@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
+// FLEET-CONTRACT-1: what {{name}} states, the page that shows each statement and the endpoint that backs it. The shared module
+// (vendor/ultrastable/contract.js, the core's seed/worker/src/contract.js) serves /.well-known/ultrastable.json and /claims.json from this one
+// declaration; contract.test.mjs runs its verify() against the real router, and the platform runs the same reading against the deployed site.
+// Every sentence below is printed on the page it names (site.js renders them from here); add a page or an endpoint and its statement together.
+// Who the system is and where it runs is read from the one manifest, ultrastable.json (written by the platform scaffold from its registries).
+import MANIFEST from "../ultrastable.json" with { type: "json" };
+
+export const ID = MANIFEST.identity;
+// public_url is null until the platform deploys this Worker; the address it will take is then used for canonical links and the manifest.
+export const SITE = ID.public_url || {{json:planned_url}};
+export const BEAT_HOURS = {{beat_hours}};
+
+export const SPEC = {
+  name: ID.name,
+  summary: ID.summary,
+  url: SITE,
+  repo: ID.repo,
+  statements: [
+    { id: "clock", text: "A beat runs on a clock and records itself; the latest beats are listed as data.", page: "/", api: "/api/beats" },
+    { id: "entries", text: "Nothing is published here without a cited, graded source; the published list is served as data and says why when it is empty.", page: "/", api: "/api/entries.json" },
+    { id: "graph", text: "Every published entry and each of its sources is a node in one graph, built from the same list.", page: "/", api: "/api/graph" },
+  ],
+  internal: [],
+};

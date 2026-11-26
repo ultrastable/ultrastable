@@ -269,3 +269,16 @@ class Lessons(unittest.TestCase):
             (Path(d) / "docs/issues").mkdir(parents=True)
             (Path(d) / "doctrine/lessons.json").write_text(json.dumps({"lessons": [{"id": "x", "lesson": "l", "enforced_by": []}]}))
             self.assertIn("x: bound to nothing and names no item", lessons.report(d)["errors"])
+
+    def test_a_shelved_item_still_tracks_its_lesson_and_a_fixed_one_without_enforcement_does_not(self):
+        from foundation import lessons
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "doctrine").mkdir()
+            (Path(d) / "docs/issues").mkdir(parents=True)
+            (Path(d) / "doctrine/lessons.json").write_text(json.dumps({"lessons": [{"id": "x", "lesson": "l", "enforced_by": [], "item": "Q-LESSON-x"}]}))
+            item = Path(d) / "docs/issues/Q-LESSON-x.json"
+            for status, disp, held in (("open", "", True), ("closed", "**Disposition:** shelved (executor-failed, t, DISPOSE-1)", True),
+                                       ("closed", "**Disposition:** gate (owner-only, t, DISPOSE-1)", True), ("closed", "**Disposition:** fixed", False), ("closed", "", False)):
+                item.write_text(json.dumps({"id": "Q-LESSON-x", "body": f"**Status:** {status}\n\n{disp}\n"}))
+                errs = [e for e in lessons.report(d)["errors"] if "missing or closed" in e]
+                self.assertEqual(errs == [], held, (status, disp))

@@ -316,7 +316,8 @@
         "CLAIMS-1",
         "WORDS-MATCH-CODE-1",
         "SHOWCASE-CLAIM-1",
-        "FRONT-BACKED-1"
+        "FRONT-BACKED-1",
+        "RULE-REFS-1"
       ]
     },
     {
@@ -745,7 +746,8 @@
       "rule": "Every JSON config the system runs on has a JSON Schema 2020-12 contract in a Schema Store catalog, generated with the config, so any tool or agent validates it without reading the code that consumes it. The constitution is itself such a config.",
       "source": "Rowan, 2026-11-25",
       "covers": [
-        "STANDARDS-1"
+        "STANDARDS-1",
+        "STANDARDS-FIRST-1"
       ],
       "detector": [
         {
@@ -765,6 +767,123 @@
           "platform": true,
           "file": "foundation/configschema.py",
           "has": "--gen"
+        }
+      ]
+    },
+    {
+      "id": "blind-spots-are-measured",
+      "rule": "A reading that is empty is unmeasured, never zero: cost, database growth, credential expiry and published content are each read by a probe, and a probe that cannot read files its own item instead of passing.",
+      "source": "Rowan, 2026-11-25",
+      "covers": [
+        "BLINDSPOT-RED-1",
+        "COST-RUNAWAY-1",
+        "D1-GROWTH-1",
+        "CRED-EXPIRY-1",
+        "CONTENT-DRIFT-1"
+      ],
+      "detector": [
+        {
+          "file": "worker/src/costsample.js",
+          "has": "recorded as a sample with an error"
+        },
+        {
+          "file": "worker/src/tick.js",
+          "has": "CONNECTOR-HEALTH-1"
+        },
+        {
+          "file": "worker/src/apprepos.js",
+          "has": "APP-CRED-WATCH-1"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "worker/src/tick.js",
+          "has": "async cost_probe("
+        },
+        {
+          "file": "worker/src/tick.js",
+          "has": "Q-COST-PROOF-2"
+        }
+      ]
+    },
+    {
+      "id": "one-contract-front-to-back",
+      "rule": "Every system serves the same public surfaces and declares each statement once, with the page that shows it and the endpoint that backs it; the system's own tests read it front to back and back to front, and its repository says where the code runs.",
+      "source": "Rowan, 2026-11-25",
+      "covers": [
+        "FLEET-CONTRACT-1",
+        "LIVE-LINKS-1"
+      ],
+      "detector": [
+        {
+          "file": "worker/src/contract.js",
+          "has": "verify"
+        },
+        {
+          "file": "worker/test/contract.test.js"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "worker/src/discover.js",
+          "has": "seedSpec"
+        },
+        {
+          "platform": true,
+          "file": "foundation/fleetcontract.py"
+        }
+      ]
+    },
+    {
+      "id": "one-repository-standard",
+      "rule": "Every repository is held to one standard from the code path that creates it: merge rules, branch cleanup, visibility, one manifest valid against the system schema, and every surface that says what the system is rendered from that manifest. A person who copies the template only states the idea.",
+      "source": "Rowan, 2026-11-25",
+      "covers": [
+        "REPO-STANDARD-1",
+        "TENANT-STANDARD-1",
+        "FLEET-MAP-1",
+        "SYSTEM-MANIFEST-1",
+        "CLONE-PATH-1"
+      ],
+      "detector": [
+        {
+          "file": "scripts/surfaces.py"
+        },
+        {
+          "file": "standards/system.schema.json"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "worker/src/repostandard.js"
+        },
+        {
+          "file": "scripts/branch_cleanup.py"
+        }
+      ]
+    },
+    {
+      "id": "every-manager-runs",
+      "rule": "Every manager is a running loop that owns code. The managers a system runs are one register, all on by default; the tick hires any switched-on manager with no runtime row and skips one that is switched off with a reason.",
+      "source": "Rowan, 2026-11-25",
+      "covers": [
+        "MANAGERS-1"
+      ],
+      "detector": [
+        {
+          "file": "autonomy/managers.json"
+        },
+        {
+          "file": "worker/test/managers.test.js"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "worker/src/managers.js"
+        },
+        {
+          "platform": true,
+          "file": "foundation/managers.py"
         }
       ]
     },

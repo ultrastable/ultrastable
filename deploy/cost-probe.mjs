@@ -86,7 +86,7 @@ export async function measureDay({ fetchFn = fetch, token, account, date, databa
 export async function discoverResources({ fetchFn = fetch, token, account, topologyPath = 'doctrine/topology.json' }) {
   // COST-PROBE-4: the GraphQL analytics API has no resource lists ("unknown field workers", run 44807806946), so discovery never worked there.
   // Each kind is listed over REST; a kind the token cannot list is null (unmeasured) and yields no drift item, never an empty account.
-  const base = `https://api.cloudflare.com/client/v4/accounts/${account}`, unmeasured = [];
+  const base = `https://api.cloudflare.com/client/v4/accounts/${account}`, unmeasured = [], sizes = [];
   const list = async (kind, path, pick) => {
     try {
       const res = await fetchFn(base + path, { headers: { authorization: `Bearer ${token}` } });
@@ -97,7 +97,7 @@ export async function discoverResources({ fetchFn = fetch, token, account, topol
   };
   const found = {
     workers: await list('workers', '/workers/scripts', (w) => w.id),
-    d1: await list('d1', '/d1/database?per_page=1000', (d) => d.uuid),
+    d1: await list('d1', '/d1/database?per_page=1000', (d) => { sizes.push({ databaseId: d.uuid, name: d.name, bytes: Number(d.file_size) || 0 }); return d.uuid; }),
     kv: await list('kv', '/storage/kv/namespaces?per_page=1000', (k) => k.id),
     r2: await list('r2', '/r2/buckets', (b) => b.name)
   };
@@ -121,7 +121,22 @@ export async function discoverResources({ fetchFn = fetch, token, account, topol
   for (const [kind, ids] of Object.entries(drift))
     for (const id of ids)
       items.push({ queue: 'topology-drift', kind, id, title: `Undeclared ${kind} resource ${id}` });
-  return { found, items, unmeasured };
+  return { found, items, unmeasured, sizes };
+}
+
+// D1-GROWTH-1 (2026-11-25): a database that grows past the plan's size limit stops taking writes, and nothing measured size. Each database's
+// file size is checked against size_max_bytes (warn at size_warn_share of it). Pure: thresholds come from ops/cost-thresholds.json.
+export function sizeBreaches(sizes, t = {}) {
+  const max = Number(t.d1_size_max_bytes) || 500 * 1024 * 1024, share = Number(t.d1_size_warn_share) || 0.6;
+  return (sizes || []).filter((d) => d.bytes > max * share).map((d) => ({ kind: 'd1-size', databaseId: d.databaseId, name: d.name, bytes: d.bytes, limit: Math.round(max * share) }));
+}
+
+// COST-THRESHOLDS-1 (2026-11-25): run() read data/cost-thresholds.json, which never existed, so every reading had d1: [] and looked like a quiet
+// account. The real file is ops/cost-thresholds.json with per-window keys; this maps them to the per-day limits measureDay compares.
+export function dayThresholds(t = {}) {
+  const days = Number(t.window_days) || 7, per = (n) => Math.floor(Number(n) / days);
+  const over = Object.fromEntries(Object.entries(t.rows_read_override || {}).map(([k, v]) => [k, per(v)]));
+  return { d1RowsReadDefault: t.rows_read_max ? per(t.rows_read_max) : undefined, d1RowsRead: over, neurons: t.neurons_max ? per(t.neurons_max) : undefined };
 }
 
 // Append a measurement record to ops/cost.jsonl.
@@ -131,22 +146,23 @@ export function appendRecord(record, path = 'ops/cost.jsonl') {
 
 // CLI entry: node deploy/cost-probe.mjs <date> [YYYY-MM-DD]
 export async function run({ fetchFn = fetch, token, account, date, cwd = process.cwd() } = {}) {
-  const thresholds = loadJson(`${cwd}/data/cost-thresholds.json`, {});
-  const dbIds = loadJson(`${cwd}/data/cost-thresholds.json`, { databases: [] }).databases || [];
-  const measurement = await measureDay({ fetchFn, token, account, date, databaseIds: dbIds, thresholds });
-  const record = { ts: new Date().toISOString(), ...measurement };
-  appendRecord(record, `${cwd}/ops/cost.jsonl`);
-  // COST-PROBE-3: a token the account refuses (run 44805356832: "not authorized for that account" after the account move) is the same state as
-  // no token (COST-PROBE-2): recorded as unmeasured, never as an empty account, and the tick Worker's sampler stays the source of record. Any other
-  // error still fails the run. Q-CFP-token-scope tracks the refused token.
-  let discovery = { items: [] };
+  const raw = loadJson(`${cwd}/ops/cost-thresholds.json`, {});
+  // COST-PROBE-3: a token the account refuses ("not authorized for that account") is recorded as unmeasured, never as an empty account.
+  // Discovery runs first: the databases it finds are the ones measured (COST-THRESHOLDS-1), so a new database is never left out.
+  let discovery = { items: [], found: { d1: null }, sizes: [] };
   try { discovery = await discoverResources({ fetchFn, token, account, topologyPath: `${cwd}/doctrine/topology.json` }); }
   catch (e) {
     const msg = String(e.message || e);
     if (!/not authorized|authz/i.test(msg)) throw e;
     console.error('cost-probe: resource discovery unmeasured: ' + msg.slice(0, 200));
-    appendRecord({ ts: new Date().toISOString(), date, unmeasured: 'token refused for this account (resource discovery)', d1: [], neurons: null, breaches: [] }, `${cwd}/ops/cost.jsonl`);
   }
+  const dbIds = (discovery.found.d1 || []).map((id) => ({ id }));
+  const measurement = await measureDay({ fetchFn, token, account, date, databaseIds: dbIds, thresholds: dayThresholds(raw) });
+  measurement.d1Size = discovery.sizes || [];
+  measurement.breaches.push(...sizeBreaches(measurement.d1Size, raw));
+  if (!dbIds.length) measurement.unmeasured = [...(measurement.unmeasured || []), { kind: 'd1', error: 'no database listed; rows read and size not measured' }];
+  const record = { ts: new Date().toISOString(), ...measurement };
+  appendRecord(record, `${cwd}/ops/cost.jsonl`);
   return { record, queueItems: [...measurement.breaches.map((b) => ({ queue: 'cost', ...b })), ...discovery.items] };
 }
 

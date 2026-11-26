@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
+// The published {{noun}} of {{name}}. Empty until the first one is graded: nothing is typed here without a cited source (IDEA.md, Constraints).
+// Shape of one entry: { id, title, summary, sources: [{ title, year, doi }], grade }. `validate` is what a new entry must pass; the router and
+// the tests read this one list, so a page, /api/entries.json, the graph and the social queue cannot disagree.
+export const ENTRIES = [];
+export const EMPTY_WHY = "No {{noun}} are published yet: each one needs a cited, graded source first.";
+
+export function validate(e = {}) {
+  const bad = [];
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(e.id || "")) bad.push("id is not a slug");
+  if (String(e.title || "").trim().length < 8) bad.push("no title");
+  if (!Array.isArray(e.sources) || !e.sources.length) bad.push("no source");
+  for (const s of e.sources || []) if (!s.title || !s.year || !s.doi) bad.push("a source needs a title, a year and a DOI");
+  if (!e.grade) bad.push("no grade");
+  return bad;
+}

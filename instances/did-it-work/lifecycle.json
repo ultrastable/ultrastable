@@ -2,8 +2,17 @@
  "_doc": "SEED-LIFECYCLE-1 answers for did-it-work; scaffolded by foundation/seedlife.py, completed by the executor through Q-SEED-did-it-work.",
  "slug": "did-it-work",
  "build": {
-  "paths": [],
-  "tests": []
+  "repo": "ultrastable/did-it-work",
+  "paths": [
+   "worker/index.js",
+   "worker/site.js",
+   "worker/contract.js",
+   "worker/entries.js"
+  ],
+  "tests": [
+   "worker/worker.test.mjs",
+   "worker/contract.test.mjs"
+  ]
  },
  "deploy": {
   "worker": ""

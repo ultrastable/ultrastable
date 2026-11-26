@@ -234,7 +234,9 @@
     "TEMPLATE-CODE-ONLY-1",
     "TENANT-SANDBOX-1",
     "INTENT-YIELD-1",
-    "PATHFINDER-1"
+    "PATHFINDER-1",
+    "RULE-REFS-1",
+    "TENANT-STANDARD-1"
   ],
   "kit_enforcement_doc": "A rule whose bullet cites platform paths but whose behaviour this kit carries under its own names: each probe must pass here, so the map cannot claim code that is not in the kit.",
   "kit_enforcement": {
@@ -305,6 +307,14 @@
     "REDTEAM-1": [
       "file:scripts/redteam.py",
       "grep:scripts/redteam.py::--probe"
+    ],
+    "LIVE-LINKS-1": [
+      "file:scripts/surfaces.py",
+      "grep:scripts/surfaces.py::live:start"
+    ],
+    "BLINDSPOT-RED-1": [
+      "grep:worker/src/costsample.js::recorded as a sample with an error",
+      "grep:worker/src/apprepos.js::APP-CRED-WATCH-1"
     ]
   }
 }

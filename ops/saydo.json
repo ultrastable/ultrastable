@@ -1,7 +1,7 @@
 {
- "at": "2026-11-25T22:45:44Z",
- "gaps": 6,
- "match_share": 0.988,
+ "at": "2026-11-26T06:16:12Z",
+ "gaps": 7,
+ "match_share": 0.987,
  "sources": {
   "changes": [
    {
@@ -156,14 +156,14 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 405
+    "total": 425
    }
   ],
   "loops": [
    {
-    "detail": "0 of 95 second-order steps kept in 14 days",
+    "detail": "0 of 108 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 95,
+    "judged": 108,
     "kept": 0,
     "ok": false
    }
@@ -555,6 +555,89 @@
     "checks": 1,
     "external": [],
     "failing": [],
+    "id": "REPO-STANDARD-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "MANAGERS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "FLEET-MAP-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "CLONE-PATH-1",
+    "missing": [
+     "org/owner-status.json"
+    ],
+    "ok": false,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "RULE-REFS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 2,
+    "external": [],
+    "failing": [],
+    "id": "STANDARDS-FIRST-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "TENANT-STANDARD-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "LIVE-LINKS-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "FLEET-CONTRACT-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
     "id": "DECISIONS-1",
     "missing": [],
     "ok": true,
@@ -572,7 +655,7 @@
    {
     "checks": 0,
     "external": [
-     "tools/connect.mjs"
+     "tools/connections.mjs"
     ],
     "failing": [],
     "id": "CONNECT-1",
@@ -704,6 +787,15 @@
     "external": [],
     "failing": [],
     "id": "COLLISION-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "BLINDSPOT-RED-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -930,7 +1022,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 81.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 88.7 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1003,20 +1095,20 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 405
+   "total": 425
   },
   "loops": {
    "gaps": 1,
    "total": 1
   },
   "rules": {
-   "gaps": 3,
-   "total": 88
+   "gaps": 4,
+   "total": 98
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 512
+ "total": 542
 }

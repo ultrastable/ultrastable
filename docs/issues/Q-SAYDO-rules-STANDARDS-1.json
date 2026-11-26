@@ -1,7 +1,7 @@
 {
   "id": "Q-SAYDO-rules-STANDARDS-1",
   "title": "Q-SAYDO-rules-STANDARDS-1: says STANDARDS-1, does not do it",
-  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe rules:STANDARDS-1\n**Status:** open\n\nThe system states `STANDARDS-1` (rules) and its code does not do it: worker/linked.js\n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe rules:STANDARDS-1` exits 0.\n",
+  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe rules:STANDARDS-1\n**Status:** closed\n\nThe system states `STANDARDS-1` (rules) and its code does not do it: worker/linked.js\n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe rules:STANDARDS-1` exits 0.\n\n**Disposition:** shelved (ttl, 2026-11-26T03:54:53Z, DISPOSE-1)\n\n**Evidence:** open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "p1",
     "agent-ready",

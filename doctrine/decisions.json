@@ -211,6 +211,7 @@
  "not_decisions": {
     "foundation/semrel.py": "plan and classify map Conventional Commit types to a SemVer bump by a fixed table, with no alternatives to weigh",
   "foundation/agents.py": "route_authors maps author names to roles from environment variables, a fixed lookup with no alternatives to weigh",
+  "foundation/repostd.py": "classify and desired compute a fixed standard: a branch's class from its pull requests and a repository's settings from one default block; nothing is weighed or chosen",
   "foundation/boundary.py": "decide looks a surface and action up in the boundary policy ledger, a deterministic rule with one allowed answer",
   "foundation/branchsweep.py": "plan_one derives the disposition of a branch from its merge state, a fixed table, and the sweep ledger records every outcome",
   "foundation/conflicts.py": "decide is a pure truth table over four booleans from the merge attempt, with no judgment or ranking",
@@ -224,6 +225,7 @@
   "seed/worker/src/airouter.js": "vendored copy of core/airouter; the routing decisions are logged and scored under ai-router by src/airoute.js and decisions.js",
   "seed/worker/src/critloop.js": "pickForRole takes the first role-matching item from the rank computed by foundation/prioritize.py, which carries the work-queue-priority metric",
   "seed/worker/src/events.js": "routeEvent looks an event name up in EVENT_TABLE generated from doctrine, a table lookup with no ranking",
-  "seed/worker/src/pace.js": "rankRows sorts rows by the rank list already chosen by foundation/prioritize.py, which is the instrumented decision"
+  "seed/worker/src/pace.js": "rankRows sorts rows by the rank list already chosen by foundation/prioritize.py, which is the instrumented decision",
+  "seed/worker/src/contract.js": "routesIn and contractRoute read a router's paths and match a request path against two fixed routes, a lookup with one answer and nothing to weigh"
  }
 }

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/rule-refs.schema.json",
+  "title": "rule-refs (doctrine/rule-refs.json)",
+  "description": "Contract for doctrine/rule-refs.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "rule": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "roots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "route_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "word_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "hosts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "loop_registry": {
+      "type": "string"
+    },
+    "site_router": {
+      "type": "string"
+    },
+    "repositories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "external": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "repo": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "undescribed": {
+      "type": "object",
+      "properties": {
+        "modules": {
+          "type": "array"
+        },
+        "workflows": {
+          "type": "array"
+        },
+        "routes": {
+          "type": "array"
+        }
+      }
+    },
+    "closing_probe": {
+      "type": "string"
+    },
+    "corrections": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "caller_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "caller_globs",
+    "closing_probe",
+    "corrections",
+    "external",
+    "hosts",
+    "id",
+    "loop_registry",
+    "owner",
+    "repositories",
+    "roots",
+    "route_globs",
+    "rule",
+    "site_router",
+    "sources",
+    "undescribed",
+    "word_globs"
+  ]
+}

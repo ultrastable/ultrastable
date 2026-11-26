@@ -1,0 +1,13 @@
+{
+  "id": "Q-MANAGERS-clocks",
+  "title": "Q-MANAGERS-clocks: 13 scheduled manager workflows are not clocks, so their silence is not measured",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation managers --clocks\n**Status:** closed\n\nMANAGERS-1, CLOCKWORK-1. doctrine/clocks.json holds 14 clocks; the loop registry holds 114 loops. `python3 -m foundation managers --clocks` lists the scheduled workflows managers run on that have no clock: fleet.yml (program-manager), issues.yml and retriage.yml (project-manager), product-manager.yml, cost-guard.yml and backup-drill.yml (infrastructure-manager), funding-maintenance.yml, outreach.yml, social-post.yml (outreach-coordinator, marketing-manager), demo-video.yml, uiux.yml, spinoff.yml. GitHub's scheduler has skipped schedules before (EXEC-SPARK-1), and a skipped run of any of these is seen by no clock, so the watchdog never restarts it.\n\nAdd one `source: workflow` clock per workflow to doctrine/clocks.json with its real cadence as expected_interval_s, so `clock --check`, /live and the watchdog's restart (foundation/resilience.py) cover them; update tests that pin the clock list. Prediction: unclocked = 0 and clock --check passes within 48 h.\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation managers --clocks.\n\n\n**Prediction:** spec_quality >= 0.7 within 336 h (read by `python3 -m foundation specgate --report`; this item closing by its done check keeps the share of well-specified open items at or above today's reading)\n\n**Out of scope:** removing a manager, switching one off to clear the reading, or changing the thresholds in doctrine/managers.json.\n\n**Disposition:** shelved (ttl, 2026-11-26T05:33:04Z, DISPOSE-1)\n\n**Evidence:** open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:operations",
+    "p1",
+    "agent-ready",
+    "managers"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

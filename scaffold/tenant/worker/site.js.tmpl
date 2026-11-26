@@ -1,0 +1,42 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
+// {{name}}'s pages: server-rendered, readable without script, light and dark from the same tokens. The statements a page makes are rendered from
+// worker/contract.js by the shared module, so the words on the page and the words in /claims.json are one string.
+import { footerLinks, statementsHtml, jsonLd } from "../vendor/ultrastable/contract.js";
+import { SPEC, BEAT_HOURS } from "./contract.js";
+import { ENTRIES, EMPTY_WHY } from "./entries.js";
+
+export const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const every = BEAT_HOURS <= 1 ? "every hour" : BEAT_HOURS < 168 ? `every ${BEAT_HOURS} hours` : "every week";
+
+const CSS = `:root{color-scheme:light dark;--ds-bg:#fbfaf7;--ds-fg:#1c1b19;--ds-muted:#5a564f;--ds-line:#d9d5cc;--ds-accent:#1f5f8b;--ds-space:1rem}
+@media (prefers-color-scheme:dark){:root{--ds-bg:#151412;--ds-fg:#eeeae2;--ds-muted:#b3aea4;--ds-line:#3a372f;--ds-accent:#8cc4ea}}
+*{box-sizing:border-box}body{margin:0;background:var(--ds-bg);color:var(--ds-fg);font:16px/1.6 system-ui,sans-serif}
+main,footer{max-width:44rem;margin:0 auto;padding:calc(var(--ds-space)*1.5) var(--ds-space)}
+h1{font-size:2rem;line-height:1.2;margin:0 0 .5rem}h2{font-size:1.15rem;margin:2rem 0 .5rem}
+.lede{font-size:1.15rem}.note{border:1px solid var(--ds-line);border-radius:.75rem;padding:var(--ds-space)}
+a{color:var(--ds-accent);text-underline-offset:.15em}a:focus-visible{outline:3px solid var(--ds-accent);outline-offset:2px}
+li{margin:.4rem 0}footer{color:var(--ds-muted);font-size:.9rem;border-top:1px solid var(--ds-line)}
+footer a{display:inline-block;min-height:44px;line-height:44px}`;
+
+export function shell(title, body, path = "/") {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(title)}</title><meta name="description" content="${esc(SPEC.summary)}"><link rel="canonical" href="${esc(SPEC.url + path)}">
+<link rel="alternate" type="application/feed+json" href="/feed.json">${path === "/" ? jsonLd(SPEC) : ""}<style>${CSS}</style></head>
+<body><main>${body}${statementsHtml(SPEC, path)}</main><footer>${footerLinks(SPEC)}</footer></body></html>`;
+}
+
+// last: the newest beat row or null; why: the reason there is no beat to show (no database, or none has run yet).
+export function home({ last = null, why = "" } = {}) {
+  const list = ENTRIES.length
+    ? `<ul>${ENTRIES.map(e => `<li><strong>${esc(e.title)}</strong>${e.summary ? ": " + esc(e.summary) : ""}</li>`).join("")}</ul>`
+    : `<p class="note">${esc(EMPTY_WHY)}</p>`;
+  const clock = last
+    ? `<p>The beat runs ${every}. The last one ran at <time datetime="${esc(new Date(last.at).toISOString())}">${esc(new Date(last.at).toISOString().slice(0, 16).replace("T", " "))} UTC</time>.</p>`
+    : `<p>The beat runs ${every}. ${esc(why || "No beat has run yet.")}</p>`;
+  return shell(SPEC.name, `<h1>${esc(SPEC.name)}</h1><p class="lede">${esc(SPEC.summary)}</p>
+<h2>Published {{noun}}</h2>${list}
+<h2>The clock</h2>${clock}`, "/");
+}
+
+export const notFound = () => shell("Not found: " + SPEC.name, `<h1>Not found</h1><p>That page is not here. <a href="/">Back to ${esc(SPEC.name)}</a>.</p>`, "/404");

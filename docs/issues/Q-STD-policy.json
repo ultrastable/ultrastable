@@ -1,7 +1,7 @@
 {
   "id": "Q-STD-policy",
   "title": "Q-STD-policy: Express gates as schema conditionals, Rego where needed",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -c \"import json,sys;sys.exit(0 if [r for r in json.load(open('doctrine/open-standards.json'))['formats'] if r['id']=='policy-as-code' and r['status']=='adopted'] else 1)\"\n**Status:** open\n\nOPEN-STANDARDS-1 (Rowan, 2026-11-25): move autonomy/policy.json gate rules into JSON Schema if/then conditionals checked by openstd; Rego only for cross-file rules.\n\nsize: M\n**Out of scope:** new formats not in doctrine/open-standards.json.\n\nPrediction: open_standards_adopted_rows >= 10 within 168 h\n\n**Closing probe:** python3 -m foundation openstd --check passes and the registry row for policy-as-code reads adopted with evidence files that exist.\n",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation openstd --probe policy-as-code\n**Status:** open\n\nOPEN-STANDARDS-1 (Rowan, 2026-11-25): move autonomy/policy.json gate rules into JSON Schema if/then conditionals checked by openstd; Rego only for cross-file rules.\n\nsize: M\n**Out of scope:** new formats not in doctrine/open-standards.json.\n\nPrediction: open_standards_adopted_rows >= 10 within 168 h\n\n**Closing probe:** python3 -m foundation openstd --check passes and the registry row for policy-as-code reads adopted with evidence files that exist.\n",
   "labels": [
     "p2",
     "agent-ready"

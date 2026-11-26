@@ -67,6 +67,14 @@
       "url": "kit.schema.json"
     },
     {
+      "name": "managers.json",
+      "description": "Contract for seed/autonomy/managers.json",
+      "fileMatch": [
+        "seed/autonomy/managers.json"
+      ],
+      "url": "managers.schema.json"
+    },
+    {
       "name": "pace.json",
       "description": "Contract for seed/autonomy/pace.json",
       "fileMatch": [

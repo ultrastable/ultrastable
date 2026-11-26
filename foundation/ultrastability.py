@@ -20,6 +20,7 @@ from __future__ import annotations
 import json, re, sys, urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+from . import cloudevents
 
 REPO = Path(__file__).resolve().parents[1]
 PATH = "doctrine/ultrastability.json"
@@ -89,7 +90,7 @@ def owner_interventions(root, now=None, days=7):
     actors = set()
     for l in lines:
         try:
-            r = json.loads(l)
+            r = cloudevents.unwrap(json.loads(l))
         except ValueError:
             continue
         o = r.get("origin") or {}

@@ -130,6 +130,18 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **configs-have-schemas** (Rowan, 2026-11-25): Every JSON config the system runs on has a JSON Schema 2020-12 contract in a Schema Store catalog, generated with the config, so any tool or agent validates it without reading the code that consumes it. The constitution is itself such a config.
   - detector: `doctrine/schemas/catalog.json`, `foundation/configschema.py` (platform)
   - remediation: `doctrine/schemas/constitution.schema.json`, `foundation/configschema.py` (platform)
+- **blind-spots-are-measured** (Rowan, 2026-11-25): A reading that is empty is unmeasured, never zero: cost, database growth, credential expiry and published content are each read by a probe, and a probe that cannot read files its own item instead of passing.
+  - detector: `worker/src/costsample.js`, `worker/src/tick.js`, `worker/src/apprepos.js`
+  - remediation: `worker/src/tick.js`, `worker/src/tick.js`
+- **one-contract-front-to-back** (Rowan, 2026-11-25): Every system serves the same public surfaces and declares each statement once, with the page that shows it and the endpoint that backs it; the system's own tests read it front to back and back to front, and its repository says where the code runs.
+  - detector: `worker/src/contract.js`, `worker/test/contract.test.js`
+  - remediation: `worker/src/discover.js`, `foundation/fleetcontract.py` (platform)
+- **one-repository-standard** (Rowan, 2026-11-25): Every repository is held to one standard from the code path that creates it: merge rules, branch cleanup, visibility, one manifest valid against the system schema, and every surface that says what the system is rendered from that manifest. A person who copies the template only states the idea.
+  - detector: `scripts/surfaces.py`, `standards/system.schema.json`
+  - remediation: `worker/src/repostandard.js`, `scripts/branch_cleanup.py`
+- **every-manager-runs** (Rowan, 2026-11-25): Every manager is a running loop that owns code. The managers a system runs are one register, all on by default; the tick hires any switched-on manager with no runtime row and skips one that is switched off with a reason.
+  - detector: `autonomy/managers.json`, `worker/test/managers.test.js`
+  - remediation: `worker/src/managers.js`, `foundation/managers.py` (platform)
 - **open-standards** (Rowan, 2026-11-25): Every format the system runs on is an established open standard registered in doctrine/open-standards.json (JSON Schema for config, CloudEvents for event ledgers, OpenAPI for HTTP, Wrangler for infrastructure, Atom and JSON Feed for feeds, MCP and AGENTS.md for agents, and registered planned rows for the rest), a new bespoke format fails CI, and the baseline of older files drains by a daily loop.
   - detector: `scripts/openstd.py`, `foundation/openstd.py` (platform)
   - remediation: `scripts/openstd.py`, `foundation/openstd.py` (platform)

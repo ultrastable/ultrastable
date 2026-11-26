@@ -59,7 +59,11 @@ const rows = [];
 // LAUNCH-PATH-1: a visitor's app is deployed by the same route. deploy/launch-apps.mjs passes its manifest in SEED_EXTRA ([{slug, instance, ai}]);
 // with SEED_ONLY_EXTRA=1 the standing seeds are left alone, and SEED_RESULT names a file that receives the rows (nothing is appended to the ledger).
 const extra = JSON.parse(process.env.SEED_EXTRA || "[]"), onlyExtra = process.env.SEED_ONLY_EXTRA === "1";
-const todo = (onlyExtra ? [] : cfg.seeds.map(slug => ({ slug, instance: `instances/${slug}/instance.json` }))).concat(extra);
+// SEED-HOST-1: a standing seed whose manifest names its own repository (ultrastable/<slug>) is deployed with the account's models and the host's
+// token route to that one repository, as a visitor's app is. Without them its Worker held no GitHub sign-in and every loop that reads or writes
+// the repository failed (second-tenant stood at ignition stage "ticking" for that reason); nobody is asked to connect anything.
+const ownRepo = (slug) => { try { const c = JSON.parse(readFileSync(`${ROOT}instances/${slug}/instance.json`, "utf8")).repos.canonical; return c === "ultrastable/" + slug ? c : undefined; } catch (e) { console.log(`::warning::${slug}: manifest unreadable for its repository: ${e.message}`); return undefined; } };
+const todo = (onlyExtra ? [] : cfg.seeds.map(slug => ({ slug, instance: `instances/${slug}/instance.json`, ai: true, host_repo: ownRepo(slug) }))).concat(extra);
 for (const { slug, instance, ai, host_repo } of todo) {
   if (!/^[a-z0-9-]{1,35}$/.test(slug)) throw new Error("seed slug not allowed: " + slug);
   const name = `ultrastable-seed-${slug}`, url = SITE.replace("ultrastable-site", name);

@@ -1,0 +1,233 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ultrastable.io/schemas/ultrastable.schema.json",
+ "title": "Organisation config half of ultrastable.json (runtime, roles, model ladder, connectors, capacity); the identity half is system.schema.json",
+ "type": "object",
+ "required": [
+  "$schema_version",
+  "runtime",
+  "roles",
+  "model_ladder",
+  "connectors",
+  "capacity",
+  "reporting"
+ ],
+ "properties": {
+  "$schema_version": {
+   "type": "string",
+   "pattern": "^\\d+\\.\\d+\\.\\d+$"
+  },
+  "runtime": {
+   "type": "object",
+   "required": [
+    "provider",
+    "worker_name",
+    "d1_database",
+    "tick_cron"
+   ],
+   "properties": {
+    "worker_name": {
+     "type": "string",
+     "minLength": 1
+    },
+    "d1_database": {
+     "type": "string",
+     "minLength": 1
+    },
+    "provider": {
+     "enum": [
+      "cloudflare"
+     ]
+    },
+    "tick_cron": {
+     "type": "string",
+     "pattern": "^\\S+ \\S+ \\S+ \\S+ \\S+$"
+    }
+   }
+  },
+  "roles": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "count",
+     "instructions",
+     "tick_every"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+     },
+     "count": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 1
+       },
+       {
+        "enum": [
+         "per_outcome",
+         "pool"
+        ]
+       }
+      ]
+     },
+     "instructions": {
+      "type": "string",
+      "pattern": "^agents/roles/[a-z-]+\\.md$"
+     },
+     "tick_every": {
+      "type": "integer",
+      "minimum": 1
+     }
+    }
+   },
+   "minItems": 1
+  },
+  "model_ladder": {
+   "type": "object",
+   "required": [
+    "tiers",
+    "aliases"
+   ],
+   "properties": {
+    "tiers": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "budget_usd_per_month_min",
+       "doer",
+       "reviewer",
+       "manager"
+      ],
+      "properties": {
+       "doer": {
+        "type": "string",
+        "minLength": 1
+       },
+       "reviewer": {
+        "type": "string",
+        "minLength": 1
+       },
+       "manager": {
+        "type": "string",
+        "minLength": 1
+       },
+       "budget_usd_per_month_min": {
+        "type": "number",
+        "minimum": 0
+       }
+      }
+     },
+     "minItems": 1
+    },
+    "aliases": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "string",
+      "minLength": 1
+     }
+    }
+   }
+  },
+  "connectors": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "required": [
+     "env",
+     "required_for"
+    ],
+    "properties": {
+     "env": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+     },
+     "required_for": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      }
+     },
+     "optional": {
+      "type": "boolean"
+     },
+     "note": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "additionalProperties": false,
+    "patternProperties": {
+     "^_": true
+    }
+   }
+  },
+  "capacity": {
+   "type": "object",
+   "required": [
+    "plus_share",
+    "max_wip_per_role"
+   ],
+   "properties": {
+    "plus_share": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    },
+    "max_wip_per_role": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "growth_share_floor": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    }
+   }
+  },
+  "reporting": {
+   "type": "object",
+   "required": [
+    "format",
+    "lines"
+   ],
+   "properties": {
+    "format": {
+     "type": "string",
+     "minLength": 1
+    },
+    "lines": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "minItems": 4
+    }
+   }
+  },
+  "analytics": {
+   "type": "object"
+  },
+  "org": {
+   "type": "object",
+   "required": [
+    "repos"
+   ],
+   "properties": {
+    "repos": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,67 @@
+{
+  "identity": {
+    "name": "Ultrastable",
+    "slug": "ultrastable",
+    "summary": "The platform: all code, rules, doctrine, the website, the dashboard and the seed/ kernel are written here and nowhere else.",
+    "repo": "ultrastable/ultrastable",
+    "public_url": "https://ultrastable.io",
+    "license": "LicenseRef-Ultrastable-USL-1.0",
+    "topics": [
+      "autonomous-agents",
+      "ai-agents",
+      "agent-orchestration",
+      "developer-tools",
+      "automation",
+      "bootstrapping",
+      "self-hosting",
+      "cloudflare-workers",
+      "ultrastable"
+    ],
+    "layer": "platform",
+    "parent": null,
+    "visibility": "public",
+    "visibility_reason": "DISCOVER-1: public by default",
+    "status": "live",
+    "runs_as": [
+      {
+        "provider": "cloudflare",
+        "kind": "worker",
+        "name": "ultrastable-tick"
+      },
+      {
+        "provider": "cloudflare",
+        "kind": "worker",
+        "name": "ultrastable-site",
+        "routes": [
+          "ultrastable.io",
+          "www.ultrastable.io",
+          "ultrastable.app",
+          "www.ultrastable.app",
+          "ultrastable.net",
+          "www.ultrastable.net"
+        ]
+      },
+      {
+        "provider": "cloudflare",
+        "kind": "worker",
+        "name": "ultrastable-dashboard"
+      },
+      {
+        "provider": "cloudflare",
+        "kind": "worker",
+        "name": "ultrastable-agents"
+      },
+      {
+        "provider": "cloudflare",
+        "kind": "worker",
+        "name": "ultrastable-tenants"
+      },
+      {
+        "provider": "cloudflare",
+        "kind": "worker",
+        "name": "ultrastable-spinoffs"
+      }
+    ],
+    "loop": "It reads its own measures, files the next improvement, hands it to its executor, merges, deploys, probes the result live and scores the prediction, for itself and for every system it runs."
+  }
+}

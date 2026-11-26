@@ -1,7 +1,7 @@
 {
   "id": "Q-STD-otel",
   "title": "Q-STD-otel: Turn on OpenTelemetry export",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -c \"import json,sys;sys.exit(0 if [r for r in json.load(open('doctrine/open-standards.json'))['formats'] if r['id']=='observability' and r['status']=='adopted'] else 1)\"\n**Status:** open\n\nOPEN-STANDARDS-1 (Rowan, 2026-11-25): enable Workers OTLP export for the tick Worker and map tick steps to spans; add the setting to its wrangler config and a test that reads it.\n\nsize: M\n**Out of scope:** new formats not in doctrine/open-standards.json.\n\nPrediction: open_standards_adopted_rows >= 10 within 168 h\n\n**Closing probe:** python3 -m foundation openstd --check passes and the registry row for observability reads adopted with evidence files that exist.\n",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation openstd --probe observability\n**Status:** open\n\nOPEN-STANDARDS-1 (Rowan, 2026-11-25): enable Workers OTLP export for the tick Worker and map tick steps to spans; add the setting to its wrangler config and a test that reads it.\n\nsize: M\n**Out of scope:** new formats not in doctrine/open-standards.json.\n\nPrediction: open_standards_adopted_rows >= 10 within 168 h\n\n**Closing probe:** python3 -m foundation openstd --check passes and the registry row for observability reads adopted with evidence files that exist.\n",
   "labels": [
     "p2",
     "agent-ready"

@@ -19,6 +19,11 @@
    "kind": "github-token",
    "optional": true,
    "used_by": "optional: the merge lane for pull requests that change workflows; data pull requests are opened by the org App (MAIN-WRITER-PR-1)"
+  },
+  {
+   "name": "GITHUB_ADMIN_APP",
+   "kind": "worker-github-app",
+   "used_by": "tenant repositories, visitor app repositories and repo settings (delete_branch_on_merge, allow_auto_merge); held by the tick Worker and read through the site Worker's OIDC route with a dry repo-settings call (APP-CRED-WATCH-1)"
   }
  ],
  "registrations": [

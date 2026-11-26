@@ -413,7 +413,7 @@ metadata:
   annotations:
     github.com/project-slug: "ultrastable/practical-solutions"
   links:
-    - url: "https://tenant-ps-web.ultrastable.workers.dev"
+    - url: "https://ultrastable.org"
       title: "Front end"
 spec:
   owner: "group:ultrastable"
@@ -456,7 +456,7 @@ apiVersion: "backstage.io/v1alpha1"
 kind: "System"
 metadata:
   name: "base-rates"
-  description: "manifest only; its repository is created before its first line of code, so its code is born outside the core"
+  description: "nothing is deployed; its repository is filled from the one scaffold (TENANT-STANDARD-1: a minimal full-stack Worker with the fleet contract and a clock) and it stays planned until the platform registers and deploys its Worker (Q-SEED-base-rates)"
   annotations:
     github.com/project-slug: "ultrastable/base-rates"
 spec:
@@ -467,7 +467,7 @@ apiVersion: "backstage.io/v1alpha1"
 kind: "System"
 metadata:
   name: "did-it-work"
-  description: "manifest only; its repository is created before its first line of code, so its code is born outside the core"
+  description: "nothing is deployed; its repository is filled from the one scaffold (TENANT-STANDARD-1: a minimal full-stack Worker with the fleet contract and a clock) and it stays planned until the platform registers and deploys its Worker (Q-SEED-did-it-work)"
   annotations:
     github.com/project-slug: "ultrastable/did-it-work"
 spec:
@@ -478,7 +478,7 @@ apiVersion: "backstage.io/v1alpha1"
 kind: "System"
 metadata:
   name: "open-questions"
-  description: "manifest only; its repository is created before its first line of code, so its code is born outside the core"
+  description: "nothing is deployed; its repository is filled from the one scaffold (TENANT-STANDARD-1: a minimal full-stack Worker with the fleet contract and a clock) and it stays planned until the platform registers and deploys its Worker (Q-SEED-open-questions)"
   annotations:
     github.com/project-slug: "ultrastable/open-questions"
 spec:

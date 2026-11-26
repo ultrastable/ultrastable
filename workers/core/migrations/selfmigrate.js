@@ -16,16 +16,23 @@ export function splitSql(sql) {
   return out.filter(s => s && s !== ';');
 }
 
-export async function applyPending(db, files, allow, nowIso, table = 'applied_migrations') {
+// MIGRATE-GAP-1 (2026-11-25): a tenant's database was 23 migrations behind, and one statement per query would have spent a whole invocation's
+// query allowance on them and starved the tick. A migration is one batched call when the database offers batch() (atomic: it lands whole, with
+// its ledger row, or not at all), and at most `max` migrations are applied per run; the rest are reported as waiting and taken on the next run.
+export async function applyPending(db, files, allow, nowIso, table = 'applied_migrations', { max = 4 } = {}) {
   await db.prepare(`CREATE TABLE IF NOT EXISTS ${table} (name TEXT PRIMARY KEY, at TEXT NOT NULL)`).run();
   const done = new Set(((await db.prepare(`SELECT name FROM ${table}`).all()).results || []).map(r => r.name));
   const report = [];
+  let applied = 0;
   for (const name of allow) {
     if (done.has(name)) continue;
     if (!(name in files)) { report.push({ name, ok: false, error: 'file not bundled' }); continue; }
+    if (applied >= max) { report.push({ name, ok: false, waiting: true, error: 'waiting for the next run' }); continue; }
+    applied++;
     try {
-      for (const st of splitSql(files[name])) await db.prepare(st).run();
-      await db.prepare(`INSERT OR REPLACE INTO ${table} (name, at) VALUES (?,?)`).bind(name, nowIso).run();
+      const mark = db.prepare(`INSERT OR REPLACE INTO ${table} (name, at) VALUES (?,?)`).bind(name, nowIso);
+      if (typeof db.batch === 'function') await db.batch([...splitSql(files[name]).map(st => db.prepare(st)), mark]);
+      else { for (const st of splitSql(files[name])) await db.prepare(st).run(); await mark.run(); }
       report.push({ name, ok: true });
     } catch (e) { report.push({ name, ok: false, error: String(e.message).slice(0, 200) }); }
   }
@@ -36,6 +43,6 @@ export const selfMigrateStep = ({ files, allow, table = 'applied_migrations', st
   name: stepName,
   async run(db, ctx) {
     const r = await applyPending(db, files, allow, ctx.nowIso, table);
-    if (r.length) ctx.notes.push(`selfmigrate: ${r.map(x => `${x.name} ${x.ok ? 'applied' : 'FAILED ' + x.error}`).join('; ')}`);
+    if (r.length) ctx.notes.push(`selfmigrate: ${r.map(x => `${x.name} ${x.ok ? 'applied' : x.waiting ? 'waiting' : 'FAILED ' + x.error}`).join('; ')}`);
   },
 });

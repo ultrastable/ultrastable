@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/schema-catalog.json",
+  "version": 1,
+  "schemas": [
+    {
+      "name": "standards.json",
+      "description": "Contract for seed/standards/standards.json",
+      "fileMatch": [
+        "seed/standards/standards.json"
+      ],
+      "url": "standards.schema.json"
+    },
+    {
+      "name": "surfaces.json",
+      "description": "Contract for seed/standards/surfaces.json",
+      "fileMatch": [
+        "seed/standards/surfaces.json"
+      ],
+      "url": "surfaces.schema.json"
+    },
+    {
+      "name": "ultrastable.json",
+      "description": "Contract for seed/ultrastable.json",
+      "fileMatch": [
+        "seed/ultrastable.json"
+      ],
+      "url": "ultrastable.schema.json"
+    }
+  ]
+}

@@ -63,7 +63,8 @@ test('only app repositories, only safe paths', async () => {
   const w = await world();
   assert.equal((await ensureAppRepo(w.db, w.env, T, spec({ repo: 'ultrastable/ultrastable' }), { fetch: w.f })).ok, false);
   assert.equal((await ensureAppRepo(w.db, w.env, T, spec({ files: [{ path: '.github/workflows/x.yml', content: 'x' }] }), { fetch: w.f })).ok, false);
-  assert.equal(w.calls.filter(c => c.m !== 'GET' && !c.path.endsWith('/generate')).length, 0);
+  assert.equal(w.calls.filter(c => c.m !== 'GET' && c.path.includes('/contents/')).length, 0, 'no file is written');
+  assert.equal(w.calls.filter(c => c.m !== 'GET' && !c.path.startsWith('/repos/' + REPO) && !c.path.endsWith('/generate')).length, 0, 'nothing outside the app repository is touched');
   assert.ok(!APP_REPO.test('ultrastable/seed') && APP_REPO.test(REPO));
 });
 test('routes: the repository route needs the internal key; a hosted app gets a token for its own repository and no other', async () => {
@@ -160,64 +161,147 @@ test('DECLARED-LIVE-1: an existing tenant repository is set to its declared visi
   assert.equal(patches.length, 1);
 });
 
-// REPO-SETTINGS-1: branch cleanup reached delete_branch_on_merge only through an ORG_ADMIN_TOKEN nobody had; the admin app sets the two settings.
-test('the admin app turns on exactly the two drifted settings, for org repositories only, behind the internal key', async () => {
-  const { ensureRepoSettings, REPO_SETTINGS } = await import('../src/apprepos.js');
+// REPO-STANDARD-1: one standard for every repository, applied by the administration app; a refused step is named and makes the answer not ok.
+function ghFake(live, { refuse = {}, rulesets = [] } = {}) {
+  const calls = [];
+  const A = async (m, path, body) => {
+    calls.push({ m, path, body });
+    for (const [k, st] of Object.entries(refuse)) if (path.endsWith(k) && m !== 'GET') return { status: st, json: { message: 'Resource not accessible by integration' } };
+    if (m === 'GET' && path.endsWith('/vulnerability-alerts')) return { status: 404, json: {} };
+    if (m === 'PUT' && path.endsWith('/vulnerability-alerts')) return { status: 204, json: {} };
+    if (m === 'GET' && path.endsWith('/rulesets')) return { status: 200, json: rulesets };
+    if (m === 'POST' && path.endsWith('/rulesets')) return { status: 201, json: { id: 1 } };
+    return { status: 200, json: {} };
+  };
+  return { A, calls, live };
+}
+test('the standard is one object: squash only, auto-merge, branches deleted on merge, main protected by a ruleset', async () => {
+  const { REPO_STANDARD } = await import('../src/repostandard.js');
+  const { REPO_SETTINGS } = await import('../src/apprepos.js');
+  assert.deepEqual(REPO_SETTINGS, REPO_STANDARD.settings);
+  assert.equal(REPO_STANDARD.settings.allow_squash_merge, true); assert.equal(REPO_STANDARD.settings.allow_merge_commit, false); assert.equal(REPO_STANDARD.settings.allow_rebase_merge, false);
+  assert.equal(REPO_STANDARD.settings.allow_auto_merge, true); assert.equal(REPO_STANDARD.settings.delete_branch_on_merge, true);
+  assert.deepEqual(REPO_STANDARD.ruleset.rules.map(r => r.type).sort(), ['deletion', 'non_fast_forward']);
+});
+test('a drifted public repository gets every part: settings, description, homepage, topics, alerts, secret scanning and the main ruleset', async () => {
+  const { applyStandard, REPO_STANDARD } = await import('../src/repostandard.js');
+  const w = ghFake({ private: false, allow_squash_merge: true, allow_merge_commit: true, allow_rebase_merge: true, allow_auto_merge: false, allow_update_branch: false, delete_branch_on_merge: false, has_wiki: true, description: null, homepage: null, topics: [], security_and_analysis: { secret_scanning: { status: 'disabled' }, secret_scanning_push_protection: { status: 'disabled' } } });
+  const r = await applyStandard(w.A, 'ultrastable/replication-ledger', w.live, { description: 'Replication Ledger', homepage: 'https://replication-ledger.ultrastable.org/', topics: ['ultrastable', 'Bad Topic!', 'built-on-ultrastable'] });
+  assert.equal(r.ok, true); assert.deepEqual(r.refused, []);
+  const patch = w.calls.find(c => c.m === 'PATCH' && !c.body.security_and_analysis).body;
+  for (const [k, v] of Object.entries(REPO_STANDARD.settings)) assert.equal(patch[k], k === 'allow_squash_merge' ? undefined : v, k);
+  assert.equal(patch.description, 'Replication Ledger'); assert.equal(patch.homepage, 'https://replication-ledger.ultrastable.org/'); assert.equal('private' in patch, false);
+  assert.deepEqual(w.calls.find(c => c.path.endsWith('/topics')).body, { names: ['ultrastable', 'built-on-ultrastable'] });
+  assert.ok(w.calls.some(c => c.m === 'PUT' && c.path.endsWith('/vulnerability-alerts')));
+  assert.deepEqual(w.calls.find(c => c.m === 'PATCH' && c.body.security_and_analysis).body.security_and_analysis.secret_scanning, { status: 'enabled' });
+  assert.equal(w.calls.find(c => c.m === 'POST' && c.path.endsWith('/rulesets')).body.name, 'main-no-rewrite');
+  for (const k of ['description', 'homepage', 'topics', 'ruleset', 'delete_branch_on_merge', 'allow_auto_merge']) assert.ok(r.changed.includes(k), k);
+});
+test('a repository already at the standard is not written to; an archived one is left alone', async () => {
+  const { applyStandard, REPO_STANDARD } = await import('../src/repostandard.js');
+  const live = { private: false, ...REPO_STANDARD.settings, description: 'd', homepage: 'https://ultrastable.io', topics: ['ultrastable'], security_and_analysis: { secret_scanning: { status: 'enabled' }, secret_scanning_push_protection: { status: 'enabled' } } };
+  const w = ghFake(live, { rulesets: [{ id: 7, name: 'main-no-rewrite', enforcement: 'active' }] });
+  w.A = (inner => async (m, p, b) => (m === 'GET' && p.endsWith('/vulnerability-alerts') ? (w.calls.push({ m, path: p }), { status: 204, json: {} }) : inner(m, p, b)))(w.A);
+  const r = await applyStandard(w.A, 'ultrastable/unlearn', live, { description: 'd', homepage: 'https://ultrastable.io', topics: ['ultrastable'] });
+  assert.equal(r.ok, true); assert.deepEqual(r.changed, []); assert.equal(w.calls.filter(c => c.m !== 'GET').length, 0);
+  const arch = ghFake({ archived: true });
+  assert.deepEqual(await applyStandard(arch.A, 'ultrastable/workers', arch.live, {}), { repo: 'ultrastable/workers', changed: [], steps: [], refused: [], gated: [], ok: true, archived: true });
+  assert.equal(arch.calls.length, 0);
+});
+test('a refused step is named and the answer is not ok; nothing is skipped quietly', async () => {
+  const { applyStandard } = await import('../src/repostandard.js');
+  const w = ghFake({ private: false, delete_branch_on_merge: false }, { refuse: { '/rulesets': 403, '/topics': 403 } });
+  const r = await applyStandard(w.A, 'ultrastable/what-works', w.live, { topics: ['ultrastable'] });
+  assert.equal(r.ok, false); assert.equal(r.refused.length, 2);
+  assert.match(r.refused.join(' | '), /topics: HTTP 403 Resource not accessible.*ruleset main-no-rewrite: HTTP 403/);
+  assert.ok(r.changed.includes('delete_branch_on_merge'), 'the steps that were allowed still happened');
+});
+test('a private repository: what the Free plan withholds is reported as gated, and only a named repository is made public', async () => {
+  const { applyStandard } = await import('../src/repostandard.js');
+  let w = ghFake({ private: true, allow_auto_merge: false, delete_branch_on_merge: false });
+  let r = await applyStandard(w.A, 'ultrastable/ops', w.live, {});
+  assert.equal(r.ok, true); assert.deepEqual([...new Set(r.gated)].sort(), ['allow_auto_merge', 'ruleset', 'security']);
+  assert.equal('allow_auto_merge' in w.calls.find(c => c.m === 'PATCH').body, false); assert.equal('private' in w.calls.find(c => c.m === 'PATCH').body, false);
+  assert.equal(w.calls.some(c => c.path.endsWith('/rulesets')), false);
+  w = ghFake({ private: true, allow_auto_merge: false });
+  r = await applyStandard(w.A, 'ultrastable/seed', w.live, { visibility: 'public' });
+  assert.equal(w.calls.find(c => c.m === 'PATCH').body.private, false); assert.equal(w.calls.find(c => c.m === 'PATCH').body.allow_auto_merge, true);
+  assert.ok(w.calls.some(c => c.m === 'POST' && c.path.endsWith('/rulesets')), 'once public, the ruleset goes on in the same pass');
+});
+test('the settings route applies the standard with the admin app, for org repositories only, behind the internal key', async () => {
+  const { ensureRepoSettings } = await import('../src/apprepos.js');
   const w = await world();
-  const patched = [];
+  const writes = [];
   const f = async (url, init = {}) => {
-    const u = new URL(url), tok = (init.headers.authorization || '').slice(7);
-    if (u.pathname === '/repos/ultrastable/ultrastable' && (init.method || 'GET') === 'GET') return new Response(JSON.stringify({ delete_branch_on_merge: false, allow_auto_merge: true }), { status: 200 });
-    if (u.pathname === '/repos/ultrastable/ultrastable' && init.method === 'PATCH') { patched.push({ tok, body: JSON.parse(init.body) }); return new Response('{}', { status: 200 }); }
+    const u = new URL(url), tok = (init.headers.authorization || '').slice(7), m = init.method || 'GET';
+    if (u.pathname.startsWith('/repos/ultrastable/ultrastable')) {
+      if (m !== 'GET') writes.push({ tok, m, path: u.pathname, body: init.body ? JSON.parse(init.body) : null });
+      if (m === 'GET' && u.pathname.endsWith('/rulesets')) return new Response('[]', { status: 200 });
+      if (m === 'GET' && u.pathname.endsWith('/vulnerability-alerts')) return new Response(null, { status: 204 });
+      if (m === 'GET') return new Response(JSON.stringify({ private: false, delete_branch_on_merge: false }), { status: 200 });
+      return new Response('{}', { status: u.pathname.endsWith('/rulesets') ? 201 : 200 });
+    }
     return w.f(url, init);
   };
-  const r = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/ultrastable' }, { fetch: f });
-  assert.equal(r.ok, true); assert.deepEqual(r.changed, ['delete_branch_on_merge']);
-  assert.deepEqual(patched, [{ tok: 'admin-token', body: { delete_branch_on_merge: true } }]);
-  assert.deepEqual(Object.keys(REPO_SETTINGS).sort(), ['allow_auto_merge', 'delete_branch_on_merge']);
+  const r = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/ultrastable', homepage: 'https://ultrastable.io' }, { fetch: f });
+  assert.equal(r.ok, true); assert.ok(r.changed.includes('delete_branch_on_merge')); assert.ok(r.changed.includes('ruleset')); assert.ok(r.changed.includes('homepage'));
+  assert.equal(r.protect, 'protected');
+  assert.ok(writes.every(x => x.tok === 'admin-token'));
+  const n = writes.length;
+  const dry = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/ultrastable', dry: true }, { fetch: f });  // APP-CRED-WATCH-1
+  assert.equal(dry.ok, true); assert.ok(dry.drift.includes('delete_branch_on_merge')); assert.equal(writes.length, n, 'a dry read never writes');
+  const arch = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/workers' }, { fetch: async (url, init = {}) => new URL(url).pathname === '/repos/ultrastable/workers' ? new Response(JSON.stringify({ archived: true }), { status: 200 }) : f(url, init) });
+  assert.equal(arch.ok, true); assert.match(arch.skipped, /archived/);  // ARCHIVED-READONLY-1: run 45696915881 failed on the archived workers repository
   for (const n of ['other/x', 'ultrastable/../x', '']) assert.equal((await ensureRepoSettings(w.db, w.env, T, { repo: n }, { fetch: f })).ok, false, n);
   const bad = await handleAppHost(new Request('https://t/host/repo-settings', { method: 'POST', headers: { 'x-internal-key': 'nope' }, body: '{"repo":"ultrastable/ultrastable"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: f });
   assert.equal(bad.status, 404);
   const none = await world({ admin: false });
   assert.equal((await ensureRepoSettings(none.db, none.env, T, { repo: 'ultrastable/ultrastable' }, { fetch: none.f })).waiting_on, 'admin-app');
 });
-
-// REDTEAM-1: main could be force-pushed or deleted on every repository because the protection in org-settings.json was never applied.
-test('the admin app adds the no-rewrite ruleset once and reads a free-plan refusal as plan, not protected', async () => {
-  const { ensureNoRewrite, NO_REWRITE } = await import('../src/apprepos.js');
-  const w = await world();
-  const posted = [];
-  let have = [];
-  const A = async (m, path, body) => {
-    if (m === 'GET') return path.includes('private') ? { status: 403, json: {} } : { status: 200, json: have };
-    posted.push({ path, body }); have = [{ name: body.name }]; return { status: 201, json: {} };
-  };
-  assert.deepEqual(await ensureNoRewrite(A, w.db, T, 'ultrastable/ultrastable'), { state: 'protected', added: true });
-  assert.deepEqual(await ensureNoRewrite(A, w.db, T, 'ultrastable/ultrastable'), { state: 'protected', added: false });
-  assert.equal(posted.length, 1);
-  assert.deepEqual(posted[0].body.rules.map(r => r.type).sort(), ['deletion', 'non_fast_forward']);
-  assert.deepEqual(NO_REWRITE.bypass_actors, []);
-  assert.equal((await ensureNoRewrite(A, w.db, T, 'ultrastable/private')).state, 'plan');
+test('a new tenant repository is created with the standard merge rules, and a new app repository is public (its workflows would be billed in private)', async () => {
+  const { REPO_STANDARD } = await import('../src/repostandard.js');
+  const w = await tenantWorld();
+  const r = await ensureTenantRepo(w.db, w.env, T, { repo: 'ultrastable/replication-ledger', visibility: 'public', description: 'd' }, { fetch: w.f });
+  for (const [k, v] of Object.entries(REPO_STANDARD.settings)) assert.equal(w.made[0].body[k], v, k);
+  assert.equal(typeof r.standard.ok, 'boolean'); assert.ok(Array.isArray(r.standard.refused), 'what GitHub refused at creation is in the answer');
+  const a = await world(); const seen = [];
+  const f = async (url, init = {}) => { const u = new URL(url); if (/\/generate$|\/orgs\/[^/]+\/repos$/.test(u.pathname)) seen.push(JSON.parse(init.body)); return a.f(url, init); };
+  assert.equal((await ensureAppRepo(a.db, a.env, T, spec(), { fetch: f })).ok, true);
+  assert.equal(seen[0].private, false);
 });
-
-test('a repository declared public is made public and then protected; ops never', async () => {
-  const { ensureRepoSettings } = await import('../src/apprepos.js');
-  const w = await world();
-  const calls = [];
-  let priv = true;
+// DEPLOY-VISIBLE-1: where the code runs is on the repository itself, as a GitHub Deployment with the live URL.
+test('a deploy is recorded as a production Deployment with its live URL on the repository and commit it came from; a missing grant is named', async () => {
+  const { recordDeployment } = await import('../src/apprepos.js');
+  const w = await world(); const posts = []; let grant = true;
   const f = async (url, init = {}) => {
-    const u = new URL(url), m = init.method || 'GET';
-    if (/^\/repos\/ultrastable\/(seed|ops)$/.test(u.pathname) && m === 'GET') return new Response(JSON.stringify({ private: priv, delete_branch_on_merge: true, allow_auto_merge: true }), { status: 200 });
-    if (u.pathname.endsWith('/rulesets') && m === 'GET') return new Response(priv ? '{}' : '[]', { status: priv ? 403 : 200 });
-    calls.push(m + ' ' + u.pathname + ' ' + (init.body || ''));
-    if (m === 'PATCH') { priv = JSON.parse(init.body).private === false ? false : priv; return new Response('{}', { status: 200 }); }
-    if (m === 'POST') return new Response('{}', { status: 201 });
+    const u = new URL(url), m = init.method || 'GET', body = init.body ? JSON.parse(init.body) : null;
+    if (/access_tokens$/.test(u.pathname)) return grant && body.permissions.deployments === 'write' ? new Response(JSON.stringify({ token: 'dep-token', expires_at: new Date(Date.now() + 3600e3).toISOString() }), { status: 201 }) : new Response(JSON.stringify({ message: 'The permissions requested are not granted to this installation.' }), { status: 422 });
+    if (u.pathname === '/repos/ultrastable/unlearn/deployments' && m === 'GET') return new Response('[]', { status: 200 });
+    if (u.pathname === '/repos/ultrastable/unlearn/deployments' && m === 'POST') { posts.push(body); return new Response(JSON.stringify({ id: 5 }), { status: 201 }); }
+    if (u.pathname === '/repos/ultrastable/unlearn/deployments/5/statuses') { posts.push(body); return new Response('{}', { status: 201 }); }
     return w.f(url, init);
   };
-  const r = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/seed', public: true }, { fetch: f });
-  assert.equal(r.ok, true); assert.equal(r.protect, 'protected');
-  assert.ok(r.changed.includes('private') && r.changed.includes('main-no-rewrite'));
-  priv = true; calls.length = 0;
-  const o = await ensureRepoSettings(w.db, w.env, T, { repo: 'ultrastable/ops', public: true }, { fetch: f });
-  assert.equal(o.protect, 'plan'); assert.equal(calls.filter(c => c.startsWith('PATCH')).length, 0);
+  const sha = 'a'.repeat(40);
+  const r = await recordDeployment(w.db, w.env, T, { repo: 'ultrastable/unlearn', sha, url: 'https://unlearn.ultrastable.org/' }, { fetch: f });
+  assert.equal(r.ok, true); assert.equal(r.deployment, 5);
+  assert.equal(posts[0].ref, sha); assert.equal(posts[0].environment, 'production'); assert.deepEqual(posts[0].required_contexts, []);
+  assert.equal(posts[1].state, 'success'); assert.equal(posts[1].environment_url, 'https://unlearn.ultrastable.org/');
+  for (const bad of [{ repo: 'other/x', sha, url: 'https://x.y' }, { repo: 'ultrastable/unlearn', sha: 'abc', url: 'https://x.y' }, { repo: 'ultrastable/unlearn', sha, url: 'http://x.y' }]) assert.equal((await recordDeployment(w.db, w.env, T, bad, { fetch: f })).ok, false);
+  grant = false;
+  const no = await recordDeployment(w.db, w.env, T, { repo: 'ultrastable/unlearn', sha, url: 'https://unlearn.ultrastable.org/' }, { fetch: f });
+  assert.equal(no.ok, false); assert.equal(no.waiting_on, 'code-app-scope'); assert.match(no.error, /Deployments: write/);
+});
+
+test('the template route hands a token for the template repository only, behind the internal key', async () => {
+  const { templateToken, TEMPLATE_REPO } = await import('../src/apprepos.js');
+  const w = await tenantWorld();
+  const r = await templateToken(w.db, w.env, T, { repo: TEMPLATE_REPO }, { fetch: w.f });
+  assert.equal(r.ok, true); assert.equal(r.token, 'scoped:seed');
+  for (const n of ['ultrastable/ultrastable', 'ultrastable/ops', 'ultrastable/unlearn', 'ultrastable/seed/', '']) assert.equal((await templateToken(w.db, w.env, T, { repo: n }, { fetch: w.f })).ok, false, n);
+  const u = await tenantWorld({ covers: false });
+  assert.equal((await templateToken(u.db, u.env, T, { repo: TEMPLATE_REPO }, { fetch: u.f })).waiting_on, 'code-app-scope');
+  const bad = await handleAppHost(new Request('https://t/host/template-token', { method: 'POST', headers: { 'x-internal-key': 'nope' }, body: '{"repo":"ultrastable/seed"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: w.f });
+  assert.equal(bad.status, 404);
+  const ok = await handleAppHost(new Request('https://t/host/template-token', { method: 'POST', headers: { 'x-internal-key': w.env.INTERNAL_DEPLOY_KEY }, body: '{"repo":"ultrastable/seed"}' }), { ...w.env, DB: w.db }, { tenant: T, fetch: w.f });
+  assert.equal(ok.status, 200); assert.equal((await ok.json()).token, 'scoped:seed');
 });

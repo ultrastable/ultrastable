@@ -1,5 +1,5 @@
 {
- "at": "2026-11-25T22:44:32Z",
+ "at": "2026-11-26T06:14:47Z",
  "days": 730,
  "drills": {
   "actions-billing": {
@@ -79,7 +79,7 @@
   "node-eol": {
    "capacity": 0.95,
    "date": "2028-04-30",
-   "evidence": "pins: 24 x16; earliest end of maintenance 2028-04-30; automatic rewrite to 24 works: True",
+   "evidence": "pins: 24 x17; earliest end of maintenance 2028-04-30; automatic rewrite to 24 works: True",
    "exercised": true,
    "mode": "recovers",
    "recover": true
@@ -128,14 +128,14 @@
   }
  ],
  "horizon": {
-  "capacity_year_p50": 0.69,
+  "capacity_year_p50": 0.693,
   "killers": {
-   "token-revoked": 15
+   "token-revoked": 16
   },
   "p10": 730,
   "p50": 730,
   "p90": 730,
-  "survive_year": 1.0
+  "survive_year": 0.995
  },
  "marker": "YEAR-SIM-1",
  "meets_target": true,
@@ -177,7 +177,7 @@
   "window_days": 14
  },
  "self_rate_per_day": 0.714,
- "self_releases_year_p50": 179.8,
+ "self_releases_year_p50": 180.6,
  "sensitivity": {
   "base": {
    "p10": 730,
@@ -192,14 +192,31 @@
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": -0.05,
-      "p10": 428,
-      "survive_year": 0.95
+      "d_survive": -0.083,
+      "p10": 415,
+      "survive_year": 0.917
      }
     },
     "id": "token-revoked",
     "rate": 1,
-    "swing": 0.05
+    "swing": 0.083
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": -0.033,
+      "p10": 648,
+      "survive_year": 0.967
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 669,
+      "survive_year": 1.0
+     }
+    },
+    "id": "merge-conflict",
+    "rate": 150.3,
+    "swing": 0.033
    },
    {
     "effect": {
@@ -210,8 +227,25 @@
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 718,
+      "p10": 613,
       "survive_year": 1.0
+     }
+    },
+    "id": "actions-outage",
+    "rate": 24,
+    "swing": 0.017
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": -0.017,
+      "p10": 714,
+      "survive_year": 0.983
      }
     },
     "id": "ai-quota",
@@ -221,47 +255,13 @@
    {
     "effect": {
      "0.5": {
-      "d_survive": -0.017,
-      "p10": 730,
-      "survive_year": 0.983
-     },
-     "2.0": {
       "d_survive": 0.0,
-      "p10": 730,
-      "survive_year": 1.0
-     }
-    },
-    "id": "cloudflare-incident",
-    "rate": 4,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.0,
-      "p10": 730,
+      "p10": 719,
       "survive_year": 1.0
      },
      "2.0": {
       "d_survive": -0.017,
-      "p10": 730,
-      "survive_year": 0.983
-     }
-    },
-    "id": "cost-spike",
-    "rate": 6,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.0,
-      "p10": 730,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": -0.017,
-      "p10": 730,
+      "p10": 662,
       "survive_year": 0.983
      }
     },
@@ -277,31 +277,14 @@
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": -0.017,
-      "p10": 730,
-      "survive_year": 0.983
-     }
-    },
-    "id": "merge-conflict",
-    "rate": 159.7,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": -0.017,
-      "p10": 630,
-      "survive_year": 0.983
-     },
-     "2.0": {
       "d_survive": 0.0,
-      "p10": 674,
+      "p10": 724,
       "survive_year": 1.0
      }
     },
-    "id": "scheduler-silent",
-    "rate": 52,
-    "swing": 0.017
+    "id": "actions-billing",
+    "rate": 4,
+    "swing": 0.0
    },
    {
     "effect": {
@@ -312,11 +295,11 @@
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 730,
+      "p10": 724,
       "survive_year": 1.0
      }
     },
-    "id": "actions-billing",
+    "id": "cloudflare-incident",
     "rate": 4,
     "swing": 0.0
    },
@@ -333,8 +316,8 @@
       "survive_year": 1.0
      }
     },
-    "id": "actions-outage",
-    "rate": 24,
+    "id": "cost-spike",
+    "rate": 6,
     "swing": 0.0
    },
    {
@@ -358,7 +341,7 @@
     "effect": {
      "0.5": {
       "d_survive": 0.0,
-      "p10": 730,
+      "p10": 709,
       "survive_year": 1.0
      },
      "2.0": {
@@ -370,19 +353,36 @@
     "id": "model-retirement",
     "rate": 6,
     "swing": 0.0
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 649,
+      "survive_year": 1.0
+     }
+    },
+    "id": "scheduler-silent",
+    "rate": 52,
+    "swing": 0.0
    }
   ],
   "runs": 60
  },
  "strict": {
-  "capacity_year_p50": 0.728,
+  "capacity_year_p50": 0.463,
   "killers": {
-   "domain-renewal": 100,
-   "token-revoked": 100
+   "domain-renewal": 68,
+   "token-revoked": 132
   },
-  "p10": 42,
-  "p50": 349,
-  "p90": 350,
+  "p10": 33,
+  "p50": 218,
+  "p90": 349,
   "survive_year": 0.0
  },
  "target_days": 365

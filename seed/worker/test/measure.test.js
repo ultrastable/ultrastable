@@ -89,7 +89,9 @@ test('LIVE-1: PUBLIC_HEALTH_ONLY exposes GET /health, the public page at / (FULL
   assert.equal(hidden(on, 'GET', '/health'), false);
   assert.equal(hidden(on, 'POST', '/hook/github'), false);
   assert.equal(hidden(on, 'GET', '/'), false);
-  for (const [m, p] of [['POST', '/'], ['GET', '/now'], ['GET', '/api/analytics'], ['GET', '/mcp'], ['GET', '/llms.txt'], ['POST', '/mcp'], ['POST', '/health'], ['GET', '/hook/github'], ['POST', '/api/graph'], ['GET', '/api/graph/ai']]) assert.equal(hidden(on, m, p), true, m + ' ' + p);
+  for (const [m, p] of [['POST', '/'], ['GET', '/now'], ['GET', '/api/analytics'], ['GET', '/mcp'], ['GET', '/llms.txt'], ['POST', '/mcp'], ['POST', '/health'], ['GET', '/hook/github']]) assert.equal(hidden(on, m, p), true, m + ' ' + p);
+  for (const p of ['/.well-known/ultrastable.json', '/claims.json', '/social-queue.json', '/api/graph']) { assert.equal(hidden(on, 'GET', p), false, p + ' is part of the fleet contract'); assert.equal(hidden(on, 'POST', p), true); }
+  assert.equal(hidden(on, 'GET', '/api/graph/node'), false, 'COLDSTART-1: the graph read side is public; without the owner bearer it serves counts and declared public kinds only');
   assert.equal(hidden({}, 'GET', '/'), false, 'off by default: customers keep their full surface');
 });
 

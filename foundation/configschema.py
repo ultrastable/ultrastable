@@ -13,8 +13,9 @@ A generated schema is a floor, not a ceiling: it fixes the root type, the top-le
 records. A schema written or tightened by hand is never overwritten (only a missing one is generated). `--gen` runs in scripts/regen_generated.py,
 so a new config gets its contract in the same change that adds it; `--check` runs in checks.
 
-Validation uses the `jsonschema` package when it is installed and otherwise the built-in subset below (type, enum, const, pattern, required,
-properties, additionalProperties, items, minItems, anyOf), which covers every keyword the generated and hand-written schemas here use.
+Validation uses the `jsonschema` package when it is installed and otherwise the built-in validator in foundation/schemas.py (type, enum, const,
+pattern, minLength, maxLength, minimum, maximum, required, properties, patternProperties, additionalProperties, items, minItems, maxItems,
+uniqueItems, anyOf, oneOf, allOf, not, $ref inside the file), which covers every keyword the generated and hand-written schemas here use.
 """
 from __future__ import annotations
 import argparse, glob, json, re, sys
@@ -28,6 +29,15 @@ COVERED = [
     ("doctrine/*.json", "doctrine/schemas", "doctrine/schemas/catalog.json"),
     ("seed/doctrine/*.json", "seed/doctrine/schemas", "seed/doctrine/schemas/catalog.json"),
     ("seed/autonomy/*.json", "seed/autonomy/schemas", "seed/autonomy/schemas/catalog.json"),
+    # STANDARDS-FIRST-1: the manifests outside doctrine/ that loops load. One schema per file name, so every instance's file is held to the same contract.
+    ("instances/*/instance.json", "instances/schemas", "instances/schemas/catalog.json"),
+    ("instances/*/lifecycle.json", "instances/schemas", "instances/schemas/catalog.json"),
+    ("instances/*/runway.json", "instances/schemas", "instances/schemas/catalog.json"),
+    ("instances/ultrastable/loop-registry.json", "instances/schemas", "instances/schemas/catalog.json"),
+    ("instances/ultrastable/progress.json", "instances/schemas", "instances/schemas/catalog.json"),
+    ("seed/standards/standards.json", "seed/standards", "seed/standards/catalog.json"),
+    ("seed/standards/surfaces.json", "seed/standards", "seed/standards/catalog.json"),
+    ("seed/ultrastable.json", "seed/standards", "seed/standards/catalog.json"),
 ]
 MIN_ITEMS_FOR_SHAPE = 3  # an array of records gets a per-field type contract only when at least this many records agree on it
 
@@ -88,13 +98,11 @@ def schema_for(rel: str, value) -> dict:
 
 
 # ---------- validation ----------
-_KINDS = {"object": dict, "array": list, "string": str, "integer": int, "number": (int, float), "boolean": bool, "null": type(None)}
-
-
-def _is(value, t):
-    if t in ("integer", "number") and isinstance(value, bool):
-        return False
-    return isinstance(value, _KINDS[t])
+def validate_subset(schema, value, path="$") -> list[str]:
+    """The built-in validator: foundation/schemas.py, the one implementation of the keyword subset every schema here may use (it refuses a
+    schema that uses any other keyword, so no schema claims a check that does not run)."""
+    from . import schemas
+    return schemas.validate(schema, value, path)
 
 
 def _kit():
@@ -103,11 +111,6 @@ def _kit():
     spec = importlib.util.spec_from_file_location("seed_stdkit", REPO / "seed/scripts/stdkit.py")
     mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
     return mod
-
-
-def validate_subset(schema, value, path="$") -> list[str]:
-    """The stdlib subset alone (no jsonschema library), as every seeded system runs it without dependencies."""
-    return _kit().validate(schema, value, prefer_library=False)
 
 
 def validate(schema, value) -> list[str]:
@@ -163,6 +166,8 @@ def check(root=REPO) -> list[str]:
             continue
         if schema.get("$schema") != DRAFT:
             bad.append(f"{sch}: $schema must be {DRAFT}")
+        from . import schemas as _lint
+        bad += [f"{sch} {m}" for m in _lint.lint(schema)]  # a keyword the built-in validator does not run would be a check that silently does nothing
         bad += [f"{rel}: {m}" for m in validate(schema, value)]
     for cat, entries in cats.items():
         p = root / cat

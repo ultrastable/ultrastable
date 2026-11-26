@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/managers.schema.json",
+  "title": "managers (doctrine/managers.json)",
+  "description": "Contract for doctrine/managers.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number"
+    },
+    "seed_register": {
+      "type": "string"
+    },
+    "live": {
+      "type": "object",
+      "properties": {
+        "agents_url": {
+          "type": "string"
+        },
+        "user_agent": {
+          "type": "string"
+        },
+        "timeout_s": {
+          "type": "number"
+        }
+      }
+    },
+    "seed_absent": {
+      "type": "object",
+      "properties": {}
+    },
+    "platform_absent": {
+      "type": "object",
+      "properties": {}
+    },
+    "roles": {
+      "type": "object",
+      "properties": {
+        "portfolio-manager": {
+          "type": "object"
+        },
+        "program-manager": {
+          "type": "object"
+        },
+        "project-manager": {
+          "type": "object"
+        },
+        "product-manager": {
+          "type": "object"
+        },
+        "staff": {
+          "type": "object"
+        },
+        "reviewer": {
+          "type": "object"
+        },
+        "operations": {
+          "type": "object"
+        },
+        "infrastructure-manager": {
+          "type": "object"
+        },
+        "funding-manager": {
+          "type": "object"
+        },
+        "outreach-manager": {
+          "type": "object"
+        },
+        "outreach-coordinator": {
+          "type": "object"
+        },
+        "research-publisher": {
+          "type": "object"
+        },
+        "marketing-manager": {
+          "type": "object"
+        },
+        "legal-ip-manager": {
+          "type": "object"
+        },
+        "customer-success": {
+          "type": "object"
+        },
+        "org-designer": {
+          "type": "object"
+        },
+        "design-manager": {
+          "type": "object"
+        },
+        "uiux-manager": {
+          "type": "object"
+        }
+      }
+    },
+    "closure": {
+      "type": "object",
+      "properties": {
+        "min_ended": {
+          "type": "number"
+        },
+        "max_shelved_share": {
+          "type": "number"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "closure",
+    "live",
+    "marker",
+    "platform_absent",
+    "roles",
+    "seed_absent",
+    "seed_register",
+    "version"
+  ]
+}

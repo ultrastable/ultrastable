@@ -52,12 +52,33 @@ def _in_scope(path: str, pats: list[str]) -> bool:
 
 def _ext(path: str) -> str:
     name = path.rsplit("/", 1)[-1]
+    if name.endswith(".tmpl") and name.count(".") >= 2:
+        name = name[:-5]  # a template is judged by the type it renders to
     if name.startswith(".") and name.count(".") == 1:
         return name[1:]
     return name.rsplit(".", 1)[-1] if "." in name else "(none)"
 
 
-def json_config_ok(root: Path, rel: str) -> bool:
+def catalogued(root: Path, files) -> set:
+    """Configs listed in a JSON Schema Store catalog (CONFIG-SCHEMA-1): the catalog entry is the schema declaration."""
+    out: set = set()
+    for c in files:
+        if not c.endswith("schemas/catalog.json"):
+            continue
+        try:
+            for e in _load(root, c).get("schemas", []):
+                for m in e.get("fileMatch", []):
+                    out.add(m)
+                    if m.startswith("seed/"):
+                        out.add(m[5:])  # the same catalog read from inside a system cloned from the seed
+        except (ValueError, OSError, AttributeError):
+            continue
+    return out
+
+
+def json_config_ok(root: Path, rel: str, cat: frozenset = frozenset()) -> bool:
+    if rel in cat:
+        return True
     try:
         d = _load(root, rel)
     except (ValueError, OSError):
@@ -93,7 +114,8 @@ def scan(root: Path = REPO) -> dict:
     reg = _load(root, REG)
     files = tracked(root)
     sc = reg["scopes"]
-    bad_cfg = sorted(f for f in files if f.endswith(".json") and _in_scope(f, sc["json_config"]) and f != BASE and not json_config_ok(root, f))
+    cat = frozenset(catalogued(root, files))
+    bad_cfg = sorted(f for f in files if f.endswith(".json") and _in_scope(f, sc["json_config"]) and f != BASE and not json_config_ok(root, f, cat))
     bad_led = sorted(f for f in files if f.endswith(".jsonl") and _in_scope(f, sc["event_ledgers"]) and not ledger_ok(root, f))
     known = set(reg["known_extensions"])
     bad_ext = sorted(f for f in files if _ext(f) not in known)
@@ -155,6 +177,8 @@ def drain(root: Path = REPO, n: int = 25) -> list[str]:
             d = json.loads(txt)
         except (OSError, ValueError):
             continue
+        if rel in catalogued(root, tracked(root)):
+            continue  # its catalog entry already declares the schema; the baseline prune below drops it
         if not isinstance(d, dict) or "$schema" in d or not txt.lstrip().startswith("{"):
             continue
         depth = "../" * rel.count("/")
@@ -184,6 +208,11 @@ def main(argv: list[str]) -> int:
         record(REPO, "openstd.drain", {"converted": done, "baseline_left": left})
         print(f"converted {len(done)}; baseline left {left}")
         return 0
+    if "--probe" in argv:
+        row = argv[argv.index("--probe") + 1]
+        ok = any(f["id"] == row and f["status"] == "adopted" for f in _load(REPO, REG)["formats"])
+        print(f"{row}: {'adopted' if ok else 'not adopted'}")
+        return 0 if ok else 1
     if "--baseline" in argv:
         b = baseline(init="--init" in argv)
         print({k: len(v) for k, v in b.items() if isinstance(v, list)})

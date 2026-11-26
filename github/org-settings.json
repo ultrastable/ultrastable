@@ -1,5 +1,5 @@
 {
-  "_doc": "Desired GitHub state for the ultrastable org and its canonical repo. Applied by scripts/apply_github_settings.sh via the org-settings workflow. Everything public here is SAFE NOW (generic). Edit this file, not the GitHub UI.",
+  "_doc": "REPO-STANDARD-1: the standard every repository gets is github/repo-standard.json, applied to every repository GitHub lists by `python3 -m foundation repostd --apply`; description, homepage and topics are computed from the registries. A row under `repos` here is only an OVERRIDE of that standard (a hand-written description, extra topics, the core's own ruleset), never the place a repository gets its settings from: a repository with no row still gets the whole standard. Org profile fields and the override rows are also applied by scripts/apply_github_settings.sh via the org-settings workflow when an org-admin token is bound. Everything public here is SAFE NOW (generic). Edit this file, not the GitHub UI.",
   "org": {
     "name": "Ultrastable",
     "description": "Ultrastable is the foundation for any autonomous system. Runs on itself.",
@@ -80,7 +80,7 @@
       }
     },
     "ultrastable/what-works": {
-      "description": "What Works: a tenant system running on Ultrastable.",
+      "description": "What Works: a living atlas of what works in public policy, every programme graded by its trials and re-graded as evidence lands. A tenant system running on Ultrastable.",
       "homepage": null,
       "topics": [
         "autonomous-agents",

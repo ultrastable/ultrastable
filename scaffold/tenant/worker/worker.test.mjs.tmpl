@@ -1,0 +1,92 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
+// {{name}}: the clock, the health reading and the published list, against the real router. runway.json names these tests as its probes.
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { DatabaseSync } from "node:sqlite";
+import { handle, beat, graph } from "./index.js";
+import { ENTRIES, EMPTY_WHY, validate } from "./entries.js";
+
+// an in-memory SQLite with D1's prepare/bind/all/first/run surface
+export function d1() {
+  const raw = new DatabaseSync(":memory:");
+  const stmt = sql => { let a = []; const o = { bind(...x) { a = x; return o; },
+    async all() { return { results: raw.prepare(sql).all(...a).map(r => ({ ...r })) }; },
+    async first() { const r = raw.prepare(sql).get(...a); return r ? { ...r } : null; },
+    async run() { const r = raw.prepare(sql).run(...a); return { meta: { changes: Number(r.changes) } }; } }; return o; };
+  return { raw, prepare: stmt };
+}
+const HOUR = 3600000, EVERY = {{beat_hours}} * HOUR, now = Date.UTC(2026, 10, 25, 12);
+const get = (env, path, at = now) => handle(new Request("https://t.test" + path), env, at);
+
+test("the beat records itself and removes beats older than 90 days", async () => {
+  const env = { DB: d1() };
+  await beat(env, now - 91 * 24 * HOUR);
+  const r = await beat(env, now);
+  assert.equal(r.ran, true); assert.equal(r.removed, 1); assert.equal(r.entries, ENTRIES.length);
+  const b = await (await get(env, "/api/beats")).json();
+  assert.equal(b.count, 1); assert.equal(b.beats[0].at, new Date(now).toISOString());
+});
+
+test("a silent cron is caught up by the next read of health", async () => {
+  const env = { DB: d1() };
+  await beat(env, now - 5 * EVERY);  // the cron last fired five intervals ago
+  const r = await get(env, "/health");
+  const h = await r.json();
+  assert.equal(r.status, 200); assert.equal(h.ok, true); assert.equal(h.clock, "ticking"); assert.equal(h.last_beat, new Date(now).toISOString());
+});
+
+test("with no database the pages still serve and health says why it is unwell", async () => {
+  const r = await get({}, "/health"), h = await r.json();
+  assert.equal(r.status, 503); assert.equal(h.ok, false); assert.equal(h.last_error, "no database bound");
+  const page = await get({}, "/");
+  assert.equal(page.status, 200); assert.match(await page.text(), /<h1>/);
+  assert.equal((await (await get({}, "/api/beats")).json()).why, "no database bound");
+});
+
+test("HALT stops the beat and reads keep serving", async () => {
+  const env = { DB: d1(), HALT: "1" };
+  assert.deepEqual(await beat(env, now), { ran: false, why: "halted" });
+  assert.equal((await get(env, "/")).status, 200);
+  const h = await (await get(env, "/health")).json();
+  assert.equal(h.halted, true); assert.equal(h.last_beat, null);
+});
+
+test("the package has no dependencies", () => {
+  const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+  assert.equal(pkg.dependencies, undefined); assert.equal(pkg.devDependencies, undefined);
+});
+
+test("an empty list says why on the page, in the data, in the graph and in the social queue; nothing is invented", async () => {
+  const env = { DB: d1() };
+  for (const e of ENTRIES) assert.deepEqual(validate(e), [], e.id);
+  if (ENTRIES.length) return;
+  assert.ok((await (await get(env, "/")).text()).includes(EMPTY_WHY));
+  assert.equal((await (await get(env, "/api/entries.json")).json()).why, EMPTY_WHY);
+  assert.deepEqual(graph().counts, { nodes: 0, edges: 0 });
+  assert.deepEqual((await (await get(env, "/social-queue.json")).json()).posts, []);
+  assert.deepEqual((await (await get(env, "/feed.json")).json()).items, []);
+});
+
+test("an entry with no source, no DOI or no grade is refused", () => {
+  assert.ok(validate({ id: "x", title: "A title long enough", sources: [], grade: "strong" }).includes("no source"));
+  assert.ok(validate({ id: "x", title: "A title long enough", sources: [{ title: "T", year: 2020 }], grade: "strong" }).some(w => /DOI/.test(w)));
+  assert.ok(validate({ id: "x", title: "A title long enough", sources: [{ title: "T", year: 2020, doi: "10.1/x" }] }).includes("no grade"));
+});
+
+test("a write is refused and an unknown page is a 404 page", async () => {
+  const r = await handle(new Request("https://t.test/api/beats", { method: "POST" }), { DB: d1() }, now);
+  assert.equal(r.status, 405);
+  assert.equal((await get({ DB: d1() }, "/nope")).status, 404);
+});
+
+test("the home page says what the system is as schema.org JSON-LD, from the same spec the page shows", async () => {
+  const { SPEC } = await import("./contract.js");
+  const html = await (await get({ DB: d1() }, "/")).text();
+  const m = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+  assert.ok(m, "the home page carries JSON-LD");
+  const ld = JSON.parse(m[1]);
+  assert.equal(ld["@context"], "https://schema.org"); assert.equal(ld["@type"], "WebSite");
+  assert.equal(ld.name, SPEC.name); assert.equal(ld.description, SPEC.summary); assert.equal(ld.mainEntity["@type"], "SoftwareApplication");
+});

@@ -1,26 +1,7 @@
 {
   "$schema": "../schemas/doctrine.schema.json",
   "_doc": "OPEN-STANDARDS-1 shrink-only baseline: files that predate the standard. Drain it; never add to it.",
-  "config": [
-    "autonomy/balance.json",
-    "autonomy/cost-budgets.json",
-    "autonomy/criticality.json",
-    "autonomy/default-policy-pack.json",
-    "autonomy/failure-modes.json",
-    "autonomy/goals.json",
-    "autonomy/improve.json",
-    "autonomy/kit.json",
-    "autonomy/pace.json",
-    "autonomy/policy.json",
-    "autonomy/retention.json",
-    "autonomy/seed-lifecycle.json",
-    "autonomy/yearsim.json",
-    "doctrine/claims.json",
-    "doctrine/constitution-baseline.json",
-    "doctrine/readmes.json",
-    "doctrine/standing-order.json",
-    "doctrine/user-backend.json"
-  ],
+  "config": [],
   "ledgers": [],
   "extensions": []
 }

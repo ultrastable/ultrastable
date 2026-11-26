@@ -1,0 +1,13 @@
+{
+  "_doc": "{{name}}: what could stop it within a year of no input, and the safeguard for each. Test probes name a test in worker/*.test.mjs; the tenant standard (vendor/ultrastable/tools/tenantstd.py) fails a probe that names no test. Platform-wide faults (Actions outages, GitHub and Cloudflare incidents, Node end of life) are covered by doctrine/yearsim.json in the core and apply to this Worker too.",
+  "target_days": 365,
+  "risks": [
+    {"id": "cron-silent", "what": "the Cloudflare cron stops firing or is dropped on a redeploy", "safeguard": "a read of /health runs the beat when the last one is older than two intervals, so any visit or probe is a second route for the clock", "probe": "test:a silent cron is caught up by the next read of health"},
+    {"id": "storage-growth", "what": "the beat ledger grows without bound over a year", "safeguard": "every beat removes beats older than 90 days", "probe": "test:the beat records itself and removes beats older than 90 days"},
+    {"id": "store-missing", "what": "the database binding is missing after a deploy", "safeguard": "pages keep serving and /health answers 503 with the reason, which the platform's tenant-health detector files", "probe": "test:with no database the pages still serve and health says why it is unwell"},
+    {"id": "owner-halt", "what": "the owner halts the platform", "safeguard": "HALT stops the beat; reads keep serving", "probe": "test:HALT stops the beat and reads keep serving"},
+    {"id": "dependency-drift", "what": "an npm package breaks or is withdrawn", "safeguard": "zero dependencies: plain Worker modules, node:sqlite only in tests", "probe": "test:the package has no dependencies"},
+    {"id": "unbacked-statement", "what": "a page says something no endpoint backs, or an endpoint ships that no page describes", "safeguard": "every statement is declared once in worker/contract.js and read both ways against the router on every change", "probe": "test:every surface answers and every statement is backed, both ways"}
+  ],
+  "owner_only": []
+}

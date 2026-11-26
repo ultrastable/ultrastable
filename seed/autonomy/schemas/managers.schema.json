@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/managers.schema.json",
+  "title": "managers (seed/autonomy/managers.json)",
+  "description": "Contract for seed/autonomy/managers.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number"
+    },
+    "beat": {
+      "type": "object",
+      "properties": {
+        "tick_s": {
+          "type": "number"
+        },
+        "late_factor": {
+          "type": "number"
+        },
+        "stopped_factor": {
+          "type": "number"
+        }
+      }
+    },
+    "managers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "core": {
+            "type": "boolean"
+          },
+          "default": {
+            "type": "string"
+          },
+          "for": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "tick_every": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "switch": {
+      "type": "object",
+      "properties": {}
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "beat",
+    "managers",
+    "marker",
+    "switch",
+    "version"
+  ]
+}

@@ -40,8 +40,15 @@ def _item_open(root, iid) -> bool:
     p = Path(root) / "docs/issues" / (iid + ".json")
     if not p.is_file():
         return False
-    m = re.search(r"\*\*Status:\*\*\s*([A-Za-z-]+)", json.loads(p.read_text(encoding="utf-8")).get("body", ""))
-    return not m or m.group(1).lower() == "open"
+    body = json.loads(p.read_text(encoding="utf-8")).get("body", "")
+    m = re.search(r"\*\*Status:\*\*\s*([A-Za-z-]+)", body)
+    if not m or m.group(1).lower() == "open":
+        return True
+    # DISPOSE-1 shelves an item the executor failed three runs in a row, or gates one only the owner's account can do: it is closed in the
+    # queue but still held (its probe runs every fleet pass and the executor retries it), so the lesson is still tracked. An item closed as
+    # fixed, done or superseded while the lesson has nothing enforcing it is the contradiction this check exists for, and still fails.
+    d = re.search(r"\*\*Disposition:\*\*\s*([A-Za-z-]+)", body)
+    return bool(d and d.group(1).lower() in ("shelved", "gate"))
 
 
 def report(root=REPO) -> dict:

@@ -74,6 +74,7 @@ jobs:
           node --test demos/test/*.test.mjs
           node --test test/cost-probe.test.mjs
           node --test test/plan-limits.test.mjs
+          node --test test/record-deployments.test.mjs
           node --test --no-warnings tests/test_sweeper.js
           node --test --no-warnings dashboard/test/*.test.mjs
           bash scripts/site_tests.sh  # GATE-PARITY-1: runs site/*.test.mjs, the gate deploy-site runs before it deploys
@@ -141,6 +142,13 @@ jobs:
           python3 -m foundation tenantpromo --check
           python3 -m foundation discover --check  # DISCOVER-1: every live tenant listed and cross-linked; the seed serves its manifest, footer and heartbeat
           python3 -m foundation fullstack --check  # FULLSTACK-1: repository, back end and public front end for every system
+          python3 -m foundation fleetcontract --check  # FLEET-CONTRACT-1: every live system carries the one contract module; one surface list
+          python3 -m foundation tenantstd --check  # TENANT-STANDARD-1: every tenant vendors the standard's base files; one scaffold writes every standard file
+          python3 -m foundation fleetmap --check  # FLEET-MAP-1: every repository of the org is one row; every copy names its source and its sync
+          python3 -m foundation surfaces --check  # SYSTEM-MANIFEST-1: the kernel manifest is valid and every surface equals what it renders
+          python3 -m foundation livelinks --check  # LIVE-LINKS-1: the README names where the platform and every system run
+          python3 -m foundation managers --check  # MANAGERS-1: every role is a loop with code, a clock, a probe and a settler; every loop has a manager; the seed carries every manager
+          python3 -m foundation rulerefs --check  # RULE-REFS-1: every path, command, test, workflow and route the rule files name resolves
           python3 -m foundation datagraph --check
           python3 -m foundation openstd --check  # OPEN-STANDARDS-1: registered open standards; no new bespoke format
           python3 -m foundation coldstart --check  # COLDSTART-1: the seed carries every capability a system owes from birth; named commands resolve; agent files agree
@@ -193,6 +201,7 @@ jobs:
           python3 -m foundation cost --check
           python3 -m foundation loopowner --check
           python3 -m foundation tenantrepos --check  # TENANT-REPO-1: tenant code lives in its own repository
+          python3 -m foundation repostd --check  # REPO-STANDARD-1: one repository standard; the Worker and the kit carry the same one
           python3 -m foundation pointclick --check
           python3 -m foundation claimcode --check
           python3 -m foundation driftguard --check  # DRIFT-GUARD-1: every incident class has a check, detector and failure mode
