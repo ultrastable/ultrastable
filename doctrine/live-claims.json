@@ -1,0 +1,22 @@
+{
+  "id": "LIVE-CLAIMS-1",
+  "rule": "NO-PITCH-1 (Rowan, 2026-11-26: \"All product, no pitch. No hyperbole anywhere.\"). Site copy, white papers and social posts describe only what is live. A line that promises a feature not yet live (future or soon wording) is blocked. A line that points at a system address must name a host listed here with the probe that proves it answers; --live fetches every probe and fails the ones that do not answer.",
+  "owner": "Rowan, 2026-11-26",
+  "scan_globs": ["site/*.js", "site/**/*.html", "research/papers/*.md", "social/*.json", "seed/site/**/*.js"],
+  "skip": ["\\.test\\.", "/test/"],
+  "future_patterns": [
+    "\\bcoming soon\\b", "\\blaunching soon\\b", "\\bwill soon\\b", "\\bsoon you (will|can)\\b",
+    "\\bin the coming (weeks|months)\\b", "\\b(is|are) on (the|our) roadmap\\b", "\\bwe will (add|launch|ship|build|support)\\b"
+  ],
+  "host_pattern": "https://([a-z0-9-]+\\.)?ultrastable\\.(org|io|app|net)",
+  "hosts": {
+    "ultrastable.io": "https://ultrastable.io/health",
+    "www.ultrastable.io": "https://ultrastable.io/health",
+    "ultrastable.org": "https://ultrastable.org/health",
+    "dashboard.ultrastable.io": "https://dashboard.ultrastable.io/",
+    "what-works.ultrastable.org": "https://what-works.ultrastable.org/health",
+    "replication-ledger.ultrastable.org": "https://replication-ledger.ultrastable.org/health",
+    "unlearn.ultrastable.org": "https://unlearn.ultrastable.org/health"
+  },
+  "closing_probe": "python3 -m foundation liveclaims --check (also run inside claimcode --check)"
+}

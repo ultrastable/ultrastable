@@ -15,6 +15,7 @@
   python3 -m foundation lessons [--check]  every lesson bound to enforcing code or an open item (LESSONS-1)
   python3 -m foundation specgate [--check]  work items an agent cannot misread: done check, prediction, out of scope, live proof (SPEC-GATE-1)
   python3 -m foundation criticality [--tick [--apply]|--check|--gate]     the mantra as a computed invariant (CRITICALITY-1)
+  python3 -m foundation liveclaims [--check|--live]                         public copy describes only what is live: no promised features, every system host probed (LIVE-CLAIMS-1)
   python3 -m foundation claimcode [--check|--baseline|--list]                words match code: every number, cadence or guarantee on a public surface is bound to a probe (WORDS-MATCH-CODE-1)
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
   python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
@@ -346,6 +347,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["criticality"]:
         from . import criticality
         return criticality.main(_av[1:])
+    if _av[:1] == ["liveclaims"]:
+        from . import liveclaims
+        return liveclaims.main(_av[1:])
     if _av[:1] == ["claimcode"]:
         from . import claimcode
         return claimcode.main(_av[1:])

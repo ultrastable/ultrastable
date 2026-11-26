@@ -19,6 +19,10 @@ OPENERS = [r"^\s*(in today's (fast-paced|digital) world|in the ever-evolving|gre
 CLOSERS = [r"(in conclusion,|in summary,|to sum up,|hope this helps|let me know if you have any questions)\s*"]
 BUZZ = ["synergy", "leverage", "game-changer", "game changer", "cutting-edge", "best-in-class", "seamless experience", "unlock the power",
         "revolutionize", "paradigm shift", "next-generation", "world-class", "robust and scalable", "delve"]
+# NO-PITCH-1 (Rowan, 2026-11-26: "All product, no pitch. No hyperbole anywhere."): words that sell instead of describe.
+HYPE = ["revolutionary", "groundbreaking", "transformative", "unprecedented", "limitless", "infinitely", "effortless",
+        "magical", "supercharge", "the future of", "any idea into", "dream it", "unstoppable", "the ultimate",
+        "change the world", "10x", "state-of-the-art", "industry-leading", "blazing fast", "zero effort"]
 TRIPLET = re.compile(r"\b(\w+(?:ity|ness|tion|ment|ency|ancy|ance|ence|ism)),\s+(\w+(?:ity|ness|tion|ment|ency|ancy|ance|ence|ism)),?\s+and\s+(\w+(?:ity|ness|tion|ment|ency|ancy|ance|ence|ism))\b", re.I)
 
 
@@ -31,6 +35,9 @@ def lint(text: str) -> list[str]:
     for w in BUZZ:
         if w in low:
             bad.append(f"buzzword: {w}")
+    for w in HYPE:
+        if re.search(r"(^|[^a-z])" + re.escape(w) + r"([^a-z]|$)", low):
+            bad.append(f"hyperbole: {w}")
     for m in TRIPLET.finditer(text):
         bad.append(f"abstract triplet: {m.group(0)}")
     return bad

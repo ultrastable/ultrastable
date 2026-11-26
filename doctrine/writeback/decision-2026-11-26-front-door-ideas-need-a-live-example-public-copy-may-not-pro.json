@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-26-front-door-ideas-need-a-live-example-public-copy-may-not-pro",
+  "kind": "decision",
+  "date": "2026-11-26",
+  "title": "Front-door ideas need a live example; public copy may not promise features not live",
+  "body": "Rowan 2026-11-26: many homepage ideas read as fantasy; all product, no pitch. Kept What Works, Replication Ledger and Unlearn; retired 13. build_idea_bank.py refuses ideas without a probed example; liveclaims blocks future-feature wording and unprobed hosts; humanvoice blocks hype words.",
+  "probe": "grep:foundation/liveclaims.py::LIVE-CLAIMS-1",
+  "session": "session_0156nqDvAYNXem2Ju82BiMPy"
+ },
+ "kind": "decision",
+ "title": "Front-door ideas need a live example; public copy may not promise features not live",
+ "session": "session_0156nqDvAYNXem2Ju82BiMPy"
+}

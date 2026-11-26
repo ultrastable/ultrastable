@@ -125,15 +125,20 @@ assert.ok([...kv.keys()].some((k) => k.startsWith("profile:")), "interview profi
 // INTERVIEW-2 + SUGGEST-1: chat thread front door. Suggestions rotate and respond to what is typed; the thread builds through JSON endpoints.
 {
   const sj = async (q, env) => (await (await mod.fetch(new Request("https://ultrastable.io/api/suggest?" + q), env)).json()).s;
-  const a1 = await sj("seed=1&q="), a2 = await sj("seed=2&q="), a3 = await sj("seed=1&q=");
-  assert.equal(a1.length, 4); assert.deepEqual(a1, a3, "same seed, same suggestions"); assert.notDeepEqual(a1, a2, "a new seed rotates the list");
-  const rel = await sj("seed=5&q=" + encodeURIComponent("a website for our club"));
-  assert.ok(rel.some((t) => /club|community|website/i.test(t)), "suggestions respond to what is typed: " + rel.join(" | "));
-  const seenOne = await sj("seed=1&q=&seen=" + encodeURIComponent(a1.join("|")));
-  assert.ok(seenOne.every((t) => !a1.includes(t)), "already-shown ideas are not repeated");
+  // LIVE-EXAMPLE-1: only bank ideas that a deployed system proves are suggested, each with its live address; model ideas are never shown.
+  const IB = (await import("./idea-bank-data.js")).default;
+  const a1 = await sj("seed=1&q="), a3 = await sj("seed=1&q=");
+  assert.equal(a1.length, Math.min(4, IB.BANK.length)); assert.deepEqual(a1, a3, "same seed, same suggestions");
+  assert.ok(a1.every((t) => IB.BANK.some((b) => b[0] === t && /^https:\/\//.test(b[4]))), "every suggestion has a live example");
+  const full = await (await mod.fetch(new Request("https://ultrastable.io/api/suggest?seed=1&q="), E2)).json();
+  assert.ok(full.s.every((t) => /^https:\/\//.test(full.ex[t])), "the API returns the address that proves each idea");
+  const rel = await sj("seed=5&q=" + encodeURIComponent("policy programmes and their trials"));
+  assert.ok(/policy/i.test(rel[0]), "suggestions respond to what is typed: " + rel.join(" | "));
+  const seenOne = await sj("seed=1&q=&seen=" + encodeURIComponent(a1.slice(0, 1).join("|")));
+  assert.ok(seenOne.every((t) => t !== a1[0]), "already-shown ideas are not repeated");
   const modelEnv = { ASSETS: mem, AI: { run: async () => ({ response: JSON.stringify(["Weekly rota for the street", "Reminder texts"]) }) } };
   const withModel = await sj("seed=3&q=" + encodeURIComponent("bin day for my street"), modelEnv);
-  assert.equal(withModel[0], "Weekly rota for the street"); assert.equal(withModel.length, 4, "model ideas first, bank fills the rest");
+  assert.ok(!withModel.includes("Weekly rota for the street"), "a model-written idea with no live example is never suggested");
   const jf = new FormData(); jf.set("idea", "a rota for the street"); jf.set("profile", JSON.stringify({ space: { who: "B" }, thread: true }));
   r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: jf, headers: { Accept: "application/json" } }), E2);
   assert.equal(r.status, 200); const jid = (await r.json()).id; assert.match(jid, /^[a-f0-9]{10}$/);
