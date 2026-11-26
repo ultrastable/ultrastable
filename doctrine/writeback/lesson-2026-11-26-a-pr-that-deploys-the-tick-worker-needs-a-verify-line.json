@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-a-pr-that-deploys-the-tick-worker-needs-a-verify-line",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "A PR that deploys the tick Worker needs a verify line",
+  "body": "Hosted CI failed ORCHESTRATE-1 on the check 'deploys ultrastable-tick with no verify line'. The tick /health carries ok, org, last_tick, cutover and ignition and no executor field, so the Handoff block reads steps_total, which shows the redeploy and a completed tick. A live reading of orch_runs needs its own endpoint; OL-20261126-1 carries it. Live ticks also skip the execute step while the cost level is in breach. (Claude-Session: session_0156nqDsC5ZesQCbC7qUmBkN)",
+  "probe": "grep:foundation/driftguard.py::with no verify line",
+  "session": "session_0156nqDsC5ZesQCbC7qUmBkN"
+ },
+ "kind": "lesson",
+ "title": "A PR that deploys the tick Worker needs a verify line",
+ "session": "session_0156nqDsC5ZesQCbC7qUmBkN"
+}
