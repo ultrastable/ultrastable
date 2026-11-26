@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: feat(phasework): phased large change as kernel code (PHASED-WORK-1) (#2517)
+- 2026-11-26: queue: closing-probe verdicts for 22 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]
+- 2026-11-26: queue: closing-probe verdicts for 22 item(s) (QUEUE-PERSIST-1) (part 1/2) [skip ci]
+- 2026-11-26: branchsweep: merge the branches main lacks (#2518)
 - 2026-11-26: feat: the Cloudflare Worker is built from a configuration (US-03-R16) (#2515)
 - 2026-11-26: feat: the specification tools run without the private specification and say unmeasured (DISCLOSE-1) (#2512)
 - 2026-11-26: fix(airouter): read reasoning-only replies and say why a reply was empty (AIROUTER-EMPTY-2) (#2508)
