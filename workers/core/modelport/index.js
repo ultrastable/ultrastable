@@ -57,8 +57,10 @@ export function createModelPort({ config = {}, endpoints = {}, env = {} } = {}) 
 }
 
 /** handlers: { <role name>: async ({ role, item, complete }) => ({ ok, detail }) }, with `default` as the fallback.
- *  config: { holder (this runtime's name), lease_minutes, default_alias } */
-export function createRoleRuntime({ db, models, handlers = {}, now = () => Date.now(), config = {} } = {}) {
+ *  config: { holder (this runtime's name), lease_minutes, default_alias }
+ *  lease (optional port): { acquire(roleId, holder, untilMs, nowMs) -> bool, release(roleId, holder, nowMs) } keeps the lease somewhere else (a Durable
+ *  Object's own storage); without it the lease is a row of modelport_instances, as before. */
+export function createRoleRuntime({ db, models, handlers = {}, now = () => Date.now(), config = {}, lease = null } = {}) {
   const clock = typeof now === 'function' ? now : () => now;
   const cfg = { holder: 'runtime-1', lease_minutes: 15, default_alias: 'small', ...config };
   const all = async (sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
@@ -72,12 +74,13 @@ export function createRoleRuntime({ db, models, handlers = {}, now = () => Date.
   }
 
   async function acquire(roleId) {
+    if (lease) return !!(await lease.acquire(roleId, cfg.holder, clock() + cfg.lease_minutes * 60e3, clock()));
     const t = stamp(clock());
     await run(`INSERT OR IGNORE INTO modelport_instances (role_id) VALUES (?)`, roleId);
     const r = await run(`UPDATE modelport_instances SET holder=?, lease_until=? WHERE role_id=? AND (lease_until IS NULL OR lease_until <= ?)`, cfg.holder, stamp(clock() + cfg.lease_minutes * 60e3), roleId, t);
     return (r.meta?.changes ?? 0) === 1;
   }
-  const release = roleId => run(`UPDATE modelport_instances SET holder=NULL, lease_until=NULL, runs=runs+1, last_run_at=? WHERE role_id=? AND holder=?`, stamp(clock()), roleId, cfg.holder);
+  const release = roleId => lease ? lease.release(roleId, cfg.holder, clock()) : run(`UPDATE modelport_instances SET holder=NULL, lease_until=NULL, runs=runs+1, last_run_at=? WHERE role_id=? AND holder=?`, stamp(clock()), roleId, cfg.holder);
 
   /** Run one piece of work on a role's instance. Refused with `busy` while the instance is held (here or by another runtime). */
   async function runRole(roleId, { item = null } = {}) {
@@ -104,8 +107,10 @@ export function createRoleRuntime({ db, models, handlers = {}, now = () => Date.
   }
 
   /** Work the queued dispatch rows: each goes to its role's instance. Roles run side by side; one role's dispatches run in order. */
-  async function runDispatches({ limit = 20 } = {}) {
-    const queued = await all(`SELECT d.id, d.role_id, d.item_id FROM dispatches d WHERE d.status='queued' ORDER BY d.id LIMIT ?`, limit);
+  async function runDispatches({ limit = 20, roleId = null } = {}) {
+    const queued = roleId
+      ? await all(`SELECT d.id, d.role_id, d.item_id FROM dispatches d WHERE d.status='queued' AND d.role_id=? ORDER BY d.id LIMIT ?`, roleId, limit)
+      : await all(`SELECT d.id, d.role_id, d.item_id FROM dispatches d WHERE d.status='queued' ORDER BY d.id LIMIT ?`, limit);
     const byRole = new Map();
     for (const d of queued) byRole.set(d.role_id, [...(byRole.get(d.role_id) || []), d]);
     const count = { done: 0, failed: 0, busy: 0 };
