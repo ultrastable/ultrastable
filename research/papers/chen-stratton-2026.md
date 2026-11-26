@@ -58,7 +58,7 @@ In our own system, 5 of 7 of these checks pass today. Verified live deploys per 
 ## 4. Trade-offs and limits
 
 - Scale. One organization: 500 closed pull requests (359 merged) over 7.87 days, against a study of 655 firms over more than five years. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.
-- Who wrote the changes. 87% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the subcritical regime with 0 self-originated deploys, so most of the work measured here was started from outside.
+- Who wrote the changes. 87% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the driven regime with 0 self-originated deploys, so most of the work measured here was started from outside.
 - Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.
 - Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.
 - Source. Job market paper (working paper, not peer reviewed), version 2026-11-19 (first version 2026-01-07); its findings may change in later versions.
