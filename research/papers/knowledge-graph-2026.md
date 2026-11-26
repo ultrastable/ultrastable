@@ -35,7 +35,7 @@ To apply this to your own system, one step per problem:
 
 1. The graph keeps itself current. Put in place: the daily build reads every work item, study and rule, and a probe fails when the graph is over 36 hours old. Check it with one number, share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending, and set a limit for it (>= 1 is the limit we use).
 
-In our own system, 1 of 1 of these checks pass today. Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending reads 1.0 (n = 5; source: doctrine/knowledge-graph.json (declared)). Where a check fails, a work item carries the fix, and it closes only when the same check passes.
+In our own system, 0 of 1 of these checks pass today. Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending reads 0.714 (n = 7; source: doctrine/knowledge-graph.json (declared)). Where a check fails, a work item carries the fix, and it closes only when the same check passes.
 
 ## 4. Trade-offs and limits
 
