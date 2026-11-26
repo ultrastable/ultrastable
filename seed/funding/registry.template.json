@@ -1,0 +1,6 @@
+{
+  "_doc": "Machine-readable funding registry, created by bootstrap/bootstrap.py as funding/registry.json. funding/verify.py reads it weekly (.github/workflows/funding-maintenance.yml) and funding/file_issues.py files issues for stale, expiring or broken entries. Update last_verified only after reading the primary source. status: verified = read at the primary source on last_verified; secondary = third-party summary; unverified = from memory or unreachable.",
+  "max_age_days": 30,
+  "deadline_warn_days": 45,
+  "items": []
+}
