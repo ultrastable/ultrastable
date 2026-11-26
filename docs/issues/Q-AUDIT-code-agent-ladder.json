@@ -1,0 +1,14 @@
+{
+  "id": "Q-AUDIT-code-agent-ladder",
+  "title": "Q-AUDIT-code-agent-ladder: fm-code-ladder-dead failing (fail): Read the rung errors ladderwatch prints, fix the route (site AI binding, model endpoint) and add a test; never relax the threshold.",
+  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe code-agent-ladder\n**Status:** open\n\nFailure mode `fm-code-ladder-dead` detected by `code-agent-ladder`, failing since 2026-11-26T16:03:01Z.\nEvidence: \"Q-ULTRA-lessons_enforced-1\",\n  \"Q-ULTRA-owner_interventions-1\",\n  \"Q-ULTRA-owner_interventions-2\",\n  \"Q-ULTRA-research_in_code-1\",\n  \"Q-ULTRA-research_in_code-2\",\n  \"Q-ULTRA-research_in_code-REDESIGN\",\n  \"Q-ULTRA-second_loop_keep_rate-3\",\n  \"Q-ULTRA-spec_quality-1\",\n  \"Q-ULTRA-spec_quality-2\"\n ]\n}\n\nSignature: d10b36aa74a5 (disposition: fix).\nSuspected root cause: no code-agent rung returns an answer (credential without the permission, provider answering 200 with no body), so the executor ships nothing while its job and the static model-routes check read green\nRemedy: Read the rung errors ladderwatch prints, fix the route (site AI binding, model endpoint) and add a test; never relax the threshold.\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe code-agent-ladder\n",
+  "labels": [
+    "role:operations",
+    "audit",
+    "fix",
+    "agent-ready",
+    "p1"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}
