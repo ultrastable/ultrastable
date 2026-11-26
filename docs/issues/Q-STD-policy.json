@@ -1,7 +1,7 @@
 {
   "id": "Q-STD-policy",
   "title": "Q-STD-policy: Express gates as schema conditionals, Rego where needed",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation openstd --probe policy-as-code\n**Status:** open\n\nOPEN-STANDARDS-1 (Rowan, 2026-11-25): move autonomy/policy.json gate rules into JSON Schema if/then conditionals checked by openstd; Rego only for cross-file rules.\n\nsize: M\n**Out of scope:** new formats not in doctrine/open-standards.json.\n\nPrediction: open_standards_adopted_rows >= 10 within 168 h\n\n**Closing probe:** python3 -m foundation openstd --check passes and the registry row for policy-as-code reads adopted with evidence files that exist.\n",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation openstd --probe policy-as-code\n**Status:** closed\n\nOPEN-STANDARDS-1 (Rowan, 2026-11-25): move autonomy/policy.json gate rules into JSON Schema if/then conditionals checked by openstd; Rego only for cross-file rules.\n\nsize: M\n**Out of scope:** new formats not in doctrine/open-standards.json.\n\nPrediction: open_standards_adopted_rows >= 10 within 168 h\n\n**Closing probe:** python3 -m foundation openstd --check passes and the registry row for policy-as-code reads adopted with evidence files that exist.\n\n**Disposition:** shelved (ttl, 2026-11-26T12:44:52Z, DISPOSE-1)\n\n**Evidence:** open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "p2",
     "agent-ready"
