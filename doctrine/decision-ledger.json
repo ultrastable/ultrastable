@@ -6276,6 +6276,15 @@
    "title": "Phased large change (PHASED-WORK-1)",
    "body": "Audit, coverage, implement, verify (evidence + adversarial, independent of the author), fix, integrate, final gate are data in seed/autonomy/phases.json; scripts/phasework.py plans and advances a run; the tick Worker orchestrator runs two independent reviewers. Session: session_0156nqDsRzjGUMyam7ytKVPj",
    "probe": "file:seed/scripts/phasework.py"
+  },
+  {
+   "id": "decision-2026-11-26-the-cloudflare-migrations-bundle-is-append-only",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "The Cloudflare migrations bundle is append-only",
+   "body": "build_migrations.mjs keeps existing file numbers and appends new migrations at the next number. A module gaining a migration used to renumber every later file (about fifty), which made a slice of work with a migration impossible to keep under the 60 file gate and let one database see one migration under two names. The module list already said new modules go last so numbers never shift; the generator now guarantees it.",
+   "probe": "file:workers/core/org/migrations.test.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
