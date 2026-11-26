@@ -43,4 +43,5 @@ Subjects are plain data: `{ id, type, title, claim, domain, evidence[], design, 
 | IGN-5 fifteen-question administration and protocol check | BUILT |
 | IGN-3b model-backed red team through GitHub Models (an Actions run's own token, `models: read`) or Workers AI, behind core/modelport; failure degrades to the rule floor | BUILT (`org.test.js`, `models.js`) |
 | IGN-6 org-tick step `ignorance` (opt-in `config.ignorance.enabled`) over the org's open items: no closing probe, aged, blocked; records in `ignorance_state` | BUILT (`org.test.js`) |
-| IGN-7 enabled in the Ultrastable tick Worker (`seed/worker`) | PLANNED (cross-repo, `Q-IGN-SELF`) |
+| IGN-7 enabled in the Ultrastable tick Worker (`seed/worker`) | BUILT in the seed as UNKNOWNS-1 (the platform's unknowns step, its tests and its Python twin, all outside this repository): a different mechanism, inverted questions filed as plus items with an append-only ledger. `core/ignorance` itself is not vendored into the seed |
+| The needs register as ignorance: each default is an untested assumption with a gap, closed by the answer (`needs.js`) | BUILT (`needSubjects`, `reconcileNeedGaps`; test in `org.test.js`) |

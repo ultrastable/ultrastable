@@ -52,6 +52,11 @@ export function githubPort({ fetch, env = {}, org, tokenEnv = 'VCS_TOKEN', apiBa
     pages: repo => call('GET', `/repos/${org}/${repo}/pages`, undefined, { allow404: true }),
     rulesets: repo => call('GET', `/repos/${org}/${repo}/rulesets`),
     forkApproval: () => call('GET', `/orgs/${org}/actions/permissions/fork-pr-contributor-approval`),
+    // Settings (US-24-R30 to R32): reads and writes of the organization Actions permissions and the repository merge settings.
+    orgWorkflowPermissions: () => call('GET', `/orgs/${org}/actions/permissions/workflow`),
+    setOrgWorkflowPermissions: body => call('PUT', `/orgs/${org}/actions/permissions/workflow`, body),
+    setForkApproval: policy => call('PUT', `/orgs/${org}/actions/permissions/fork-pr-contributor-approval`, { approval_policy: policy }),
+    patchRepo: (repo, body) => call('PATCH', `/repos/${org}/${repo}`, body),
     releases: async repo => (await call('GET', `/repos/${org}/${repo}/releases?per_page=30`)) || [],
   };
 }

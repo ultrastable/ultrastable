@@ -67,3 +67,30 @@ test('endpoints: Workers AI binding, missing token, defensive JSON parsing', asy
   const port = createModelPort({ config: { aliases: { r: { endpoint: 'e', model: 'm', family: 'f' } } }, endpoints: { e: async () => ({ text: '{"findings":[]}', tokens_in: 1, tokens_out: 1 }) } });
   assert.deepEqual(await redTeamModel(port, 'r')({ prompt: 'p' }), { family: 'f', findings: [] });
 });
+
+test('US-16-R05 and IGN-6: every defaulted need yields one untested-assumption gap; answering it closes the gap with the answer as evidence and the registry audit stays balanced', async () => {
+  const { createElicit } = await import('../elicit/index.js');
+  const { needSubjects, needSubjectId, reconcileNeedGaps } = await import('./needs.js');
+  const { run: runIgnorance, assumptionMiner } = await import('./index.js');
+  const db = makeDb([...MIGS, fileURLToPath(new URL('../elicit/migrations/', import.meta.url))]);
+  const e = createElicit({ db, now: () => T, config: { defer_below: 0 } });
+  const need = id => ({ id, label: `Thing ${id}`, artifact: 'A-INI-2', question: `Which ${id}?`, why: 'It changes it.', cue: 'Most pick first.', options: ['first', 'second'], default: 'first', default_consequence: 'redo it' });
+  await e.registerNeeds('demo', [need('a'), need('b'), need('c', { derive_from: 'club' })].map((n, i) => (i === 2 ? { ...n, derive_from: 'club' } : n)), { idea: 'a chess club' });
+  await e.nextAsks('demo'); await e.answer('demo', 'a', { choice: 'Not sure' }); await e.answer('demo', 'b', { choice: 'second' });
+  const registry = createRegistry({ store: dbStore(db), now: () => T });
+  const subjects = await needSubjects(db, 'demo');
+  assert.deepEqual(subjects.map(s => s.id), [needSubjectId('demo', 'a'), needSubjectId('demo', 'b'), needSubjectId('demo', 'c')]);
+  await runIgnorance({ registry, subjects, miners: [assumptionMiner], budget: 0, now: () => T });
+  const open = (await registry.list({ status: 'open' })).filter(g => g.kind === 'untested_assumption');
+  assert.equal(open.length, 1, 'one gap for the one default, none for a stated or derived need'); assert.equal(open[0].subject, needSubjectId('demo', 'a')); assert.match(open[0].text, /default "first" is right/);
+  await e.answer('demo', 'a', { choice: 'Not sure' }); // still the default: nothing changes
+  assert.deepEqual(await reconcileNeedGaps({ registry, db, project: 'demo' }), []);
+  await e.correct('demo', 'a', 'second');
+  const closed = await reconcileNeedGaps({ registry, db, project: 'demo' });
+  assert.deepEqual(closed, [open[0].id]);
+  const g = (await registry.list()).find(x => x.id === open[0].id);
+  assert.equal(g.status, 'closed'); assert.equal(g.disposition, 'resolved'); assert.match(g.evidence, /replaced by stated: second/);
+  assert.equal((await registry.audit()).balanced, true);
+  await runIgnorance({ registry, subjects: await needSubjects(db, 'demo'), miners: [assumptionMiner], budget: 0, now: () => T });
+  assert.equal((await registry.list({ status: 'open' })).filter(x => x.kind === 'untested_assumption').length, 0);
+});
