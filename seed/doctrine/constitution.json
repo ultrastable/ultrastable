@@ -846,7 +846,8 @@
         "TENANT-STANDARD-1",
         "FLEET-MAP-1",
         "SYSTEM-MANIFEST-1",
-        "CLONE-PATH-1"
+        "CLONE-PATH-1",
+        "REPO-SHAPE-1"
       ],
       "detector": [
         {
