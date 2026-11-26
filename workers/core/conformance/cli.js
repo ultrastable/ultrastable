@@ -108,7 +108,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const outPath = arg('--out') || MANIFEST;
   const everyTest = () => { const extra = readExtraTests(); for (const r of extra.absent) console.log(`skipped root ${r}: not present`); return { tests: [...readTests(), ...extra.tests], absent: extra.absent }; };
   if (has('--write')) {
-    if (!dir) { console.error('--write needs the specifications: pass --spec-dir, set US_SPEC_DIR, or check them out at ../specs'); process.exit(2); }
+    if (!dir || !readSpecs(dir).length) { console.error('conformance: unmeasured, no specification text' + (dir ? ` in ${dir}` : '') + ' (DISCLOSE-1): pass --spec-dir, or set US_SPEC_DIR to the private specification; the manifest was not written'); process.exit(2); }
     const prev = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, 'utf8')) : {};
     const reasons = Object.fromEntries((prev.requirements || []).filter(r => r.status === 'deviation' && r.reason && !/^no test in this repository/.test(r.reason)).map(r => [r.id, r.reason]));
     const m = buildManifest({ specs: readSpecs(dir), tests: everyTest().tests, declared: arg('--level') || prev.declared_level || 'L1', reasons, generated_at: new Date().toISOString().slice(0, 10) });
@@ -119,9 +119,10 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const manifest = JSON.parse(readFileSync(has('--write') ? outPath : manifestPath, 'utf8'));
   if (has('--declare')) console.log(JSON.stringify(declaration(manifest), null, 1));
   if (has('--check')) {
-    if (!dir) console.log(coverageNotice(dir));
+    const specsRead = dir ? readSpecs(dir) : [];
+    if (!specsRead.length) console.log(coverageNotice(null));
     const { tests, absent } = everyTest();
-    const r = check(manifest, { files: { ...readNamedFiles(manifest), ...Object.fromEntries(tests.map(t => [t.path, t.text])) }, specs: dir ? readSpecs(dir) : null, tests, absentRoots: absent });
+    const r = check(manifest, { files: { ...readNamedFiles(manifest), ...Object.fromEntries(tests.map(t => [t.path, t.text])) }, specs: specsRead.length ? specsRead : null, tests, absentRoots: absent });
     console.log(`${r.problems.length} problem(s), ${r.stale.length} deviation(s) a test now cites, ${r.unverified.length} proof(s) unverified here`);
     for (const p of r.problems) console.log('  ' + p);
     for (const u of r.unverified) console.log('  unverified: ' + u);

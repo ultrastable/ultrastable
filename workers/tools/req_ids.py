@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -75,14 +76,14 @@ def undefined(spec_dir: Path, code_dir: Path, fixtures: bool = True) -> list[dic
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--spec-dir", type=Path, required=True)
+    ap.add_argument("--spec-dir", type=Path, default=os.environ.get("ULTRASTABLE_SPEC_DIR") or None, help="the specification directory; defaults to ULTRASTABLE_SPEC_DIR (the specification is private, DISCLOSE-1)")
     ap.add_argument("--code-dir", type=Path, required=True)
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--strict", action="store_true")
     ap.add_argument("--no-fixtures", action="store_true", help="also report ids in the files tools/req-ids-fixtures.json lists")
     a = ap.parse_args(argv)
-    if not any(a.spec_dir.glob("US-SPEC-*.md")):
-        print(f"req_ids: no specification found in {a.spec_dir}", file=sys.stderr)
+    if not a.spec_dir or not any(Path(a.spec_dir).glob("US-SPEC-*.md")):
+        print(f"req_ids: unmeasured, no specification text in {a.spec_dir} (DISCLOSE-1: set ULTRASTABLE_SPEC_DIR to the private specification)", file=sys.stderr)
         return 2
     f = undefined(a.spec_dir, a.code_dir, fixtures=not a.no_fixtures)
     if a.json:

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -77,11 +78,14 @@ def findings(spec_dir: Path, code_dir) -> list[dict]:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--spec-dir", type=Path, required=True)
+    ap.add_argument("--spec-dir", type=Path, default=os.environ.get("ULTRASTABLE_SPEC_DIR") or None, help="the specification directory; defaults to ULTRASTABLE_SPEC_DIR (the specification is private, DISCLOSE-1)")
     ap.add_argument("--code-dir", type=Path, action="append", required=True, help="code repository (repeatable: also the specs repository for documents it names)")
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--strict", action="store_true")
     a = ap.parse_args(argv)
+    if not a.spec_dir or not any(Path(a.spec_dir).glob("US-SPEC-*.md")):
+        print(f"spec_truth: unmeasured, no specification text in {a.spec_dir} (DISCLOSE-1: set ULTRASTABLE_SPEC_DIR to the private specification)")
+        return 2 if a.strict else 0
     f = findings(a.spec_dir, a.code_dir)
     if a.json:
         print(json.dumps(f, indent=2))
