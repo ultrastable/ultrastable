@@ -5956,6 +5956,24 @@
    "title": "A failed step after the work is not a beat, and must not discard the work",
    "body": "The scout workflow ran on 2026-11-24; scout and rnd finished, the idea-bank step exited 1 and the commit step was skipped, so a week of findings was lost while the clock read ticking. The commit step now runs unless cancelled, the scout clock beats only on a successful run and is restarted after 1.5 intervals, and the watchdog no longer skips restarts under the Actions budget pause when the repository is public.",
    "probe": "grep:foundation/resilience.py::def run_beats"
+  },
+  {
+   "id": "lesson-2026-11-26-a-built-label-is-checked-against-the-tree-and-specs-follow-t",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A BUILT label is checked against the tree, and specs follow the running kit",
+   "body": "The 26 specifications named only the portable core while the kit had moved on; scripts/spec_truth.py now fails a BUILT label that names no existing path, and each spec status section names the kit files and tests.",
+   "probe": "file:scripts/spec_truth.py",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "lesson-2026-11-26-a-specification-that-names-only-the-portable-core-lags-the-s",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A specification that names only the portable core lags the seed tick",
+   "body": "Specs 01, 02, 03, 04, 05 and 08 described a seven-step tick and cited workers/core only, while seed/worker/src/tick.js ran 19 steps with tenant rows, a migration ledger, the in-tick doer, the manager register and metric probes. The specs now describe the seed tick as the reference, each new behaviour has a requirement ID appended at the end of its numbering, and the seed migration runner refuses a file that drops a table or column without a copy in the same atomic file (US-01-R13).",
+   "probe": "grep:seed/worker/src/migrate.js::export function unbackedDrops",
+   "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
   }
  ]
 }
