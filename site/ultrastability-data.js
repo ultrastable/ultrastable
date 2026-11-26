@@ -4,74 +4,74 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": false,
-   "value": 0.938
+   "value": 0.937
   },
   "happy_paths": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": false,
    "value": 71
   },
   "research_in_code": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": false,
    "value": 0.621
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": false,
    "value": 0.0
   },
   "self_shipping": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": false,
    "value": 0.714
   },
   "spec_quality": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": false,
    "value": 0.3
   },
   "spend": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": false,
    "value": 8.491
   },
   "stalled_clocks": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": false,
    "value": 3
   },
   "ui_findings": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-26T21:15:05Z",
+   "at": "2026-11-26T21:25:25Z",
    "ok": true,
-   "value": 33.565
+   "value": 33.329
   }
  },
  "readiness": {
