@@ -1,0 +1,31 @@
+name: workstart
+# budget: ~0.3 min per opened issue plus ~0.5 min x 1 per day = ~20 min per month
+# trigger: issues.opened (the moment work starts) and a daily sweep for issues that opened while the event path was down
+# free-alternative: `python3 -m foundation workstart --sweep` from the Cloudflare tick worker's dispatch, or any launch host
+# WORKSTART-1: every work issue gets a branch and a linked draft PR as soon as it opens, so work is durable from the start.
+on:
+  issues:
+    types: [opened, reopened]
+  schedule:
+    - cron: "41 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+concurrency:
+  group: workstart
+  cancel-in-progress: false
+jobs:
+  start:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Open a branch and draft PR for the issue
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || github.token }}
+          ISSUE: ${{ github.event.issue.number }}
+        run: |
+          if [ -n "$ISSUE" ]; then python3 -m foundation workstart --issue "$ISSUE"; else python3 -m foundation workstart --sweep --max 5; fi

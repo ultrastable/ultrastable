@@ -211,3 +211,8 @@ test('PACE-1: beats_24h and beats_productive_share_24h read the loop clock; idle
   const empty = makeDb(); empty.raw.exec('DROP TABLE loop_beats');
   assert.equal(await METRICS.beats_24h(empty, T0), 0);
 });
+
+test('KILL-DRILL-CADENCE-1: the daily kill drill is judged against a day, not the tick', async () => {
+  const { DEFAULT_CADENCE } = await import('../src/pulse.js');
+  assert.equal(DEFAULT_CADENCE['kill-drill'], 1440);
+});

@@ -103,6 +103,16 @@ def _day(ctx):
     return bool(d) and d.get("error_count", 1) == 0 and d.get("completed") == d.get("ticks"), json.dumps(d)[:400]
 
 
+def _year_soak(ctx):
+    """YEAR-SOAK-1: one tick per simulated day for a year on a fresh store; every tick completes and the store stays under its limit."""
+    y = ctx.get("soak") or {}
+    limit = int(ctx["spec"].get("soak_max_db_bytes", 500_000_000))
+    ok = bool(y) and y.get("error_count", 1) == 0 and y.get("completed") == y.get("ticks") and int(y.get("db_bytes") or 0) <= limit
+    ev = {k: y.get(k) for k in ("ticks", "completed", "error_count", "db_bytes")}
+    ev["first_errors"] = (y.get("errors") or [])[:2]
+    return ok, json.dumps(ev)[:400]
+
+
 def _definition(ctx):
     r = subprocess.run([sys.executable, "-I", str(ctx["sb"] / "scripts" / "system.py"), "--check", "--root", str(ctx["sb"])], capture_output=True, text=True, timeout=120)
     return r.returncode == 0, r.stdout.strip().splitlines()[-1] if r.returncode == 0 else " ".join(r.stdout.split("\n")[:4])[:400]
@@ -130,7 +140,7 @@ def _teardown(ctx):
 
 
 CHECKS = {"boot_ok": _boot_ok, "no_secret_cards": _no_secret_cards, "workflow_headers": _workflow_headers, "provision_plan": _provision_plan,
-          "managers": _managers, "liveness": _liveness, "year_gate": _year_gate, "day": _day, "teardown": _teardown, "definition": _definition, "human_voice": _human_voice, "ignition": _ignition}
+          "managers": _managers, "liveness": _liveness, "year_gate": _year_gate, "day": _day, "year_soak": _year_soak, "teardown": _teardown, "definition": _definition, "human_voice": _human_voice, "ignition": _ignition}
 
 
 def _cap(ctx, cap) -> tuple[bool, str]:
@@ -189,6 +199,8 @@ def run(root: Path = REPO, ticks: int | None = None, keep: bool = False) -> dict
             con.close()
             cfg = tmp / "config.json"
             cfg.write_text(json.dumps(_config(sb)))
+            soak_db = tmp / "soak.db"
+            shutil.copyfile(db, soak_db)  # YEAR-SOAK-1: the same fresh store, run apart so the day check stays clean
             d = subprocess.run(["node", "--no-warnings", str(root / "platform" / "selfhost" / "day.mjs"), str(sb), str(db), str(cfg), str(ticks)],
                                capture_output=True, text=True, timeout=1800, cwd=root)
             line = (d.stdout.strip().splitlines() or [""])[-1]
@@ -196,6 +208,14 @@ def run(root: Path = REPO, ticks: int | None = None, keep: bool = False) -> dict
                 ctx["day"] = json.loads(line)
             except ValueError:
                 ctx["day"] = {"ticks": ticks, "completed": 0, "error_count": 1, "errors": [{"tick": -1, "error": (d.stderr or line)[-400:]}]}
+            soak_days = int(spec.get("soak_days", 365))
+            y = subprocess.run(["node", "--no-warnings", str(root / "platform" / "selfhost" / "day.mjs"), str(sb), str(soak_db), str(cfg), str(soak_days), "1440"],
+                               capture_output=True, text=True, timeout=1800, cwd=root)
+            yline = (y.stdout.strip().splitlines() or [""])[-1]
+            try:
+                ctx["soak"] = json.loads(yline)
+            except ValueError:
+                ctx["soak"] = {"ticks": soak_days, "completed": 0, "error_count": 1, "errors": [{"tick": -1, "error": (y.stderr or yline)[-400:]}]}
         else:
             ctx["day"] = {"ticks": ticks, "completed": 0, "error_count": 1, "errors": [{"tick": -1, "error": "node not installed: no day was run"}]}
         results = []

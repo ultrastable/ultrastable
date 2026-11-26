@@ -2649,6 +2649,24 @@
       "bindings": [
         "LANE_PAT"
       ]
+    },
+    "work-start": {
+      "inflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "feedback": "the next sweep reads open issues against open PRs; an issue still without a linked PR is started again, and a PR the lane merges closes its issue",
+      "bindings": [
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {

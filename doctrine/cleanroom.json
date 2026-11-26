@@ -138,6 +138,11 @@
       "check": "day"
     },
     {
+      "id": "year-soak",
+      "what": "a fresh seed's tick runs once per simulated day for 365 days with no error, and its database stays under soak_max_db_bytes",
+      "check": "year_soak"
+    },
+    {
       "id": "ignition",
       "what": "after a simulated day the system has computed its own ignition stage from evidence and is at least ticking; what blocks the next stage is named",
       "check": "ignition"
@@ -149,5 +154,7 @@
     }
   ],
   "min_sandbox_stage": "ticking",
-  "_criticality_doc": "A sandbox has no deploys, money or models, so it cannot reach critical: k_eff needs verified deploys. The sandbox proves the stage machinery runs and names its blocker; critical and self-sustaining are read from live systems (/health ignition stage, python3 -m foundation seedadmit --autonomy)."
+  "_criticality_doc": "A sandbox has no deploys, money or models, so it cannot reach critical: k_eff needs verified deploys. The sandbox proves the stage machinery runs and names its blocker; critical and self-sustaining are read from live systems (/health ignition stage, python3 -m foundation seedadmit --autonomy).",
+  "soak_days": 365,
+  "soak_max_db_bytes": 500000000
 }

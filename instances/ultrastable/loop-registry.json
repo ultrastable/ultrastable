@@ -36,6 +36,43 @@
  ],
  "loops": [
   {
+   "id": "work-start",
+   "kind": "probe",
+   "summary": "Every work issue gets a branch and a linked draft PR the moment it opens, so work is durable before any agent starts (WORKSTART-1).",
+   "trigger": "issues.opened event and daily sweep in workstart.yml",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "10m",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "the loop's own workflow or command",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "file:foundation/workstart.py",
+   "writeback": [
+    "instances/ultrastable/gaps.json",
+    "docs/handoff/selfhost.md"
+   ],
+   "system_path": [
+    "foundation/workstart.py",
+    ".github/workflows/workstart.yml",
+    "tests/foundation/test_workstart.py"
+   ],
+   "launch": "workstart",
+   "workflows": [
+    "workstart.yml"
+   ],
+   "server_owner": "github-actions"
+  },
+  {
    "id": "tick-heartbeat",
    "kind": "tick",
    "summary": "One pass of the heartbeat: reconcile, pull, act, verify, compare the prediction, record, report.",
