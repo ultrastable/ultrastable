@@ -259,6 +259,24 @@
     "source": "https://www.cognition.ai/blog/new-self-serve-plans-for-devin",
     "reason": "no free tier; revisit when one exists"
    }
+  },
+  {
+   "id": "pr-agent",
+   "name": "PR-Agent (open source, self-hosted)",
+   "sources": [
+    {
+     "url": "https://github.com/The-PR-Agent/pr-agent",
+     "kind": "page"
+    }
+   ],
+   "plug_in": {
+    "role": "reviewer",
+    "status": "staged",
+    "cost": "self-hosted as a GitHub Action, no licence condition on the repo it reviews; model calls can run on GitHub Models through the built-in token",
+    "default": "in-repo reviewer and red-team checks in the merge lane",
+    "probe": "grep:.github/workflows/checks.yml::pr-agent",
+    "source": "https://github.blog/ai-and-ml/llms/solving-the-inference-problem-for-open-source-ai-projects-with-github-models/"
+   }
   }
  ],
  "_plug_in_doc": "BORROW-1 (Rowan, 2026-11-26): where a competitor does one step better than we do, plug it in as a worker instead of rebuilding it. A competitor's plug_in names the role it would fill, its status (staged until an account exists, live once a probe shows it running, declined with a reason), the default in effect meanwhile (always our own worker, so nothing waits) and a file:/grep: probe that passes only when it is wired in. Free tiers only, or cost inside the soft daily throttle. rnd --check validates every row."
