@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-read-budget-10-three-unindexed-d1-readers-held-the-tick-lean",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "READ-BUDGET-10: three unindexed D1 readers held the tick lean",
+  "body": "The org D1 read 175k rows an hour against the 120k cap, so every tick skipped dispatch and execute and issues sat open. Top readers by rows read (d1QueriesAdaptiveGroups): kg_nodes by changed_at (115k), outcomes by result and time (100k), dispatches by status and time (13k). Migration 0034 indexes all three. The cap is not raised. Separate open loop: the Actions executor's model rungs fail (GitHub Models answers 200 OK text, Workers AI via the site Worker returns 502).",
+  "probe": "grep:seed/worker/migrations/0034_read_indexes_6.sql::kg_nodes_changed_live",
+  "session": "session_0156nqDr9ZUpSg4xzL3vBZus"
+ },
+ "kind": "lesson",
+ "title": "READ-BUDGET-10: three unindexed D1 readers held the tick lean",
+ "session": "session_0156nqDr9ZUpSg4xzL3vBZus"
+}
