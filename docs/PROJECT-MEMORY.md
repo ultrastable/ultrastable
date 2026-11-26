@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: feat: SHIP-PLAN-1, the canonical record of built but unmerged work (slice 8 of 11) (#2481)
+- 2026-11-26: feat(tests): the last seed specification tests and the first foundation specification tests (slice 7 of 10) (#2464)
+- 2026-11-26: feat(seed): goal planner breaks the worst vital into small tasks (PLAN-1) (#2466)
 - 2026-11-26: perf(tick): cache the two repeated whole-window D1 scans that hold the tick lean (READ-BUDGET-10) (#2465)
 - 2026-11-26: feat(seed): the second group of specification tests (slice 6 of 10) (#2463)
 - 2026-11-26: feat(seed): consent links, ensureSchema guard and the first group of specification tests (slice 5 of 10) (#2462)
