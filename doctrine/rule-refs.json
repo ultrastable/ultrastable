@@ -170,6 +170,10 @@
     {
       "ref": "ops/supply-chain.json",
       "reason": "Written by the supply-chain workflow on its first run (foundation/supplychain.py); it is an output that does not exist until that run lands it."
+    },
+    {
+      "ref": "/api/plans",
+      "reason": "The planner's route, added by ultrastable/ultrastable PR 2466 (seed/worker/src/planner.js); worklog --plans reports it unmeasured until that ships."
     }
   ],
   "undescribed": {
