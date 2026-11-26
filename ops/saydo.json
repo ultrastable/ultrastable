@@ -1,5 +1,5 @@
 {
- "at": "2026-11-26T14:23:09Z",
+ "at": "2026-11-26T14:39:30Z",
  "gaps": 7,
  "match_share": 0.987,
  "sources": {
@@ -139,16 +139,6 @@
     "id": "5e5b31e4740d",
     "ok": true,
     "said": "Add a self-contained Q-TICK doer module that closes Q-TICK items from their own tick records, registered shape for confi"
-   },
-   {
-    "did": [
-     "brand/public-profile/profile/proof.js",
-     "doctrine/decision-ledger.json",
-     "tests/proof.test.js"
-    ],
-    "id": "476b12d061c2",
-    "ok": true,
-    "said": "Update ultrastable.io/proof to serve a product-side feed (#Q-10) (#268)"
    }
   ],
   "claims": [
@@ -1067,7 +1057,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 96.8 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 97.1 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1127,7 +1117,7 @@
     "ok": true
    },
    {
-    "detail": "0.714 substantive server-originated changes a day (target 1)",
+    "detail": "0.643 substantive server-originated changes a day (target 1)",
     "id": "ships-daily",
     "ok": false
    }
@@ -1136,7 +1126,7 @@
  "summary": {
   "changes": {
    "gaps": 1,
-   "total": 16
+   "total": 15
   },
   "claims": {
    "gaps": 0,
@@ -1155,5 +1145,5 @@
    "total": 2
   }
  },
- "total": 554
+ "total": 553
 }

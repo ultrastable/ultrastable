@@ -1,24 +1,12 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // Ultrastable Worker: the server-side runtime for one org. Cron (or, when the account refuses cron, the Heartbeat
-// Durable Object alarm) runs one tick of every loop (core/org); fetch serves /health, /console, /describe,
-// /describe.json and /llms.txt.
+// Durable Object alarm) runs one tick of every loop (core/org), once per slot whichever scheduler fires; fetch serves /health,
+// /console, /describe, /describe.json and /llms.txt. The logic is in worker.js; this file only binds it to the rendered config.js.
 import config from './config.js';
-import { createOrg } from '../../../core/org/index.js';
-import { createHeartbeat, ensureArmed } from './heartbeat.js';
+import { createWorker } from './worker.js';
 
-const orgFor = env => createOrg({ db: env.DB, env, config });
+const worker = createWorker(config);
 
-export const Heartbeat = createHeartbeat(env => orgFor(env).tick());
-
-export default {
-  async scheduled(_event, env, ctx) {
-    ctx.waitUntil(orgFor(env).scheduledTick()); // one tick per slot: a cron firing twice runs once
-  },
-
-  async fetch(request, env) {
-    await ensureArmed(env); // alarm mode: any visit makes sure the heartbeat is armed
-    return (await orgFor(env).handle(request))
-      ?? new Response('ultrastable worker\n', { status: 404, headers: { 'content-type': 'text/plain' } });
-  },
-};
+export const Heartbeat = worker.Heartbeat;
+export default worker.handler;
