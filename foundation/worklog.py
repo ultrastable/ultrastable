@@ -10,7 +10,7 @@ reviewable, survive any session, and the lane, executor and planner (/api/plans)
   python3 -m foundation worklog start --goal G --owner O --done D [--next N] [--pr URL] [--ref ID]   open a record; prints its number
   python3 -m foundation worklog beat N [--next N] [--pr URL] [--state S]                             heartbeat / progress
   python3 -m foundation worklog finish N --evidence E                                               close with evidence
-  python3 -m foundation worklog list [--json]                                                       open work, from the store alone
+  python3 -m foundation worklog list [--json] [--plans]                                             open work, from the store alone; --plans joins /api/plans
   python3 -m foundation worklog reap [--apply] [--hours H]                                          re-dispatch silent records
   python3 -m foundation worklog backfill [--apply]                                                  file doctrine/work-backfill.json once
   python3 -m foundation worklog --check                                                             instructions and loop are wired
@@ -60,9 +60,44 @@ def _gh(*a, inp=None) -> tuple[int, str]:
     return r.returncode, r.stdout if r.returncode == 0 else r.stdout + r.stderr
 
 
-def new_record(goal, owner, done, nxt="", prs=None, ref="", now=None) -> dict:
+def new_record(goal, owner, done, nxt="", prs=None, ref="", now=None, plan="") -> dict:
     return {"v": 1, "goal": goal, "owner": owner, "state": "active", "done": done, "next": nxt, "prs": list(prs or []),
-            "ref": ref, "started": now_iso(now), "heartbeat": now_iso(now)}
+            "ref": ref, "plan": plan, "started": now_iso(now), "heartbeat": now_iso(now)}
+
+
+def fetch_plans(url, fetch=None) -> list[dict] | None:
+    """The planner's /api/plans (PLAN-1). None means unreachable: unmeasured, never an empty list."""
+    import urllib.request
+    try:
+        if fetch:
+            body = fetch(url)
+        else:
+            req = urllib.request.Request(url, headers={"user-agent": "ultrastable-worklog"})
+            with urllib.request.urlopen(req, timeout=20) as r:
+                body = r.read().decode("utf-8")
+        j = json.loads(body)
+    except Exception as e:  # noqa: BLE001 - recorded, reported as unmeasured
+        print(f"plans unmeasured: {url}: {e}", file=sys.stderr)
+        return None
+    return j.get("plans", j) if isinstance(j, dict) else j
+
+
+def link_plans(rows: list[dict], plans: list[dict] | None) -> list[dict]:
+    """Attach each record to its plan: by the record's `plan` id, or by a plan task whose item_id is the record's ref or #number."""
+    if plans is None:
+        for r in rows:
+            r["plan_status"] = "unmeasured"
+        return rows
+    by_id, by_item = {}, {}
+    for p in plans:
+        by_id[str(p.get("id"))] = p
+        for t in p.get("tasks", []) or []:
+            by_item[str(t.get("item_id"))] = p
+    for r in rows:
+        p = by_id.get(str(r.get("plan") or "")) or by_item.get(str(r.get("ref") or "")) or by_item.get(f"#{r['number']}") \
+            or by_item.get(str(r["number"]))
+        r["plan"], r["plan_status"] = (p.get("id"), p.get("status")) if p else (r.get("plan") or "", "none")
+    return rows
 
 
 def open_records(gh=_gh) -> list[dict]:
@@ -109,8 +144,8 @@ def _edit(n, rec, gh, add=()):
     return rc, out
 
 
-def start(goal, owner, done, nxt="", prs=None, ref="", gh=_gh) -> str:
-    rec = new_record(goal, owner, done, nxt, prs, ref)
+def start(goal, owner, done, nxt="", prs=None, ref="", gh=_gh, plan="") -> str:
+    rec = new_record(goal, owner, done, nxt, prs, ref, plan=plan)
     rc, out = _api(gh, "POST", "issues", {"title": goal[:120], "labels": ["work"], "body": render(rec)})
     if rc:
         raise RuntimeError(out)
@@ -127,8 +162,10 @@ def _get(n, gh):
     return rec
 
 
-def beat(n, nxt=None, pr=None, state=None, gh=_gh) -> None:
+def beat(n, nxt=None, pr=None, state=None, gh=_gh, plan=None) -> None:
     rec = _get(n, gh)
+    if plan:
+        rec["plan"] = plan
     rec["heartbeat"] = now_iso()
     if nxt:
         rec["next"] = nxt
@@ -158,7 +195,7 @@ def reap(apply=False, hours=None, gh=_gh, root=REPO) -> list[int]:
     for r in hit:
         if not apply:
             continue
-        rec = {k: r[k] for k in ("v", "goal", "owner", "state", "done", "next", "prs", "ref", "started", "heartbeat") if k in r}
+        rec = {k: r[k] for k in ("v", "goal", "owner", "state", "done", "next", "prs", "ref", "plan", "started", "heartbeat") if k in r}
         prev = rec.get("owner", "?")
         rec.update(state="resume", owner="server-lane", heartbeat=now_iso())
         _edit(r["number"], rec, gh, add=("resume", "queue"))
@@ -202,9 +239,9 @@ def main(argv=None) -> int:
     cmd = a[0] if a else "list"
     if cmd == "start":
         print(start(opt("--goal"), opt("--owner", os.environ.get("CLAUDE_SESSION", "agent")), opt("--done"), opt("--next", ""),
-                    [opt("--pr")] if "--pr" in a else [], opt("--ref", ""))); return 0
+                    [opt("--pr")] if "--pr" in a else [], opt("--ref", ""), plan=opt("--plan", ""))); return 0
     if cmd == "beat":
-        beat(a[1], opt("--next"), opt("--pr"), opt("--state")); return 0
+        beat(a[1], opt("--next"), opt("--pr"), opt("--state"), plan=opt("--plan")); return 0
     if cmd == "finish":
         finish(a[1], opt("--evidence", "")); return 0
     if cmd == "reap":
@@ -212,10 +249,13 @@ def main(argv=None) -> int:
     if cmd == "backfill":
         print(json.dumps({"filed": backfill("--apply" in a)})); return 0
     rows = open_records()
+    if "--plans" in a:
+        rows = link_plans(rows, fetch_plans(cfg()["plans_url"]))
     if "--json" in a:
         print(json.dumps(rows, indent=1)); return 0
     for r in rows:
-        print(f"#{r['number']:<5} {r.get('state','?'):<7} {r.get('owner','?')[:18]:<18} {r.get('heartbeat','?')}  {r['title']}\n"
+        print(f"#{r['number']:<5} {r.get('state','?'):<7} {r.get('owner','?')[:18]:<18} {r.get('heartbeat','?')}  {r['title']}"
+              + (f"  [plan {r.get('plan') or '-'}: {r['plan_status']}]" if "plan_status" in r else "") + "\n"
               f"       next: {r.get('next') or '-'}")
     print(f"{len(rows)} open work records")
     return 0

@@ -2,6 +2,11 @@
  "$schema": "./schemas/worklog.schema.json",
  "rule": "WORK-RECORD-1",
  "store": "GitHub issues in ultrastable/ultrastable labelled work; JSON record between work-record markers",
- "stale_hours": 6,
- "instruction_files": ["agents/AGENTS.md", "seed/agents/AGENTS.md", "agents/PROJECT-INSTRUCTIONS.md"]
+ "stale_hours": 1,
+ "instruction_files": [
+  "agents/AGENTS.md",
+  "seed/agents/AGENTS.md",
+  "agents/PROJECT-INSTRUCTIONS.md"
+ ],
+ "plans_url": "https://ultrastable.io/api/plans"
 }

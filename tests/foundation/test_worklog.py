@@ -26,6 +26,13 @@ class WorkRecord(unittest.TestCase):
         self.assertEqual(w.parse(bodies[0]["body"])["owner"], "server-lane")
         self.assertEqual(bodies[1]["labels"], ["resume", "queue"])
 
+    def test_link_plans(self):
+        rows = [{"number": 5, "ref": "WR-a"}, {"number": 6, "ref": "", "plan": "P2"}, {"number": 7, "ref": "x"}]
+        plans = [{"id": "P1", "status": "active", "tasks": [{"item_id": "WR-a"}]}, {"id": "P2", "status": "done", "tasks": []}]
+        out = w.link_plans(rows, plans)
+        self.assertEqual([(r["plan"], r["plan_status"]) for r in out], [("P1", "active"), ("P2", "done"), ("", "none")])
+        self.assertEqual(w.link_plans([{"number": 1}], None)[0]["plan_status"], "unmeasured")
+
     def test_check_passes(self):
         self.assertEqual(w.check(), [])
 
