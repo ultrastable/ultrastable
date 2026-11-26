@@ -1,3 +1,3 @@
 # Security
 
-Report a vulnerability privately by email to security@ultrastable.io, or through GitHub's "Report a vulnerability" (private security advisory) on this repository. Please do not open a public issue for a vulnerability. Expect an acknowledgement within 7 days.
+Report a vulnerability privately by email to security@ultrastable.io, or through GitHub's "Report a vulnerability" (private security advisory) on this repository. Please do not open a public issue for a vulnerability.

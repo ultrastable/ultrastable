@@ -3,7 +3,7 @@
   {
    "area": "workers",
    "quiet_days": 0,
-   "recent7": 91887,
+   "recent7": 92325,
    "series": [
     0,
     0,
@@ -34,17 +34,17 @@
     0,
     0,
     0,
-    91887
+    92325
    ],
-   "share_recent": 0.245,
-   "share_trend": 0.245,
-   "slope": 592.8194,
-   "total": 91887
+   "share_recent": 0.243,
+   "share_trend": 0.243,
+   "slope": 595.6452,
+   "total": 92325
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 42691,
+   "recent7": 42700,
    "series": [
     0,
     0,
@@ -75,12 +75,12 @@
     0,
     0,
     0,
-    42691
+    42700
    ],
-   "share_recent": 0.114,
-   "share_trend": 0.114,
-   "slope": 275.4258,
-   "total": 42691
+   "share_recent": 0.112,
+   "share_trend": 0.112,
+   "slope": 275.4839,
+   "total": 42700
   },
   {
    "area": "foundation",
@@ -118,15 +118,15 @@
     0,
     42212
    ],
-   "share_recent": 0.113,
-   "share_trend": 0.113,
+   "share_recent": 0.111,
+   "share_trend": 0.111,
    "slope": 272.3355,
    "total": 42212
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 28088,
+   "recent7": 32702,
    "series": [
     0,
     0,
@@ -157,12 +157,12 @@
     0,
     0,
     0,
-    28088
+    32702
    ],
-   "share_recent": 0.075,
-   "share_trend": 0.075,
-   "slope": 181.2129,
-   "total": 28088
+   "share_recent": 0.086,
+   "share_trend": 0.086,
+   "slope": 210.9806,
+   "total": 32702
   },
   {
    "area": "seed/worker",
@@ -200,8 +200,8 @@
     0,
     27395
    ],
-   "share_recent": 0.073,
-   "share_trend": 0.073,
+   "share_recent": 0.072,
+   "share_trend": 0.072,
    "slope": 176.7419,
    "total": 27395
   },
@@ -241,8 +241,8 @@
     0,
     23866
    ],
-   "share_recent": 0.064,
-   "share_trend": 0.064,
+   "share_recent": 0.063,
+   "share_trend": 0.063,
    "slope": 153.9742,
    "total": 23866
   },
@@ -282,8 +282,8 @@
     0,
     17582
    ],
-   "share_recent": 0.047,
-   "share_trend": 0.047,
+   "share_recent": 0.046,
+   "share_trend": 0.046,
    "slope": 113.4323,
    "total": 17582
   },
@@ -323,8 +323,8 @@
     0,
     17295
    ],
-   "share_recent": 0.046,
-   "share_trend": 0.046,
+   "share_recent": 0.045,
+   "share_trend": 0.045,
    "slope": 111.5806,
    "total": 17295
   },
@@ -413,7 +413,7 @@
   {
    "area": "seed/scripts",
    "quiet_days": 0,
-   "recent7": 6197,
+   "recent7": 6241,
    "series": [
     0,
     0,
@@ -444,12 +444,12 @@
     0,
     0,
     0,
-    6197
+    6241
    ],
-   "share_recent": 0.017,
-   "share_trend": 0.017,
-   "slope": 39.9806,
-   "total": 6197
+   "share_recent": 0.016,
+   "share_trend": 0.016,
+   "slope": 40.2645,
+   "total": 6241
   },
   {
    "area": "deploy/sibling-patches",
@@ -487,15 +487,15 @@
     0,
     5107
    ],
-   "share_recent": 0.014,
-   "share_trend": 0.014,
+   "share_recent": 0.013,
+   "share_trend": 0.013,
    "slope": 32.9484,
    "total": 5107
   },
   {
    "area": "seed/autonomy",
    "quiet_days": 0,
-   "recent7": 4119,
+   "recent7": 4191,
    "series": [
     0,
     0,
@@ -526,12 +526,12 @@
     0,
     0,
     0,
-    4119
+    4191
    ],
    "share_recent": 0.011,
    "share_trend": 0.011,
-   "slope": 26.5742,
-   "total": 4119
+   "slope": 27.0387,
+   "total": 4191
   },
   {
    "area": "specs",
@@ -659,7 +659,7 @@
   {
    "area": ".github",
    "quiet_days": 0,
-   "recent7": 3406,
+   "recent7": 3408,
    "series": [
     0,
     0,
@@ -690,12 +690,12 @@
     0,
     0,
     0,
-    3406
+    3408
    ],
    "share_recent": 0.009,
    "share_trend": 0.009,
-   "slope": 21.9742,
-   "total": 3406
+   "slope": 21.9871,
+   "total": 3408
   },
   {
    "area": "dashboard",
@@ -946,7 +946,7 @@
   {
    "area": "seed",
    "quiet_days": 0,
-   "recent7": 1450,
+   "recent7": 1501,
    "series": [
     0,
     0,
@@ -977,12 +977,12 @@
     0,
     0,
     0,
-    1450
+    1501
    ],
    "share_recent": 0.004,
    "share_trend": 0.004,
-   "slope": 9.3548,
-   "total": 1450
+   "slope": 9.6839,
+   "total": 1501
   },
   {
    "area": "seed/plugins",
@@ -1026,7 +1026,7 @@
    "total": 1419
   }
  ],
- "at": "2026-11-26T21:44:38Z",
+ "at": "2026-11-26T21:47:41Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1093,10 +1093,10 @@
    0,
    0,
    0,
-   61
+   -92
   ],
-  "closed": 1295,
-  "opened": 1356
+  "closed": 1449,
+  "opened": 1357
  },
  "loops": [
   {
@@ -1824,7 +1824,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 506,
+   "rows": 507,
    "series": [
     0,
     0,
@@ -1855,9 +1855,9 @@
     80,
     55,
     88,
-    166
+    167
    ],
-   "slope": 2.8592
+   "slope": 2.8656
   },
   {
    "loop": "ultrastability",
