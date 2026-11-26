@@ -322,6 +322,16 @@
     "directory_registration": {
       "keep": "state",
       "reason": "DISCOVER-1 / BOOT-4: one row (id 1), the directory's last answer to this system's registration"
+    },
+    "role_beats": {
+      "column": "at",
+      "keep_days": 30,
+      "reason": "ROLE-DUTIES-1: one row per role duty per hour; the idle probe reads the last day and the trend the last weeks"
+    },
+    "market_snapshots": {
+      "column": "seen_at",
+      "keep_days": 90,
+      "reason": "ROLE-DUTIES-1: one row per competitor source, rewritten each read; a source unread for 90 days was dropped from the market list"
     }
   }
 }

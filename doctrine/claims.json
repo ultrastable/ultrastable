@@ -4525,6 +4525,53 @@
       "of": "cited-5d0567ad32"
     },
     {
+      "id": "mirror-8b4324e096",
+      "surface": "seed/agents/roles/qa-engineer.md",
+      "text": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+      "probe": [
+        "grep:products/gaplint/gaplint/rules.py::GL003",
+        "grep:gaplint.json::agent_rules",
+        "grep:.github/workflows/checks.yml::python3 -m gaplint"
+      ],
+      "bound_by": "mirror",
+      "of": "curated-8540e7a089"
+    },
+    {
+      "id": "mirror-58c9a94a71",
+      "surface": "seed/agents/roles/qa-engineer.md",
+      "text": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+      "probe": [
+        "file:foundation/closedloop.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-09973d0254"
+    },
+    {
+      "id": "mirror-24c3f4468c",
+      "surface": "seed/agents/roles/qa-engineer.md",
+      "text": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+      "probe": [
+        "file:foundation/boundary.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-f46e34e2a9"
+    },
+    {
+      "id": "mirror-f12364bde8",
+      "surface": "seed/agents/roles/qa-engineer.md",
+      "text": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+      "probe": [
+        "file:foundation/lanewatch.py",
+        "file:foundation/crosswalk.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-5d0567ad32"
+    },
+    {
       "id": "mirror-d5b7a2ce91",
       "surface": "seed/agents/roles/research-publisher.md",
       "text": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
@@ -4585,6 +4632,100 @@
     {
       "id": "mirror-1bb239003f",
       "surface": "seed/agents/roles/reviewer.md",
+      "text": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+      "probe": [
+        "file:foundation/lanewatch.py",
+        "file:foundation/crosswalk.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-5d0567ad32"
+    },
+    {
+      "id": "mirror-bfe1c1968c",
+      "surface": "seed/agents/roles/security-engineer.md",
+      "text": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+      "probe": [
+        "grep:products/gaplint/gaplint/rules.py::GL003",
+        "grep:gaplint.json::agent_rules",
+        "grep:.github/workflows/checks.yml::python3 -m gaplint"
+      ],
+      "bound_by": "mirror",
+      "of": "curated-8540e7a089"
+    },
+    {
+      "id": "mirror-776c65e567",
+      "surface": "seed/agents/roles/security-engineer.md",
+      "text": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+      "probe": [
+        "file:foundation/closedloop.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-09973d0254"
+    },
+    {
+      "id": "mirror-1c85e7b449",
+      "surface": "seed/agents/roles/security-engineer.md",
+      "text": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+      "probe": [
+        "file:foundation/boundary.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-f46e34e2a9"
+    },
+    {
+      "id": "mirror-3cc38c5c7b",
+      "surface": "seed/agents/roles/security-engineer.md",
+      "text": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+      "probe": [
+        "file:foundation/lanewatch.py",
+        "file:foundation/crosswalk.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-5d0567ad32"
+    },
+    {
+      "id": "mirror-73942db732",
+      "surface": "seed/agents/roles/sre.md",
+      "text": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+      "probe": [
+        "grep:products/gaplint/gaplint/rules.py::GL003",
+        "grep:gaplint.json::agent_rules",
+        "grep:.github/workflows/checks.yml::python3 -m gaplint"
+      ],
+      "bound_by": "mirror",
+      "of": "curated-8540e7a089"
+    },
+    {
+      "id": "mirror-9b515b9ca1",
+      "surface": "seed/agents/roles/sre.md",
+      "text": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+      "probe": [
+        "file:foundation/closedloop.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-09973d0254"
+    },
+    {
+      "id": "mirror-7277a34fcd",
+      "surface": "seed/agents/roles/sre.md",
+      "text": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+      "probe": [
+        "file:foundation/boundary.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-f46e34e2a9"
+    },
+    {
+      "id": "mirror-eafd376384",
+      "surface": "seed/agents/roles/sre.md",
       "text": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
       "probe": [
         "file:foundation/lanewatch.py",

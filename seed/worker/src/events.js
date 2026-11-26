@@ -213,6 +213,14 @@ export const EVENT_TABLE = [
     "role": "project-manager"
   },
   {
+    "id": "wake-qa-engineer",
+    "event": "repository_dispatch",
+    "actions": [
+      "wake:qa-engineer"
+    ],
+    "role": "qa-engineer"
+  },
+  {
     "id": "wake-research-publisher",
     "event": "repository_dispatch",
     "actions": [
@@ -227,6 +235,22 @@ export const EVENT_TABLE = [
       "wake:reviewer"
     ],
     "role": "reviewer"
+  },
+  {
+    "id": "wake-security-engineer",
+    "event": "repository_dispatch",
+    "actions": [
+      "wake:security-engineer"
+    ],
+    "role": "security-engineer"
+  },
+  {
+    "id": "wake-sre",
+    "event": "repository_dispatch",
+    "actions": [
+      "wake:sre"
+    ],
+    "role": "sre"
   },
   {
     "id": "wake-staff",
