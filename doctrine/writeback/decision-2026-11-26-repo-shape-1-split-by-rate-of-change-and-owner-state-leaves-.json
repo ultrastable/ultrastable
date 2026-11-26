@@ -4,8 +4,8 @@
   "kind": "decision",
   "date": "2026-11-26",
   "title": "REPO-SHAPE-1: split by rate of change and owner; state leaves git",
-  "body": "Evidence: python3 -m foundation reposhape --report on main reads 4,548 tracked files, 482 in the kernel (seed/) and 1,489 in state (queue items, ledgers, packets), a state share of 0.3274 against a budget of 0.25; the last 52 commits on the shallow clone include 48 by the lane bot. Decision: every path has a class in doctrine/repo-shape.json; state moves to D1 items, the evidence branches and R2 under Q-SHAPE-state-out-of-git (one area per PR, archived before it leaves main, closing probe reposhape --probe state); a session PR is bounded by pr_budget (checks.yml) and an oversize branch is carried by reposhape --split as a stack of in-budget branches with the original kept. No work is deleted, and the full specification move stays with the DISCLOSE-1 session.",
-  "probe": "grep:foundation/reposhape.py::def pr_problems",
+  "body": "Evidence: python3 -m foundation reposhape --report on main reads 4,548 tracked files, 482 in the kernel (seed/) and 1,489 in state (queue items, ledgers, packets), a state share of 0.3274 against a budget of 0.25. Decision: every path has a class in doctrine/repo-shape.json; state moves to D1 items, the evidence branches and R2 under Q-SHAPE-state-out-of-git (one area per PR, archived before it leaves main, closing probe reposhape --probe state); the size of a change is gated once, by SMALL-CHANGE-1 (seed/scripts/prsize.py), and an oversize branch is carried by reposhape --split as a stack of in-budget branches sized from the same config, with the original kept. No work is deleted, and the full specification move stays with the DISCLOSE-1 session.",
+  "probe": "grep:foundation/reposhape.py::def apply_split",
   "session": "session_0156nqDr9ZUpSg4xzL3vBZus"
  },
  "kind": "decision",
