@@ -1,7 +1,7 @@
 {
- "at": "2026-11-26T07:14:42Z",
- "gaps": 6,
- "match_share": 0.989,
+ "at": "2026-11-26T07:09:55Z",
+ "gaps": 7,
+ "match_share": 0.987,
  "sources": {
   "changes": [
    {
@@ -156,7 +156,7 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 429
+    "total": 427
    }
   ],
   "loops": [
@@ -195,7 +195,7 @@
     "missing": [],
     "ok": true,
     "unmeasured": [
-     "python3 -m foundation lanewatch --check: lanewatch: gh failed: OST /repos/{owner}/{repo}/pulls/{n}/ccr/comments/{comment_id}/resolve (or /unresolve), PUT or DELETE /repos/{owner}/{repo}/pulls/{n}/ccr/auto_merge, POST /repos/{owner}/{repo}/pu"
+     "python3 -m foundation lanewatch --check:     GH_TOKEN: ${{ github.token }}"
     ]
    },
    {
@@ -849,15 +849,6 @@
     "checks": 1,
     "external": [],
     "failing": [],
-    "id": "CLEANROOM-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
     "id": "DOC-CONSUMED-1",
     "missing": [],
     "ok": true,
@@ -997,7 +988,7 @@
     "missing": [],
     "ok": true,
     "unmeasured": [
-     "python3 -m foundation lanewatch --check: lanewatch: gh failed: OST /repos/{owner}/{repo}/pulls/{n}/ccr/comments/{comment_id}/resolve (or /unresolve), PUT or DELETE /repos/{owner}/{repo}/pulls/{n}/ccr/auto_merge, POST /repos/{owner}/{repo}/pu"
+     "python3 -m foundation lanewatch --check:     GH_TOKEN: ${{ github.token }}"
     ]
    },
    {
@@ -1039,10 +1030,12 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation dispose --check: an open item is 89.6 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+    ],
     "id": "DISPOSE-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -1111,20 +1104,20 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 429
+   "total": 427
   },
   "loops": {
    "gaps": 1,
    "total": 1
   },
   "rules": {
-   "gaps": 3,
-   "total": 100
+   "gaps": 4,
+   "total": 99
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 548
+ "total": 545
 }
