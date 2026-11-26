@@ -4,10 +4,9 @@ export default {
  "areas": [
   {
    "area": "doctrine",
-   "quiet_days": 0,
-   "recent7": 61721,
+   "quiet_days": 1,
+   "recent7": 61295,
    "series": [
-    0,
     0,
     0,
     0,
@@ -36,18 +35,18 @@ export default {
     19152,
     83,
     2,
-    17140
+    17148,
+    0
    ],
-   "share_recent": 0.252,
-   "share_trend": 0.242,
-   "total": 127205
+   "share_recent": 0.251,
+   "share_trend": 0.222,
+   "total": 127213
   },
   {
    "area": "workers",
-   "quiet_days": 0,
-   "recent7": 3550,
+   "quiet_days": 1,
+   "recent7": 3225,
    "series": [
-    0,
     0,
     0,
     0,
@@ -76,18 +75,18 @@ export default {
     237,
     0,
     0,
-    840
+    894,
+    0
    ],
-   "share_recent": 0.014,
-   "share_trend": 0.142,
-   "total": 74364
+   "share_recent": 0.013,
+   "share_trend": 0.147,
+   "total": 74418
   },
   {
    "area": "site",
-   "quiet_days": 0,
-   "recent7": 57526,
+   "quiet_days": 1,
+   "recent7": 58130,
    "series": [
-    0,
     0,
     0,
     0,
@@ -116,18 +115,18 @@ export default {
     5013,
     2446,
     1383,
-    29655
+    30834,
+    0
    ],
-   "share_recent": 0.235,
-   "share_trend": 0.126,
-   "total": 71785
+   "share_recent": 0.238,
+   "share_trend": 0.134,
+   "total": 72964
   },
   {
    "area": "foundation",
-   "quiet_days": 0,
-   "recent7": 21340,
+   "quiet_days": 1,
+   "recent7": 20861,
    "series": [
-    0,
     0,
     0,
     0,
@@ -156,18 +155,18 @@ export default {
     963,
     78,
     0,
-    8593
+    8601,
+    0
    ],
-   "share_recent": 0.087,
-   "share_trend": 0.072,
-   "total": 43475
+   "share_recent": 0.086,
+   "share_trend": 0.056,
+   "total": 43483
   },
   {
    "area": "instances",
-   "quiet_days": 0,
-   "recent7": 17836,
+   "quiet_days": 1,
+   "recent7": 17795,
    "series": [
-    0,
     0,
     0,
     0,
@@ -196,18 +195,18 @@ export default {
     4415,
     0,
     0,
-    11406
+    11406,
+    0
    ],
    "share_recent": 0.073,
-   "share_trend": 0.066,
+   "share_trend": 0.048,
    "total": 34945
   },
   {
    "area": "ip",
-   "quiet_days": 4,
+   "quiet_days": 5,
    "recent7": 14290,
    "series": [
-    0,
     0,
     0,
     0,
@@ -236,18 +235,18 @@ export default {
     0,
     0,
     0,
+    0,
     0
    ],
-   "share_recent": 0.058,
-   "share_trend": -0.158,
+   "share_recent": 0.059,
+   "share_trend": -0.126,
    "total": 31241
   },
   {
    "area": "seed/worker",
-   "quiet_days": 0,
-   "recent7": 8321,
+   "quiet_days": 1,
+   "recent7": 8314,
    "series": [
-    0,
     0,
     0,
     0,
@@ -276,15 +275,16 @@ export default {
     846,
     27,
     0,
-    3778
+    3778,
+    0
    ],
    "share_recent": 0.034,
-   "share_trend": 0.038,
+   "share_trend": 0.03,
    "total": 20626
   },
   {
    "area": "doctrine/schemas",
-   "quiet_days": 0,
+   "quiet_days": 1,
    "recent7": 18135,
    "series": [
     0,
@@ -315,70 +315,70 @@ export default {
     0,
     0,
     0,
-    0,
-    18135
+    18135,
+    0
    ],
    "share_recent": 0.074,
-   "share_trend": 0.035,
+   "share_trend": 0.036,
    "total": 18135
   }
  ],
- "at": "2026-11-25T23:56:14Z",
+ "at": "2026-11-26T00:10:31Z",
  "days": 30,
  "findings": [
   {
-   "evidence": "share 0% then 24%",
+   "evidence": "share 2% then 25%",
    "id": "doctrine",
    "kind": "drift",
-   "why": "doctrine's share of attention moved 24 points between the first and second half of the window"
+   "why": "doctrine's share of attention moved 22 points between the first and second half of the window"
   },
   {
-   "evidence": "share 19% then 3%",
-   "id": "ip",
-   "kind": "drift",
-   "why": "ip's share of attention moved -16 points between the first and second half of the window"
+   "evidence": "quiet_days 7; system change in the last 7 days 243786",
+   "id": "specs",
+   "kind": "neglected",
+   "why": "specs had 4267 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "share 16% then 0%",
-   "id": "platform",
-   "kind": "drift",
-   "why": "platform's share of attention moved -16 points between the first and second half of the window"
+   "evidence": "quiet_days 7; system change in the last 7 days 243786",
+   "id": "GLOSSARY.md",
+   "kind": "neglected",
+   "why": "GLOSSARY.md had 961 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 245164",
+   "evidence": "quiet_days 8; system change in the last 7 days 243786",
    "id": "docs/ops",
    "kind": "neglected",
-   "why": "docs/ops had 396 lines of change, then nothing for 7 days while the rest of the system moved"
+   "why": "docs/ops had 396 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 9; system change in the last 7 days 245164",
+   "evidence": "quiet_days 10; system change in the last 7 days 243786",
    "id": "docs/architecture",
    "kind": "neglected",
-   "why": "docs/architecture had 192 lines of change, then nothing for 9 days while the rest of the system moved"
+   "why": "docs/architecture had 192 lines of change, then nothing for 10 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 245164",
+   "evidence": "quiet_days 9; system change in the last 7 days 243786",
    "id": "seed/self",
    "kind": "neglected",
-   "why": "seed/self had 151 lines of change, then nothing for 8 days while the rest of the system moved"
+   "why": "seed/self had 151 lines of change, then nothing for 9 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 10; system change in the last 7 days 245164",
+   "evidence": "quiet_days 11; system change in the last 7 days 243786",
    "id": "seed/outreach",
    "kind": "neglected",
-   "why": "seed/outreach had 139 lines of change, then nothing for 10 days while the rest of the system moved"
+   "why": "seed/outreach had 139 lines of change, then nothing for 11 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 12; system change in the last 7 days 245164",
+   "evidence": "quiet_days 13; system change in the last 7 days 243786",
    "id": "docs/runbooks",
    "kind": "neglected",
-   "why": "docs/runbooks had 134 lines of change, then nothing for 12 days while the rest of the system moved"
+   "why": "docs/runbooks had 134 lines of change, then nothing for 13 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 245164",
+   "evidence": "quiet_days 8; system change in the last 7 days 243786",
    "id": "HANDOFF.md",
    "kind": "neglected",
-   "why": "HANDOFF.md had 51 lines of change, then nothing for 7 days while the rest of the system moved"
+   "why": "HANDOFF.md had 51 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
    "evidence": "days with changes: 15",
@@ -399,10 +399,9 @@ export default {
    "why": "seed/worker/src/index.js was rewritten on 15 of 30 days"
   }
  ],
- "history_days": 16,
+ "history_days": 17,
  "issues": {
   "backlog_series": [
-   0,
    0,
    0,
    0,
@@ -431,18 +430,18 @@ export default {
    -416,
    -907,
    -1222,
-   -1643
+   -1649,
+   -1649
   ],
-  "closed": 2872,
+  "closed": 2878,
   "opened": 1229
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 14935,
+   "rows": 15011,
    "series": [
-    0,
     0,
     0,
     0,
@@ -471,15 +470,15 @@ export default {
     5004,
     3322,
     2312,
-    2497
+    2535,
+    38
    ]
   },
   {
    "loop": "deploys",
-   "quiet_days": 0,
-   "rows": 1116,
+   "quiet_days": 1,
+   "rows": 1126,
    "series": [
-    0,
     0,
     0,
     0,
@@ -508,15 +507,15 @@ export default {
     50,
     14,
     0,
-    202
+    212,
+    0
    ]
   },
   {
    "loop": "contracts",
-   "quiet_days": 0,
+   "quiet_days": 1,
    "rows": 1071,
    "series": [
-    0,
     0,
     0,
     0,
@@ -545,15 +544,15 @@ export default {
     0,
     0,
     0,
-    704
+    704,
+    0
    ]
   },
   {
    "loop": "improvements",
-   "quiet_days": 0,
-   "rows": 935,
+   "quiet_days": 1,
+   "rows": 940,
    "series": [
-    0,
     0,
     0,
     0,
@@ -582,15 +581,15 @@ export default {
     25,
     5,
     0,
-    60
+    65,
+    0
    ]
   },
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 382,
+   "rows": 384,
    "series": [
-    0,
     0,
     0,
     0,
@@ -619,15 +618,15 @@ export default {
     122,
     80,
     55,
-    61
+    62,
+    1
    ]
   },
   {
    "loop": "trajectory",
-   "quiet_days": 0,
-   "rows": 337,
+   "quiet_days": 1,
+   "rows": 340,
    "series": [
-    0,
     0,
     0,
     0,
@@ -656,15 +655,15 @@ export default {
     112,
     80,
     55,
-    85
+    88,
+    0
    ]
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 317,
+   "rows": 319,
    "series": [
-    0,
     0,
     0,
     0,
@@ -693,15 +692,15 @@ export default {
     112,
     80,
     55,
-    61
+    62,
+    1
    ]
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 316,
+   "rows": 318,
    "series": [
-    0,
     0,
     0,
     0,
@@ -730,35 +729,36 @@ export default {
     112,
     80,
     55,
-    61
+    62,
+    1
    ]
   }
  ],
  "measured": true,
  "observed": {
   "ci_unavailable": {
-   "days": 16,
+   "days": 17,
    "events": 106,
-   "rate_year": 2418.1,
-   "recent_year": 2409.0,
-   "trend": -0.01
+   "rate_year": 2275.9,
+   "recent_year": 657.0,
+   "trend": -0.78
   },
   "conflict_merges": {
-   "days": 16,
+   "days": 17,
    "events": 7,
-   "rate_year": 159.7,
-   "recent_year": 146.0,
-   "trend": -0.12
+   "rate_year": 150.3,
+   "recent_year": 0.0,
+   "trend": -0.9
   },
   "deploy_not_live": {
-   "days": 16,
+   "days": 17,
    "events": 1,
-   "rate_year": 22.8,
-   "recent_year": 73.0,
-   "trend": 4.0
+   "rate_year": 21.5,
+   "recent_year": 0.0,
+   "trend": -0.9
   },
   "reverts": {
-   "days": 16,
+   "days": 17,
    "events": 0,
    "rate_year": 0.0,
    "recent_year": 0.0,
