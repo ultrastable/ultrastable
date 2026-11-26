@@ -5,7 +5,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { makeDb } from '../_shared/testdb.js';
+import { createHash } from 'node:crypto';
 import { createDeploy, dbLock } from './index.js';
+import { step as opsStep } from './agent.js';
+import * as Trust from '../trust/index.js';
+import * as Predict from '../predict/index.js';
 
 const MIG = fileURLToPath(new URL('./migrations/', import.meta.url));
 const SECRET = 'tok-very-secret-value';
@@ -269,4 +273,145 @@ test('US-05-R09: a probe marked revert:false (shared resource under load) is rec
   const rev = await d.deploy({ unit: 'api', artifact: art('v3'), expectedVersion: 'v2', actor: 'ops' });
   assert.equal(rev.status, 'reverted');
   assert.equal(deployer.live, 'v2');
+});
+
+// ---- US-06-R21, US-05-R13: the deploy path asks the authorizer and the confidence gate before it acts ----
+const POLICY = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
+function governed({ required_rung = 'assisted', threshold, limits, authorizeOverride } = {}) {
+  const db = makeDb([MIG, fileURLToPath(Trust.MIGRATIONS_DIR), fileURLToPath(Predict.MIGRATIONS_DIR)]);
+  const deployer = fakeDeployer();
+  const web = { healthy: true, version: 'v2' };
+  let t = Date.parse('2026-11-11T00:00:00Z');
+  const now = () => t, sleep = async (ms) => { t += ms; };
+  const authorize = authorizeOverride || Trust.deployAuthorizer({ db, policy: POLICY, required_rung, now, limits });
+  const confidence = threshold === undefined ? undefined : Predict.confidenceGate({ db, decision_type: 'merge', threshold });
+  const d = createDeploy({ db, deployer, fetch: fakeFetch(web), now, sleep, env: { DEPLOY_TOKEN: SECRET }, config: { windowMs: 6000, intervalMs: 2000 },
+    probes: { api: [{ kind: 'http', url: 'https://svc.example/health', contains: ['"ok":true'], version: true }] }, authorize, confidence });
+  return { db, deployer, web, d, now };
+}
+const ask = (d, over = {}) => d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1', actor: 'agent-a', ...over });
+
+test('US-06-R21: a deploy is refused with the reason and a ledger row when the rung is below the one required, and published when it is at or above', async () => {
+  const low = governed({ required_rung: 'delegated' });
+  const r = await ask(low.d);
+  assert.deepEqual([r.status, r.reason], ['refused', 'unauthorized: effective rung assisted is below delegated']);
+  assert.deepEqual(low.deployer.calls, [], 'nothing is published');
+  assert.deepEqual((await low.d.ledger('api')).map(x => [x.status, x.reason]), [['refused', 'unauthorized: effective rung assisted is below delegated']]);
+  low.db.raw.prepare(`INSERT INTO trust_ledger (surface, action_class, rung, reliability, outcomes) VALUES ('runtime','deploy_production','delegated',0.9,12)`).run();
+  assert.equal((await ask(low.d)).status, 'kept');
+  assert.deepEqual(low.deployer.calls, ['publish']);
+  const ok = governed(); // the policy starts runtime at assisted, which is what the default asks for
+  assert.equal((await ask(ok.d)).status, 'kept');
+});
+
+test('US-06-R21: an authorizer that throws or answers anything but allowed refuses: unknown is not allowed', async () => {
+  const boom = governed({ authorizeOverride: async () => { throw new Error('policy store down'); } });
+  assert.equal((await ask(boom.d)).reason, 'unauthorized: the authorizer failed: policy store down');
+  const none = governed({ authorizeOverride: async () => undefined });
+  assert.equal((await ask(none.d)).reason, 'unauthorized: not allowed');
+  const truthy = governed({ authorizeOverride: async () => ({ allowed: 'yes' }) });
+  assert.equal((await ask(truthy.d)).status, 'refused', 'only the boolean true allows');
+  for (const g of [boom, none, truthy]) assert.deepEqual(g.deployer.calls, []);
+});
+
+test('US-06-R21, US-06-R08: an irreversible, identity-bound class yields a gate card and publishes nothing', async () => {
+  const g = governed();
+  const r = await ask(g.d, { action_class: 'delete_database_or_bucket' });
+  assert.equal(r.status, 'refused'); assert.match(r.reason, /^unauthorized: interrupt_gate|^unauthorized: irreversible and identity-bound/);
+  assert.match(r.gate_card, /^GATE-runtime-delete_database_or_bucket-api$/);
+  assert.equal((await rows(g.db, `SELECT status FROM gate_cards WHERE id='${r.gate_card}'`))[0].status, 'open');
+  assert.deepEqual(g.deployer.calls, []);
+});
+
+test('US-06-R13, US-06-R21: a standing-limit refusal is recorded and the same deploy is not resubmitted', async () => {
+  const g = governed({ limits: { harness: { refused: true, reason: 'the permission check refused this change' } } });
+  const first = await ask(g.d);
+  assert.deepEqual([first.status, first.reason, first.next], ['refused', 'unauthorized: the permission check refused this change', 'correct_condition_and_retry_once']);
+  const again = await ask(g.d);
+  assert.equal(again.next, 'take_next_path', 'the same action under the same condition is told to take the next path');
+  assert.deepEqual(g.deployer.calls, []);
+  const rec = await rows(g.db, `SELECT check_name, attempts FROM trust_refusals`);
+  assert.deepEqual(rec.map(x => [x.check_name, x.attempts]), [['harness', 2]]);
+});
+
+test('US-05-R13, US-06-R21: a stated confidence that clears the threshold uncorrected but not after the stored correction refuses the deploy', async () => {
+  const g = governed({ threshold: 0.8 });
+  const st = g.db.raw.prepare(`INSERT INTO predict_predictions (id, form, subject, op, value, due_at, confidence, decision_type, matched) VALUES (?, 'metric','m','>=',1,'2026-11-11 00:00:00',0.85,'merge',?)`);
+  for (let i = 0; i < 40; i++) st.run(`c-${i}`, i < 28 ? 1 : 0);
+  await Predict.calibrate(g.db, { now: Date.parse('2026-11-11T00:00:00Z') });
+  const r = await ask(g.d, { confidence: 0.85 });
+  assert.equal(r.status, 'refused'); assert.match(r.reason, /^confidence_below_gate: stated 0\.85, corrected 0\.7/);
+  assert.deepEqual(g.deployer.calls, []);
+  assert.equal((await ask(g.d, { confidence: 0.95, expectedVersion: 'v1' })).status, 'kept', 'a confidence that survives the correction deploys');
+  const none = await ask(governed({ threshold: 0.8 }).d); // no stated confidence at all
+  assert.match(none.reason, /^confidence_below_gate: stated null/);
+});
+
+test('US-06-R21: the ops agent passes the item\'s surface and action class to the deploy path, so an unauthorized item stays open with the reason as its blocker', async () => {
+  const g = governed();
+  g.db.raw.prepare(`INSERT INTO items (id, title, owner_role, done_check, status, surface, action_class) VALUES ('I1','drop','operations','deploy-unit: api; version: v2','ready','runtime','delete_database_or_bucket')`).run();
+  const out = await opsStep({ db: g.db, deploy: g.d, liveVersion: async () => 'v1', sources: [{ name: 's', fetch: async () => art('v2') }] });
+  assert.deepEqual([out[0].item, out[0].status], ['I1', 'refused']);
+  const it = (await rows(g.db, `SELECT status, blocker FROM items WHERE id='I1'`))[0];
+  assert.equal(it.status, 'ready'); assert.match(it.blocker, /^refused: unauthorized: /);
+});
+
+// ---- US-07-R13: the published artifact is compared with what the platform serves ----
+const sha = (b) => createHash('sha256').update(b).digest('hex');
+function withDigest(live, over = {}) {
+  const deployer = fakeDeployer();
+  if (live !== undefined) deployer.liveDigest = typeof live === 'function' ? live : async () => live;
+  return { ...setup({ deployer, ...over }), deployer };
+}
+const digestRow = async (db) => (await rows(db, `SELECT state, detail FROM deploy_digest_checks`))[0];
+
+test('US-07-R13: a live digest that equals the published digest keeps the deploy and is recorded as a match', async () => {
+  const body = 'code-v2';
+  const { d, db } = withDigest(sha(body));
+  const r = await d.deploy({ unit: 'api', artifact: art('v2', body), expectedVersion: 'v1' });
+  assert.equal(r.status, 'kept');
+  assert.equal((await digestRow(db)).state, 'match');
+  assert.equal((await rows(db, `SELECT ok FROM deploy_probe_results WHERE probe='artifact:digest' AND phase='after'`))[0].ok, 1);
+});
+
+test('US-07-R13: a live digest that differs from the published digest reverts the deploy and records artifact:digest failed', async () => {
+  const { d, db, deployer } = withDigest('0'.repeat(64));
+  const r = await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' });
+  assert.equal(r.status, 'reverted'); assert.match(r.reason, /probe_failed: artifact:digest/);
+  assert.deepEqual(deployer.calls, ['publish', 'rollback']); assert.equal(deployer.live, 'v1');
+  assert.equal((await digestRow(db)).state, 'mismatch');
+  assert.equal((await rows(db, `SELECT ok FROM deploy_probe_results WHERE probe='artifact:digest' AND phase='after'`))[0].ok, 0);
+  assert.match(r.item, /^DEPLOYFAIL-api-/);
+});
+
+test('US-07-R13: a deployer with no liveDigest keeps working and records the comparison as skipped, never as a match', async () => {
+  const { d, db } = withDigest(undefined);
+  assert.equal((await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' })).status, 'kept');
+  const row = await digestRow(db);
+  assert.equal(row.state, 'skipped'); assert.match(row.detail, /no liveDigest/);
+  assert.equal((await rows(db, `SELECT COUNT(*) AS n FROM deploy_probe_results WHERE probe='artifact:digest'`))[0].n, 0);
+  // an artifact that carries neither a digest nor a body has nothing to compare: no row at all
+  const bare = withDigest('x'.repeat(64));
+  assert.equal((await bare.d.deploy({ unit: 'api', artifact: { version: 'v2' }, expectedVersion: 'v1' })).status, 'kept');
+  assert.equal((await rows(bare.db, `SELECT COUNT(*) AS n FROM deploy_digest_checks`))[0].n, 0);
+});
+
+test('US-07-R13: a per-file digest map is compared file by file (the platform deploy script\'s rule); a different shape is skipped, an unreadable digest is retried inside the window', async () => {
+  const files = { 'index.js': sha('a'), 'util.js': sha('b') };
+  const good = withDigest({ ...files });
+  assert.equal((await good.d.deploy({ unit: 'api', artifact: { version: 'v2', files }, expectedVersion: 'v1' })).status, 'kept');
+  assert.match((await digestRow(good.db)).detail, /2 file digest\(s\) equal/);
+  const bad = withDigest({ 'index.js': sha('a'), 'util.js': sha('changed') });
+  const r = await bad.d.deploy({ unit: 'api', artifact: { version: 'v2', files }, expectedVersion: 'v1' });
+  assert.equal(r.status, 'reverted'); assert.match((await digestRow(bad.db)).detail, /file digest differs: util\.js/);
+  const shape = withDigest(files);
+  assert.equal((await shape.d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' })).status, 'kept');
+  assert.equal((await digestRow(shape.db)).state, 'skipped');
+  let n = 0; // the platform serves the old script for the first two reads, then the new one
+  const lag = withDigest(async () => (++n >= 3 ? sha('code-v2') : sha('code-v1')));
+  assert.equal((await lag.d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' })).status, 'kept');
+  assert.equal((await digestRow(lag.db)).state, 'match');
+  const gone = withDigest(async () => { throw new Error('platform 503'); });
+  const g = await gone.d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' });
+  assert.equal(g.status, 'reverted'); assert.match((await digestRow(gone.db)).detail, /error: platform 503/);
 });
