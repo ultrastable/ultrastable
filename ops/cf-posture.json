@@ -1,5 +1,5 @@
 {
- "at": "2026-11-24T17:40:19Z",
+ "at": "2026-11-26T16:51:45Z",
  "account_id": "81e3a4efb4eb66e613529b87682911bb",
  "rules": [
   {
@@ -12,7 +12,6 @@
     "ultrastable-did-it-work",
     "ultrastable-mail-in",
     "ultrastable-mail-relay",
-    "ultrastable-spinoffs",
     "ultrastable-uptime"
    ]
   },
