@@ -6241,6 +6241,24 @@
    "body": "The conformance manifest and tests, the DISCLOSE-1 and KERNEL-1 decisions and the kernel split design. REPO-SHAPE-1 (#2444) was built on main meanwhile, so its version prevails and three drafted items are superseded with evidence in docs/handoff/kernel-split.md; Q-KERNEL-modules remains.",
    "probe": "file:workers/core/conformance/manifest.json",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-glm-empty-replies-kept-failing-after-the-textof-fix-the-log-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "glm empty replies kept failing after the textOf fix; the log now says why",
+   "body": "2026-11-26 after PR 2449: orchestrator runs no longer die on the neuron cap, but 10 of 19 glm-4.7-flash calls still read 'empty reply'. textOf now also reads choices[0].message.reasoning_content (the JSON gate rejects junk), and the empty-reply reason names the response keys, finish_reason and message fields so the cause is read from airouter_calls. Next failure seen: orchestrator step 'FIND text is not in the file'.",
+   "probe": "file:seed/worker/test/loopship.test.js",
+   "session": "session_0156nqDvhFqKM9k59M8vrcqM"
+  },
+  {
+   "id": "lesson-2026-11-26-the-specification-tools-run-without-the-private-specificatio",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "The specification tools run without the private specification (DISCLOSE-1)",
+   "body": "The conformance CLI --write overwrote the committed manifest with an empty one when given an empty specification directory. It now refuses, spec_truth, req_ids and spec_backlog report unmeasured on no text, and disclosure --tooling runs each against an empty directory and fails on a crash, a false pass or a rewritten manifest.",
+   "probe": "file:tests/foundation/test_spec_optional.py",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
