@@ -267,7 +267,12 @@
   {
    "id": "US-03-T04",
    "spec": "US-SPEC-03",
-   "tests": []
+   "tests": [
+    {
+     "file": "adapters/cloudflare/src/worker.test.js",
+     "name": "US-03-R06 and US-03-T04: /health is 503 after a tick whose step failed and 200 after a clean tick"
+    }
+   ]
   },
   {
    "id": "US-03-T05",
@@ -2457,6 +2462,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "adapters/cloudflare/src/worker.test.js",
+     "name": "US-03-R01: scheduled() and the alarm both end in runTick over env.DB: the tick_runs row counts the L1 steps plus the composed ones"
+    },
+    {
      "file": "core/test/tick.test.js",
      "name": "US-03-R01: one function runs the tick over any store handle: the node:sqlite test shim and the SQLite adapter produce the same tick_runs row"
     }
@@ -2548,9 +2557,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "adapters/cloudflare/src/worker.test.js",
+     "name": "US-03-R06 and US-03-T04: /health is 503 after a tick whose step failed and 200 after a clean tick"
+    }
+   ]
   },
   {
    "id": "US-03-R07",
@@ -2725,9 +2739,18 @@
    "level": "L3",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "adapters/cloudflare/src/worker.test.js",
+     "name": "US-03-R16: two scheduled() firings in one slot write one tick_runs row and the second ends without acting"
+    },
+    {
+     "file": "adapters/cloudflare/src/worker.test.js",
+     "name": "US-03-R16: a cron firing and a Heartbeat alarm in the same slot run one tick; the next slot runs normally"
+    }
+   ]
   },
   {
    "id": "US-03-R17",
