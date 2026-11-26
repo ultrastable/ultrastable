@@ -186,6 +186,25 @@
     "field": "week_balance"
    },
    "why": "FLOW-BALANCE-1: the only outcome that shows the corrective plan worked is that closures caught up with net inflow without closing anything to move the number."
+  },
+  {
+   "id": "orchestrator-plan",
+   "name": "Orchestrator: how a failed item is split into steps",
+   "store": "d1",
+   "files": [
+    "seed/worker/src/orchestrate.js",
+    "seed/worker/src/decisions.js"
+   ],
+   "metric": "run_integrated",
+   "metric_says": "1 when the planned run opened its pull request, 0 when it ended failed",
+   "op": ">=",
+   "target": 1,
+   "window_h": 6,
+   "predict": "the share of earlier planned runs that opened a pull request (0.5 until 4 runs are settled)",
+   "measure": {
+    "kind": "d1_settled"
+   },
+   "why": "ORCHESTRATE-1: a plan is only as good as the run it produces; scoring each accepted plan by whether its steps, review and fix rounds reached one pull request shows whether planning is working on the models the system can afford."
   }
  ],
  "discover": {
@@ -209,7 +228,7 @@
  },
  "gap_item": "Q-DECISION-COVERAGE-1",
  "not_decisions": {
-    "foundation/semrel.py": "plan and classify map Conventional Commit types to a SemVer bump by a fixed table, with no alternatives to weigh",
+  "foundation/semrel.py": "plan and classify map Conventional Commit types to a SemVer bump by a fixed table, with no alternatives to weigh",
   "foundation/agents.py": "route_authors maps author names to roles from environment variables, a fixed lookup with no alternatives to weigh",
   "foundation/repostd.py": "classify and desired compute a fixed standard: a branch's class from its pull requests and a repository's settings from one default block; nothing is weighed or chosen",
   "foundation/boundary.py": "decide looks a surface and action up in the boundary policy ledger, a deterministic rule with one allowed answer",

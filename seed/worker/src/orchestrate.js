@@ -15,6 +15,7 @@
 import { runCodeAgent, applyEdit, ADAPTERS, BLOCK_FORMAT } from './codeagent.js';
 import { guard, shrinkGuard, stubGuard, substanceGuard, github, openPr, slugOf, deployFor, pathsIn, PROTECTED } from './nativeexec.js';
 import { tenantOf } from './tenant.js';
+import { recordPlan, settlePlan, safely } from './decisions.js';
 
 export const MAX_STEPS = 6, PARALLEL = 3, MAX_ATTEMPTS = 2, MAX_ROUNDS = 2, MAX_RUNS_PER_ITEM = 2, STEP_FILES = 3, RUN_FILES = 12, STALE_MS = 6 * 3600000;
 export const TRIGGER = 'needs-code: worker-native attempt failed';
@@ -111,6 +112,7 @@ async function touch(db, r, now, fields) {
 async function fail(db, r, now, why) {
   why = String(why).slice(0, 300);
   await touch(db, r, now, { phase: 'failed', detail: why });
+  await safely(() => settlePlan(db, { run: r.id, ok: false, now }));
   await run(db, "UPDATE items SET blocker = ?, updated_at = datetime('now') WHERE id = ? AND blocker LIKE 'in-orch:%'", `needs-code: orchestrated run ${r.id} failed (${why})`.slice(0, 400), r.item);
   return { ok: false, detail: `${r.item}: orchestrated run failed (${why})` };
 }
@@ -134,6 +136,7 @@ async function start(env, db, now) {
   return first(db, 'SELECT * FROM orch_runs WHERE id = ?', id);
 }
 
+// DECISION-METRIC: orchestrator-plan (the accepted plan is logged with the share of earlier runs that reached a PR as its prediction, and settled when this run ends; src/decisions.js)
 async function plan(env, db, gh, r, now, agent) {
   const main = await gh.call('GET', `/repos/${gh.repo}/git/ref/heads/main`);
   const tree = main.ok ? await gh.call('GET', `/repos/${gh.repo}/git/trees/${main.json.object.sha}?recursive=1`) : main;
@@ -144,6 +147,7 @@ async function plan(env, db, gh, r, now, agent) {
   catch (e) { return retry(db, r, now, String(e && e.message)); }
   for (const s of p) await run(db, 'INSERT OR REPLACE INTO orch_steps (run, n, title, instructions, paths, after) VALUES (?,?,?,?,?,?)', r.id, s.n, s.title, s.instructions, JSON.stringify(s.paths), JSON.stringify(s.after));
   await touch(db, r, now, { phase: 'implement', attempts: 0, detail: `planned ${p.length} steps` });
+  await safely(() => recordPlan(db, { run: r.id, steps: p.length, now }));
   return { ok: true, detail: `${r.item}: planned ${p.length} steps (${p.filter(s => !s.after.length).length} independent)` };
 }
 
@@ -236,6 +240,7 @@ async function integrate(db, gh, r, now) {
     change: { files, summary: `${ss.length} planned steps: ${ss.map(s => s.title).join('; ')}`.slice(0, 300), adapter: `worker-orchestrator (${authors})` } });
   if (!pr.ok) return retry(db, r, now, pr.detail);
   await touch(db, r, now, { phase: 'done', pr_url: pr.url, detail: pr.detail });
+  await safely(() => settlePlan(db, { run: r.id, ok: true, now }));
   await run(db, "UPDATE items SET blocker = ?, updated_at = datetime('now') WHERE id = ?", `in-pr: ${pr.url} | agent: worker-orchestrator | model: ${authors}`.slice(0, 400), r.item);
   return { ok: true, detail: `${pr.detail} (${ss.length} steps, ${r.round} fix round(s))`, pr: pr.url };
 }

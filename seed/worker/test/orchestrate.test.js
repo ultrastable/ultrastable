@@ -103,6 +103,15 @@ test('a failed single-shot item is planned, worked in parallel, reviewed and ope
   assert.equal(run.phase, 'done'); assert.match(run.review, /passed/);
   assert.equal((await advance(env, { fetchImpl: gh.f, agent: t.agent, now: T0 + 9e6 })).idle, true);
 });
+test('each accepted plan is a logged decision, settled 1 when the run opens its PR and 0 when it fails', async () => {
+  const good = setup(), gh = fakeGh();
+  await drive(good.env, { fetchImpl: gh.f, agent: team().agent });
+  const row = good.db.raw.prepare("SELECT predicted, measured, hit, settled_at FROM decision_log WHERE point='orchestrator-plan'").get();
+  assert.equal(row.predicted, 0.5); assert.equal(row.measured, 1); assert.equal(row.hit, 1); assert.ok(row.settled_at);
+  const bad = setup();
+  await drive(bad.env, { fetchImpl: fakeGh().f, agent: team({ answers: { ...ANSWERS, 1: { files: [{ path: 'seed/worker/src/sum.js', content: 'x\n' }] } } }).agent });
+  assert.equal(bad.db.raw.prepare("SELECT measured FROM decision_log WHERE point='orchestrator-plan'").get().measured, 0);
+});
 test('while a run holds an item the single-shot lane leaves it alone', async () => {
   const { db, env } = setup(), gh = fakeGh(), t = team();
   await advance(env, { fetchImpl: gh.f, agent: t.agent, now: T0 });
