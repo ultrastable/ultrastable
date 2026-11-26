@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """US-SPEC-01: a backup counts only after it restores (US-01-R19), provenance rows settle and the public view is redacted (US-01-R20), a person's
 data leaves as open-standard JSON with no secret and comes back idempotently (US-01-R21).
 
