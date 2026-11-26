@@ -6435,6 +6435,15 @@
    "body": "feat: the workers tools, gaplint and loop closer (W09). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
    "probe": "file:workers/tools/fleet_graph.mjs",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-wi-of-the-specification-run-s-code-and-tests-shipped-o",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice WI of the specification run's code and tests shipped on its own",
+   "body": "feat: the steward, principles enforcement and GitHub pull helpers (WI). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/adapters/github/pulls.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
