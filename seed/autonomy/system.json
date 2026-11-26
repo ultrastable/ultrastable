@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/doctrine.schema.json",
   "$schema_version": "0.1.0",
   "doc": "SYSTEM-SPEC-1 (Rowan, 2026-11-25: \"something's missing in the core ultra-stable template that's not saying, hey, this is what an ultra-stable system is. This is how ultra-stable runs. This is how ultra-stable bootstraps. This is how ultra-stable becomes autonomous and achieves criticality.\"). The definition of an Ultrastable system, as data. scripts/system.py renders SYSTEM.md from it and from the code of record (bootstrap stages from bootstrap/bootstrap.py, tick steps from worker/src/tick.js, ignition stages from worker/src/ignition.js, the criticality formula from autonomy/criticality.json, standing rules from agents/AGENTS.md), and `scripts/system.py --check` fails when SYSTEM.md is stale, a clause's probe fails in this kit, or a standing rule has no enforcement here that is not on the shrink-only not_in_kit list. Every probe is a path inside this kit: grep:<path>::<regex> or file:<path>.",
   "sections": [

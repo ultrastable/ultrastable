@@ -886,6 +886,36 @@
           "file": "foundation/managers.py"
         }
       ]
+    },
+    {
+      "id": "open-standards",
+      "rule": "Every format the system runs on is an established open standard registered in doctrine/open-standards.json (JSON Schema for config, CloudEvents for event ledgers, OpenAPI for HTTP, Wrangler for infrastructure, Atom and JSON Feed for feeds, MCP and AGENTS.md for agents, and registered planned rows for the rest), a new bespoke format fails CI, and the baseline of older files drains by a daily loop.",
+      "source": "Rowan, 2026-11-25",
+      "covers": [
+        "OPEN-STANDARDS-1"
+      ],
+      "detector": [
+        {
+          "file": "scripts/openstd.py",
+          "has": "def check"
+        },
+        {
+          "platform": true,
+          "file": "foundation/openstd.py",
+          "has": "--check"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "scripts/openstd.py",
+          "has": "def drain"
+        },
+        {
+          "platform": true,
+          "file": "foundation/openstd.py",
+          "has": "--drain"
+        }
+      ]
     }
   ]
 }

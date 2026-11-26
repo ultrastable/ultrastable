@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/open-standards.schema.json",
+  "title": "Open standards registry (OPEN-STANDARDS-1)",
+  "type": "object",
+  "required": ["formats", "known_extensions", "scopes"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "formats": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "covers", "standard", "spec", "status"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "covers": {"type": "string", "minLength": 3},
+          "standard": {"type": "string"},
+          "spec": {"type": "string", "pattern": "^https://"},
+          "status": {"enum": ["adopted", "partial", "planned"]},
+          "evidence": {"type": "array", "items": {"type": "string"}},
+          "next": {"type": "string"},
+          "trigger": {"type": "string"},
+          "probe": {"type": "string"}
+        },
+        "allOf": [
+          {"if": {"properties": {"status": {"const": "adopted"}}}, "then": {"required": ["evidence"]}},
+          {"if": {"properties": {"status": {"enum": ["partial", "planned"]}}}, "then": {"required": ["next", "trigger", "probe"]}}
+        ]
+      }
+    },
+    "known_extensions": {"type": "array", "items": {"type": "string"}},
+    "scopes": {
+      "type": "object",
+      "required": ["json_config", "event_ledgers"],
+      "properties": {
+        "json_config": {"type": "array", "items": {"type": "string"}},
+        "event_ledgers": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

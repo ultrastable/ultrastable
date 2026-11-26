@@ -116,7 +116,7 @@ Criticality numbers (from `autonomy/criticality.json`): window 14 days, k_min 1,
 
 ## Standing rules
 
-92 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
+93 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
 a rule enforced only by the platform is marked so, and the platform checks it for every system it hosts.
 
 - **USER-BACKEND-1**: The user does the idea; the system does the backend; one fix improves every system. In this kit: `doctrine/user-backend.json`, `worker/src/errors.js`, `worker/test/errors.test.js`.
@@ -190,6 +190,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **PATHFINDER-1**: Find another path before asking; the information is already held. In this kit: checked by the platform.
 - **COLDSTART-1**: Everything bootstraps itself from a cold start and works together from birth. In this kit: `doctrine/SYSTEM.md`, `worker/src/visibility.js`, `worker/src/visibility.test.js`.
 - **WORK-NOT-PULSE-1**: Root-caused on launch day. In this kit: `worker/src/greenguard.js`, `worker/test/greenguard.test.js`.
+- **OPEN-STANDARDS-1**: Open standards, never a home-grown format. In this kit: `autonomy/`, `doctrine/`, `doctrine/open-standards-baseline.json`, `doctrine/open-standards.json`.
 - **BOOT-ACCEPT-1**: Every surface works together from the first deploy; one command proves it. In this kit: `worker/src/visibility.js`, `worker/test/bootaccept.test.js`.
 - **SYSTEM-SPEC-1**: Every system carries its own definition, generated from its code. In this kit: `autonomy/system.json`, `scripts/system.py`, `tests/test_system.py`.
 - **DOC-CONSUMED-1**: Every document is consumed by code. In this kit: checked by the platform.

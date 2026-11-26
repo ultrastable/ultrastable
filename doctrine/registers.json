@@ -804,6 +804,30 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:tests/foundation/test_contentdrift.py::def test_drifted_feed_fails"
+    },
+    {
+      "id": "fm-code-ladder-dead",
+      "trigger": "every rung of the code-agent ladder errors (HTTP 401, 200 with a non-JSON body)",
+      "symptom": "executor runs fail and items are shelved with 'every code agent rung failed' while clocks read green",
+      "blast_radius": "all self-originated change; k_self; every second-loop step",
+      "detection": "python3 -m foundation ladderwatch --check",
+      "root_cause": "the site's CF_DEPLOY_TOKEN has no Workers AI permission, so /__internal/cf answered 401; GitHub Models answered 200 OK text/plain to the Actions token",
+      "remediation": "site/deployer.js serves ai/run through the AI binding (AI-BINDING-1); dispose no longer shelves an item for a dead ladder",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:foundation/ladderwatch.py::def read"
+    },
+    {
+      "id": "fm-pr-stale",
+      "trigger": "a PR conflicts with main or a check fails and nothing repairs it",
+      "symptom": "pull requests sit open for hours labelled conflict or ci-failed",
+      "blast_radius": "every session and executor change; DRAIN-ZERO-1 open_prs",
+      "detection": "python3 -m foundation prbound --check",
+      "root_cause": "lane.sh only labelled conflicted and failed session PRs; conflicts.py requeued executor PRs only; the executor was dead; both-sides-additive registry rows were treated as real conflicts",
+      "remediation": "ADDITIVE-MERGE-1 in scripts/resolve_generated.py; PR-BOUND-1 prbound --apply from lane.sh",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:foundation/prbound.py::def read"
     }
   ],
   "controls": [

@@ -5855,6 +5855,48 @@
    "body": "After the first template publish the seed repository failed its own tests. Causes in the core's kit: two Worker tests read deploy/ and site/ without being on the monorepo-only register, and improve.yml and redteam.yml committed docs/issues without the balance gate the kit's own balance check requires. The publish also holds back files that differ in the copy, so a half-updated template is possible; that drift is tracked as Q-FLEETMAP-seed. Fix: the platform-only assertions are their own registered tests, both workflows pass the gate, and a kit test fails any test that reads above the kit unregistered.",
    "probe": "grep:seed/tests/test_seed.py::KitTestsAreSelfContained",
    "session": "session_0156nqDufLi3JgDJf3gVw7Fh"
+  },
+  {
+   "id": "decision-2026-11-26-borrow-1-plug-in-competitors",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "BORROW-1 plug in competitors",
+   "body": "Competitors' best steps are plug_in rows in doctrine/competitors.json, staged with our own worker as default. Devin declined, no free tier. Our repos are source-available, so OSS free tiers likely do not apply.",
+   "probe": "grep:foundation/rnd.py::def plug_in_problems"
+  },
+  {
+   "id": "lesson-2026-11-26-second-loop-kept-no-step",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Second loop kept no step",
+   "body": "Evidence: ops/ultrastability.jsonl held 107 verdicts, all reverted, because a step counted only on a full return to bounds. Fix: settle_verdict now keeps a step that closed at least min_progress of its gap; tests/foundation/test_ultrastability.py SettleProgress.",
+   "probe": "grep:foundation/ultrastability.py::def progressed"
+  },
+  {
+   "id": "lesson-2026-11-26-a-new-gate-must-read-the-standards-already-adopted-on-main",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A new gate must read the standards already adopted on main",
+   "body": "OPEN-STANDARDS-1: the openstd gate first accepted only a $schema key, while CONFIG-SCHEMA-1 on main declares config schemas through Schema Store catalogs; the gate now accepts either, so two standards checks do not disagree about the same file. A long-lived branch is reconciled with main before each push, because a day of merges added five checks the branch had never run.",
+   "probe": "grep:foundation/openstd.py::def catalogued",
+   "session": "session_0156nqDvhf9QiAUCtw3GwA14"
+  },
+  {
+   "id": "lesson-2026-11-26-a-pr-bound-and-a-model-free-merge-for-additive-conflicts",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A PR bound and a model-free merge for additive conflicts",
+   "body": "PRs sat open for hours because lane.sh only labelled conflicted and failed session PRs and waited on a dead executor, and both-sides-additive registry rows counted as conflicts. ADDITIVE-MERGE-1 resolves those without a model; PR-BOUND-1 closes past 30/60 min with the branch kept; detector pr-age-bound fails on any PR open past 2 h.",
+   "probe": "grep:foundation/prbound.py::def read"
+  },
+  {
+   "id": "lesson-2026-11-26-judge-the-code-agent-ladder-by-answers-not-by-runs",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Judge the code-agent ladder by answers, not by runs",
+   "body": "From 2026-11-23 every code-agent rung failed: the site's CF_DEPLOY_TOKEN has no Workers AI permission so /__internal/cf returned 401, and GitHub Models answered 200 OK text/plain. 20 of 21 executor-shelved items in 72 h died that way while clocks read green. Fix: ai/run goes through the site's AI binding; dispose no longer shelves an item for a dead ladder; ladderwatch --check is a live detector (fm-code-ladder-dead).",
+   "probe": "grep:foundation/ladderwatch.py::def read",
+   "session": "session_0156nqDvbXYqh4M3id5voNoB"
   }
  ]
 }

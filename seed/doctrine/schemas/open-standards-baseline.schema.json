@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/doctrine/open-standards-baseline.schema.json",
+  "title": "open-standards-baseline (seed/doctrine/open-standards-baseline.json)",
+  "description": "Contract for seed/doctrine/open-standards-baseline.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "_doc": {
+      "type": "string"
+    },
+    "config": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ledgers": {
+      "type": "array"
+    },
+    "extensions": {
+      "type": "array"
+    }
+  },
+  "required": [
+    "$schema",
+    "_doc",
+    "config",
+    "extensions",
+    "ledgers"
+  ]
+}
