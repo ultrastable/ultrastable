@@ -115,6 +115,14 @@
       "url": "claims.schema.json"
     },
     {
+      "name": "cleanroom.json",
+      "description": "Contract for doctrine/cleanroom.json",
+      "fileMatch": [
+        "doctrine/cleanroom.json"
+      ],
+      "url": "cleanroom.schema.json"
+    },
+    {
       "name": "clocks.json",
       "description": "Contract for doctrine/clocks.json",
       "fileMatch": [
@@ -137,6 +145,14 @@
         "doctrine/code-agents.json"
       ],
       "url": "code-agents.schema.json"
+    },
+    {
+      "name": "coherence.json",
+      "description": "Contract for doctrine/coherence.json",
+      "fileMatch": [
+        "doctrine/coherence.json"
+      ],
+      "url": "coherence.schema.json"
     },
     {
       "name": "coldstart.json",

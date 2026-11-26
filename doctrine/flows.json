@@ -2605,6 +2605,24 @@
       ],
       "feedback": "each Scorecard check under the floor and each package outside the licence policy is filed as a Q-STD-SC-* item; the fix lands, the next weekly reading is the item's closing probe, so a check that recovers closes its item and one that does not stays on the executor's queue",
       "bindings": []
+    },
+    "cleanroom": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a capability that does not come up in the sandbox becomes a Q-CLEANROOM item whose closing probe is the same clean-room check; the next run closes it when the seed brings the capability up on its own",
+      "bindings": [
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {

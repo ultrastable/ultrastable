@@ -719,7 +719,9 @@
         "COLDSTART-1",
         "ADMIT-1",
         "SYSTEM-SPEC-1",
-        "BOOT-ACCEPT-1"
+        "BOOT-ACCEPT-1",
+        "CLEANROOM-1",
+        "COHERENCE-1"
       ],
       "detector": [
         {

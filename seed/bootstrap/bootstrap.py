@@ -325,6 +325,13 @@ class Boot:
             if k in case_library.load_library()["defaults"]:
                 facts[k] = {"true": True, "false": False}.get(v.lower(), int(v) if v.isdigit() else v)
         facts.setdefault("budget_usd_per_month", self.budget)
+        if getattr(self, "hosted_by", ""):
+            # CLEANROOM-1: a hosted system gets its repository from the host's Apps (TENANT-REPO-2), posts through the host's connected
+            # channels (TENANT-PROMO-1, SOCIAL-MODULE-1) and mails through the host's relay (USER-BACKEND-1), so no card asks its owner for a
+            # credential, an account or a sender. Facts the owner stated in IDEA.md still win.
+            for k in ("has_org_admin_token", "has_social_accounts", "has_sender_identity"):
+                facts.setdefault(k, True)
+            facts.setdefault("provided_by_host", self.hosted_by)
         if "has_org_admin_token" not in facts:
             facts["has_org_admin_token"] = "ORG_ADMIN_TOKEN" in os.environ
         plan = case_library.plan_cases(facts)

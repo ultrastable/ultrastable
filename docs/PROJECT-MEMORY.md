@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: CLEANROOM-1 and COHERENCE-1 carried from the stuck PR 2276 onto main inside PR 2369: `foundation/cleanroom.py` boots a sandbox from seed/ alone, runs 144 ticks and tears it down (daily, cleanroom.yml); `foundation/coherence.py` lints instruction surfaces and generated agent files against the closed-loop axiom. Left out as superseded: its SYSTEM-1 (`seed/doctrine/system.json`) by SYSTEM-SPEC-1 and COLDSTART-1, its org-settings generator by ADMIT-1 and REPO-STANDARD-1, its seed-template compare by FLEET-MAP-1. The clean room's first run found that a booted system's SYSTEM.md went stale (org/ paths counted as kit enforcement); fixed in `seed/scripts/system.py`.
 - 2026-11-26: feat(rnd): plug in competitors' best steps as workers (BORROW-1) (#2366)
 - 2026-11-26: queue: closing-probe verdicts for 26 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]
 - 2026-11-26: queue: closing-probe verdicts for 26 item(s) (QUEUE-PERSIST-1) (part 1/2) [skip ci]

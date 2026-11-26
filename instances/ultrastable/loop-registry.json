@@ -4322,6 +4322,47 @@
     "supply-chain.yml"
    ],
    "server_owner": "github-actions"
+  },
+  {
+   "id": "cleanroom",
+   "kind": "governance",
+   "summary": "CLEANROOM-1 and COHERENCE-1: a sandbox system is built from nothing but seed/ and an idea, boots, runs a simulated day and tears itself down; every capability that does not come up with zero human steps becomes a Q-CLEANROOM item. The same run checks that the agent files in the satellite repositories match their generator.",
+   "trigger": "daily workflow, every push to main that touches seed/, and on demand",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "ops/cleanroom/latest.json is under 50 hours old and passed, every finding has a Q-CLEANROOM item, and coherence --check --remote reports no drift",
+   "paths": [
+    {
+     "id": "github",
+     "how": ".github/workflows/cleanroom.yml runs python3 -m foundation cleanroom --run --apply",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation cleanroom --run --apply from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/cleanroom.py::def run",
+   "writeback": [
+    "ops/cleanroom",
+    "docs/issues"
+   ],
+   "system_path": [
+    "foundation/cleanroom.py",
+    "foundation/coherence.py",
+    "doctrine/cleanroom.json",
+    "doctrine/coherence.json",
+    "platform/selfhost/day.mjs",
+    "tests/foundation/test_cleanroom.py",
+    ".github/workflows/cleanroom.yml"
+   ],
+   "workflows": [
+    "cleanroom.yml"
+   ],
+   "area": "managers",
+   "server_owner": "github-actions"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
