@@ -828,6 +828,18 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:foundation/prbound.py::def read"
+    },
+    {
+      "id": "fm-loop-unmeasured",
+      "trigger": "a clock in ops/transparency.json reads 'unmeasured'",
+      "symptom": "the site shows a loop with no status, so a stopped loop looks the same as a working one",
+      "blast_radius": "every loop the record cannot read",
+      "detection": "python3 -m foundation clock --measured",
+      "root_cause": "the only route to the beats needs a credential this host lacks",
+      "remediation": "declare a credential-free health route per clock; detector clock-measured files Q-AUDIT until every clock reads",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:tests/foundation/test_directive.py::def test_lint_flags_owner_handback"
     }
   ],
   "controls": [

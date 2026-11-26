@@ -120,10 +120,16 @@ export const ADAPTERS = [
 // MODEL-REPLY-1: Workers AI may return an already-parsed object in `response`; callers need a string (parseJson called t.indexOf on it).
 const text = r => { const v = (r && (r.response || (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || ''; return typeof v === 'string' ? v : JSON.stringify(v); };
 
+// LOOP-SHIP-1: the router's default cap (8,000 free neurons a day) stopped the code agent by noon on 2026-11-26: six orchestrator runs failed with
+// 'daily free neurons used' and the loops merged nothing while sessions merged 13. The account is on Workers Paid, so neurons past the free 10,000
+// are billed at about $0.011 per 1,000. The code agent gets its own cap (AI_CODE_NEURONS_DAY, default 150,000, roughly $1.50 a day), well inside the
+// ~$5/day soft throttle; HALT and the budget governor still apply.
+export function codeNeuronCap(env) { const n = Number(env && env.AI_CODE_NEURONS_DAY); return Number.isFinite(n) && n > 0 ? n : 150000; }
+
 export async function invoke(env, adapter, prompt) {
   // AI-ROUTER-1: one adapter through core/airouter: identical prompts come from cache, cost and pass rate are recorded. The JSON check is the quality gate (a bad reply is never cached).
   const { max_tokens, ...extra } = adapter.extra || {};
-  const r = await routeChat(env, { kind: 'codeagent', models: [{ id: adapter.id, model: adapter.model, extra }], messages: [{ role: 'user', content: prompt }], maxTokens: max_tokens || 3000, verify: t => { parseJson(t); return true; } });
+  const r = await routeChat(env, { kind: 'codeagent', models: [{ id: adapter.id, model: adapter.model, extra }], messages: [{ role: 'user', content: prompt }], maxTokens: max_tokens || 3000, config: { neurons_day_cap: codeNeuronCap(env) }, verify: t => { parseJson(t); return true; } });
   return r.text;
 }
 

@@ -103,7 +103,9 @@ export function createExporter({ db, store, now = () => Date.now(), config = {} 
 
   /** Apply one migration. Additive: applied. Destructive: every affected table that exists is exported and verified first; any
    *  failure refuses the migration and leaves the store untouched. Each call is recorded in export_migrations. */
-  async function applyMigration(name, sql) {
+  async function applyMigration(name, sql, { also = [] } = {}) {
+    // `also`: prepared statements that land with the migration (a caller's ledger row). With a store that offers batch() the migration and
+    // they are one all-or-nothing call; without it they run in order.
     const c = classify(sql);
     const exports = [];
     if (c.destructive) {
@@ -120,7 +122,9 @@ export function createExporter({ db, store, now = () => Date.now(), config = {} 
         }
       }
     }
-    for (const st of splitStatements(sql)) await run(st);
+    const statements = splitStatements(sql);
+    if (typeof db.batch === 'function') await db.batch([...statements.map(st => db.prepare(st)), ...also]);
+    else { for (const st of statements) await run(st); for (const a of also) await a.run(); }
     await run(`INSERT INTO export_migrations (name, destructive, tables, outcome, reason, at) VALUES (?,?,?,?,?,?)
       ON CONFLICT(name) DO UPDATE SET outcome=excluded.outcome, reason=excluded.reason, at=excluded.at`, name, c.destructive ? 1 : 0, JSON.stringify(c.tables), 'applied', null, stamp(clock()));
     return { ok: true, applied: true, destructive: c.destructive, exports, findings: c.findings };

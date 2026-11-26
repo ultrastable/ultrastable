@@ -507,6 +507,14 @@
       "url": "lineage.schema.json"
     },
     {
+      "name": "live-claims.json",
+      "description": "Contract for doctrine/live-claims.json",
+      "fileMatch": [
+        "doctrine/live-claims.json"
+      ],
+      "url": "live-claims.schema.json"
+    },
+    {
       "name": "loop-ownership.json",
       "description": "Contract for doctrine/loop-ownership.json",
       "fileMatch": [
@@ -745,6 +753,14 @@
         "doctrine/registers.json"
       ],
       "url": "registers.schema.json"
+    },
+    {
+      "name": "repo-shape.json",
+      "description": "Contract for doctrine/repo-shape.json",
+      "fileMatch": [
+        "doctrine/repo-shape.json"
+      ],
+      "url": "repo-shape.schema.json"
     },
     {
       "name": "research.json",

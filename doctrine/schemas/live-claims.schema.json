@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/live-claims.schema.json",
+  "title": "live-claims (doctrine/live-claims.json)",
+  "description": "Contract for doctrine/live-claims.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "rule": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "scan_globs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "skip": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "future_patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "host_pattern": {
+      "type": "string"
+    },
+    "hosts": {
+      "type": "object",
+      "properties": {
+        "ultrastable.io": {
+          "type": "string"
+        },
+        "www.ultrastable.io": {
+          "type": "string"
+        },
+        "ultrastable.org": {
+          "type": "string"
+        },
+        "dashboard.ultrastable.io": {
+          "type": "string"
+        },
+        "what-works.ultrastable.org": {
+          "type": "string"
+        },
+        "replication-ledger.ultrastable.org": {
+          "type": "string"
+        },
+        "unlearn.ultrastable.org": {
+          "type": "string"
+        }
+      }
+    },
+    "closing_probe": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "closing_probe",
+    "future_patterns",
+    "host_pattern",
+    "hosts",
+    "id",
+    "owner",
+    "rule",
+    "scan_globs",
+    "skip"
+  ]
+}

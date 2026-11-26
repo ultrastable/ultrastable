@@ -56,6 +56,9 @@ jobs:
         run: |
           python3 -m foundation collisions --check
           python3 -m foundation collisions --prs
+      - name: Every path is classified (REPO-SHAPE-1)
+        # state is kept apart from code; the size gate is SMALL-CHANGE-1 below, and an oversize branch splits with `foundation reposhape --split`
+        run: python3 -m foundation reposhape --check
       - name: The change is small enough to verify and revert alone (SMALL-CHANGE-1)
         # ops PR 45 changed 3,194 files, 3,158 of them session scratch copies; a change that size cannot be reviewed, deployed or rolled back on its own
         env:

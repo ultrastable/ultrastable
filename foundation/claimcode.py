@@ -89,6 +89,8 @@ def main(argv):
             if key in base: print(f"{rel}:{n}: {line[:140]}")
         return 0
     errs = check(root)
+    from . import liveclaims  # LIVE-CLAIMS-1: copy promises nothing that is not live; runs wherever claimcode --check runs
+    errs += liveclaims.scan(root)
     for e in errs: print("FAIL", e)
     print("claimcode ok" if not errs else f"claimcode: {len(errs)} problems")
     return 1 if errs else 0

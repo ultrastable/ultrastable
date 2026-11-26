@@ -15,6 +15,7 @@
   python3 -m foundation lessons [--check]  every lesson bound to enforcing code or an open item (LESSONS-1)
   python3 -m foundation specgate [--check]  work items an agent cannot misread: done check, prediction, out of scope, live proof (SPEC-GATE-1)
   python3 -m foundation criticality [--tick [--apply]|--check|--gate]     the mantra as a computed invariant (CRITICALITY-1)
+  python3 -m foundation liveclaims [--check|--live]                         public copy describes only what is live: no promised features, every system host probed (LIVE-CLAIMS-1)
   python3 -m foundation claimcode [--check|--baseline|--list]                words match code: every number, cadence or guarantee on a public surface is bound to a probe (WORDS-MATCH-CODE-1)
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
   python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
@@ -43,6 +44,7 @@
   python3 -m foundation cleanroom [--run [--apply] [--ticks N]|--probe ID|--check]   CLEANROOM-1: a sandbox system boots from the seed alone, runs a day, tears down
   python3 -m foundation coherence [--check [--remote]|--report]   COHERENCE-1: no instruction surface or generated agent file contradicts the closed-loop axiom; every rule names code and reaches the seed
   python3 -m foundation fullstack [--check|--live|--probe ID|--list]        FULLSTACK-1: every system has a repository, a back end and a public front end
+  python3 -m foundation reposhape [--check|--report|--probe state|--pr BASE...HEAD|--split BASE...HEAD [--apply]]   REPO-SHAPE-1: every path is classified, a session PR stays in budget, an oversize branch splits into a stack
   python3 -m foundation collisions [--check|--prs [--pr N]|--claim ID]   COLLISION-1: no two migrations share a number; a PR may not add what an older open PR adds
   python3 -m foundation datagraph [--check|--list|--live]                        DATAGRAPH-1: every system keeps a knowledge graph of all its data
   python3 -m foundation livelinks [--check [--readme PATH --id ID]|--write README --id ID|--block ID|--live]   LIVE-LINKS-1: every README says where its code runs
@@ -346,6 +348,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["criticality"]:
         from . import criticality
         return criticality.main(_av[1:])
+    if _av[:1] == ["liveclaims"]:
+        from . import liveclaims
+        return liveclaims.main(_av[1:])
     if _av[:1] == ["claimcode"]:
         from . import claimcode
         return claimcode.main(_av[1:])
@@ -409,6 +414,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["contentdrift"]:
         from . import contentdrift
         return contentdrift.main(_av[1:])
+    if _av[:1] == ["reposhape"]:
+        from . import reposhape
+        return reposhape.main(_av[1:])
     if _av[:1] == ["collisions"]:
         from . import collisions
         return collisions.main(_av[1:])

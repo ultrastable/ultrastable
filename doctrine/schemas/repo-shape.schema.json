@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/repo-shape.schema.json",
+  "title": "repo-shape (doctrine/repo-shape.json)",
+  "description": "Contract for doctrine/repo-shape.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "rule": {
+      "type": "string"
+    },
+    "size_gate": {
+      "type": "string"
+    },
+    "state_budget": {
+      "type": "object",
+      "properties": {
+        "max_share_of_tracked_files": {
+          "type": "number"
+        },
+        "item": {
+          "type": "string"
+        }
+      }
+    },
+    "areas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "class": {
+            "type": "string"
+          },
+          "home": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "areas",
+    "rule",
+    "size_gate",
+    "state_budget"
+  ]
+}

@@ -1083,6 +1083,22 @@
       "root_cause": "the lane labelled a conflicted or failed session PR and handed it to the executor, whose model calls were failing; no age bound existed",
       "owner": "operations",
       "remedy": "The lane runs prbound --apply each pass (closes past the bound, branch kept) and resolve_generated merges additive conflicts model-free; never raise the bound to clear a breach."
+    },
+    {
+      "id": "clock-measured",
+      "failure_mode": "fm-loop-unmeasured",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "clock",
+        "--measured"
+      ],
+      "timeout": 60,
+      "root_cause": "a loop's clock has no reading in the published record (no route that can read its beats from this host)",
+      "owner": "operations",
+      "remedy": "Give the clock a route this host can read (a health field, a workflow, a token), so /demo and /live show its real status."
     }
   ]
 }

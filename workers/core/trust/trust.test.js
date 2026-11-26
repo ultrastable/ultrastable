@@ -360,3 +360,103 @@ test('step validates the policy, recomputes and reroutes in one pass; an invalid
   const bad = clone(POLICY); bad.surfaces.money.start_rung = 'autonomous';
   await assert.rejects(T.step({ db, policy: bad, now: NOW }), /invalid policy/);
 });
+
+test('US-06-R15: an open card with no identity-bound line files one item per day, closed by a query the tick can run once the card is rerouted', async () => {
+  const db = mk();
+  assert.deepEqual(await T.checkHealth(db, { now: NOW }), { cards_without_identity_line: 0, filed: [] });
+  db.raw.prepare(`INSERT INTO gate_cards (id, what, why_gated, default_in_effect, closing_probe) VALUES ('G9','rename the staging bucket','unsure','old name stays','manual')`).run();
+  db.raw.prepare(`INSERT INTO gate_cards (id, what, why_gated, default_in_effect, closing_probe) VALUES ('G10','add the API key','needs a credential','feature stays off','env:API_KEY')`).run();
+  const h = await T.checkHealth(db, { now: NOW });
+  assert.deepEqual([h.cards_without_identity_line, h.filed], [1, ['TRUST-cards-without-identity-line-2026-11-11']], 'the card whose probe waits for a credential is identity-bound by its nature');
+  assert.deepEqual((await T.checkHealth(db, { now: NOW })).filed, [], 'one item per day');
+  const it = one(db, `SELECT kind, owner_role, done_check, closing_probe FROM items WHERE id='TRUST-cards-without-identity-line-2026-11-11'`);
+  assert.deepEqual([it.kind, it.owner_role, it.done_check], ['fix', 'operations', 'cards_without_identity_line = 0']);
+  assert.equal(Object.values(one(db, it.closing_probe))[0], 0, 'open card: the probe is red');
+  const r = await T.step({ db, policy: POLICY, now: NOW + DAY }); // the step measures before it reroutes, files, then reroutes
+  assert.deepEqual([r.filed, r.rerouted, r.cards_without_identity_line], [['TRUST-cards-without-identity-line-2026-11-12'], 1, 0]);
+  assert.equal(Object.values(one(db, it.closing_probe))[0], 1, 'rerouted: the probe is green');
+  assert.equal(one(db, `SELECT status FROM gate_cards WHERE id='G10'`).status, 'open');
+});
+
+test('US-06-R21: deployAuthorizer allows an action at the rung it needs, refuses below it, and carries the gate card and the refusal advice back', async () => {
+  const db = mk();
+  const auth = T.deployAuthorizer({ db, policy: POLICY, required_rung: 'delegated', now: () => NOW });
+  const low = await auth({ surface: 'runtime', action_class: 'deploy_production', target: 'api', executor: 'agent-a' });
+  assert.deepEqual([low.allowed, low.reason, low.refused], [false, 'effective rung assisted is below delegated', 'rung_too_low']);
+  db.raw.prepare(`INSERT INTO trust_ledger (surface, action_class, rung, reliability, outcomes) VALUES ('runtime','deploy_production','delegated',0.9,12)`).run();
+  assert.equal((await auth({ surface: 'runtime', action_class: 'deploy_production', target: 'api', executor: 'agent-a' })).allowed, true);
+  const gated = await auth({ surface: 'runtime', action_class: 'delete_database_or_bucket', target: 'db1', executor: 'agent-a' });
+  assert.deepEqual([gated.allowed, gated.refused, gated.gate_card], [false, 'interrupt_gate', 'GATE-runtime-delete_database_or_bucket-db1']);
+  const unknown = await auth({ surface: 'runtime', action_class: 'teleport', target: 'x' });
+  assert.deepEqual([unknown.allowed, unknown.refused], [false, 'not_in_policy']);
+  const limited = T.deployAuthorizer({ db, policy: POLICY, now: () => NOW, limits: (req) => (req.target === 'api' ? { classifier: { refused: true, reason: 'flagged' } } : undefined) });
+  assert.deepEqual([(await limited({ surface: 'runtime', action_class: 'deploy_production', target: 'api' })).refused, (await limited({ surface: 'runtime', action_class: 'deploy_production', target: 'web' })).allowed], ['classifier', true]);
+});
+
+test('US-06-R18: rankItems multiplies each score by its pair score, uses the baseline for an unscored pair, reads the pairs together and keeps ties in input order', async () => {
+  const db = mk();
+  outcomes(db, 'outreach', 'draft', 'verified', 12);              // high score
+  outcomes(db, 'work_tracker', 'create_update_close', 'failed', 6); // low score
+  await T.recompute(db, { policy: POLICY, now: NOW });
+  const high = one(db, `SELECT score FROM trust_scores WHERE surface='outreach' AND action_class='draft' AND executor=''`).score;
+  const low = one(db, `SELECT score FROM trust_scores WHERE surface='work_tracker' AND action_class='create_update_close' AND executor=''`).score;
+  assert.ok(high > 0.5 && low < 0.5);
+  const reads = []; const spy = { prepare(sql) { if (/FROM trust_scores/.test(sql)) reads.push(sql); return db.prepare(sql); } };
+  const items = [
+    { id: 'a', score: 10, surface: 'work_tracker', action_class: 'create_update_close' },
+    { id: 'b', score: 10, surface: 'outreach', action_class: 'draft' },
+    { id: 'c', score: 10, surface: 'money', action_class: 'estimate_cost' },  // never scored: baseline 0.5
+    { id: 'd', score: 10 },                                                     // no pair: baseline
+    { id: 'e', score: 10, surface: 'outreach', action_class: 'draft' },
+  ];
+  const ranked = await T.rankItems(spy, items, { policy: POLICY, now: NOW });
+  assert.deepEqual(ranked.map(r => r.id), ['b', 'e', 'c', 'd', 'a'], 'highest trust first; ties keep input order');
+  assert.ok(near(ranked[0].ranked_score, 10 * high) && near(ranked[2].factor, 0.5) && near(ranked[4].factor, low));
+  assert.equal(reads.length, 1, 'one read for many items');
+  assert.deepEqual(items.map(i => i.id), ['a', 'b', 'c', 'd', 'e'], 'the input is not reordered');
+  assert.deepEqual(await T.rankItems(spy, [], { policy: POLICY }), []);
+  // more than 40 distinct pairs are read in chunks of 40, still not one per item
+  const many = Array.from({ length: 85 }, (_, i) => ({ id: `m${i}`, score: 1, surface: 's', action_class: `a${i}` }));
+  reads.length = 0;
+  await T.rankItems(spy, many, { policy: POLICY });
+  assert.equal(reads.length, 3);
+});
+
+test('US-06-R03: promote_on lower_bound also needs the Wilson lower bound of ok/n to reach the bar: 12 of 12 promotes by score and not by lower bound, 20 of 20 does both', async () => {
+  const run1 = async (n, config) => {
+    const db = mk();
+    outcomes(db, 'outreach', 'draft', 'verified', n);
+    const [r] = await T.recompute(db, { policy: POLICY, now: NOW, config });
+    return { r, lb: one(db, `SELECT lower_bound FROM trust_scores WHERE surface='outreach' AND action_class='draft' AND executor=''`).lower_bound };
+  };
+  const byScore = await run1(12, {});
+  assert.equal(byScore.r.indicated, 'assisted');
+  assert.ok(byScore.lb < 0.8, `lower bound ${byScore.lb}`);
+  const strict12 = await run1(12, { promote_on: 'lower_bound' });
+  assert.deepEqual([strict12.r.indicated, strict12.r.item], ['observed', undefined], 'the score clears 0.8 but the lower bound does not: no proposal');
+  const strict20 = await run1(20, { promote_on: 'lower_bound' });
+  assert.equal(strict20.r.indicated, 'assisted'); assert.ok(strict20.lb >= 0.8);
+  // demotion is unchanged by the mode
+  const db = mk();
+  db.raw.prepare(`INSERT INTO trust_ledger (surface, action_class, rung, reliability) VALUES ('outreach','draft','assisted',0.9)`).run();
+  outcomes(db, 'outreach', 'draft', 'failed', 8);
+  assert.equal((await T.recompute(db, { policy: POLICY, now: NOW, config: { promote_on: 'lower_bound' } }))[0].indicated, 'observed');
+  // the banded mode honours it as well
+  const banded = mk();
+  outcomes(banded, 'outreach', 'draft', 'verified', 12);
+  assert.equal((await T.recompute(banded, { policy: POLICY, now: NOW, config: { mode: 'banded', promote_on: 'lower_bound' } }))[0].indicated, 'observed');
+});
+
+test('US-06-R12, mirror rule: the shipped policy against the harness settings file reports no problem; a missing pattern, or a shell-reachable gated action with no harness_deny, is reported', () => {
+  const SETTINGS = JSON.parse(readFileSync(new URL('../../.claude/settings.json', import.meta.url), 'utf8'));
+  const deny = T.harnessDenyFrom(SETTINGS);
+  assert.ok(deny.length > 5);
+  assert.deepEqual(T.mirrorProblems(POLICY, deny), []);
+  assert.deepEqual(T.mirrorProblems(POLICY, deny.filter(p => p !== 'Bash(gh repo delete:*)')), ['repo.delete_repo: Bash(gh repo delete:*)']);
+  assert.deepEqual(T.harnessDenyFrom({}), []); assert.deepEqual(T.harnessDenyFrom(null), []);
+  const bare = clone(POLICY); delete bare.surfaces.runtime.actions.delete_database_or_bucket.harness_deny;
+  assert.deepEqual(T.mirrorProblems(bare, deny), ['runtime.delete_database_or_bucket: a gated action reachable through a shell command names no harness_deny pattern']);
+  const noShell = clone(POLICY); delete noShell.surfaces.money.actions.spend.harness_deny;
+  assert.deepEqual(T.mirrorProblems(noShell, deny), [], 'a gated action on a surface no shell command reaches needs no pattern');
+  assert.equal(T.mirrorProblems(bare, deny, { shell_surfaces: [] }).length, 0, 'the shell surfaces are configuration');
+});
