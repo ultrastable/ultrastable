@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2482",
+  "title": "OL-PR-2482: land or supersede pull request #2482 (ci-failed)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2482 is ci-failed\n**Done check:** cmd:python3 -m foundation loopowner --closed 2482\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2482 (`claude/project-thread-ov0rsf` at 49e50861c4, opened by rwnq8): feat: draft PR when work opens, year soak in the clean room, daily kill-drill cadence. The session that opened it is not its closer and is never asked to act. A check failed on the head commit. Read the failing run, then land the same change so that every check passes: push a fix to the branch, or open a new pull request from main that carries the change and close this one as superseded. Failed checks: checks, fast, foundation, rest, tests-a, tests-b. Files (11): .github/workflows/workstart.yml, agents/roles/operations.md, doctrine/cleanroom.json, doctrine/flows.json, foundation/cleanroom.py, foundation/workstart.py, instances/ultrastable/loop-registry.json, platform/selfhost/day.mjs, seed/worker/src/pulse.js, seed/worker/test/pulse.test.js, tests/foundation/test_workstart.py.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2482 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2482` exits 0 (pull request #2482 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
