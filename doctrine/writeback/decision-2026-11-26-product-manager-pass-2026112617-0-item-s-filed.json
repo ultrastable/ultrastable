@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-26-product-manager-pass-2026112617-0-item-s-filed",
+  "kind": "decision",
+  "date": "2026-11-26",
+  "title": "Product manager pass 2026112617: 0 item(s) filed",
+  "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
+  "probe": "file:foundation/pm.py"
+ },
+ "kind": "decision",
+ "title": "Product manager pass 2026112617: 0 item(s) filed",
+ "session": ""
+}
