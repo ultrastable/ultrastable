@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-oversized-prs-hide-scratch-refuse-them",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "Oversized PRs hide scratch; refuse them",
+  "body": "ops PR 45 changed 3,194 files, 3,158 of them session scratch copies. SMALL-CHANGE-1 (seed/scripts/prsize.py, in checks) fails a PR over 60 files or 3,000 lines or carrying wip/ paths. The work was salvaged into ops #46 and kept on archive/pr45-spec-held-work.",
+  "probe": "file:seed/scripts/prsize.py",
+  "session": "session_0156nqDuK44xqnv57kfkBrGR"
+ },
+ "kind": "lesson",
+ "title": "Oversized PRs hide scratch; refuse them",
+ "session": "session_0156nqDuK44xqnv57kfkBrGR"
+}

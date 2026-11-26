@@ -1,0 +1,32 @@
+{
+ "rule": "DISCLOSE-1 (Rowan, 2026-11-26): the full specification is private in ultrastable/ops spec/; new specification text is never committed to a public branch. What is already public stays (no history rewrite).",
+ "public_spec_dir": "specs",
+ "baseline": [
+  "US-SPEC-00-conformance.md",
+  "US-SPEC-01-data-model.md",
+  "US-SPEC-02-virtual-staff.md",
+  "US-SPEC-03-tick.md",
+  "US-SPEC-04-plus-loop.md",
+  "US-SPEC-05-predict-act-verify-score.md",
+  "US-SPEC-06-trust-and-interrupt-gate.md",
+  "US-SPEC-07-governance-and-change-path.md",
+  "US-SPEC-08-work-claims-and-reconciliation.md",
+  "US-SPEC-09-caps-kill-switches-model-ladder.md",
+  "US-SPEC-10-kit-and-seed.md",
+  "US-SPEC-11-fleet-runtime.md",
+  "US-SPEC-12-signal-organism-and-wiring.md",
+  "US-SPEC-13-dashboard-sla-report-card.md",
+  "US-SPEC-14-portability-seams.md",
+  "US-SPEC-15-management-lifecycle.md",
+  "US-SPEC-16-ignorance-and-prompted-recall.md",
+  "US-SPEC-17-failure-modes-and-remediation.md",
+  "US-SPEC-18-guided-console.md",
+  "US-SPEC-19-front-door.md",
+  "US-SPEC-20-self-hosting.md",
+  "US-SPEC-21-capability-packs.md",
+  "US-SPEC-22-self-description.md",
+  "US-SPEC-23-closed-system.md",
+  "US-SPEC-24-github-substrate-and-cost-control.md",
+  "US-SPEC-25-tenant-storage.md"
+ ]
+}
