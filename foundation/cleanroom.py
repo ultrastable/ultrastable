@@ -243,7 +243,9 @@ def apply(rec: dict, root: Path = REPO) -> list[str]:
     led = root / "ops" / "cleanroom"
     (led / "latest.json").write_text(json.dumps(rec, indent=1) + "\n")
     with (led / "runs.jsonl").open("a", encoding="utf-8") as f:
-        f.write(json.dumps({"at": rec["at"], "passed": rec["passed"], "findings": rec["findings"]}) + "\n")
+        from . import cloudevents  # STANDARDS-FIRST-1: ledger rows are CloudEvents 1.0 envelopes
+        ev = cloudevents.event("cleanroom", "run", "urn:ultrastable:loop:cleanroom", {"passed": rec["passed"], "findings": rec["findings"], "ticks": rec.get("ticks")}, time=rec["at"] if re.match(r"^\d{4}-", str(rec["at"])) else False)
+        f.write(json.dumps(ev) + "\n")
     return touched
 
 

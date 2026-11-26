@@ -1,1 +1,1 @@
-{"at": "2026-11-26T06:39:21Z", "passed": true, "findings": []}
+{"specversion": "1.0", "id": "ac664d94fcd940b59dc99bf6981d1504", "source": "urn:ultrastable:loop:cleanroom", "type": "io.ultrastable.cleanroom.run", "time": "2026-11-26T06:48:18Z", "datacontenttype": "application/json", "data": {"passed": true, "findings": [], "ticks": 144}}
