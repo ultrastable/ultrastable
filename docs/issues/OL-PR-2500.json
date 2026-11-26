@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2500",
+  "title": "OL-PR-2500: land or supersede pull request #2500 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2500 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2500\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2500 (`agent/data-e74a0e77c3` at e74a0e77c3, opened by app/ultrastable-209646): queue: closing-probe verdicts for 15 item(s) (QUEUE-PERSIST-1) [skip ci]. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (15): docs/issues/OL-PR-2464.json, docs/issues/Q-EXP-cd9db55b.json, docs/issues/Q-EXP-d6b832ee.json, docs/issues/Q-FIND-replication-ledger.json, docs/issues/Q-FIND-ultrastable.json, docs/issues/Q-FIND-unlearn.json, docs/issues/Q-FIND-what-works.json, docs/issues/Q-GAP-capability-evidence-precision.json, docs/issues/Q-GAP-chat-entry.json, docs/issues/Q-GAP-durable-agent-runs.json, docs/issues/Q-GAP-site-agent-protocol-parity.json, docs/issues/Q-ROLE-sales-partnerships.json, docs/issues/Q-ROLE-security.json, ops/balance.json, site/balance-data.js.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2500 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2500` exits 0 (pull request #2500 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

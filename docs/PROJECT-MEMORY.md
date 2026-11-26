@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: queue: closing-probe verdicts for 21 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]
+- 2026-11-26: queue: closing-probe verdicts for 21 item(s) (QUEUE-PERSIST-1) (part 1/2) [skip ci]
+- 2026-11-26: test: foundation tests for the specification requirements, part 2 (slice 10 of 11) (#2501)
+- 2026-11-26: test: foundation tests for the specification requirements, part 1 (slice 9 of 11) (#2499)
 - 2026-11-26: feat: SHIP-PLAN-1, the canonical record of built but unmerged work (slice 8 of 11) (#2481)
 - 2026-11-26: feat(tests): the last seed specification tests and the first foundation specification tests (slice 7 of 10) (#2464)
 - 2026-11-26: feat(seed): goal planner breaks the worst vital into small tasks (PLAN-1) (#2466)
