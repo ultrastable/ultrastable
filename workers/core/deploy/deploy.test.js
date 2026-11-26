@@ -80,13 +80,14 @@ test('a probe that passes only after a delay inside the window is kept', async (
   assert.equal((await d2.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' })).status, 'kept');
 });
 
-test('stale expectedVersion is refused and nothing is published', async () => {
+test('US-07-R19: a stale expectedVersion is refused, nothing is published and the refused ledger row carries the reason', async () => {
   const { d, deployer } = setup();
   const r = await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v0', actor: 'a' });
   assert.equal(r.status, 'refused');
   assert.match(r.reason, /stale_version/);
   assert.deepEqual(deployer.calls, []);
   assert.equal((await d.ledger('api'))[0].status, 'refused'); // refusals are ledgered
+  assert.match((await d.ledger('api'))[0].reason, /stale_version/); // the refused row carries the reason text
 });
 
 test('US-07-R12: deploys of one unit are serialized by the lock; other units are not blocked', async () => {
@@ -113,7 +114,7 @@ test('an expired lock is taken over; an injected lock port is used instead of th
   assert.deepEqual(calls, ['acq:api', 'rel:T']);
 });
 
-test('loop breaker: N consecutive reverts trip a gate-style record and further deploys are refused until closed', async () => {
+test('US-07-R19: loop breaker: N consecutive reverts trip a gate-style record and further deploys are refused until closed', async () => {
   const { d, web } = setup({ config: { breakerThreshold: 3 } });
   web.healthy = false;
   let last;
@@ -127,7 +128,7 @@ test('loop breaker: N consecutive reverts trip a gate-style record and further d
   assert.equal((await d.deploy({ unit: 'api', artifact: art('v5'), expectedVersion: 'v1' })).status, 'kept');
 });
 
-test('a kept deploy resets the breaker count', async () => {
+test('US-07-R19: a kept deploy resets the breaker count', async () => {
   const { d, web } = setup({ config: { breakerThreshold: 2 } });
   web.healthy = false;
   assert.equal((await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' })).gate, undefined);
@@ -137,7 +138,7 @@ test('a kept deploy resets the breaker count', async () => {
   assert.equal((await d.deploy({ unit: 'api', artifact: art('v4'), expectedVersion: 'v3' })).gate, undefined);
 });
 
-test('an unverifiable rollback opens a gate record and reports failed', async () => {
+test('US-07-R20: an unverifiable rollback opens a gate record and reports failed', async () => {
   const { d, web } = setup({ deployer: fakeDeployer('v1', { brokenRollback: true }) });
   web.healthy = false;
   const r = await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' });
@@ -146,7 +147,7 @@ test('an unverifiable rollback opens a gate record and reports failed', async ()
   assert.ok(r.gate);
 });
 
-test('unlogged mutation: reconcile files a record when live differs from the ledger', async () => {
+test('US-07-R21: unlogged mutation: reconcile files a record when live differs from the ledger', async () => {
   const { d, deployer, db } = setup();
   assert.equal((await d.reconcile('api')).status, 'no_baseline');
   await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' });
@@ -162,7 +163,7 @@ test('unlogged mutation: reconcile files a record when live differs from the led
   assert.equal((await d.reconcile('api')).status, 'consistent'); // baseline moved, no duplicate record
 });
 
-test('after a revert, reconcile expects the prior version', async () => {
+test('US-07-R21: after a revert, reconcile expects the prior version', async () => {
   const { d, web } = setup();
   web.healthy = false;
   await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' });
@@ -189,7 +190,7 @@ test('artifact digest mismatch is refused (US-07-R13)', async () => {
   assert.deepEqual(deployer.calls, []);
 });
 
-test('kill switch refuses deploys (US-09-R02), via config row or injected port', async () => {
+test('US-07-R19, US-09-R02: the kill switch refuses deploys, via config row or injected port', async () => {
   const { d, db, deployer } = setup();
   db.raw.exec(`INSERT INTO deploy_config VALUES ('kill_switch','on')`);
   assert.equal((await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' })).reason, 'kill_switch');
@@ -211,15 +212,18 @@ test('db-row probes and observe mode', async () => {
   assert.equal((await s.d.deploy({ unit: 'svc2', artifact: art('c'), expectedVersion: 'b' })).status, 'kept');
 });
 
-test('no secret value is stored anywhere, even if an error message carries it', async () => {
+test('US-06-R10, US-06-T06: no secret value is stored anywhere, even if an error message carries it; the presence of the binding is recorded, never its value', async () => {
   const deployer = fakeDeployer();
   deployer.publish = async () => { throw new Error('auth failed with ' + SECRET); };
   const { d, db } = setup({ deployer });
   const r = await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' });
   assert.equal(r.status, 'failed');
-  const dump = JSON.stringify([
-    await rows(db, `SELECT * FROM deploy_ledger`), await rows(db, `SELECT * FROM deploy_records`),
-    await rows(db, `SELECT * FROM deploy_probe_results`), await rows(db, `SELECT * FROM deploy_lock`)]);
+  // every deploy_* table and the items table, found from the schema so a table added later is covered too
+  const tables = (await rows(db, `SELECT name FROM sqlite_master WHERE type='table' AND (name LIKE 'deploy\\_%' ESCAPE '\\' OR name='items')`)).map(t => t.name);
+  assert.ok(tables.includes('deploy_ledger') && tables.includes('items'));
+  const all = [];
+  for (const t of tables) all.push(await rows(db, `SELECT * FROM ${t}`));
+  const dump = JSON.stringify(all);
   assert.ok(!dump.includes(SECRET));
   assert.ok(dump.includes('[redacted]'));
 });

@@ -44,3 +44,24 @@ test('a tick that throws keeps its slot (never two ticks in one slot) and record
   assert.equal(db.raw.prepare(`SELECT outcome FROM sched_slots WHERE slot=?`).get(r.slot).outcome, 'incomplete');
   assert.deepEqual(await claimSlot(db, T0 + 5 * SLOT_MS, { slotMs: SLOT_MS }), { won: true, slot: Math.floor(T0 / SLOT_MS) + 5 });
 });
+
+test('US-14-R03: a tick still running when the next slot starts is not overlapped; a claim abandoned past the bound is taken over', async () => {
+  const db = makeDb([MIG]);
+  let finish; const long = new Promise(r => { finish = r; });
+  const first = runOncePerSlot(db, async () => { await long; return { tickId: 1, completed: 8, total: 8 }; }, { now: T0 });
+  await new Promise(r => setImmediate(r));
+  const next = await runOncePerSlot(db, async () => { throw new Error('must not run'); }, { now: T0 + SLOT_MS });
+  assert.deepEqual([next.ran, next.overlap, next.running_slot], [false, true, Math.floor(T0 / SLOT_MS)], 'the earlier tick holds the store until it ends');
+  assert.equal(db.raw.prepare(`SELECT COUNT(*) AS n FROM sched_slots`).get().n, 1, 'the overlapped slot was not taken');
+  finish(); await first;
+  assert.equal((await runOncePerSlot(db, async () => ({ tickId: 2, completed: 8, total: 8 }), { now: T0 + SLOT_MS })).ran, true, 'once it has ended the next slot runs');
+  // a process that died: its slot row never got an outcome
+  db.raw.exec(`INSERT INTO sched_slots (slot, claimed_at) VALUES (${Math.floor(T0 / SLOT_MS) + 10}, '2026-11-15 13:40:00')`);
+  const at = Date.UTC(2026, 10, 15, 13, 40, 0);
+  const soon = await runOncePerSlot(db, async () => ({ tickId: 3, completed: 8, total: 8 }), { now: at + SLOT_MS });
+  assert.equal(soon.overlap, true, 'inside the bound the claim may still be running');
+  const late = await runOncePerSlot(db, async () => ({ tickId: 4, completed: 8, total: 8 }), { now: at + 3 * SLOT_MS });
+  assert.equal(late.ran, true, 'past the bound the abandoned claim is taken over');
+  assert.equal(db.raw.prepare(`SELECT outcome FROM sched_slots WHERE slot=?`).get(Math.floor(T0 / SLOT_MS) + 10).outcome, 'abandoned');
+  assert.equal((await runOncePerSlot(db, async () => ({ tickId: 5, completed: 8, total: 8 }), { now: at + 3 * SLOT_MS, noOverlapMs: 1 })).duplicate, true, 'the same slot is still a duplicate');
+});

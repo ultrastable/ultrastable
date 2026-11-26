@@ -18,7 +18,7 @@ const CORE = resolve(fileURLToPath(new URL('..', import.meta.url)));
 
 function walk(dir, out = []) {
   for (const name of readdirSync(dir)) {
-    if (name === 'node_modules') continue;
+    if (name === 'node_modules' || (dir === CORE && name === 'test')) continue; // the test harness builds stores from adapters and is not runtime code
     const p = join(dir, name);
     if (statSync(p).isDirectory()) walk(p, out);
     else if (/\.m?js$/.test(name) && !/\.test\.m?js$/.test(name)) out.push(p);

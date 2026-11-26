@@ -4,6 +4,7 @@
 // parents of unaccounted items, the visibility ratio across issue stores, and the principal-queue reroute rule.
 // Ports only: ctx = { db, now(), config, stores?: [{ name, visible, list() -> [{key, status}] }] }.
 import { recordLoopRun, cfg as baseCfg, nowMs, iso } from './index.js';
+import { triggerStates, triggered } from './triggers.js';
 
 const DEFAULTS = { visibility_threshold: 2, staff_role: 'staff', identity_patterns: ['identity-bound', 'money', 'payment', 'sign', 'legal', 'credential', "owner's account"] };
 const cfg = ctx => ({ ...DEFAULTS, ...baseCfg(ctx) });
@@ -11,6 +12,56 @@ const TERMINAL = ['done', 'superseded', 'cancelled'];
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
 const first = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).first()) || null;
 const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
+const hasTable = async (db, name) => !!(await first(db, `SELECT name FROM sqlite_master WHERE type='table' AND name=?`, name).catch(() => null));
+
+// ---- triggers at dispatch (US-08-R03, R16) -----------------------------------------------------
+
+/**
+ * Keep status in step with triggers, whatever the trigger form (one item, several items, `gate:<card>`). (a) An `open` item
+ * whose triggers are all done becomes `ready`: the core tick's own promotion only matches one item id. (b) A `ready` item
+ * whose trigger is not done (a trigger reopened by silent-drop reconcile, a relapse) goes back to `open` with an outcome
+ * naming what it waits on, so no dispatch picks it. A claimed item is never touched: work in progress finishes or is reaped.
+ */
+export async function enforceTriggers(ctx) {
+  const at = iso(nowMs(ctx)), out = { promoted: [], demoted: [] };
+  const limit = Number(cfg(ctx).trigger_scan_max) > 0 ? Number(cfg(ctx).trigger_scan_max) : 500;
+  const open = await triggered(ctx, 'open', limit), ready = await triggered(ctx, 'ready', limit);
+  const states = await triggerStates(ctx, [...open, ...ready].map(i => i.trigger_on));   // a handful of statements, not two per item
+  for (const it of open) {
+    if (!states.get(it.trigger_on).done) continue;
+    const r = await run(ctx.db, `UPDATE items SET status = 'ready', updated_at = ? WHERE id = ? AND status = 'open'`, at, it.id);
+    if (r.meta.changes) out.promoted.push(it.id);
+  }
+  for (const it of ready) {
+    const t = states.get(it.trigger_on);
+    if (t.done) continue;
+    const r = await run(ctx.db, `UPDATE items SET status = 'open', updated_at = ? WHERE id = ? AND status = 'ready'`, at, it.id);
+    if (!r.meta.changes) continue;
+    await run(ctx.db, `INSERT INTO outcomes (item_id, surface, action_class, result, evidence) VALUES (?, 'work_tracker', 'trigger_guard', 'failed', ?)`,
+      it.id, `demoted to open: trigger not done (${t.waiting_on.map(w => `${w}: ${t.reasons[w]}`).join('; ')})`.slice(0, 500));
+    out.demoted.push(it.id);
+  }
+  return out;
+}
+
+// ---- a held item returns when its gate card closes (US-08-R17) ---------------------------------
+
+/**
+ * An item blocked with `gate card <id>` (written by escalateToGate and routeToPrincipal) returns to `ready` when that card
+ * is closed, whether the card's probe closed it or a reroute did. An item blocked for any other reason is never touched.
+ */
+export async function releaseHeld(ctx) {
+  const at = iso(nowMs(ctx)), released = [];
+  for (const r of await all(ctx.db, `SELECT i.id AS item, g.id AS card, g.closing_probe AS probe FROM items i JOIN gate_cards g ON i.blocker = 'gate card ' || g.id
+      WHERE i.status = 'blocked' AND g.status = 'closed' ORDER BY i.id`)) {
+    const u = await run(ctx.db, `UPDATE items SET status = 'ready', blocker = NULL, updated_at = ? WHERE id = ? AND status = 'blocked' AND blocker = ?`, at, r.item, `gate card ${r.card}`);
+    if (!u.meta.changes) continue;
+    await run(ctx.db, `INSERT INTO outcomes (item_id, surface, action_class, result, evidence) VALUES (?, 'work_tracker', 'gate_release', 'verified', ?)`, r.item, `gate card ${r.card} closed by probe ${r.probe}`.slice(0, 300));
+    await run(ctx.db, `INSERT INTO claims_events (at, kind, key, holder, event, detail) VALUES (?, 'work', ?, NULL, 'gate-released', ?)`, at, `item:${r.item}`, `gate card ${r.card} closed`);
+    released.push(r.item);
+  }
+  return { released };
+}
 
 // ---- parents and the closure gate (US-08-R11) --------------------------------------------------
 
@@ -134,8 +185,13 @@ export async function visibilityRatio(ctx, { stores = ctx.stores } = {}) {
 
 // ---- principal queue (US-08 s6) ----------------------------------------------------------------
 
+// A card whose probe waits for a credential is identity-bound by its nature: only the principal can create the credential
+// (the same rule as core/trust, so the two modules never disagree about a card either of them opened).
+const inferredLine = card => (/^env:\w+$/.test(card.closing_probe || '') ? `the credential ${String(card.closing_probe).slice(4)} can be created only by the principal` : null);
 function findLine(card, line, patterns) {
   if (line && String(line).trim()) return String(line).trim();
+  const inferred = inferredLine(card);
+  if (inferred) return inferred;
   const text = String(card.why_gated || '');
   const hit = text.split(/(?<=[.;\n])\s*/).find(s => patterns.some(p => s.toLowerCase().includes(String(p).toLowerCase())));
   return hit ? hit.trim() : null;
@@ -163,8 +219,10 @@ export async function routeToPrincipal(ctx, g = {}) {
 /** Open cards without an identity-bound line: the metric whose target is zero. */
 export async function cardsWithoutIdentityLine(ctx) {
   const c = cfg(ctx), out = [];
-  for (const card of await all(ctx.db, `SELECT g.*, l.identity_bound_line AS line, l.item_id AS item_id FROM gate_cards g LEFT JOIN claims_gate_lines l ON l.card_id = g.id WHERE g.status = 'open' ORDER BY g.id`))
-    if (!findLine(card, card.line, c.identity_patterns)) out.push(card);
+  const trust = await hasTable(ctx.db, 'trust_gate_meta'); // US-08-R23: a line stored by core/trust counts
+  for (const card of await all(ctx.db, `SELECT g.*, l.identity_bound_line AS line, l.item_id AS item_id${trust ? ', t.identity_bound_line AS trust_line' : ''} FROM gate_cards g
+      LEFT JOIN claims_gate_lines l ON l.card_id = g.id ${trust ? 'LEFT JOIN trust_gate_meta t ON t.card_id = g.id' : ''} WHERE g.status = 'open' ORDER BY g.id`))
+    if (!findLine(card, card.line || card.trust_line, c.identity_patterns)) out.push(card);
   return out;
 }
 
@@ -194,9 +252,16 @@ export async function rerouteCards(ctx) {
 
 /** One tick of the gates. Wire after the loops that report runs. */
 export async function step(ctx) {
+  const held = await releaseHeld(ctx);
+  const triggers = await enforceTriggers(ctx);
   const gate = await enforceGate(ctx);
   // rerouting closes cards, so it is opt-in: cards filed by other modules must carry an identity-bound line first
   const queue = cfg(ctx).reroute_cards === true ? await rerouteCards(ctx) : { rerouted: [], cards_without_identity_line: (await cardsWithoutIdentityLine(ctx)).length };
   const vis = Array.isArray(ctx.stores) && ctx.stores.length ? await visibilityRatio(ctx) : null;
-  return { gate, rerouted: queue.rerouted.length, cards_without_identity_line: queue.cards_without_identity_line, visibility: vis && { ratio: vis.ratio, fired: vis.fired } };
+  // the trigger and held-item counts appear only when the step did something, so an idle tick keeps the shape it always had
+  const acted = {};
+  if (held.released.length) acted.held_released = held.released;
+  if (triggers.promoted.length) acted.triggers_promoted = triggers.promoted;
+  if (triggers.demoted.length) acted.triggers_demoted = triggers.demoted;
+  return { ...acted, gate, rerouted: queue.rerouted.length, cards_without_identity_line: queue.cards_without_identity_line, visibility: vis && { ratio: vis.ratio, fired: vis.fired } };
 }

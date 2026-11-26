@@ -3,6 +3,8 @@
 // Claims (US-SPEC-08): exclusive time-limited claims, fences, secret lease, deploy lock, reaper, reconciliation hooks.
 // Ports only: ctx = { db, now(), config, killSwitch?(), authorize?(request) }. No platform imports.
 
+import { triggerState } from './triggers.js';
+
 const KINDS = ['work', 'deploy', 'secret'];
 const TERMINAL = ['done', 'superseded', 'cancelled'];
 const SECRET_FIELDS = ['value', 'secret', 'secret_value', 'password', 'plaintext'];
@@ -119,9 +121,9 @@ export async function acquire(ctx, req = {}) {
       const item = await first(ctx.db, `SELECT status, trigger_on FROM items WHERE id=?`, item_id);
       if (item) {
         if (TERMINAL.includes(item.status)) return refuse(409, 'item_terminal');
-        if (item.trigger_on) {
-          const t = await first(ctx.db, `SELECT status FROM items WHERE id=?`, item.trigger_on);
-          if (!t || t.status !== 'done') return refuse(409, 'trigger_not_done', { trigger: item.trigger_on });
+        if (item.trigger_on) { // US-08-R03, R16: one item, several items, or gate:<card>; each must be done with a disposition
+          const t = await triggerState(ctx, item.trigger_on);
+          if (!t.done) return refuse(409, 'trigger_not_done', { trigger: item.trigger_on, waiting_on: t.waiting_on });
         }
         if (await hasTable(ctx.db, 'claims')) {
           const seed = await first(ctx.db, `SELECT agent FROM claims WHERE item_id=?`, item_id);
@@ -147,6 +149,10 @@ export async function acquire(ctx, req = {}) {
     }
     const row = await first(ctx.db, `SELECT fence, expires_at FROM claims_lock WHERE kind=? AND key=? AND released_at IS NULL`, kind, key);
     if (kind === 'work') await mirrorIn(ctx, item_id, holder, nowS);
+    if (kind === 'work' && req.repo && Number.isInteger(Number(req.pr)) && Number(req.pr) > 0 && await hasTable(ctx.db, 'claims_pr')) { // US-08-R19: link the claim to its pull request
+      const lock = await first(ctx.db, `SELECT id FROM claims_lock WHERE kind=? AND key=? AND released_at IS NULL`, kind, key);
+      await run(ctx.db, `INSERT OR REPLACE INTO claims_pr (claim_id, repo, pr) VALUES (?,?,?)`, lock.id, String(req.repo).slice(0, 200), Number(req.pr));
+    }
     await event(ctx, kind, key, holder, 'acquired', `fence ${row.fence}`);
     return { ok: true, status: 200, acquired: true, kind, key, holder, token, fence: row.fence, expires_at: row.expires_at, ttl_minutes: ttl };
   });
@@ -201,14 +207,53 @@ export async function release(ctx, req = {}) {
 }
 
 // ---- protected-resource check (US-08-R08): accept a write only for the live token and the current fence ----
+// While the kill switch is on the answer is invalid with reason kill-switch (US-08-R18): a holder with a live claim stops writing
+// when the switch flips, it does not wait for its claim to expire. The refusal is recorded at most once per 5 minutes per key.
 export async function check(ctx, req = {}) {
   const kind = req.kind || 'work', { key } = target(req);
   const row = await liveRow(ctx, kind, key);
+  if (await killed(ctx)) {
+    const since = iso(nowMs(ctx) - 5 * 60000);
+    if (!(await first(ctx.db, `SELECT id FROM claims_events WHERE event='kill-switch' AND kind=? AND key=? AND detail='check refused' AND at>=?`, kind, key, since)))
+      await event(ctx, kind, key, row ? row.holder : null, 'kill-switch', 'check refused');
+    return { ok: true, status: 503, valid: false, reason: 'kill-switch', fence: row ? row.fence : null };
+  }
   if (!row) return { ok: true, status: 200, valid: false, reason: 'no_live_claim' };
   if (row.expires_at <= iso(nowMs(ctx))) return { ok: true, status: 200, valid: false, reason: 'expired' };
   if (!(await authed(ctx, row, req.token))) return { ok: true, status: 200, valid: false, reason: 'token_mismatch' };
   if (Number(req.fence) !== row.fence) return { ok: true, status: 200, valid: false, reason: 'stale_fence', current_fence: row.fence };
   return { ok: true, status: 200, valid: true, fence: row.fence };
+}
+
+/**
+ * A write guarded by the claim (US-08-R08, R21). `write({ fence })` runs only when check says the token and fence are live;
+ * a refused write returns { ok:false, written:false, reason } and leaves a `write-refused` event (never a token). Because
+ * check and write are two operations, a store that can take a conditional statement should also put fenceGuardSql in the
+ * write itself, so the claim expiring between the two cannot let a stale holder through.
+ */
+export async function guardedWrite(ctx, req = {}, write) {
+  if (typeof write !== 'function') throw new Error('guardedWrite needs the write function');
+  const kind = req.kind || 'work', { key } = target(req);
+  const v = await check(ctx, req);
+  if (!v.valid) {
+    await event(ctx, kind, key, null, 'write-refused', v.reason);
+    return { ok: false, written: false, status: v.status === 503 ? 503 : 409, reason: v.reason, ...(v.current_fence != null ? { current_fence: v.current_fence } : {}) };
+  }
+  return { ok: true, written: true, status: 200, fence: v.fence, result: await write({ fence: v.fence }) };
+}
+
+/**
+ * The fence test as a SQL fragment with its bind values, for a protected store to put in the write statement itself
+ * (`UPDATE t SET ... WHERE id = ? AND <sql>`), so the test and the write are one atomic operation. It reads claims_lock, so
+ * the protected table must live in the same database. While the kill switch is on the fragment is false.
+ */
+export async function fenceGuardSql(ctx, req = {}) {
+  const kind = req.kind || 'work', { key } = target(req);
+  if (await killed(ctx)) return { sql: '(0 = 1)', binds: [] };
+  return {
+    sql: `EXISTS (SELECT 1 FROM claims_lock WHERE kind = ? AND key = ? AND token_hash = ? AND fence = ? AND released_at IS NULL AND expires_at > ?)`,
+    binds: [kind, key, await hashToken(req.token ?? ''), Number(req.fence), iso(nowMs(ctx))],
+  };
 }
 
 // ---- status: never exposes tokens or hashes ----
@@ -245,6 +290,47 @@ export async function releaseTerminal(ctx) {
   let released = 0;
   for (const r of rows) if (await endClaim(ctx, r, 'terminal', iso(nowMs(ctx)))) { released++; await event(ctx, r.kind, r.key, r.holder, 'terminal', 'linked item is terminal'); }
   return { released };
+}
+
+// ---- pull-request release (US-08-R19): a claim linked to a pull request ends with it ----
+// The reference reaper that does this in production is a script bound to one code host; here the reading of a pull
+// request is a port, so any host can supply it: readPull(repo, pr) -> { state: 'open' | 'closed' | 'merged', merged_at?, closed_at? }.
+const parseAt = v => (typeof v === 'number' ? v : Date.parse(String(v).includes('T') ? String(v) : String(v).replace(' ', 'T') + 'Z'));
+
+/** Release the live claims linked to one pull request. Merged: at once. Closed unmerged: at once too when called directly (the caller knows). Idempotent. */
+export async function releaseForPull(ctx, { repo, pr, merged = false } = {}) {
+  if (!(await hasTable(ctx.db, 'claims_pr'))) return { released: 0, claims: [] };
+  const outcome = merged ? 'merged' : 'closed', ids = [];
+  for (const r of await all(ctx.db, `SELECT l.* FROM claims_lock l JOIN claims_pr p ON p.claim_id = l.id WHERE l.released_at IS NULL AND p.repo = ? AND p.pr = ?`, String(repo), Number(pr)))
+    if (await endClaim(ctx, r, outcome, iso(nowMs(ctx)))) { ids.push(r.key); await event(ctx, r.kind, r.key, r.holder, 'released', `pull request ${repo}#${pr} ${outcome}`); }
+  return { released: ids.length, claims: ids };
+}
+
+/**
+ * Read the pull request of every live linked claim and release those that merged (at once) or closed unmerged (after
+ * config.pr_grace_min, default 30, so a pull request closed and reopened is not lost). A pull request that cannot be read
+ * releases nothing and is reported as unmeasured, never as closed. The run is recorded as a loop run, so it is itself accounted for.
+ */
+export async function reapClosedPulls(ctx, { readPull } = {}) {
+  if (typeof readPull !== 'function') throw new Error('reapClosedPulls needs the readPull port');
+  const out = { released: [], kept: [], unmeasured: [] };
+  if (!(await hasTable(ctx.db, 'claims_pr'))) return out;
+  const grace = (Number(cfg(ctx).pr_grace_min) >= 0 ? Number(cfg(ctx).pr_grace_min) : 30) * 60000, now = nowMs(ctx);
+  for (const r of await all(ctx.db, `SELECT l.*, p.repo AS pr_repo, p.pr AS pr_no FROM claims_lock l JOIN claims_pr p ON p.claim_id = l.id WHERE l.released_at IS NULL ORDER BY l.id`)) {
+    let pull = null;
+    try { pull = await readPull(r.pr_repo, r.pr_no); } catch { pull = null; }
+    if (!pull || !pull.state) { out.unmeasured.push(r.key); continue; }
+    const merged = pull.state === 'merged' || !!pull.merged_at;
+    const closedAt = pull.closed_at ? parseAt(pull.closed_at) : null;
+    if (!merged && !(pull.state === 'closed' && closedAt !== null && now - closedAt >= grace)) { out.kept.push(r.key); continue; }
+    if (await endClaim(ctx, r, merged ? 'merged' : 'closed', iso(now))) {
+      await event(ctx, r.kind, r.key, r.holder, 'released', `pull request ${r.pr_repo}#${r.pr_no} ${merged ? 'merged' : 'closed'}`);
+      out.released.push(r.key);
+    }
+  }
+  const n = out.released.length + out.kept.length + out.unmeasured.length;
+  if (n) await recordLoopRun(ctx, { loop: 'claims_pr_reap', scanned: n, executed: out.released.length, no_action: out.kept.length, failed: out.unmeasured.length });
+  return out;
 }
 
 export async function metrics(ctx) {
@@ -326,11 +412,45 @@ export async function escalateToGate(ctx, g = {}) {
   return { rerouted: false, card: id };
 }
 
+// ---- retention (US-08-R22): module tables are pruned by age; live claims, state and the fence high-water mark are never pruned ----
+const PRUNE_DEFAULT_DAYS = 30;
+/**
+ * Delete rows older than `keep_days` (default config.prune_keep_days, else 30) from the append-only tables: events, queue pulls,
+ * idempotency records, visibility readings, closed incidents, cleared closure blocks, loop runs (the newest run of every loop is
+ * kept: the gate reads it) and released claims (the newest row of every kind and key is kept, so the next fence is still
+ * previous + 1). A live claim, an open incident, an uncleared block and the rework counters are never touched.
+ */
+export async function prune(ctx, { keep_days } = {}) {
+  const days = Number(keep_days ?? cfg(ctx).prune_keep_days ?? PRUNE_DEFAULT_DAYS);
+  if (!(days >= 0)) throw new Error('keep_days must be a non-negative number');
+  const cutoff = iso(nowMs(ctx) - days * 86400000), out = { cutoff, keep_days: days };
+  const del = async (name, sql, ...a) => { out[name] = (await run(ctx.db, sql, ...a)).meta.changes; };
+  await del('events', `DELETE FROM claims_events WHERE at < ?`, cutoff);
+  await del('pulls', `DELETE FROM claims_pulls WHERE at < ?`, cutoff);
+  await del('idempotency', `DELETE FROM claims_idem WHERE at < ?`, cutoff);
+  await del('loop_runs', `DELETE FROM claims_loop_runs WHERE at < ? AND id NOT IN (SELECT MAX(id) FROM claims_loop_runs GROUP BY loop)`, cutoff);
+  if (await hasTable(ctx.db, 'claims_visibility')) await del('visibility', `DELETE FROM claims_visibility WHERE at < ?`, cutoff);
+  await del('incidents', `DELETE FROM claims_incidents WHERE status = 'closed' AND at < ?`, cutoff);
+  if (await hasTable(ctx.db, 'claims_closure_blocks')) await del('closure_blocks', `DELETE FROM claims_closure_blocks WHERE cleared_at IS NOT NULL AND cleared_at < ?`, cutoff);
+  if (await hasTable(ctx.db, 'claims_pr')) await run(ctx.db, `DELETE FROM claims_pr WHERE claim_id IN (SELECT id FROM claims_lock WHERE released_at IS NOT NULL AND released_at < ? AND id NOT IN (SELECT MAX(id) FROM claims_lock GROUP BY kind, key))`, cutoff);
+  await del('claims', `DELETE FROM claims_lock WHERE released_at IS NOT NULL AND released_at < ? AND id NOT IN (SELECT MAX(id) FROM claims_lock GROUP BY kind, key)`, cutoff);
+  return out;
+}
+/** prune at most once a day: the marker is a `pruned` event, which the prune itself never deletes inside its own window. */
+export async function pruneIfDue(ctx) {
+  const last = await first(ctx.db, `SELECT MAX(at) AS at FROM claims_events WHERE event = 'pruned'`);
+  if (last && last.at && nowMs(ctx) - parseAt(last.at) < 86400000) return null;
+  const out = await prune(ctx);
+  await event(ctx, null, null, null, 'pruned', `before ${out.cutoff}`);
+  return out;
+}
+
 export async function reconcile(ctx) {
   const reaped = await reapExpired(ctx);
   const terminal = await releaseTerminal(ctx);
   const drops = await reopenSilentDrops(ctx);
-  return { ...reaped, terminal_released: terminal.released, reopened: drops.reopened, metrics: await metrics(ctx) };
+  const pruned = await pruneIfDue(ctx);
+  return { ...reaped, terminal_released: terminal.released, reopened: drops.reopened, ...(pruned ? { pruned } : {}), metrics: await metrics(ctx) };
 }
 
 // ---- fetch-style router: /work-lock, /deploy-lock, /secret-lock + acquire|heartbeat|release|check|status ----
