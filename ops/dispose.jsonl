@@ -1625,3 +1625,7 @@
 {"age_days": 1.0, "at": "2026-11-26T16:16:11Z", "disposition": "shelved", "evidence": "open 24.3 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-replication-ledger", "rule": "ttl", "status_before": "open"}
 {"age_days": 0.3, "at": "2026-11-26T16:22:05Z", "disposition": "shelved", "evidence": "open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "OL-20261126-1", "rule": "ttl", "status_before": "open"}
 {"age_days": 0.3, "at": "2026-11-26T16:22:05Z", "disposition": "shelved", "evidence": "open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "ORCHESTRATE-1", "rule": "ttl", "status_before": "open"}
+{"age_days": 4.1, "at": "2026-11-26T16:38:27Z", "disposition": "shelved", "evidence": "open 99.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-base-rates", "rule": "ttl", "status_before": "open"}
+{"age_days": 4.1, "at": "2026-11-26T16:38:27Z", "disposition": "shelved", "evidence": "open 99.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-did-it-work", "rule": "ttl", "status_before": "open"}
+{"age_days": 4.1, "at": "2026-11-26T16:38:27Z", "disposition": "shelved", "evidence": "open 99.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-open-questions", "rule": "ttl", "status_before": "open"}
+{"age_days": 1.0, "at": "2026-11-26T16:38:27Z", "disposition": "shelved", "evidence": "open 24.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-replication-ledger", "rule": "ttl", "status_before": "open"}
