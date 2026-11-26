@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 import json, tempfile, unittest
 from pathlib import Path
 from foundation import disclosure
