@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: fix(lane): PR age bound from open time; fix main red (openstd land, post hook) (#2380)
+- 2026-11-26: fix(executor): model calls through the site AI binding, and a detector for a dead code-agent ladder (#2368)
+- 2026-11-26: chore(openstd): baseline batch, events and release notes (OPEN-STANDARDS-1) [skip ci]
 - 2026-11-26: OPEN-STANDARDS-1 gate (#2260): `doctrine/open-standards.json` maps every format class to its standard and `python3 -m foundation openstd --check` (in `checks`, seed twin `seed/scripts/openstd.py`) fails a new config with neither `$schema` nor a Schema Store catalog entry (CONFIG-SCHEMA-1), an event ledger that is not CloudEvents 1.0, or an unregistered file type; the shrink-only baseline drains daily in `openstd.yml`, which also writes `CHANGELOG.md` and `VERSION` from Conventional Commits (`foundation semrel`). Planned rows are `Q-STD-*` items closed by `openstd --probe <row>`.
 - 2026-11-26: feat(rnd): plug in competitors' best steps as workers (BORROW-1) (#2366)
 - 2026-11-26: queue: closing-probe verdicts for 26 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]
