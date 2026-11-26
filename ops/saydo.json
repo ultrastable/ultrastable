@@ -1,5 +1,5 @@
 {
- "at": "2026-11-26T10:16:37Z",
+ "at": "2026-11-26T10:26:48Z",
  "gaps": 7,
  "match_share": 0.987,
  "sources": {
@@ -156,14 +156,14 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 430
+    "total": 432
    }
   ],
   "loops": [
    {
-    "detail": "0 of 113 second-order steps kept in 14 days",
+    "detail": "0 of 114 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 113,
+    "judged": 114,
     "kept": 0,
     "ok": false
    }
@@ -855,6 +855,15 @@
     "unmeasured": []
    },
    {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "ORCHESTRATE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
     "checks": 1,
     "external": [],
     "failing": [],
@@ -1040,7 +1049,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 92.7 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 92.9 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1113,7 +1122,7 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 430
+   "total": 432
   },
   "loops": {
    "gaps": 1,
@@ -1121,12 +1130,12 @@
   },
   "rules": {
    "gaps": 4,
-   "total": 100
+   "total": 101
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 549
+ "total": 552
 }
