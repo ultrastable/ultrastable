@@ -4,13 +4,19 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { openTenantSql } from '../../adapters/sqlite/tenant-sqlite.js';
 import { TenantStore, BudgetError } from './store.js';
-import { estimateMonth, worstCase, probe } from './spend.js';
+import { estimateMonth, worstCase, probe, maxVecDimsMonth } from './spend.js';
+import { PRICES } from './prices.js';
+import { vectorizeGateCard } from './vectorport.js';
+import { crossCheck, sumSelf } from './crosscheck.js';
+import { readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { PAID_PLAN_BUDGET, FREE_PLAN_BUDGET } from './budget.js';
 import { doSqlPort, tenantStub, makeTenantDO } from '../../adapters/cloudflare/src/tenant-do.js';
 
 const mk = (budget = {}, now) => new TenantStore({ tenantId: 'acme', sql: openTenantSql(), budget, now });
 
-test('write budget is a hard cap and resets next day', () => {
+test('US-25-R02 TS-2: write budget is a hard cap and resets next day', () => {
   let t = new Date('2026-11-16T10:00:00Z');
   const s = mk({ day: { writes: 3 } }, () => t);
   s.query('CREATE TABLE a(x)');
@@ -20,7 +26,7 @@ test('write budget is a hard cap and resets next day', () => {
   assert.doesNotThrow(() => s.query('INSERT INTO a VALUES(9)'));
 });
 
-test('full-table scan over the per-query cap is refused and charged', () => {
+test('US-25-R03 TS-3: full-table scan over the per-query cap is refused and charged', () => {
   const s = mk({ perQueryReads: 10 });
   s.query('CREATE TABLE a(x, y)');
   for (let i = 0; i < 50; i++) s.query('INSERT INTO a VALUES(?,?)', [i, i]);
@@ -30,7 +36,7 @@ test('full-table scan over the per-query cap is refused and charged', () => {
   assert.ok(s.status().month.reads >= 50);
 });
 
-test('rollup replaces a scan with a one-row read', () => {
+test('US-25-R04 TS-4: rollup replaces a scan with a one-row read', () => {
   const s = mk();
   for (let i = 0; i < 100; i++) s.rollups.add('jobs_by_status', i % 2 ? 'ok' : 'fail');
   const before = s.status().month.reads;
@@ -38,7 +44,7 @@ test('rollup replaces a scan with a one-row read', () => {
   assert.equal(s.status().month.reads - before, 1);
 });
 
-test('vectors rank by cosine, stay in namespace, and cap at maxVectors', () => {
+test('US-25-R05 TS-5: vectors rank by cosine, stay in namespace, and cap at maxVectors', () => {
   const s = mk({ maxVectors: 3 });
   s.vectors.upsert('a', [1, 0, 0], { ns: 'n1', meta: { t: 'a' } });
   s.vectors.upsert('b', [0.9, 0.1, 0], { ns: 'n1' });
@@ -51,7 +57,7 @@ test('vectors rank by cosine, stay in namespace, and cap at maxVectors', () => {
   assert.ok(s.status().month.vec_dims > 0);
 });
 
-test('hot read falls back to stale cache when the budget is spent', async () => {
+test('US-25-R06 TS-6: hot read falls back to stale cache when the budget is spent', async () => {
   const m = new Map();
   const cache = { get: async k => m.get(k) ?? null, put: async (k, v) => m.set(k, v) };
   const s = new TenantStore({ tenantId: 'acme', sql: openTenantSql(), budget: { day: { requests: 2 } }, cache });
@@ -60,7 +66,7 @@ test('hot read falls back to stale cache when the budget is spent', async () => 
   assert.equal(await s.cached('k', 0, async x => x.query('SELECT 1')), 1); // stale served, no throw
 });
 
-test('worst case is bounded by the budgets and spend probe flags a breach', () => {
+test('US-25-R07 TS-7: worst case is bounded by the budgets and spend probe flags a breach', () => {
   const wc = worstCase([PAID_PLAN_BUDGET, PAID_PLAN_BUDGET, PAID_PLAN_BUDGET, PAID_PLAN_BUDGET, PAID_PLAN_BUDGET]);
   assert.ok(wc.estimate && wc.total < 8, 'five tenants at full budget stay under the ceiling: ' + wc.total);
   const heavy = estimateMonth({ reads: 60e9, writes: 100e6, requests: 5e6 });
@@ -69,7 +75,7 @@ test('worst case is bounded by the budgets and spend probe flags a breach', () =
   assert.equal(p.status, 'breach'); assert.equal(p.topReaders[0], 'b'); assert.equal(p.estimate, true);
 });
 
-test('DO port aborts a runaway cursor and tenant ids are validated', () => {
+test('US-25-R08 TS-8 US-25-R01 TS-1: DO port aborts a runaway cursor and tenant ids are validated', () => {
   const cur = (function* () { for (let i = 0; i < 1000; i++) yield { i }; })();
   cur.rowsRead = 0; const it = { [Symbol.iterator]() { const g = cur; return { next() { const n = g.next(); g.rowsRead++; return n; } }; }, get rowsRead() { return cur.rowsRead; }, rowsWritten: 0 };
   const r = doSqlPort({ exec: () => it }, 10).exec('SELECT 1');
@@ -77,7 +83,7 @@ test('DO port aborts a runaway cursor and tenant ids are validated', () => {
   assert.throws(() => tenantStub({ TENANT: {} }, '../other'), /bad_tenant_id/);
 });
 
-test('free profile: five tenants fit inside the free plan account-wide daily limits, and metering is batched', () => {
+test('US-25-R02 free profile: five tenants fit inside the free plan account-wide daily limits, and metering is batched', () => {
   const sum = (f) => 5 * FREE_PLAN_BUDGET.day[f];
   assert.ok(sum('requests') <= 100_000 && sum('writes') <= 100_000 && sum('reads') <= 5_000_000);
   const s = new TenantStore({ tenantId: 'acme', sql: openTenantSql(), budget: {} });
@@ -89,7 +95,7 @@ test('free profile: five tenants fit inside the free plan account-wide daily lim
   assert.equal(s.sql.exec('SELECT requests FROM _budget WHERE period LIKE ?', ['d:%']).rows[0].requests, 11);
 });
 
-test('TenantDO runs behind a fake platform base and returns errors as data', () => {
+test('US-25-R08 TS-8: TenantDO runs behind a fake platform base and returns errors as data', () => {
   const sql = openTenantSql();
   const fakeStorage = { sql: { exec: (t, ...p) => { const r = sql.exec(t, p); const it = r.rows[Symbol.iterator](); return { [Symbol.iterator]: () => it, rowsRead: r.rowsRead, rowsWritten: r.rowsWritten }; }, databaseSize: 1 } };
   const DO = makeTenantDO(class { constructor(ctx, env) { this.base = true; } });
@@ -99,4 +105,403 @@ test('TenantDO runs behind a fake platform base and returns errors as data', () 
   assert.equal(d.query('acme', 'INSERT INTO a VALUES(1)').ok, true);
   const e = d.query('acme', 'INSERT INTO a VALUES(2)');
   assert.equal(e.ok, false); assert.equal(e.error.code, 'budget_exceeded');
+});
+
+// ---------------- metering invariant (US-25-R14, TS-2) ----------------
+// A SqlPort wrapper that sums the platform's own rowsRead and rowsWritten for every statement the store issues, except the statements the
+// store declares exempt (the tenant pin and the budget table: PIN_ROWS, the first load of a period and the flush).
+function metered(sql) {
+  const m = { reads: 0, writes: 0, log: [] };
+  const port = { raw: sql.raw, storageBytes: sql.storageBytes, exec(text, params, limits) {
+    const r = sql.exec(text, params, limits);
+    const exempt = /\b_budget\b|\b_tenant\b/.test(text);
+    m.log.push({ text, rowsRead: r.rowsRead, exempt });
+    if (!exempt) { m.reads += r.rowsRead; m.writes += r.rowsWritten; }
+    return r;
+  } };
+  return { port, m };
+}
+const tick = (s) => s.guard.flush();
+
+test('US-25-R14: 300 vector upserts charge the guard within 1 percent of the rows the SqlPort reported', () => {
+  const { port, m } = metered(openTenantSql());
+  const s = new TenantStore({ tenantId: 'acme', sql: port, budget: { maxVectors: 1000 } });
+  for (let i = 0; i < 300; i++) s.vectors.upsert('v' + i, [1, i % 7, 3], { ns: 'n' });
+  tick(s);
+  const charged = s.status().month;
+  assert.ok(m.reads > 0 && m.writes > 0);
+  assert.ok(Math.abs(charged.reads - m.reads) <= Math.max(1, m.reads * 0.01), `charged ${charged.reads} reads vs platform ${m.reads}`);
+  assert.ok(Math.abs(charged.writes - m.writes) <= Math.max(1, m.writes * 0.01), `charged ${charged.writes} writes vs platform ${m.writes}`);
+  assert.ok(m.reads < 3 * 300, 'no upsert scans the vector table: the platform read fewer than 3 rows per upsert');
+});
+
+test('US-25-R14: status() reads one row and does not scan _vec', () => {
+  const { port, m } = metered(openTenantSql());
+  const s = new TenantStore({ tenantId: 'acme', sql: port, budget: { maxVectors: 1000 } });
+  for (let i = 0; i < 50; i++) s.vectors.upsert('v' + i, [1, 0, i], {});
+  m.log.length = 0;
+  assert.equal(s.status().vectors, 50);
+  assert.deepEqual(m.log.map(l => [l.text.replace(/\s+/g, ' '), l.rowsRead]), [["SELECT n FROM _vec_meta WHERE k = 'count'", 1]]);
+  assert.ok(!m.log.some(l => /COUNT\(\*\)/i.test(l.text)));
+});
+
+test('US-25-R14: the counter follows overwrite and remove, and a store with vectors but no counter backfills once, charged', () => {
+  const sql = openTenantSql();
+  const s = new TenantStore({ tenantId: 'acme', sql, budget: {} });
+  s.vectors.upsert('a', [1, 0], {}); s.vectors.upsert('b', [0, 1], {}); s.vectors.upsert('a', [1, 1], {});
+  assert.equal(s.status().vectors, 2);
+  s.vectors.remove('a'); s.vectors.remove('nope');
+  assert.equal(s.status().vectors, 1);
+  sql.raw.exec('DELETE FROM _vec_meta');                                             // a store written before the counter existed
+  const s2 = new TenantStore({ tenantId: 'acme', sql, budget: {} });
+  const before = s2.status().month.reads;
+  s2.vectors.upsert('c', [1, 0], {});
+  assert.equal(s2.status().vectors, 2);
+  assert.ok(s2.status().month.reads > before, 'the backfill read is charged');
+});
+
+test('US-25-R02: a month budget resets on the first of the next month', () => {
+  let t = new Date('2026-11-30T23:00:00Z');
+  const s = mk({ month: { writes: 3 }, day: { writes: 100 } }, () => t);
+  s.query('CREATE TABLE a(x)');
+  for (let i = 0; i < 3; i++) s.query('INSERT INTO a VALUES(?)', [i]);
+  assert.throws(() => s.query('INSERT INTO a VALUES(9)'), (e) => e instanceof BudgetError && e.limit === 'writes' && e.period === 'month' && e.resetsAt === '2026-12-01T00:00:00.000Z');
+  t = new Date('2026-12-01T00:00:01Z');
+  assert.doesNotThrow(() => s.query('INSERT INTO a VALUES(9)'));
+});
+
+test('US-25-R02: reads, requests and vector dimensions each refuse with budget_exceeded when spent', () => {
+  for (const [limit, budget, act] of [
+    ['reads', { day: { reads: 5 } }, s => { for (let i = 0; i < 20; i++) s.query('SELECT 1'); }],
+    ['requests', { day: { requests: 3 } }, s => { for (let i = 0; i < 20; i++) s.query('SELECT 1'); }],
+    ['vecDims', { day: { vecDims: 10 } }, s => { for (let i = 0; i < 20; i++) { s.vectors.upsert('v' + i, [1, 0, 0], {}); s.vectors.query([1, 0, 0], {}); } }],
+  ]) {
+    const s = mk(budget);
+    assert.throws(() => act(s), (e) => e instanceof BudgetError && e.limit === limit && e.period === 'day', limit);
+  }
+});
+
+test('US-25-R05: a vector upsert at maxVectors still fails vector_cap after the counter change; overwrite at the cap works', () => {
+  const s = mk({ maxVectors: 2 });
+  s.vectors.upsert('a', [1, 0, 0]); s.vectors.upsert('b', [0, 1, 0]);
+  assert.throws(() => s.vectors.upsert('c', [0, 0, 1]), (e) => e.code === 'vector_cap' && e.max === 2);
+  s.vectors.upsert('a', [0, 0, 1]);
+  s.vectors.remove('b'); s.vectors.upsert('c', [0, 0, 1]);                           // removing frees a slot
+  assert.equal(s.status().vectors, 2);
+});
+
+// ---------------- one tenant per store, per-tenant halt (US-25-R12, R13) ----------------
+test('US-25-R12: a second tenant id on the same storage is refused with tenant_mismatch and its budget is not used', () => {
+  const sql = openTenantSql();
+  const a = new TenantStore({ tenantId: 'a', sql, budget: {} });
+  a.query('CREATE TABLE t(x)'); a.query('INSERT INTO t VALUES(1)');
+  assert.throws(() => new TenantStore({ tenantId: 'b', sql, budget: { day: { writes: 1_000_000 } } }), (e) => e.code === 'tenant_mismatch');
+  assert.equal(sql.raw.prepare(`SELECT v FROM _tenant WHERE k = 'id'`).get().v, 'a');
+  assert.doesNotThrow(() => new TenantStore({ tenantId: 'a', sql, budget: {} }));    // the same id, a new object over the same storage, is fine
+});
+
+test('US-25-R13: halting one tenant refuses its reads, writes, vectors and rollups with tenant_halted and leaves another tenant working; resume restores service', () => {
+  const a = mk(), b = new TenantStore({ tenantId: 'b', sql: openTenantSql(), budget: {} });
+  a.query('CREATE TABLE t(x)');
+  a.halt('investigating a runaway loop');
+  for (const f of [() => a.query('SELECT 1'), () => a.query('INSERT INTO t VALUES(1)'), () => a.vectors.upsert('v', [1, 0]), () => a.vectors.query([1, 0]), () => a.rollups.add('r', 'k'), () => a.rollups.get('r', 'k')]) {
+    assert.throws(f, (e) => e.code === 'tenant_halted' && /investigating/.test(e.message));
+  }
+  assert.equal(a.status().halted, 'investigating a runaway loop');
+  assert.doesNotThrow(() => b.query('SELECT 1'));
+  const reads = a.status().month.requests;
+  a.resume();
+  assert.equal(a.query('SELECT 1').rows.length, 1);
+  assert.equal(a.status().halted, null);
+  assert.ok(a.status().month.requests > reads, 'metering resumes');
+});
+
+test('US-25-R13: a halt survives a new object over the same storage', () => {
+  const sql = openTenantSql();
+  new TenantStore({ tenantId: 'a', sql, budget: {} }).halt('stop');
+  const again = new TenantStore({ tenantId: 'a', sql, budget: {} });
+  assert.throws(() => again.query('SELECT 1'), (e) => e.code === 'tenant_halted');
+});
+
+// ---------------- the hard bound: statement write cap, scanning writes, storage ceiling (US-25-R03, R15) ----------------
+test('US-25-R03: an UPDATE without an index over more than perQueryReads rows is refused, charged and rolled back', () => {
+  const s = mk({ perQueryReads: 10, perQueryWrites: 1000 });
+  s.query('CREATE TABLE a(x, y)');
+  for (let i = 0; i < 50; i++) s.query('INSERT INTO a VALUES(?,?)', [i, 0]);
+  const before = { ...s.status().month };
+  assert.throws(() => s.query('UPDATE a SET x = 99 WHERE y = 0'), (e) => e.code === 'query_too_wide');
+  assert.equal(s.sql.exec('SELECT COUNT(*) n FROM a WHERE x = 99').rows[0].n, 0, 'the refused UPDATE changed nothing');
+  assert.ok(s.status().month.reads >= before.reads + 50, 'it was charged for the rows it scanned');
+  assert.throws(() => s.query('DELETE FROM a WHERE y = 0'), (e) => e.code === 'query_too_wide');
+  assert.equal(s.sql.exec('SELECT COUNT(*) n FROM a').rows[0].n, 50);
+});
+
+test('US-25-R15: an INSERT ... SELECT writing more than perQueryWrites rows is refused, charged and rolled back', () => {
+  const s = mk({ perQueryReads: 1000, perQueryWrites: 20 });
+  s.query('CREATE TABLE a(x)'); s.query('CREATE TABLE b(x)');
+  for (let i = 0; i < 15; i++) s.query('INSERT INTO a VALUES(?)', [i]);
+  assert.doesNotThrow(() => s.query('INSERT INTO b SELECT x FROM a'));                 // 15 rows: inside the cap
+  const w0 = s.status().month.writes;   // a number, not the live row
+  assert.throws(() => s.query('INSERT INTO b SELECT x FROM a UNION ALL SELECT x FROM a'), (e) => e.code === 'write_too_wide' && e.rowsWritten === 30);
+  assert.equal(s.sql.exec('SELECT COUNT(*) n FROM b').rows[0].n, 15, 'the refused statement wrote nothing');
+  assert.ok(s.status().month.writes >= w0 + 30, 'the refused statement is still charged for the rows it tried to write');
+});
+
+test('US-25-R15: a tenant that states day.writes gets a statement write cap of a third of it, and a profile states its own', () => {
+  assert.equal(mk({ day: { writes: 900 } }).guard.budget.perQueryWrites, 300);
+  assert.equal(FREE_PLAN_BUDGET.perQueryWrites, Math.floor(FREE_PLAN_BUDGET.day.writes / 3));
+  assert.equal(PAID_PLAN_BUDGET.perQueryWrites, Math.floor(PAID_PLAN_BUDGET.day.writes / 3));
+  assert.equal(mk({ perQueryWrites: 7, day: { writes: 900 } }).guard.budget.perQueryWrites, 7);
+});
+
+test('US-25-R15: writes are refused once storageBytes reaches maxStorageBytes and reads and deletes still work', () => {
+  const sql = openTenantSql();
+  const limit = new TenantStore({ tenantId: 'probe', sql: openTenantSql(), budget: {} }).sql.storageBytes() + 30_000;   // the empty store plus room for a few pages
+  const s = new TenantStore({ tenantId: 'acme', sql, budget: { maxStorageBytes: limit } });
+  s.query('CREATE TABLE a(x)');
+  let refused = null;
+  for (let i = 0; i < 2000 && !refused; i++) { try { s.query('INSERT INTO a VALUES(?)', ['x'.repeat(200) + i]); } catch (e) { refused = e; } }
+  assert.ok(refused instanceof BudgetError, 'a write is eventually refused');
+  assert.deepEqual([refused.limit, refused.period], ['storage', 'total']);
+  assert.ok(sql.storageBytes() >= limit);
+  assert.doesNotThrow(() => s.query('SELECT COUNT(*) n FROM a'));
+  assert.throws(() => s.vectors.upsert('v', [1, 0]), (e) => e instanceof BudgetError && e.limit === 'storage');
+  assert.throws(() => s.rollups.add('r', 'k'), (e) => e instanceof BudgetError && e.limit === 'storage');
+  assert.doesNotThrow(() => s.query('DELETE FROM a WHERE x LIKE ?', ['xxxx%']));        // deleting frees space and is never gated by it
+});
+
+// ---------------- spend probe: plan, worst case, Worker-safe prices (US-25-R07, R11, R17) ----------------
+test('US-25-R17: five Free budgets on the Free plan estimate USD 0 and a paid equivalent of 5.20', () => {
+  const five = Array(5).fill(FREE_PLAN_BUDGET);
+  const free = worstCase(five, undefined, { plan: 'free' });
+  assert.equal(free.total, 0); assert.equal(free.plan, 'free');
+  assert.equal(Number(free.paidEquivalentUsd.toFixed(2)), 5.2);
+  assert.equal(Number(worstCase(five).total.toFixed(2)), 5.2);                           // the default plan is paid, as before
+});
+
+test('US-25-R17: five Paid budgets on the Paid plan still estimate 7.10', () => {
+  const wc = worstCase(Array(5).fill(PAID_PLAN_BUDGET), undefined, { plan: 'paid' });
+  assert.equal(Number(wc.total.toFixed(2)), 7.1); assert.ok(wc.total < 8);
+});
+
+test('US-25-R07: probe returns ok under 80 percent of the ceiling, warn between 80 and 100, breach above, and states worstCase and plan', () => {
+  const snap = (requests) => [{ tenantId: 'a', month: { reads: 0, writes: 0, requests } }];
+  // paid base 5 + 0.15 per million requests over 1 million: 1M -> 5.00, 17M -> 7.40, 21M -> 8.00 (ceiling 8 -> warn above 6.4, breach above 8)
+  assert.equal(probe(snap(1e6), { ceilingUsd: 8, dayOfMonth: 30, daysInMonth: 30 }).status, 'ok');
+  assert.equal(probe(snap(14e6), { ceilingUsd: 8, dayOfMonth: 30, daysInMonth: 30 }).status, 'warn');
+  assert.equal(probe(snap(40e6), { ceilingUsd: 8, dayOfMonth: 30, daysInMonth: 30 }).status, 'breach');
+  const p = probe(snap(1e6), { ceilingUsd: 8, plan: 'free', budgets: Array(5).fill(FREE_PLAN_BUDGET) });
+  assert.equal(p.plan, 'free'); assert.equal(p.projectedUsd, 0); assert.equal(p.status, 'ok');
+  assert.deepEqual(p.worstCase, { totalUsd: 0, paidEquivalentUsd: 5.2, plan: 'free', vectorize: false });
+  assert.equal(probe(snap(1e6), { budgets: Array(5).fill(PAID_PLAN_BUDGET) }).worstCase.totalUsd, 7.1);
+});
+
+test('US-25-R17: gbSeconds above 400,000 add 12.50 per million', () => {
+  const base = estimateMonth({ gbSeconds: 400_000 }).total, more = estimateMonth({ gbSeconds: 1_400_000 }).total;
+  assert.equal(Number((more - base).toFixed(2)), 12.5);
+});
+
+test('US-25-R11: no module in core/tenantstore imports node:, cloudflare: or reads import.meta.url, and prices.js equals prices.json', () => {
+  const dir = path.dirname(fileURLToPath(import.meta.url));
+  for (const f of readdirSync(dir).filter(n => n.endsWith('.js') && !n.endsWith('.test.js'))) {
+    const src = readFileSync(path.join(dir, f), 'utf8').replace(/\/\/[^\n]*/g, '');
+    assert.ok(!/from\s+['"](node|cloudflare):/.test(src) && !/import\.meta\.url/.test(src) && !/\brequire\(/.test(src), `${f} reaches a platform`);
+  }
+  assert.deepEqual(PRICES, JSON.parse(readFileSync(path.join(dir, 'prices.json'), 'utf8')));
+});
+
+// ---------------- promotion past maxVectors (US-25-R09, TS-9) ----------------
+function fakeVectorize() {
+  const idx = { rows: new Map(), upserts: 0, queries: [], deleted: [], failNext: 0 };
+  idx.upsert = async (rows) => { if (idx.failNext > 0) { idx.failNext--; throw new Error('vectorize unavailable'); } idx.upserts++; for (const r of rows) idx.rows.set(r.id, r); };
+  idx.deleteByIds = async (ids) => { for (const id of ids) { idx.rows.delete(id); idx.deleted.push(id); } };
+  idx.query = async (vec, { topK = 5, namespace, filter } = {}) => {
+    idx.queries.push({ topK, namespace, filter });
+    const cos = (a, b) => { let d = 0, na = 0, nb = 0; for (let i = 0; i < a.length; i++) { d += a[i] * b[i]; na += a[i] ** 2; nb += b[i] ** 2; } return na && nb ? d / Math.sqrt(na * nb) : 0; };
+    const m = [...idx.rows.values()].filter(r => r.namespace === namespace && (!filter || r.metadata.ns === filter.ns)).map(r => ({ id: r.id, score: cos(vec, r.values), metadata: r.metadata }));
+    return { matches: m.sort((a, b) => b.score - a.score).slice(0, topK) };
+  };
+  return idx;
+}
+const mkv = (budget, binding) => new TenantStore({ tenantId: 'acme', sql: openTenantSql(), budget, vectorize: binding });
+
+test('US-25-R09: at maxVectors with a fake binding the next upsert promotes, all earlier vectors are queryable through the port and none is lost', async () => {
+  const idx = fakeVectorize(), s = mkv({ maxVectors: 3 }, idx);
+  for (const [id, v] of [['a', [1, 0, 0]], ['b', [0, 1, 0]], ['c', [0, 0, 1]]]) await s.tv.upsert(id, v, { ns: 'n', meta: { t: id } });
+  assert.equal(s.tv.mode(), 'local');
+  await s.tv.upsert('d', [1, 1, 0], { ns: 'n' });                          // the 4th does not fit: promotion starts, the new vector goes to the port
+  assert.equal(s.tv.mode(), 'promoting');
+  assert.deepEqual((await s.tv.query([1, 0, 0], { k: 4, ns: 'n' })).map(x => x.id).sort(), ['a', 'b', 'c', 'd'], 'while promoting, local and port results are merged');
+  const r = await s.tv.promote({ maxBatches: 5 });
+  assert.deepEqual([r.done, r.copied, r.mode], [true, 3, 'vectorize']);
+  assert.equal(s.vectors.count(), 0, 'nothing is left locally');
+  assert.deepEqual([...idx.rows.keys()].sort(), ['a', 'b', 'c', 'd']);
+  assert.ok([...idx.rows.values()].every(x => x.namespace === 'acme' && x.metadata.ns === 'n'), 'namespaced by tenant');
+  const top = await s.tv.query([1, 0, 0], { k: 2, ns: 'n' });
+  assert.equal(top[0].id, 'a'); assert.deepEqual(top[0].meta, { t: 'a' });
+  assert.deepEqual(idx.queries.at(-1).filter, { ns: 'n' });
+  await s.tv.upsert('e', [0, 1, 1], { ns: 'n' });                          // later upserts go straight to the port
+  assert.ok(idx.rows.has('e'));
+  assert.equal(s.status().vectorMode, 'vectorize');
+});
+
+test('US-25-R09: promotion resumes after an interrupted batch without duplicates and a newer value is never overwritten by the old local row', async () => {
+  const idx = fakeVectorize(), s = mkv({ maxVectors: 5 }, idx);
+  s.tv.batch = 2;
+  for (const id of 'abcde') await s.tv.upsert(id, [1, id.charCodeAt(0) % 5, 1], {});
+  await s.tv.upsert('a', [0, 0, 9], {});                                    // an overwrite at the cap is local and fine
+  await s.tv.upsert('f', [9, 9, 9], {});                                    // promotes
+  await s.tv.upsert('b', [7, 7, 7], {});                                    // b changes while promoting: the port holds the newest, the local row is dropped
+  idx.failNext = 1;
+  await assert.rejects(() => s.tv.promote({ maxBatches: 1 }), /vectorize unavailable/);   // the port refuses the first batch: nothing was deleted locally
+  assert.equal(s.vectors.count(), 4);
+  const r = await s.tv.promote({ maxBatches: 10 });
+  assert.equal(r.done, true);
+  assert.deepEqual([...idx.rows.keys()].sort(), ['a', 'b', 'c', 'd', 'e', 'f']);
+  assert.deepEqual(idx.rows.get('b').values, [7, 7, 7]);
+  assert.deepEqual(idx.rows.get('a').values.map(x => Math.round(x)), [0, 0, 9]);
+  assert.equal(new Set([...idx.rows.keys()]).size, 6);
+});
+
+test('US-25-R09: without a binding the same upsert still fails with vector_cap', async () => {
+  const s = mkv({ maxVectors: 2 }, null);
+  await s.tv.upsert('a', [1, 0]); await s.tv.upsert('b', [0, 1]);
+  await assert.rejects(() => s.tv.upsert('c', [1, 1]), (e) => e.code === 'vector_cap');
+  assert.equal(s.tv.mode(), 'local');
+  assert.deepEqual(await s.tv.promote(), { done: false, reason: 'no_binding', mode: 'local' });
+});
+
+test('US-25-R09: a port query is charged (stored + 1) x dimensions', async () => {
+  const idx = fakeVectorize(), s = mkv({ maxVectors: 2 }, idx);
+  await s.tv.upsert('a', [1, 0, 0]); await s.tv.upsert('b', [0, 1, 0]); await s.tv.upsert('c', [0, 0, 1]);
+  await s.tv.promote({ maxBatches: 3 });
+  assert.equal(s.tv.status().stored, 3);
+  const before = s.status().month.vec_dims;
+  await s.tv.query([1, 0, 0], { k: 1 });
+  assert.equal(s.status().month.vec_dims - before, (3 + 1) * 3);
+});
+
+test('US-25-R09: the promotion state survives a new object over the same storage, and the gate card names its default and probe', async () => {
+  const sql = openTenantSql(), idx = fakeVectorize();
+  const s = new TenantStore({ tenantId: 'acme', sql, budget: { maxVectors: 1 }, vectorize: idx });
+  await s.tv.upsert('a', [1, 0]); await s.tv.upsert('b', [0, 1]);
+  assert.equal(s.tv.mode(), 'promoting');
+  const again = new TenantStore({ tenantId: 'acme', sql, budget: { maxVectors: 1 }, vectorize: idx });
+  assert.equal(again.tv.mode(), 'promoting');
+  assert.equal((await again.tv.promote()).mode, 'vectorize');
+  const card = vectorizeGateCard();
+  assert.match(card.default_in_effect, /vector_cap/); assert.deepEqual(card.probe, { get: '/health', path: 'vectors.mode', expect: 'vectorize' });
+});
+
+// ---------------- cross-check against the platform (US-25-R10, TS-10) ----------------
+test('US-25-R10: 100 self versus 130 platform requests (30 percent) is a finding; 100 versus 115 is not', () => {
+  const hit = crossCheck({ self: { requests: 100 }, platform: { requests: 130 } });
+  assert.equal(hit.findings.length, 1); assert.deepEqual([hit.findings[0].meter, hit.findings[0].self, hit.findings[0].platform], ['requests', 100, 130]);
+  assert.ok(hit.findings[0].divergence > 0.2 && hit.findings[0].divergence < 0.25);
+  assert.equal(crossCheck({ self: { requests: 100 }, platform: { requests: 115 } }).findings.length, 0);
+  assert.equal(crossCheck({ self: { requests: 100 }, platform: { requests: 70 }, threshold: 0.5 }).findings.length, 0);
+});
+
+test('US-25-R10: a null platform reading is reported unmeasured, not as zero or as a finding; no reading at all is not ok', () => {
+  const r = crossCheck({ self: { requests: 100, reads: 5000, writes: 10 }, platform: { requests: 100, reads: null } });
+  assert.deepEqual(r.unmeasured, ['reads', 'writes']); assert.deepEqual(r.findings, []); assert.equal(r.ok, true);
+  assert.equal(crossCheck({ self: { requests: 100 }, platform: {} }).ok, false);
+  assert.equal(crossCheck({ self: { requests: 0 }, platform: { requests: 0 } }).compared[0].divergence, 0);
+});
+
+test('US-25-R10: declared overhead (the hourly self-test calls) is added before comparing, and sumSelf adds tenant statuses', () => {
+  const self = sumSelf([{ month: { requests: 60, reads: 1, writes: 1 } }, { month: { requests: 30, reads: 2, writes: 0 } }]);
+  assert.deepEqual(self, { requests: 90, reads: 3, writes: 1 });
+  assert.equal(crossCheck({ self, platform: { requests: 130 } }).findings.length, 1);
+  assert.equal(crossCheck({ self, platform: { requests: 130 }, overhead: { requests: 35 } }).findings.length, 0);
+});
+
+// ---------------- statement classification: a CTE write is a write (US-25-R03, R15) ----------------
+import { statementKind, isWriteStatement, freesSpace } from './sqlclass.js';
+
+test('US-25-R15: statementKind reads past the first keyword: WITH ... INSERT, UPDATE and DELETE are DML, a WITH ... SELECT using replace() is a read', () => {
+  assert.equal(statementKind('SELECT 1'), 'read');
+  assert.equal(statementKind('  -- note\n SELECT 1'), 'read');
+  assert.equal(statementKind('PRAGMA page_count'), 'read');
+  assert.equal(statementKind('WITH c AS (SELECT 1 x) SELECT replace(x, 1, 2) FROM c'), 'read');
+  assert.equal(statementKind("WITH c AS (SELECT 1 x) SELECT 'insert into t' FROM c"), 'read');            // a keyword inside text is text
+  assert.equal(statementKind('WITH c(x) AS (SELECT 1) INSERT INTO t SELECT x FROM c'), 'dml');
+  assert.equal(statementKind('WITH c(x) AS (SELECT 1) UPDATE t SET a = (SELECT x FROM c)'), 'dml');
+  assert.equal(statementKind('WITH c(x) AS (SELECT 1) DELETE FROM t WHERE a IN (SELECT x FROM c)'), 'dml');
+  assert.equal(statementKind('WITH c(x) AS (SELECT 1) REPLACE INTO t SELECT x FROM c'), 'dml');
+  assert.equal(statementKind('/* hide */ INSERT INTO t VALUES (1)'), 'dml');
+  assert.equal(statementKind('CREATE TABLE t(a)'), 'ddl');
+  assert.ok(isWriteStatement('WITH c AS (SELECT 1) DELETE FROM t'));
+  assert.ok(freesSpace('DELETE FROM t') && !freesSpace('INSERT INTO t VALUES (1)'));
+});
+
+test('US-25-R15: a WITH ... INSERT at the storage ceiling is refused like a plain INSERT, and a CTE write is metered and capped per statement (US-25-R03)', () => {
+  const s = mk({ day: { writes: 3000 }, perQueryWrites: 10 });
+  s.query('CREATE TABLE t(a INTEGER)');
+  const cte = (n) => `WITH RECURSIVE c(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM c WHERE x < ${n}) INSERT INTO t SELECT x FROM c`;
+  assert.throws(() => s.query(cte(100)), (e) => e.code === 'write_too_wide');           // refused by the statement write cap ...
+  assert.equal(s.sql.raw.prepare('SELECT COUNT(*) n FROM t').get().n, 0);                // ... and rolled back
+  const before = s.status().day.writes;
+  assert.equal(s.query(cte(5)).rowsWritten, 5);
+  assert.equal(s.status().day.writes - before, 5, 'the CTE write is metered as written rows, not as a read');
+  s.guard.budget.maxStorageBytes = 1;                                                    // the store is full
+  assert.throws(() => s.query('INSERT INTO t VALUES (9)'), (e) => e.code === 'budget_exceeded' && e.limit === 'storage');
+  assert.throws(() => s.query(cte(2)), (e) => e.code === 'budget_exceeded' && e.limit === 'storage');
+  assert.equal(s.sql.raw.prepare('SELECT COUNT(*) n FROM t').get().n, 5);
+  assert.doesNotThrow(() => s.query('WITH c AS (SELECT 1 x) SELECT x FROM c'));         // reads still work at the ceiling
+});
+
+// ---------------- promotion writes are metered (US-25-R14) ----------------
+test('US-25-R14: in promoting mode every row the facade writes is charged: metered writes equal the SqlPort rows written, apart from the declared exemptions', async () => {
+  const sql = openTenantSql(); let actual = 0;
+  const ex = sql.exec.bind(sql);
+  const port = { raw: sql.raw, storageBytes: sql.storageBytes, exec(text, params, limits) {
+    const r = ex(text, params, limits);
+    if (!/\b_budget\b|\b_tenant\b/.test(text)) actual += r.rowsWritten;       // the same exemptions as the local-mode test: the pin and the budget table
+    return r;
+  } };
+  const idx = fakeVectorize();
+  const s = new TenantStore({ tenantId: 'acme', sql: port, budget: { maxVectors: 2 }, vectorize: idx });
+  for (let i = 0; i < 2; i++) await s.tv.upsert('v' + i, [1, 0, 0]);              // local mode
+  s.guard.flush();
+  actual = 0; const before = s.guard.usage().day.writes;
+  for (let i = 2; i < 12; i++) await s.tv.upsert('v' + i, [1, 0, 0]);             // the first one switches the mode; all go through the port
+  assert.equal(s.tv.mode(), 'promoting');
+  const metered = s.guard.usage().day.writes - before;
+  assert.ok(actual > 0, 'promotion wrote rows');
+  assert.equal(metered, actual, `charged ${metered} rows written vs the SqlPort's ${actual}`);
+  actual = 0; const b2 = s.guard.usage().day.writes;
+  assert.equal((await s.tv.promote({ maxBatches: 10 })).mode, 'vectorize');
+  assert.equal(s.guard.usage().day.writes - b2, actual, 'the promotion batches (delete, counter update, state rows) are charged too');
+});
+
+// ---------------- the worst case covers Vectorize (US-25-R07, R09) ----------------
+test('US-25-R07: the worst case costs Vectorize queried dimensions when a binding exists, and is stated as local-mode only when it does not', () => {
+  const five = Array(5).fill(PAID_PLAN_BUDGET);
+  const local = worstCase(five), vec = worstCase(five, undefined, { vectorize: true });
+  assert.equal(Number(local.total.toFixed(2)), 7.1); assert.equal(local.vectorize, false);
+  assert.equal(vec.vectorize, true);
+  assert.ok(vec.total > 100, `five Paid budgets with Vectorize reachable cost ${vec.total.toFixed(2)}, far above the USD 8 ceiling`);
+  assert.ok(worstCase(Array(5).fill(FREE_PLAN_BUDGET), undefined, { plan: 'free', vectorize: true }).paidEquivalentUsd > 100);
+});
+
+test('US-25-R07: a tenant promoting to Vectorize (or a configured binding) makes the probe cost Vectorize, in the projection and in the worst case', () => {
+  const snap = (vectorMode) => [{ tenantId: 'a', month: { reads: 0, writes: 0, requests: 1e6, vec_dims: 20e9 }, vectorMode }];
+  const budgets = Array(5).fill(PAID_PLAN_BUDGET);
+  const loc = probe(snap('local'), { budgets, dayOfMonth: 30, daysInMonth: 30 });
+  assert.equal(loc.vectorize, false); assert.equal(loc.worstCase.totalUsd, 7.1); assert.equal(loc.status, 'ok');
+  const prom = probe(snap('promoting'), { budgets, dayOfMonth: 30, daysInMonth: 30 });
+  assert.equal(prom.vectorize, true); assert.equal(prom.worstCase.vectorize, true); assert.ok(prom.worstCase.totalUsd > 100);
+  assert.equal(prom.status, 'breach', 'the projected month of queried dimensions breaches the ceiling');
+  assert.equal(probe(snap('local'), { budgets, vectorize: true, dayOfMonth: 30, daysInMonth: 30 }).worstCase.vectorize, true);   // the host says a binding is configured
+});
+
+test('US-25-R07: capping every tenant at maxVecDimsMonth keeps the Vectorize worst case under the ceiling', () => {
+  const five = Array(5).fill(PAID_PLAN_BUDGET);
+  const cap = maxVecDimsMonth(five, { ceilingUsd: 8 });
+  assert.ok(cap > 0 && cap < PAID_PLAN_BUDGET.month.vecDims);
+  const capped = five.map(b => ({ ...b, month: { ...b.month, vecDims: cap } }));
+  const wc = worstCase(capped, undefined, { vectorize: true });
+  assert.ok(wc.total <= 8 + 1e-9, `capped Vectorize worst case ${wc.total}`);
+  assert.ok(worstCase(five.map(b => ({ ...b, month: { ...b.month, vecDims: cap + 1_000_000 } })), undefined, { vectorize: true }).total > 8, 'and a larger cap would breach it');
 });

@@ -389,8 +389,32 @@ test('US-06-R21: deployAuthorizer allows an action at the rung it needs, refuses
   assert.deepEqual([gated.allowed, gated.refused, gated.gate_card], [false, 'interrupt_gate', 'GATE-runtime-delete_database_or_bucket-db1']);
   const unknown = await auth({ surface: 'runtime', action_class: 'teleport', target: 'x' });
   assert.deepEqual([unknown.allowed, unknown.refused], [false, 'not_in_policy']);
-  const limited = T.deployAuthorizer({ db, policy: POLICY, now: () => NOW, limits: (req) => (req.target === 'api' ? { classifier: { refused: true, reason: 'flagged' } } : undefined) });
+  const limited = T.deployAuthorizer({ db, policy: POLICY, required_rung: 'assisted', now: () => NOW, limits: (req) => (req.target === 'api' ? { classifier: { refused: true, reason: 'flagged' } } : undefined) });
   assert.deepEqual([(await limited({ surface: 'runtime', action_class: 'deploy_production', target: 'api' })).refused, (await limited({ surface: 'runtime', action_class: 'deploy_production', target: 'web' })).allowed], ['classifier', true]);
+});
+
+test('US-06-R23: a denied action is refused even when it is reversible or names a reversible path, and the validator flags the combination', async () => {
+  const db = mk();
+  const pol = JSON.parse(JSON.stringify(POLICY));
+  pol.surfaces.runtime.actions.force_push_default_branch = { reversible: false, identity_bound: false, denied: true, reversible_path: 'git reflog restore', reason: 'never' };
+  assert.ok(T.validatePolicy(pol).some(p => /force_push_default_branch: denied but carries a reversible form/.test(p)));
+  pol.surfaces.runtime.actions.force_push_default_branch = { reversible: true, identity_bound: false, denied: true };
+  assert.ok(T.validatePolicy(pol).some(p => /denied but carries a reversible form/.test(p)));
+  for (const def of [{ reversible: false, identity_bound: false, denied: true, reversible_path: 'git reflog restore' }, { reversible: true, denied: true }]) {
+    pol.surfaces.runtime.actions.force_push_default_branch = def;
+    const r = await T.authorize(db, { surface: 'runtime', action_class: 'force_push_default_branch', executor: 'agent-a' }, { policy: pol, now: NOW });
+    assert.deepEqual([r.allowed, r.refused], [false, 'denied']);
+  }
+  assert.deepEqual(T.validatePolicy(POLICY), [], 'the shipped policy states no such combination');
+});
+
+test('US-06-R21: the deploy authorizer defaults to the autonomous rung, so a pair that has earned nothing cannot deploy to production', async () => {
+  const db = mk();
+  const auth = T.deployAuthorizer({ db, policy: POLICY, now: () => NOW });
+  const fresh = await auth({ surface: 'runtime', action_class: 'deploy_production', target: 'api', executor: 'brand-new-agent' });
+  assert.deepEqual([fresh.allowed, fresh.refused, fresh.reason], [false, 'rung_too_low', 'effective rung assisted is below autonomous']);
+  db.raw.prepare(`INSERT INTO trust_ledger (surface, action_class, rung, reliability, outcomes) VALUES ('runtime','deploy_production','autonomous',0.9,12)`).run();
+  assert.equal((await auth({ surface: 'runtime', action_class: 'deploy_production', target: 'api', executor: 'agent-a' })).allowed, true);
 });
 
 test('US-06-R18: rankItems multiplies each score by its pair score, uses the baseline for an unscored pair, reads the pairs together and keeps ties in input order', async () => {
@@ -459,4 +483,27 @@ test('US-06-R12, mirror rule: the shipped policy against the harness settings fi
   const noShell = clone(POLICY); delete noShell.surfaces.money.actions.spend.harness_deny;
   assert.deepEqual(T.mirrorProblems(noShell, deny), [], 'a gated action on a surface no shell command reaches needs no pattern');
   assert.equal(T.mirrorProblems(bare, deny, { shell_surfaces: [] }).length, 0, 'the shell surfaces are configuration');
+});
+
+test('US-06-T05, US-06-R09: a card for a missing credential carries probe env:<NAME> and a default; it stays open without the binding, closes itself with it, and the tick throws nothing', async () => {
+  const db = mk();
+  const card = await T.openCard(db, {
+    id: 'GATE-CLOUDFLARE', what: 'Create the Cloudflare API token the deploy needs', why_gated: 'only the principal can mint the credential',
+    default_in_effect: 'the system keeps serving the last deployed version and queues the deploy', prepared_by_fleet: 'scoped permission list drafted',
+    closing_probe: 'env:CLOUDFLARE_API_TOKEN', surface: 'runtime', action_class: 'deploy_production',
+    identity_bound_line: 'the credential CLOUDFLARE_API_TOKEN can be created only by the principal',
+  }, { now: NOW });
+  assert.equal(card.rerouted, false, 'a card with an identity-bound line is a gate card, not a rerouted work item');
+  assert.equal((await T.gateQueue(db))[0].identity_bound_line.includes('CLOUDFLARE_API_TOKEN'), true);
+  const open = one(db, `SELECT * FROM gate_cards WHERE id = 'GATE-CLOUDFLARE'`);
+  assert.equal(open.closing_probe, 'env:CLOUDFLARE_API_TOKEN');
+  assert.ok(open.default_in_effect.length > 0 && open.status === 'open');
+  const r1 = await runTick(db, { now: NOW, env: {}, config: { policy: POLICY } });
+  assert.deepEqual(r1.errors || [], [], 'a missing binding is not an error: the tick goes on');
+  assert.equal(one(db, `SELECT status FROM gate_cards WHERE id = 'GATE-CLOUDFLARE'`).status, 'open');
+  const r2 = await runTick(db, { now: NOW + 600e3, env: { CLOUDFLARE_API_TOKEN: 'present' }, config: { policy: POLICY } });
+  assert.deepEqual(r2.errors || [], []);
+  assert.equal(one(db, `SELECT status FROM gate_cards WHERE id = 'GATE-CLOUDFLARE'`).status, 'closed', 'the probe passes, the card closes itself');
+  // the binding's value is never stored: only that the probe passed
+  assert.ok(!JSON.stringify(rows(db, `SELECT * FROM gate_cards`)).includes('present'));
 });

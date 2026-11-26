@@ -8,12 +8,21 @@
 //  - step runs are timed against per-step budgets and handed to the breach procedure of core/console-l3 (R11); a process
 //    defines its done check once and a step with fewer than two paths is a gap (R12);
 //  - the six-term F is computed from tables and stored with its weights, never adopted as the objective (R06 stays in force);
-//  - the autonomy card is recomputed monthly from tables, with evidence, limits and the three largest gaps filed.
+//  - the autonomy card and the systems card (six rubrics) are recomputed monthly from tables, with evidence, limits and, for the autonomy
+//    card, the three largest gaps filed; each card is audited by a second computation and an optional attestor (R23);
+//  - the weights of F are calibrated by regression over the stored history and proposed, never adopted (R20);
+//  - a breach item or question is filed again when the same breach recurs after it was closed (R16).
 // Ports: db, now, config. The report-card writer is passed in (l3 = createConsoleL3(...)), so this module owns no card logic.
+import { fileOrReopen } from '../_shared/items.js';
+import { calibrateWeights } from './calibrate.js';
+import { secondPath, phantomClosures } from './card-audit.js';
+import { systemsDimensions, SYSTEMS_CARD_NAME, SYSTEMS_LIMITS } from './systems-card.js';
+import { processesFor, derivedRuns } from './processes.js';
 export const SEVERITY_HOURS = { SEV1: 24, SEV2: 72, SEV3: 168, SEV4: 336 };
 export const EXEMPTIONS = ['calendar', 'external_event', 'rate_limited_drain'];
 export const F_TERMS = ['loop_closure_rate', 'drift_count', 'human_interventions', 'cost_overrun', 'integration_gap', 'throughput'];
-const F_SIGN = { loop_closure_rate: 1, drift_count: -1, human_interventions: -1, cost_overrun: -1, integration_gap: -1, throughput: 1 };
+export const F_SIGN = { loop_closure_rate: 1, drift_count: -1, human_interventions: -1, cost_overrun: -1, integration_gap: -1, throughput: 1 };
+export { SYSTEMS_CARD_NAME, SYSTEMS_LIMITS };
 export const CARD_NAME = 'autonomy';
 export const CARD_LIMITS = 'Self-measurement bias: the system grades itself. Rubric mismatch: the scale is applied by analogy. Evidence is point-in-time, read from the tables at the stated time. A top score is reported as a gap, not accepted.';
 const TERMINAL = `('done','superseded','cancelled')`;
@@ -30,14 +39,16 @@ export function createSla({ db, now = () => Date.now(), config = {} } = {}) {
     severity_hours: SEVERITY_HOURS, default_severity: 'SEV3', hard_cap_days: 14, accelerate: true, manager_role: 'portfolio-manager',
     person_roles: ['owner', 'principal'], audit_every_days: 7, card_every_days: 30, window_days: 30,
     rungs: ['observed', 'assisted', 'delegated', 'autonomous', 'self-directed', 'self-modifying', 'self-extending'],
-    weights: { loop_closure_rate: 1, drift_count: 1, human_interventions: 1, cost_overrun: 1, integration_gap: 1, throughput: 1 }, calibrated: false, ...config,
+    weights: { loop_closure_rate: 1, drift_count: 1, human_interventions: 1, cost_overrun: 1, integration_gap: 1, throughput: 1 },
+    max_rows_per_tick: 500, seed_default_processes: true, systems_card: true, calibration_min_rows: 12, adopted_calibration: null, ...config,
   };
   const all = async (sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
   const one = (sql, ...a) => db.prepare(sql).bind(...a).first();
   const run = (sql, ...a) => db.prepare(sql).bind(...a).run();
   const hours = sev => cfg.severity_hours[sev] ?? cfg.severity_hours[cfg.default_severity];
+  // Files the item, or reopens it when the same breach recurs after it was closed (US-13-R16); an open item is left alone.
   const fileItem = (id, title, done_check, { kind = 'fix', project = 'sla', probe = 'manual', priority = 20, owner = cfg.manager_role } = {}) =>
-    run(`INSERT OR IGNORE INTO items (id, title, kind, project, owner_role, done_check, closing_probe, priority, status, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,'open',?,?)`, id, String(title).slice(0, 300), kind, project, owner, done_check, probe, priority, stamp(clock()), stamp(clock()));
+    fileOrReopen(db, { id, title, kind, project, owner_role: owner, done_check, closing_probe: probe, priority, at: stamp(clock()) });
 
   /** Set a row's severity, due date or exemption. An exemption needs one of the three kinds and a reason; a rate-limited drain
    *  must state its running checkpoint in the reason (section 4). */
@@ -55,16 +66,39 @@ export function createSla({ db, now = () => Date.now(), config = {} } = {}) {
     await run(`INSERT INTO sla_rows (item_id, severity, opened_at, due_at, exempt, exempt_reason, updated_at) VALUES (?,?,?,?,?,?,?)
       ON CONFLICT(item_id) DO UPDATE SET severity=excluded.severity, due_at=excluded.due_at, exempt=excluded.exempt, exempt_reason=excluded.exempt_reason, updated_at=excluded.updated_at`,
     itemId, sev, opened, due, exempt, exempt_reason, stamp(clock()));
+    await run(`DELETE FROM sla_register WHERE name='recompute_pass'`);                  // a changed row needs the next recompute to visit rows
     return { ok: true, item_id: itemId, severity: sev, due_at: due, exempt };
   }
 
-  /** The policy of section 4, run over every open row. Idempotent: a second run in the same instant changes nothing. */
+  /** The policy of section 4, run over every open row. Idempotent: a second run in the same instant changes nothing. At most
+   *  config.max_rows_per_tick rows are visited per call, from a stored cursor, so a large backlog rotates and every row is visited within
+   *  the rotation. After a complete pass, with no open item lacking a row and no row past a due date it has not been raised for (two
+   *  counts, plus the open total), no row is read at all; classify() and a change of the policy configuration clear that mark. */
   async function recompute() {
     const t = clock(); const nowS = stamp(t);
     const sev3 = stamp(t + hours('SEV3') * H); const cap = stamp(t + cfg.hard_cap_days * 24 * H);
     const out = { rows: 0, added: 0, tightened: 0, capped: 0, accelerated: 0, raised: 0, notified: 0 };
-    const items = await all(`SELECT i.id, i.title, i.owner_role, i.priority, i.created_at, s.severity, s.opened_at, s.due_at, s.exempt, s.raised_for_due
-      FROM items i LEFT JOIN sla_rows s ON s.item_id = i.id WHERE i.status NOT IN ${TERMINAL} ORDER BY i.id`);
+    const fingerprint = JSON.stringify([cfg.severity_hours, cfg.hard_cap_days, cfg.accelerate, cfg.person_roles]);
+    const pass = await one(`SELECT last_run_at, next_due_at FROM sla_register WHERE name='recompute_pass'`);
+    if (pass && pass.next_due_at === fingerprint) {
+      const fresh = (await one(`SELECT COUNT(*) AS n FROM items i LEFT JOIN sla_rows s ON s.item_id = i.id WHERE i.status NOT IN ${TERMINAL} AND s.item_id IS NULL`)).n;
+      const overdue = (await one(`SELECT COUNT(*) AS n FROM sla_rows s JOIN items i ON i.id = s.item_id WHERE i.status NOT IN ${TERMINAL} AND s.due_at < ? AND COALESCE(s.raised_for_due,'') <> s.due_at`, nowS)).n;
+      if (!fresh && !overdue) {
+        out.rows = (await one(`SELECT COUNT(*) AS n FROM items WHERE status NOT IN ${TERMINAL}`)).n;
+        Object.defineProperty(out, 'skipped', { value: 'nothing is new, changed or past due', enumerable: false });   // not enumerable: the counters of a pass that did visit rows are unchanged
+        return out;
+      }
+    }
+    const cursor = (await one(`SELECT last_run_at FROM sla_register WHERE name='recompute_cursor'`))?.last_run_at || '';
+    let items = await all(`SELECT i.id, i.title, i.owner_role, i.priority, i.created_at, s.severity, s.opened_at, s.due_at, s.exempt, s.raised_for_due
+      FROM items i LEFT JOIN sla_rows s ON s.item_id = i.id WHERE i.status NOT IN ${TERMINAL} AND i.id > ? ORDER BY i.id LIMIT ?`, cursor, cfg.max_rows_per_tick);
+    let wrapped = false;
+    if (items.length < cfg.max_rows_per_tick) {                                                  // end of the rotation: finish it and start from the top
+      const more = await all(`SELECT i.id, i.title, i.owner_role, i.priority, i.created_at, s.severity, s.opened_at, s.due_at, s.exempt, s.raised_for_due
+        FROM items i LEFT JOIN sla_rows s ON s.item_id = i.id WHERE i.status NOT IN ${TERMINAL} AND i.id <= ? ORDER BY i.id LIMIT ?`, cursor, cfg.max_rows_per_tick - items.length);
+      items = items.concat(more); wrapped = true;
+    }
+    const partial = items.length >= cfg.max_rows_per_tick && !wrapped;
     for (const it of items) {
       out.rows++;
       const sev = it.severity || cfg.default_severity;
@@ -79,15 +113,22 @@ export function createSla({ db, now = () => Date.now(), config = {} } = {}) {
       }
       let raisedFor = it.raised_for_due || null;
       if (due < nowS && raisedFor !== due) {                                                        // R09
-        await run(`UPDATE items SET priority = CASE WHEN priority > 0 THEN priority - 1 ELSE 0 END, updated_at=? WHERE id=?`, nowS, it.id);
-        await run(`INSERT INTO sla_notices (item_id, role, text, at) VALUES (?,?,?,?)`, it.id, cfg.manager_role, `${it.id} (${sev}) was due ${due} and is still open: priority raised one level`, nowS);
-        raisedFor = due; out.raised++; out.notified++;
+        const top = !(it.priority > 0);                                                              // already at priority 0: noticed, not lowered
+        if (!top) await run(`UPDATE items SET priority = priority - 1, updated_at=? WHERE id=?`, nowS, it.id);
+        await run(`INSERT INTO sla_notices (item_id, role, text, at) VALUES (?,?,?,?)`, it.id, cfg.manager_role,
+          `${it.id} (${sev}) was due ${due} and is still open: ${top ? 'already at top priority' : 'priority raised one level'}`, nowS);
+        raisedFor = due; out.notified++; out.raised++; if (top) out.at_top = (out.at_top || 0) + 1; // `raised` counts every row handled; at_top appears only when some were already at priority 0
       }
       if (due !== it.due_at || raisedFor !== (it.raised_for_due || null)) {
         await run(`INSERT INTO sla_rows (item_id, severity, opened_at, due_at, raised_for_due, updated_at) VALUES (?,?,?,?,?,?)
           ON CONFLICT(item_id) DO UPDATE SET due_at=excluded.due_at, raised_for_due=excluded.raised_for_due, updated_at=excluded.updated_at`, it.id, sev, opened, due, raisedFor, nowS);
       }
     }
+    // The cursor is the last row visited when the rotation is partial, and empty (start again) when it finished.
+    const nextCursor = partial ? items[items.length - 1].id : '';
+    await run(`INSERT INTO sla_register (name, last_run_at, next_due_at) VALUES ('recompute_cursor', ?, ?) ON CONFLICT(name) DO UPDATE SET last_run_at=excluded.last_run_at, next_due_at=excluded.next_due_at`, nextCursor, nowS);
+    if (!partial) await run(`INSERT INTO sla_register (name, last_run_at, next_due_at) VALUES ('recompute_pass', ?, ?) ON CONFLICT(name) DO UPDATE SET last_run_at=excluded.last_run_at, next_due_at=excluded.next_due_at`, nowS, fingerprint);
+    if (partial) out.rotating = { visited: items.length, next_after: nextCursor };
     return out;
   }
 
@@ -160,11 +201,53 @@ export function createSla({ db, now = () => Date.now(), config = {} } = {}) {
     return { ok: true, id: r.meta.last_row_id };
   }
   const finishStep = id => run(`UPDATE sla_step_runs SET finished_at=? WHERE id=? AND finished_at IS NULL`, stamp(clock()), id);
-  /** Open step runs in the shape core/console-l3 sweepStepBudgets takes. */
-  async function stepRuns() {
-    return (await all(`SELECT process, step, budget_hours, MIN(started_at) AS started_at FROM sla_step_runs WHERE finished_at IS NULL GROUP BY process, step, budget_hours ORDER BY process, step`))
-      .map(r => ({ process: r.process, step: r.step, budget_hours: r.budget_hours, started_at: parse(r.started_at) }));
+  /** The budget in hours of a step: the stored definition when there is one, else the default or configured process. */
+  async function budgetOf(process, step) {
+    const p = await one(`SELECT steps FROM sla_processes WHERE process=?`, process);
+    const fromStore = p ? JSON.parse(p.steps).find(s => s.step === step)?.budget_hours : null;
+    return fromStore ?? processesFor(cfg)[process]?.steps.find(s => s.step === step)?.budget_hours ?? 0;
   }
+  /** Seed the default processes once, when no process is defined yet, so every stage has a budget and no path gap (US-13-R11, R12). */
+  async function seedDefaultProcesses() {
+    if (!cfg.seed_default_processes) return 0;
+    if ((await one(`SELECT COUNT(*) AS n FROM sla_processes`)).n > 0) return 0;
+    let n = 0; for (const [process, def] of Object.entries(processesFor(cfg))) { if ((await defineProcess({ process, done_check: def.done_check, steps: def.steps })).ok) n++; }
+    return n;
+  }
+  /** Open runs read from the tables the core already keeps (a claim with no heartbeat, a prediction past due, a queued dispatch). */
+  async function derivedStepRuns() {
+    const budgets = new Map();
+    for (const [process, def] of Object.entries(processesFor(cfg))) for (const s of def.steps) budgets.set(`${process}/${s.step}`, await budgetOf(process, s.step));
+    return derivedRuns({ db, budgetOf: (p, s) => budgets.get(`${p}/${s}`) ?? 0, asOf: clock() });
+  }
+  /** Open step runs in the shape core/console-l3 sweepStepBudgets takes: stored runs and derived runs, one (process, step, ref) once. */
+  async function stepRuns() {
+    const stored = (await all(`SELECT process, step, ref, budget_hours, started_at FROM sla_step_runs WHERE finished_at IS NULL`)).map(r => ({ ...r, started_at: parse(r.started_at) }));
+    const once = new Map();                                                                  // one (process, step, ref) once: the earlier start wins
+    for (const r of [...stored, ...(await derivedStepRuns())]) { const k = `${r.process}/${r.step}/${r.ref ?? ''}`; if (!once.has(k) || r.started_at < once.get(k).started_at) once.set(k, r); }
+    const groups = new Map();
+    for (const r of once.values()) {
+      const g = `${r.process}/${r.step}/${r.budget_hours}`; const cur = groups.get(g);
+      if (!cur || r.started_at < cur.started_at) groups.set(g, { process: r.process, step: r.step, budget_hours: r.budget_hours, started_at: r.started_at });
+    }
+    return [...groups.values()].sort((a, b) => a.process.localeCompare(b.process) || a.step.localeCompare(b.step));
+  }
+
+  /** True only when configuration names a calibration run (sla.adopted_calibration) and the weights in effect are exactly the weights that
+   *  run proposed: a person or a deploy adopted them through configuration. Nothing here ever writes the weights (US-13-R06, R20). */
+  async function adoptedCalibration() {
+    if (!cfg.adopted_calibration) return false;
+    const row = await one(`SELECT id, weights, adopted_at FROM sla_calibrations WHERE id=?`, cfg.adopted_calibration).catch(() => null);
+    if (!row) return false;
+    const proposed = JSON.parse(row.weights);
+    if (!F_TERMS.every(k => Math.abs(Number(proposed[k]) - Number(cfg.weights[k])) < 1e-9)) return false;
+    if (!row.adopted_at) await run(`UPDATE sla_calibrations SET adopted_at=? WHERE id=? AND adopted_at IS NULL`, stamp(clock()), row.id);
+    return true;
+  }
+
+  /** Fit the weights of F to the stored history and propose them (US-13-R20). Never writes cfg.weights; see calibrate.js. */
+  const calibrate = ({ l3 = null, minRows = cfg.calibration_min_rows } = {}) =>
+    calibrateWeights({ db, l3, terms: F_TERMS, sign: F_SIGN, weights: cfg.weights, minRows, at: stamp(clock()) });
 
   /** The six-term F and the triad, from tables. drift_count, cost_overrun and integration_gap have no L1 table: pass readings in
    *  `measured`, otherwise they count as 0 and are marked unmeasured. Stored, never used to steer: weights come from config only. */
@@ -198,8 +281,9 @@ export function createSla({ db, now = () => Date.now(), config = {} } = {}) {
       good = worse ? 0 : (better || atGoal) ? 1 : 0;
     }
     const unmeasured = F_TERMS.filter(k => !terms[k].measured);
-    await run(`INSERT INTO sla_objective (at, f, terms, weights, calibrated, triad, good) VALUES (?,?,?,?,?,?,?)`, stamp(t), f, JSON.stringify(terms), JSON.stringify(cfg.weights), cfg.calibrated ? 1 : 0, JSON.stringify(triad), good);
-    return { f, terms, weights: cfg.weights, calibrated: !!cfg.calibrated, triad, good, unmeasured, window_days: cfg.window_days };
+    const calibrated = await adoptedCalibration();
+    await run(`INSERT INTO sla_objective (at, f, terms, weights, calibrated, triad, good) VALUES (?,?,?,?,?,?,?)`, stamp(t), f, JSON.stringify(terms), JSON.stringify(cfg.weights), calibrated ? 1 : 0, JSON.stringify(triad), good);
+    return { f, terms, weights: cfg.weights, calibrated, triad, good, unmeasured, window_days: cfg.window_days };
   }
 
   /** Ten dimensions, each a ratio read from tables, scored 0 to 5 with the evidence it was read from. */
@@ -251,24 +335,90 @@ export function createSla({ db, now = () => Date.now(), config = {} } = {}) {
     return { ok: true, card_id: rec.card_id, overall, dimensions: dims, fell: rec.items, kaizen };
   }
 
-  const due = async (name, everyDays) => {
+  /** The systems card: six rubrics from tables, recorded through the same report-card writer (US-13-R22). */
+  async function recomputeSystemsCard({ l3, causes = {} } = {}) {
+    if (!l3 || typeof l3.recordCard !== 'function') return { ok: false, error: 'a report-card writer (core/console-l3) is required' };
+    const dims = await systemsDimensions({ db, cfg, asOf: clock() });
+    const rec = await l3.recordCard({ name: SYSTEMS_CARD_NAME, rubric: 'six rubrics, each the share of rows meeting the stated condition, scaled 0 to 5', limits: SYSTEMS_LIMITS,
+      scores: dims.map(({ gap, ...x }) => ({ ...x, cause: causes[x.dimension] })) });
+    if (!rec.ok) return rec;
+    return { ok: true, card_id: rec.card_id, overall: Math.round((dims.reduce((a, d) => a + d.score, 0) / dims.length) * 100) / 100, dimensions: dims, fell: rec.items };
+  }
+
+  /** Audit the latest autonomy card (US-13-R23): the ten dimensions again by a second path, the phantom-touch check, and the attestor's
+   *  verdicts when an attestor port is given. A difference above 0.05 on a dimension, a phantom closure or a disagreement files an item
+   *  (reopened when it recurs). Every audit is stored; core/console-l3 reads the table to label a card attested or self-measured. */
+  async function auditCard({ name = CARD_NAME, attestor = null } = {}) {
+    const card = await one(`SELECT id, at FROM l3_cards WHERE name=? ORDER BY id DESC LIMIT 1`, name);
+    if (!card) return { ok: false, error: 'no such card' };
+    const stored = await all(`SELECT dimension, score, evidence FROM l3_scores WHERE card_id=? ORDER BY dimension`, card.id);
+    const second = name === CARD_NAME ? await secondPath({ db, cfg, asOf: clock() }) : {};
+    const diffs = [];
+    for (const s of stored) {
+      const r = second[s.dimension];
+      if (r && Math.abs(r.score - s.score) > 0.05) {
+        diffs.push({ dimension: s.dimension, stored: s.score, second_path: r.score, n: r.n, d: r.d });
+        await fileItem(`AUDIT-CARD-${slug(name)}-${slug(s.dimension)}`, `${name} card: ${s.dimension} is stored as ${s.score} but a second computation gives ${r.score} (${r.n} of ${r.d})`, `${s.dimension} agrees between the two computations, or the difference is explained`, { project: 'report-card', priority: 15 });
+      }
+    }
+    const phantom = name === CARD_NAME ? await phantomClosures({ db, cfg, asOf: clock() }) : [];
+    if (phantom.length) await fileItem('AUDIT-CARD-PHANTOM', `${phantom.length} item(s) closed by a person role have no console action: the human-touch count is too low (${phantom.slice(0, 5).join(', ')})`, 'every closure by a person role has a console action', { project: 'report-card', priority: 15 });
+    let attested = null; const verdicts = [];
+    if (typeof attestor === 'function') {
+      try {
+        const res = await attestor({ card: { name, id: card.id, at: card.at }, evidence: stored });
+        for (const v of res?.verdicts || []) {
+          verdicts.push({ dimension: v.dimension, agree: !!v.agree, note: String(v.note || '').slice(0, 200) });
+          if (!v.agree) await fileItem(`AUDIT-CARD-ATTEST-${slug(name)}-${slug(v.dimension)}`, `${name} card: the attestor disagrees on ${v.dimension}: ${String(v.note || 'no reason given').slice(0, 160)}`, `${v.dimension} is re-measured or the disagreement is explained`, { project: 'report-card', priority: 15 });
+        }
+        attested = { by: String(attestor.name || res?.by || 'attestor').slice(0, 60), agree: verdicts.length > 0 && verdicts.every(v => v.agree) && stored.every(s => verdicts.some(v => v.dimension === s.dimension)) };
+      } catch (e) { verdicts.push({ error: `the attestor failed: ${String(e?.message || e).slice(0, 120)}` }); attested = { by: String(attestor.name || 'attestor'), agree: false }; }
+    }
+    await run(`INSERT INTO sla_card_audits (card_id, name, at, dimensions, disagree, phantom, attestor, agree, detail) VALUES (?,?,?,?,?,?,?,?,?)`,
+      card.id, name, stamp(clock()), stored.length, diffs.length, phantom.length, attested?.by ?? null, attested ? (attested.agree ? 1 : 0) : null, JSON.stringify({ diffs, phantom, verdicts }));
+    return { ok: true, card_id: card.id, dimensions: stored.length, disagree: diffs, phantom, attested, verdicts, self_measured: !attested };
+  }
+
+  // `due` only reads the register. The next-due date moves in `markRan`, after the guarded work succeeded, so a throw or a not-ok result leaves the
+  // row due and the next tick retries (a failed weekly audit used to be skipped for 7 days and a failed card for 30).
+  const due = async name => {
     const r = await one(`SELECT next_due_at FROM sla_register WHERE name=?`, name);
-    if (r && r.next_due_at > stamp(clock())) return false;
-    await run(`INSERT INTO sla_register (name, last_run_at, next_due_at) VALUES (?,?,?) ON CONFLICT(name) DO UPDATE SET last_run_at=excluded.last_run_at, next_due_at=excluded.next_due_at`,
-      name, stamp(clock()), stamp(clock() + everyDays * 24 * H));
-    return true;
+    return !(r && r.next_due_at > stamp(clock()));
+  };
+  const markRan = (name, everyDays) => run(`INSERT INTO sla_register (name, last_run_at, next_due_at) VALUES (?,?,?) ON CONFLICT(name) DO UPDATE SET last_run_at=excluded.last_run_at, next_due_at=excluded.next_due_at`,
+    name, stamp(clock()), stamp(clock() + everyDays * 24 * H));
+
+  // A part after the card that throws is recorded as an item (reopened when it recurs) and reported in the result; the tick goes on.
+  const guarded = async (id, what, fn) => {
+    try { return await fn(); }
+    catch (e) {
+      const reason = String(e?.message || e).slice(0, 160);
+      await fileItem(id, `Computing ${what} failed: ${reason}`, `${what} is computed on a tick`, { project: 'report-card', priority: 15 });
+      return { ok: false, error: reason };
+    }
   };
 
   /** One tick of the service-level loops. `l3` (core/console-l3) is optional: with it, step-budget breaches are filed and the
    *  monthly card is recomputed. Returns what ran, and pushes one line to ctx.notes when there is a ctx. */
-  async function step(ctx = {}, { l3 = null, measured = {} } = {}) {
+  async function step(ctx = {}, { l3 = null, measured = {}, attestor = null } = {}) {
     const out = {};
+    await seedDefaultProcesses();
     out.sla = await recompute();
-    if (await due('weekly_audit', cfg.audit_every_days)) out.audit = await weeklyAudit();
+    if (await due('weekly_audit')) { out.audit = await weeklyAudit(); await markRan('weekly_audit', cfg.audit_every_days); }
     if (!out.audit) out.waiting = await waitingOnPerson();
     out.path_gaps = (await processGaps()).length;
     if (l3) out.step_budget = await l3.sweepStepBudgets(await stepRuns());
-    if (l3 && await due('autonomy_card', cfg.card_every_days)) { out.objective = await objective(measured); out.card = await recomputeAutonomyCard({ l3 }); }
+    if (l3 && await due('autonomy_card')) {
+      out.objective = await objective(measured); out.card = await recomputeAutonomyCard({ l3 });
+      if (out.card.ok) {
+        // The card is recorded: its month is spent. The parts after it are retried by an item, never by a second card in the same month.
+        await markRan('autonomy_card', cfg.card_every_days);
+        if (cfg.systems_card) out.systems_card = await guarded('SLA-SYSTEMS-CARD-FAILED', 'the systems card', () => recomputeSystemsCard({ l3 }));
+        out.card_audit = await guarded('SLA-CARD-AUDIT-FAILED', 'the card audit', () => auditCard({ name: CARD_NAME, attestor }));
+      } else {
+        await fileItem('SLA-AUTONOMY-CARD-FAILED', `The autonomy card was not recorded: ${String(out.card.errors?.join('; ') || out.card.error || 'no reason given').slice(0, 200)}`, 'the autonomy card is recorded on a tick', { project: 'report-card', priority: 15 });
+      }
+    }
     ctx.notes?.push(`sla: ${out.sla.rows} open rows, ${out.sla.raised} raised past due, ${out.sla.capped + out.sla.accelerated + out.sla.tightened} due dates pulled in${out.audit ? `, weekly audit ${out.audit.failing} failing` : ''}${out.card ? `, autonomy card ${out.card.overall}` : ''}`);
     return out;
   }
@@ -285,5 +435,5 @@ export function createSla({ db, now = () => Date.now(), config = {} } = {}) {
       notices: await all(`SELECT item_id, role, text, at FROM sla_notices ORDER BY id DESC LIMIT 3`) };
   }
 
-  return { config: cfg, classify, recompute, waitingOnPerson, weeklyAudit, defineProcess, processGaps, startStep, finishStep, stepRuns, objective, autonomyDimensions, recomputeAutonomyCard, step, summary };
+  return { config: cfg, classify, recompute, waitingOnPerson, weeklyAudit, defineProcess, processGaps, startStep, finishStep, stepRuns, derivedStepRuns, objective, calibrate, autonomyDimensions, recomputeAutonomyCard, recomputeSystemsCard, auditCard, step, summary };
 }

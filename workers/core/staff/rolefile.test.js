@@ -19,13 +19,13 @@ const GOOD = `# Role: reviewer
 `;
 const base = { id: 'p', role: 'program-manager', program_id: 'OPS', scope: 's', authority: ['score'] };
 
-test('US-02-T09: a role instruction file with a never list naming live claims, secret values and own-work review passes', () => {
+test('US-02-R12, US-02-T09: a role instruction file with a never list naming live claims, secret values and own-work review passes', () => {
   const r = checkRoleInstruction(GOOD);
   assert.deepEqual([r.ok, r.has_section, r.missing, r.bullets], [true, true, [], 3]);
   assert.equal(NEVER_REQUIRED.length, 3);
 });
 
-test('US-02-T09: a file with no Never section, or one missing any of the three, is refused and the missing item is named', () => {
+test('US-02-R12, US-02-T09: a file with no Never section, or one missing any of the three, is refused and the missing item is named', () => {
   assert.deepEqual(checkRoleInstruction('# Role\n\nDo the work.\n').missing, ['live-claim', 'secrets', 'own-work']);
   assert.equal(checkRoleInstruction('# Role\n\nDo the work.\n').has_section, false);
   const noSecrets = GOOD.replace(/- Handle secret values.*\n/, '');
@@ -34,7 +34,7 @@ test('US-02-T09: a file with no Never section, or one missing any of the three, 
   assert.deepEqual(checkRoleInstruction(onlyClaim).missing, ['secrets', 'own-work']);
 });
 
-test('US-02-T09: bullets outside the Never section do not satisfy the check, and a wrapped bullet is read as one', () => {
+test('US-02-R12, US-02-T09: bullets outside the Never section do not satisfy the check, and a wrapped bullet is read as one', () => {
   const elsewhere = '## Rules\n- Never handle secret values.\n- Never review your own work.\n- Never act under another agent\'s live claim.\n\n## Never\n- Ship without a metric.\n';
   assert.equal(checkRoleInstruction(elsewhere).ok, false);
   const wrapped = '## Never\n- Act on an item under another\n  agent\'s live claim.\n- Handle secret values.\n- Review one\'s own work.\n';
@@ -42,7 +42,7 @@ test('US-02-T09: bullets outside the Never section do not satisfy the check, and
   assert.equal(parseNever('# x\n## Never\n- a\n## Next\n- b\n').bullets.length, 1);
 });
 
-test('US-02-T09: registerPersona refuses a persona whose instruction file fails the check when the check is on, and never reads a prompt reference', async () => {
+test('US-02-R12, US-02-T09: registerPersona refuses a persona whose instruction file fails the check when the check is on, and never reads a prompt reference', async () => {
   const db = makeDb([KERNEL_DIR, MIGRATIONS_DIR]);
   const files = { 'agents/roles/good.md': GOOD, 'agents/roles/bad.md': '# Role\n## Never\n- Ship without a metric.\n' };
   const readInstruction = async (p) => { if (!(p in files)) throw new Error('no such file'); return files[p]; };
@@ -55,7 +55,7 @@ test('US-02-T09: registerPersona refuses a persona whose instruction file fails 
   assert.deepEqual(db.raw.prepare(`SELECT id FROM staff_personas ORDER BY id`).all().map(r => r.id), ['good', 'off', 'prompt']);
 });
 
-test('US-02-T09: checkRoleFiles reports every file, and an unreadable file is a failure, never a pass', async () => {
+test('US-02-R12, US-02-T09: checkRoleFiles reports every file, and an unreadable file is a failure, never a pass', async () => {
   const files = { 'a.md': GOOD, 'b.md': '# no never list' };
   const out = await checkRoleFiles({ list: async () => ['a.md', 'b.md', 'c.md'], readFile: async (p) => { if (!(p in files)) throw new Error('ENOENT'); return files[p]; } });
   assert.deepEqual(out.map(r => [r.path, r.ok]), [['a.md', true], ['b.md', false], ['c.md', false]]);

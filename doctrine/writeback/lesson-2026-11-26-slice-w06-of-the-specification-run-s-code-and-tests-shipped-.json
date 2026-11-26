@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-slice-w06-of-the-specification-run-s-code-and-tests-shipped-",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "Slice W06 of the specification run's code and tests shipped on its own",
+  "body": "feat: the sla, specloop, staff, tenantstore and trust modules (W06). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+  "probe": "file:workers/core/sla/calibrate.js",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "lesson",
+ "title": "Slice W06 of the specification run's code and tests shipped on its own",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}

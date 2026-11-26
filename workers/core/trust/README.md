@@ -31,15 +31,19 @@ BUILT means implemented here and covered by a passing test in `trust.test.js`. N
 | US-06-R07 severe outcomes demote; window stated | BUILT | `severe_window_days` |
 | US-06-R08 irreversible and identity-bound: gate card at any rung | BUILT | `authorize` |
 | US-06-R09 card needs closing probe and default; manual never closed by the tick | BUILT | `openCard`; closing is the seed step `probe_gates` |
-| US-06-R10 only presence of a secret recorded | NOT COVERED here | bootstrapper and `core/deploy` |
-| US-06-R11, R12 policy validator; money, legal, outreach, secrets below execute | BUILT | `validatePolicy`, `assertPolicy`; the Python validator stays in `bootstrap/bootstrap.py` |
+| US-06-R10 only presence of a secret recorded | BUILT in `core/deploy` | test "US-06-R10, US-06-T06"; a gate card for a missing credential closes by `env:<NAME>` (test "US-06-T05") |
+| US-06-R12 money, legal, outreach, secrets below execute | BUILT | `validatePolicy`, `assertPolicy` |
+| US-06-R11 an invalid policy blocks the boot | PARTIAL | the functions exist and are tested; the bootstrappers (`bootstrap/bootstrap.py`) mark stage `read` blocked but keep running later stages, and the Python validator has no R12 ceiling rule. Integration requests are filed |
 | US-06-R13 standing limits outrank rung and score | BUILT | `authorize`, `recordRefusal`, `maySubmit` |
 | US-06-R14 reversibility engineering before classifying irreversible | BUILT | `authorize({ reversible_forms })`, `trust_reversibility_attempts` |
 | US-06-R15 step without an identity-bound line rerouted; metric | BUILT | `openCard`, `rerouteUnbound`, `cardsWithoutIdentityLine` |
 | US-06-R16 reversible in-scope question answered by the default | BUILT | `adoptDefault` (`trust_adoptions`) |
 | US-06-R17 transitions recorded with evidence | BUILT | `trust_transitions` |
-| US-06-R18 queue multiplier | BUILT | `queueMultiplier`; no queue uses it yet |
+| US-06-R18 queue multiplier | BUILT | `queueMultiplier`, `rankItems` (one read for many items, ties keep input order); no queue uses them yet |
+| US-06-R20 a ladder item is closed by applying the rung its reviewed merge carried | BUILT | `settleLadder`, `ladder-loop.test.js` |
+| US-06-R21 an action on a policy surface is authorized before it executes | BUILT | `deployAuthorizer` (port for `core/deploy`), `trust.test.js` and the deploy tests |
 | US-06-R19 per-executor trust, minimum of executor and pair | BUILT | `effectiveRung`, `trust_executor_rungs` |
-| Event weights, decay toward the prior, lower confidence bound, banded ladder (section 3 alternatives) | BUILT | `recordEvent`, `decayToward`, `wilsonLower` (stored, not used for rungs), `rungForScore` |
-| Mirror rule | BUILT as a function | `mirrorProblems(policy, harnessDeny)`; the caller supplies the harness deny list |
-| US-06-T05, T06 boot without a credential; planted secret | NOT COVERED here | bootstrapper tests |
+| Event weights, decay toward the prior, lower confidence bound, banded ladder (section 3 alternatives) | BUILT | `recordEvent`, `decayToward`, `wilsonLower` (promotion also requires it with `config.promote_on = 'lower_bound'`), `rungForScore` |
+| Mirror rule | BUILT as a function | `mirrorProblems(policy, harnessDeny, { shell_surfaces })` (a gated action on a shell surface with no `harness_deny` is reported too), `harnessDenyFrom(settings)`; the caller supplies the settings file |
+| US-06-T05, T06 boot without a credential; planted secret | BUILT for the card and the deploy path | `trust.test.js`, `core/deploy/deploy.test.js`; the boot exit code is in the bootstrapper tests |
+| Cards without an identity-bound line, with a trigger (US-06-R15) | BUILT | `checkHealth` files one item per day |
