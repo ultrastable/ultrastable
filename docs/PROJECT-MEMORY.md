@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-26
 
+- 2026-11-26: feat: the specification tools run without the private specification and say unmeasured (DISCLOSE-1) (#2512)
+- 2026-11-26: fix(airouter): read reasoning-only replies and say why a reply was empty (AIROUTER-EMPTY-2) (#2508)
 - 2026-11-26: docs: conformance manifest, kernel split decision and the disclosure line (slice 11 of 11) (#2503)
 - 2026-11-26: queue: closing-probe verdicts for 32 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]
 - 2026-11-26: queue: closing-probe verdicts for 32 item(s) (QUEUE-PERSIST-1) (part 1/2) [skip ci]
