@@ -1,7 +1,7 @@
 {
   "id": "Q-STALL-what-works-beat",
   "title": "Q-STALL-what-works-beat: clock what-works-beat stopped and restarts did not take",
-  "body": "**Owner:** executor\n**Trigger:** clock `what-works-beat` stopped (last beat age None s, expected every 3600 s) and 2 restarts did not take\n**Done check:** cmd:python3 -m foundation resilience --probe what-works-beat\n**Status:** open\n\nRESILIENCE-1: find why the clock stopped (disabled schedule, failing job, dead route), fix the cause, and add a second independent trigger so it cannot stop silently again. Escalated through the queue, never by email.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation resilience --probe what-works-beat` reports ticking.\n",
+  "body": "**Owner:** executor\n**Trigger:** clock `what-works-beat` stopped (last beat age None s, expected every 3600 s) and 2 restarts did not take\n**Done check:** cmd:python3 -m foundation resilience --probe what-works-beat\n**Status:** closed\n\nRESILIENCE-1: find why the clock stopped (disabled schedule, failing job, dead route), fix the cause, and add a second independent trigger so it cannot stop silently again. Escalated through the queue, never by email.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation resilience --probe what-works-beat` reports ticking.\n\n**Disposition:** shelved (ttl, 2026-11-26T14:19:27Z, DISPOSE-1)\n\n**Evidence:** open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "p0",
     "agent-ready"
