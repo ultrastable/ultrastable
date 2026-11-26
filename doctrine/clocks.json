@@ -184,6 +184,7 @@
       ]
     },
     {
+<<<<<<< HEAD
       "id": "funding-maintenance",
       "what": "the weekly re-verification of funding registry rows at their primary sources",
       "source": "workflow",
@@ -288,6 +289,8 @@
       "periodic": true
     },
     {
+=======
+>>>>>>> 79cfe12549ef2be2c078ee997f34037a793f0f8d
       "id": "cleanroom",
       "what": "the daily clean-room bootstrap: a sandbox system from the seed alone, a simulated day, teardown, and the satellite agent-file coherence check",
       "source": "workflow",
