@@ -44,7 +44,7 @@
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 40507,
+   "recent7": 40619,
    "series": [
     0,
     0,
@@ -75,17 +75,17 @@
     0,
     0,
     0,
-    40507
+    40619
    ],
    "share_recent": 0.124,
    "share_trend": 0.124,
-   "slope": 261.3355,
-   "total": 40507
+   "slope": 262.0581,
+   "total": 40619
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 39912,
+   "recent7": 39959,
    "series": [
     0,
     0,
@@ -116,17 +116,17 @@
     0,
     0,
     0,
-    39912
+    39959
    ],
    "share_recent": 0.122,
    "share_trend": 0.122,
-   "slope": 257.4968,
-   "total": 39912
+   "slope": 257.8,
+   "total": 39959
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 26898,
+   "recent7": 26889,
    "series": [
     0,
     0,
@@ -157,12 +157,12 @@
     0,
     0,
     0,
-    26898
+    26889
    ],
    "share_recent": 0.082,
    "share_trend": 0.082,
-   "slope": 173.5355,
-   "total": 26898
+   "slope": 173.4774,
+   "total": 26889
   },
   {
    "area": "seed/worker",
@@ -249,7 +249,7 @@
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 16515,
+   "recent7": 16571,
    "series": [
     0,
     0,
@@ -280,12 +280,12 @@
     0,
     0,
     0,
-    16515
+    16571
    ],
-   "share_recent": 0.05,
-   "share_trend": 0.05,
-   "slope": 106.5484,
-   "total": 16515
+   "share_recent": 0.051,
+   "share_trend": 0.051,
+   "slope": 106.9097,
+   "total": 16571
   },
   {
    "area": "instances",
@@ -372,7 +372,7 @@
   {
    "area": "scripts",
    "quiet_days": 0,
-   "recent7": 6271,
+   "recent7": 6343,
    "series": [
     0,
     0,
@@ -403,12 +403,12 @@
     0,
     0,
     0,
-    6271
+    6343
    ],
    "share_recent": 0.019,
    "share_trend": 0.019,
-   "slope": 40.4581,
-   "total": 6271
+   "slope": 40.9226,
+   "total": 6343
   },
   {
    "area": "seed/scripts",
@@ -1026,7 +1026,7 @@
    "total": 1419
   }
  ],
- "at": "2026-11-26T06:39:48Z",
+ "at": "2026-11-26T06:41:40Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1093,10 +1093,10 @@
    0,
    0,
    0,
-   26
+   28
   ],
   "closed": 1205,
-  "opened": 1231
+  "opened": 1233
  },
  "loops": [
   {
@@ -1634,7 +1634,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 228,
+   "rows": 230,
    "series": [
     0,
     0,
@@ -1665,9 +1665,9 @@
     3,
     1,
     153,
-    4
+    6
    ],
-   "slope": 1.2667
+   "slope": 1.2796
   },
   {
    "loop": "resilience",
@@ -1824,7 +1824,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 382,
+   "rows": 383,
    "series": [
     0,
     0,
@@ -1855,9 +1855,9 @@
     80,
     55,
     88,
-    42
+    43
    ],
-   "slope": 2.0592
+   "slope": 2.0656
   },
   {
    "loop": "ultrastability",
