@@ -2884,6 +2884,10 @@ export default {
     "loops": [
      "workers-tests"
     ]
+   },
+   {
+    "id": "worklog",
+    "loops": []
    }
   ]
  },
