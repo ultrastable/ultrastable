@@ -56,14 +56,17 @@ jobs:
         run: |
           python3 -m foundation collisions --check
           python3 -m foundation collisions --prs
-      - name: Every path is classified and a session PR stays inside its size budget (REPO-SHAPE-1)
-        # a 3,000-file, 291,031-line change is unreviewable; state is classified apart from code and an oversize branch splits with `foundation reposhape --split`
+      - name: Every path is classified (REPO-SHAPE-1)
+        # state is kept apart from code; the size gate is SMALL-CHANGE-1 below, and an oversize branch splits with `foundation reposhape --split`
+        run: python3 -m foundation reposhape --check
+      - name: The change is small enough to verify and revert alone (SMALL-CHANGE-1)
+        # ops PR 45 changed 3,194 files, 3,158 of them session scratch copies; a change that size cannot be reviewed, deployed or rolled back on its own
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_REF: ${{ github.head_ref }}
         run: |
-          python3 -m foundation reposhape --check
-          if [ -n "${BASE_SHA:-}" ]; then python3 -m foundation reposhape --pr "${BASE_SHA}...HEAD"; fi
+          if [ -n "${BASE_SHA:-}" ]; then cd seed && python3 scripts/prsize.py --range "${BASE_SHA}...HEAD"; fi
+      - name: No new specification text on the public branch (DISCLOSE-1)
+        run: python3 -m foundation disclosure --check
       - name: Workflow minute-budget lint (cheap, runs first)
         run: python3 scripts/lint_workflows.py
       - name: Public docs complete and in sync with the code (DOCS-SYNC-1)

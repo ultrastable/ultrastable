@@ -11,22 +11,8 @@
     "rule": {
       "type": "string"
     },
-    "pr_budget": {
-      "type": "object",
-      "properties": {
-        "max_files": {
-          "type": "number"
-        },
-        "max_added_lines": {
-          "type": "number"
-        },
-        "exempt_classes": {
-          "type": "array"
-        },
-        "exempt_branch_prefixes": {
-          "type": "array"
-        }
-      }
+    "size_gate": {
+      "type": "string"
     },
     "state_budget": {
       "type": "object",
@@ -66,8 +52,8 @@
   "required": [
     "_doc",
     "areas",
-    "pr_budget",
     "rule",
+    "size_gate",
     "state_budget"
   ]
 }

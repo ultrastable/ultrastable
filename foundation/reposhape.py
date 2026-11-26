@@ -9,13 +9,14 @@ evidence) sat in the same tree as the code, so every bot commit moved the code r
   python3 -m foundation reposhape --check            every tracked path belongs to an area in doctrine/repo-shape.json (a new top-level path must be claimed)
   python3 -m foundation reposhape --report           files and bytes per class and per area, and the share of state in git (JSON)
   python3 -m foundation reposhape --probe state      exit 1 while state is above state_budget.max_share_of_tracked_files (the closing probe of Q-SHAPE-state-out-of-git)
-  python3 -m foundation reposhape --pr BASE...HEAD   a session branch changes at most pr_budget.max_files and adds at most max_added_lines, state excluded (exit 1)
   python3 -m foundation reposhape --split BASE...HEAD [--apply] [--max-files N] [--max-lines N]
-                                                     the stack of in-budget batches that carries the same tree; --apply writes it as local branches
+                                                     the stack of in-budget batches (limits from seed/autonomy/prsize.json, the SMALL-CHANGE-1 gate) that
+                                                     carries the same tree; --apply writes it as local branches
                                                      <branch>-part-1 ... -part-N, each on the one before, and checks the last has HEAD's tree. The original
                                                      branch is never changed or deleted.
 
-Consumers: .github/workflows/checks.yml (--check on every change, --pr on every PR), agents/AGENTS.md, instances Q-SHAPE-state-out-of-git (closing probe).
+The size of a change is gated once, by SMALL-CHANGE-1 (seed/scripts/prsize.py, seed/autonomy/prsize.json); this module classifies paths and splits what is over.
+Consumers: .github/workflows/checks.yml (--check on every change), agents/AGENTS.md, Q-SHAPE-state-out-of-git (closing probe).
 Tests: tests/foundation/test_reposhape.py.
 """
 from __future__ import annotations
@@ -95,30 +96,15 @@ def changes(root, rng: str) -> list[dict]:
     return out
 
 
-def counted(rows: list[dict], pol: dict) -> list[dict]:
-    ex = set(pol["pr_budget"]["exempt_classes"])
-    return [r for r in rows if (area_of(r["path"], pol["areas"]) or {"class": "platform"})["class"] not in ex]
-
-
-def pr_problems(rows: list[dict], pol: dict, branch: str = "") -> list[str]:
-    b = pol["pr_budget"]
-    if any(branch.startswith(p) for p in b["exempt_branch_prefixes"]):
-        return []
-    rows = counted(rows, pol)
-    files, added = len(rows), sum(r["added"] for r in rows)
-    bad = []
-    if files > b["max_files"]:
-        bad.append(f"{files} files changed (budget {b['max_files']}, state excluded)")
-    if added > b["max_added_lines"]:
-        bad.append(f"{added} lines added (budget {b['max_added_lines']}, state excluded)")
-    if bad:
-        bad.append("split it: python3 -m foundation reposhape --split BASE...HEAD --apply (a stack of in-budget branches; the original is kept)")
-    return bad
+def budget(root=REPO) -> dict:
+    """The one size budget: the SMALL-CHANGE-1 gate's own config."""
+    return json.loads((Path(root) / "seed/autonomy/prsize.json").read_text(encoding="utf-8"))
 
 
 def plan(rows: list[dict], pol: dict, max_files: int | None = None, max_lines: int | None = None) -> list[dict]:
     """Batches in landing order: by class (kernel first), then by area, then by path; a batch closes at the file or line budget."""
-    mf, ml = max_files or pol["pr_budget"]["max_files"], max_lines or pol["pr_budget"]["max_added_lines"]
+    b0 = budget() if not (max_files and max_lines) else {}
+    mf, ml = max_files or b0["max_files"], max_lines or b0["max_lines"]
     keyed = []
     for r in rows:
         a = area_of(r["path"], pol["areas"]) or {"class": "platform", "path": "(unclassified)"}
@@ -127,9 +113,9 @@ def plan(rows: list[dict], pol: dict, max_files: int | None = None, max_lines: i
     batches, cur = [], None
     for _, area, _, r, cls in keyed:
         # state travels with its own batch, so a state-only PR is exempt from the budget and never mixed into code
-        if cur is None or cur["class"] != cls or len(cur["files"]) >= mf or (cur["added"] + r["added"] > ml and cur["files"]):
-            cur = {"class": cls, "files": [], "added": 0}; batches.append(cur)
-        cur["files"].append(r["path"]); cur["added"] += r["added"]
+        if cur is None or cur["class"] != cls or len(cur["files"]) >= mf or (cur["lines"] + r["added"] + r["deleted"] > ml and cur["files"]):
+            cur = {"class": cls, "files": [], "lines": 0}; batches.append(cur)
+        cur["files"].append(r["path"]); cur["lines"] += r["added"] + r["deleted"]
     for i, b in enumerate(batches, 1):
         b["name"] = f"part-{i}"; b["of"] = len(batches)
     return batches
@@ -167,7 +153,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="foundation reposhape")
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--check", action="store_true"); g.add_argument("--report", action="store_true")
-    g.add_argument("--probe"); g.add_argument("--pr"); g.add_argument("--split")
+    g.add_argument("--probe"); g.add_argument("--split")
     ap.add_argument("--apply", action="store_true"); ap.add_argument("--max-files", type=int); ap.add_argument("--max-lines", type=int)
     a = ap.parse_args(argv)
     if a.check:
@@ -181,13 +167,9 @@ def main(argv=None) -> int:
         print(json.dumps({"state_share": r["state_share"], "budget": r["state_budget"]}))
         return 1 if r["state_share"] > r["state_budget"] else 0
     pol = policy()
-    if a.pr:
-        bad = pr_problems(changes(REPO, a.pr), pol, os.environ.get("HEAD_REF", ""))
-        print("reposhape: inside the PR budget" if not bad else "\n".join(bad))
-        return 1 if bad else 0
     rows = changes(REPO, a.split)
     batches = plan(rows, pol, a.max_files, a.max_lines)
-    out = {"files": len(rows), "batches": [{"name": b["name"], "class": b["class"], "files": len(b["files"]), "added": b["added"]} for b in batches]}
+    out = {"files": len(rows), "batches": [{"name": b["name"], "class": b["class"], "files": len(b["files"]), "lines": b["lines"]} for b in batches]}
     if a.apply:
         out["branches"] = apply_split(REPO, a.split, batches)
     print(json.dumps(out, indent=1))
