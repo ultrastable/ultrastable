@@ -7301,10 +7301,6 @@
    "proof": "named test",
    "tests": [
     {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R01: every erroring run still writes its hit row"
-    },
-    {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-R01 / R03 / R04: the standard detectors register with severity and a full contract, and each run writes one hit row"
     }
@@ -7366,10 +7362,6 @@
      "name": "a failure mode without a detector, severity or contract field cannot be registered (US-17-R03/R04)"
     },
     {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R04: without the state tables a relapse inside the same clock hour opens a new remediation under a fresh item id"
-    },
-    {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-R01 / R03 / R04: the standard detectors register with severity and a full contract, and each run writes one hit row"
     }
@@ -7406,10 +7398,6 @@
     {
      "file": "core/kernel/failure.test.js",
      "name": "the consumer books exactly one bucket per scanned item and closes only when the closing probe passes (US-17-R05/R06)"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R06: a doer that throws leaves its message in the remediation evidence"
     }
    ]
   },
@@ -7431,10 +7419,6 @@
      "name": "an interrupt-eligible item goes through the gate card after max_attempts (US-17-R07)"
     },
     {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R07: when no alternate doer remains an ESCALATE item is filed once and the remediation is exhausted"
-    },
-    {
      "file": "core/kernel/kernel.test.js",
      "name": "exhausted contract: interrupt-eligible goes to a gate card, otherwise is reassigned (US-17-R07)"
     }
@@ -7449,10 +7433,6 @@
    "status": "met",
    "proof": "named test",
    "tests": [
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R08: a failed half-open probe doubles the interval, a failure recorded before the half-open time does not"
-    },
     {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-T03 / R08: a ledger whose writer has no breaker gets one; 26 hourly identical failures become 3 attempts"
@@ -7471,18 +7451,6 @@
     {
      "file": "core/kernel/failure.test.js",
      "name": "US-17-R09: a detector mostly refuted by verification goes to probation and stops opening items"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R09: ten firings whose verify_probe passes (the problem was not there) put the detector in probation without any manual confirmFiring call"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R09: firings whose verify_probe still fails are confirmed and the detector stays armed"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R09: a probation detector keeps writing hit rows and opens no item"
     }
    ]
   },
@@ -7556,22 +7524,9 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R14: two consecutive runs of a detector over a missing table open DETECTOR-BROKEN-<id> once"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R14: one erroring run followed by a good run opens nothing"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R14: the item closes with a disposition when the detector returns a value again, and reopens if it breaks again"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-17-R15",
@@ -7579,22 +7534,9 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R15: with due_only a detector with interval_h 1 run twice 10 minutes apart writes one hit row; 61 minutes later it writes a second"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R15: without due_only every call writes a row as before"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R15: a due_only run that skipped everything still lets detectStaleDetectors fire after 2 intervals of silence"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-17-R16",
@@ -7602,18 +7544,9 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R16: a closed remediation whose detector fires again is reopened and counts one relapse"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R16: a closure outside the relapse window is a new remediation, not a reopen"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-17-R17",
@@ -7621,14 +7554,9 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R17: after three relapses closure needs two consecutive passes of the closing probe"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-17-R18",
@@ -7636,18 +7564,9 @@
    "level": "L3",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R18: after 3 failures, a success and one new failure inside the window the breaker stays closed"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R18: a changed source_hash re-arms an open breaker and the next attempt is allowed"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-17-R19",

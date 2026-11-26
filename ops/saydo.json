@@ -1,9 +1,17 @@
 {
- "at": "2026-11-26T17:49:08Z",
+ "at": "2026-11-26T21:16:41Z",
  "gaps": 7,
  "match_share": 0.987,
  "sources": {
   "changes": [
+   {
+    "did": [
+     "site/lite.js"
+    ],
+    "id": "8481e6057fe6",
+    "ok": true,
+    "said": "Implement inbound webmention receiver in lite.js to record external referrals as reach (#Q-IMPROVE-webmention) (#2566)"
+   },
    {
     "did": [
      "foundation/mergeaudit.py",
@@ -151,9 +159,9 @@
   ],
   "loops": [
    {
-    "detail": "0 of 124 second-order steps kept in 14 days",
+    "detail": "0 of 133 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 124,
+    "judged": 133,
     "kept": 0,
     "ok": false
    }
@@ -1066,7 +1074,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 100.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 103.7 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1126,7 +1134,7 @@
     "ok": true
    },
    {
-    "detail": "0.643 substantive server-originated changes a day (target 1)",
+    "detail": "0.714 substantive server-originated changes a day (target 1)",
     "id": "ships-daily",
     "ok": false
    }
@@ -1135,7 +1143,7 @@
  "summary": {
   "changes": {
    "gaps": 1,
-   "total": 15
+   "total": 16
   },
   "claims": {
    "gaps": 0,
@@ -1154,5 +1162,5 @@
    "total": 2
   }
  },
- "total": 554
+ "total": 555
 }
