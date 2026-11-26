@@ -406,3 +406,4 @@
 {"at": "2026-11-26T03:44:07Z", "clocks": 43, "kind": "beat", "seq": 404, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
 {"at": "2026-11-26T03:53:49Z", "clocks": 43, "kind": "beat", "seq": 405, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
 {"at": "2026-11-26T04:03:57Z", "clocks": 43, "kind": "beat", "seq": 406, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
+{"at": "2026-11-26T04:13:46Z", "clocks": 43, "kind": "beat", "seq": 407, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "wf:findable", "wf:ledger-openalex"], "unmeasured": 0}
