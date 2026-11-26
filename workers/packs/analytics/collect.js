@@ -11,8 +11,10 @@ export function cfg(settings = {}) {
 }
 
 // request: { url, referrer, userAgent, ip, dnt, gpc }. Returns { recorded } or { skipped: reason }.
-export async function recordPageview({ db, now = Date.now, settings = {}, request = {} }) {
+// secrets: the host's presence-only accessor (US-21-R20); ANALYTICS_SALT is read at call time when the salt setting is empty.
+export async function recordPageview({ db, now = Date.now, settings = {}, request = {}, secrets = null }) {
   const s = cfg(settings);
+  if (!s.salt && secrets && secrets.get) s.salt = secrets.get('ANALYTICS_SALT') || '';
   if (!s.salt) throw new Error('analytics salt is not configured (ANALYTICS_SALT)');
   if (request.dnt === '1' || request.dnt === true || request.gpc === '1' || request.gpc === true) return { skipped: 'do_not_track' };
   const ua = String(request.userAgent || '');

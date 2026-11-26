@@ -21,6 +21,7 @@ export function guardPort({ db, channel, maxLength = 4000 }) {
       if (res?.url) await run(db, `UPDATE video_queue SET url = ? WHERE idem_key = ?`, res.url, idempotencyKey);
       return { id: res.id };
     },
+    ...(typeof channel.probe === 'function' ? { probe: () => channel.probe() } : {}),   // US-21-R25: read-only, never publishes
   };
 }
 

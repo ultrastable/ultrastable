@@ -19,6 +19,7 @@ export function guardPorts({ channel, senderLine }) {
       const r = await channel.deliver({ to: recipient, subject: m.subject, text: m.text, html: m.html, headers: m.headers || {} });
       return { id: r && r.providerId != null ? String(r.providerId) : null };
     },
+    ...(typeof channel.probe === 'function' ? { probe: () => channel.probe() } : {}),   // US-21-R25: read-only, never delivers
   };
   return { email: port, email_confirm: port };
 }

@@ -48,6 +48,7 @@
   "outbound": {
     "channels": ["video"],
     "caps": { "video": { "per_day": 2, "per_week": 6 } },
+    "hosts": ["oauth2.googleapis.com", "www.googleapis.com", "www.youtube.com"],
     "consent": "none",
     "suppression": true,
     "approval": "by_rung"

@@ -15,6 +15,11 @@ import { createRedactor, secretValuesFor, redactingSink } from './redact.js';
 import { createBounceIntake } from './bounce.js';
 import { applyPackMigrations, scanPackDirs } from './loader.js';
 import { createGuard, sha256, setSwitch, engagedSwitches, rungCeilings, DEFAULT_RUNGS } from './guard.js';
+import { createPackTrust } from './trust.js';
+import { runChannelProbes, openTrial, lastProbes } from './probe.js';
+import { createPackRoutes } from './routes.js';
+import { guardTransport } from './transport.js';
+import { createEgressFetch } from './egress.js';
 
 export * from './manifest.js';
 export * from './guard.js';
@@ -23,6 +28,11 @@ export * from './sandbox.js';
 export * from './loader.js';
 export * from './bounce.js';
 export * from './redact.js';
+export * from './egress.js';
+export * from './trust.js';
+export * from './probe.js';
+export * from './routes.js';
+export * from './transport.js';
 export const MIGRATIONS_DIR = (() => { try { return fileURLToPath(new URL('./migrations/', import.meta.url)); } catch { return null; } })(); // import.meta.url is not a URL inside a deployed Worker (live trial 2026-11-12, error 10021); only Node tooling and tests use this path
 
 export function loadManifest(dir) { return JSON.parse(readFileSync(path.join(dir, 'pack.json'), 'utf8')); }
@@ -40,15 +50,58 @@ export function createPacks({ db, now = Date.now, config = {}, channels = {}, de
   const known = new Set();
   const learn = (m, tickEnv) => { for (const v of secretValuesFor(m, { env: { ...env, ...(tickEnv || {}) }, settings: config.packs?.[m.id] || {} })) known.add(v); };
   const redactor = createRedactor({ values: () => [...known] });
-  const guard = createGuard({ db, now, config, channels, deployRoute, redact: redactor.redact });
-  const bounces = createBounceIntake({ db, guard, now, config: config.bounces || {} });
+  const trust = createPackTrust({ db, now, policy: config.policy || null, config });
+  const guard = createGuard({ db, now, config, channels, deployRoute, redact: redactor.redact, policyCeiling: id => trust.policyCeiling(id) });
+  const bounces = createBounceIntake({ db, guard, now, config: config.bounces || {}, onEvent: (ev, outcome) => onBounceEvent(ev, outcome) });
   const rungs = config.rungs || DEFAULT_RUNGS;
   const ceilings = rungCeilings(config);
   const timeoutMs = config.step_timeout_ms ?? 5000;
+  const refusals = [];
   const managerRole = id => `pack-manager-${id}`;
   const programId = id => `pack-${id}`;
 
   async function row(id) { return first(db, `SELECT * FROM packs_registry WHERE id = ?`, id); }
+
+  // US-21-R20: presence-only access to the secrets a manifest declares. has() never returns a value; get() returns the value of a
+  // DECLARED name from the tick env at call time (never stored, and learned by the redactor so it cannot reach a log). An undeclared
+  // name returns false or undefined and is written to packs_runs as `secret_not_declared`.
+  function packSecrets(m, tickEnv, misses = []) {
+    const declared = new Set(m.requires?.secrets || []);
+    const e = { ...env, ...(tickEnv || {}) };
+    const val = n => (declared.has(n) && typeof e[n] === 'string' && e[n] !== '' ? e[n] : undefined);
+    return Object.freeze({
+      has: n => { if (!declared.has(n)) { misses.push(String(n)); return false; } return val(n) !== undefined; },
+      get: n => { if (!declared.has(n)) { misses.push(String(n)); return undefined; } const v = val(n); if (v !== undefined) known.add(v); return v; },
+    });
+  }
+
+  // US-21-R21: a delivery event the core intake just applied is handed to every enabled pack that sends on that channel, so the pack's own
+  // records (a subscriber row) stop matching what the guard already suppressed. Trust outcomes are recorded here too (a complaint is a
+  // hidden failure, a hard bounce a failure). One pack's failure never stops the intake or another pack.
+  async function onBounceEvent(ev, outcome) {
+    for (const r of await all(db, `SELECT * FROM packs_registry WHERE enabled = 1 ORDER BY id`)) {
+      const m = JSON.parse(r.manifest_json);
+      if (!m.outbound || !m.outbound.channels.includes(ev.channel) || (ev.pack && ev.pack !== m.id)) continue;
+      const started = now();
+      try {
+        if (ev.kind === 'complaint') await trust.outcome({ pack: m.id, kind: 'send', event: 'complaint', ref: ev.eventId });
+        else if (ev.kind === 'hard') await trust.outcome({ pack: m.id, kind: 'send', event: 'failed', ref: ev.eventId });
+        if (!m.hooks || !m.hooks.bounce) continue;
+        learn(m);
+        const en = parseEntry(m.hooks.bounce);
+        const mod = await importer(path.resolve(r.source_dir, en.module));
+        if (typeof mod[en.export] !== 'function') throw new Error(`hook ${m.hooks.bounce} is not a function`);
+        await withTimeout(mod[en.export]({ db: sandboxDb(db, m.id), now, pack: m, settings: config.packs?.[m.id] || {}, guard: boundGuard(m.id), secrets: packSecrets(m, null),
+          event: { channel: ev.channel, recipient: ev.recipient, kind: ev.kind, eventId: ev.eventId ?? null }, outcome }), timeoutMs);
+        await record(m.id, 'hook:bounce', null, 'ok', null, now() - started);
+      } catch (e) {
+        const msg = redactor.redact(e && e.message);
+        await record(m.id, 'hook:bounce', null, e.timeout ? 'timeout' : 'error', msg, now() - started);
+        await ensureItem(db, { id: `PACKFAIL-${m.id}-hook-bounce-${iso(now()).slice(0, 13).replace(' ', 'T')}`, title: `Pack ${m.id} bounce hook failed: ${msg}`, owner_role: managerRole(m.id),
+          done_check: `the next bounce event for ${m.id} is applied to its records`, priority: 0, project: programId(m.id) });
+      }
+    }
+  }
 
   // US-21-R02: validate at load. A pack that fails is not stored at all.
   async function register(manifest, { dir = null } = {}) {
@@ -106,6 +159,7 @@ export function createPacks({ db, now = Date.now, config = {}, channels = {}, de
       await ensureItem(db, { id: `PACKPLUS-${id}-1`, title: `Improve pack ${id}: find the largest gap against ${c.primary_metric.id} and file the change`, kind: 'plus',
         project: pid, owner_role: managerRole(id), done_check: `an improvement for ${id} merged and its primary metric re-read`, priority: 30 });
     }
+    if (kernel) await openTrial(db, m, managerRole);   // US-21-R25: the live-trial gate card, default in effect: every send waits for a person
     // The manager role: its items are dispatched by the seed tick like any other role's.
     await run(db, `INSERT OR REPLACE INTO roles (id, role, project, tick_every, model) VALUES (?,?,?,?,?)`,
       managerRole(id), managerRole(id), null, 1, config.manager_model || 'default');
@@ -143,14 +197,17 @@ export function createPacks({ db, now = Date.now, config = {}, channels = {}, de
             if (sw.has('global') || sw.has(`pack:${m.id}`)) { await record(m.id, loop.id, ctx.tickId, 'skipped_killed', null, 0); return; }
             const started = now();
             learn(m, ctx.env);
+            const misses = [];
             try {
               const en = parseEntry(loop.entry);
               const mod = await importer(path.resolve(r.source_dir, en.module));
               const fn = mod[en.export];
               if (typeof fn !== 'function') throw new Error(`entry ${loop.entry} is not a function`);
-              await withTimeout(fn({ db: sandboxDb(db, m.id), ctx: sandboxCtx(ctx, t => redactingSink(t, redactor.redact)), now, pack: m, settings: config.packs?.[m.id] || {}, guard: boundGuard(m.id) }), timeoutMs);
+              await withTimeout(fn({ db: sandboxDb(db, m.id), ctx: sandboxCtx(ctx, t => redactingSink(t, redactor.redact)), now, pack: m, settings: config.packs?.[m.id] || {}, guard: boundGuard(m.id), secrets: packSecrets(m, ctx.env, misses) }), timeoutMs);
               await record(m.id, loop.id, ctx.tickId, 'ok', null, now() - started);
+              for (const n of new Set(misses)) await record(m.id, loop.id, ctx.tickId, 'secret_not_declared', redactor.redact(n), 0);
             } catch (e) {
+              for (const n of new Set(misses)) await record(m.id, loop.id, ctx.tickId, 'secret_not_declared', redactor.redact(n), 0);
               const msg = redactor.redact(e && e.message);
               await record(m.id, loop.id, ctx.tickId, e.timeout ? 'timeout' : 'error', msg, now() - started);
               ctx.errors.push(`pack:${m.id}:${loop.id}: ${msg}`);
@@ -175,12 +232,48 @@ export function createPacks({ db, now = Date.now, config = {}, channels = {}, de
       },
       unsubscribe: a => guard.unsubscribe(a), suppress: a => guard.suppress(a),
       stats: () => guard.stats(packId),
+      // US-21-R17: a verified, failed or removed result of this pack's own action, recorded as trust on pack:<id> (never as another pack).
+      outcome: a => trust.outcome({ ...a, pack: packId }),
     });
   }
 
-  return {
-    guard, bounces, register, loadFromDir, enablePack, disablePack, packSteps, boundGuard,
+  // Read side of the person-facing surface (routes.js): the card, scope and last probes of each pack, the switches, the pending queue.
+  async function list() {
+    const out = [];
+    for (const r of await all(db, `SELECT * FROM packs_registry ORDER BY id`)) {
+      const m = JSON.parse(r.manifest_json);
+      out.push({ id: r.id, name: m.name, version: m.version, class: r.class, enabled: !!r.enabled, enabled_by: r.enabled_by, enabled_at: r.enabled_at, rung_ceiling: r.rung_ceiling,
+        scope: m.scope, enable_gate: m.enable_gate, channels: m.outbound ? m.outbound.channels : [], probes: await lastProbes(db, r.id) });
+    }
+    return out;
+  }
+
+  const api = {
+    guard, bounces, trust, register, loadFromDir, enablePack, disablePack, packSteps, boundGuard, list,
     setSwitch: (scope, on, reason) => setSwitch(db, scope, on, reason, now()),
+    switches: () => all(db, `SELECT scope, is_on, reason, set_at FROM packs_switches ORDER BY scope`),
+    queue: () => all(db, `SELECT q.id, q.at, q.pack, q.channel, q.kind, q.card_id, g.what AS card FROM guard_queue q LEFT JOIN gate_cards g ON g.id = q.card_id WHERE q.status = 'pending' ORDER BY q.id`),
     status: async () => all(db, `SELECT id, class, enabled, enabled_by, enabled_at, decision_id, rung_ceiling FROM packs_registry ORDER BY id`),
+    // US-21-R16: the one fetch a channel adapter for this pack may be built with: the host's real fetch, limited to the pack's declared outbound.hosts over
+    // https. A pack that declares no hosts has no network (egress_hosts_not_declared), so a deployment declares them in the manifest it registers. A refused
+    // call is recorded as a packs_runs row (loop `egress`, outcome `egress_refused`) and kept in egressRefusals(); a failure to record it is kept there too.
+    egressFetch: async (id, { fetch } = {}) => {
+      const r = await row(id);
+      if (!r) throw new Error(`unknown_pack:${id}`);
+      const hosts = (JSON.parse(r.manifest_json).outbound || {}).hosts;
+      if (!Array.isArray(hosts) || !hosts.length) throw new Error(`egress_hosts_not_declared:${id}`);
+      return createEgressFetch({ fetch, hosts, onRefuse: (host, url) => {
+        refusals.push({ pack: id, host, at: iso(now()) });
+        record(id, 'egress', null, 'egress_refused', `${host}`, 0).catch(e => refusals.push({ pack: id, error: `could not record the refusal: ${e && e.message}` }));
+      } });
+    },
+    egressRefusals: () => refusals.slice(),
+    // US-21-R25: read-only probe of every declared channel of every enabled outbound pack. ports defaults to the channels given to createPacks.
+    probeChannels: (ports = channels) => runChannelProbes({ db, now, ports, redact: redactor.redact, managerRole }),
+    // US-21-R18: mount with any host; authorize(request) returns the actor's name or null.
+    routes: ({ authorize, bounceSecret = null } = {}) => createPackRoutes({ packs: api, db, authorize, bounceSecret, now }),
+    // US-21-R23: a transport for core/outreach and core/promote that sends through the guard as the named pack.
+    transport: ({ pack, channel, kind, keyOf } = {}) => guardTransport({ guard: boundGuard(pack), channel, kind, keyOf }),
   };
+  return api;
 }

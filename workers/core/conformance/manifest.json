@@ -1482,7 +1482,7 @@
    "tests": [
     {
      "file": "core/packs/packs.test.js",
-     "name": "T21-1 a pack is inert until enabled; enabling records who, when and the card text; disabling stops the loops"
+     "name": "T21-1 US-21-R01 US-21-R04 a pack is inert until enabled; enabling records who, when and the card text; disabling stops the loops"
     }
    ]
   },
@@ -1492,7 +1492,7 @@
    "tests": [
     {
      "file": "core/packs/packs.test.js",
-     "name": "T21-2 manifest validation refuses missing fields, class C outbound, out-of-bounds scope, outbound without a block, tenant names"
+     "name": "T21-2 US-21-R02 US-21-R11 manifest validation refuses missing fields, class C outbound, out-of-bounds scope, outbound without a block, tenant names"
     }
    ]
   },
@@ -1502,7 +1502,7 @@
    "tests": [
     {
      "file": "core/packs/packs.test.js",
-     "name": "T21-3 no consent, suppressed, over cap and duplicate sends are not delivered and the ledger says why"
+     "name": "T21-3 US-21-R06 US-21-R13 no consent, suppressed, over cap and duplicate sends are not delivered and the ledger says why"
     }
    ]
   },
@@ -1512,7 +1512,7 @@
    "tests": [
     {
      "file": "core/packs/packs.test.js",
-     "name": "T21-4 below the act rung an action is queued as a decision card and not sent; approving delivers it"
+     "name": "T21-4 US-21-R06 below the act rung an action is queued as a decision card and not sent; approving delivers it"
     }
    ]
   },
@@ -1522,7 +1522,7 @@
    "tests": [
     {
      "file": "core/packs/packs.test.js",
-     "name": "T21-5 tripping one pack's switch stops that pack and no other; global and channel switches also hold"
+     "name": "T21-5 US-21-R07 tripping one pack's switch stops that pack and no other; global and channel switches also hold"
     }
    ]
   },
@@ -1532,7 +1532,7 @@
    "tests": [
     {
      "file": "core/packs/packs.test.js",
-     "name": "T21-6 a pack step that throws or hangs files an item and the tick completes"
+     "name": "T21-6 US-21-R05 a pack step that throws or hangs files an item and the tick completes"
     }
    ]
   },
@@ -1542,11 +1542,11 @@
    "tests": [
     {
      "file": "core/packs/packs.test.js",
-     "name": "T21-7 no core or adapter module imports a pack module (static check over core/ and adapters/)"
+     "name": "T21-7 US-21-R03 no core or adapter module imports a pack module (static check over core/ and adapters/)"
     },
     {
      "file": "core/packs/packs.test.js",
-     "name": "T21-7 the static check catches a core file importing a pack, static or dynamic"
+     "name": "T21-7 US-21-R03 the static check catches a core file importing a pack, static or dynamic"
     }
    ]
   },
@@ -1556,7 +1556,7 @@
    "tests": [
     {
      "file": "core/packs/packs.test.js",
-     "name": "T21-8 a secret value never appears in any table; the ledger holds hashes, not recipients or content"
+     "name": "T21-8 US-21-R09 a secret value never appears in any table; the ledger holds hashes, not recipients or content"
     }
    ]
   },
@@ -8233,9 +8233,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "T21-1 US-21-R01 US-21-R04 a pack is inert until enabled; enabling records who, when and the card text; disabling stops the loops"
+    },
+    {
+     "file": "core/packs/surface.test.js",
+     "name": "US-21-R01 and US-21-R18: enable via the route records who, when and the card text; disable via the route stops the loops on the next tick"
+    }
+   ]
   },
   {
    "id": "US-21-R02",
@@ -8243,9 +8252,22 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/packs/egress.test.js",
+     "name": "US-21-R02: covers must be a list of lower-case words; hooks accept only a known bounce entry inside the pack"
+    },
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "T21-2 US-21-R02 US-21-R11 manifest validation refuses missing fields, class C outbound, out-of-bounds scope, outbound without a block, tenant names"
+    },
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "US-21-R02 every case tag in bootstrap/cases.json is covered by a shipped pack or listed as unmapped"
+    }
+   ]
   },
   {
    "id": "US-21-R03",
@@ -8253,9 +8275,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "T21-7 US-21-R03 no core or adapter module imports a pack module (static check over core/ and adapters/)"
+    },
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "T21-7 US-21-R03 the static check catches a core file importing a pack, static or dynamic"
+    }
+   ]
   },
   {
    "id": "US-21-R04",
@@ -8266,6 +8297,14 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/packs/offline.test.js",
+     "name": "US-21-R04 every shipped manifest validates, its probes are read-only SELECTs, and every pack passes the source scan"
+    },
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "T21-1 US-21-R01 US-21-R04 a pack is inert until enabled; enabling records who, when and the card text; disabling stops the loops"
+    },
     {
      "file": "core/packs/packs.test.js",
      "name": "R04 enabling seeds the manager role, charter, primary and guard metrics and a plus item into the kernel records"
@@ -8278,9 +8317,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "T21-6 US-21-R05 a pack step that throws or hangs files an item and the tick completes"
+    },
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "US-21-R05 every_ticks gates a loop and runs are counted"
+    }
+   ]
   },
   {
    "id": "US-21-R06",
@@ -8289,11 +8337,19 @@
    "tagged": false,
    "must": true,
    "status": "met",
-   "proof": "test file cites it",
+   "proof": "named test",
    "tests": [
     {
-     "file": "core/packs/sandbox.test.js",
-     "name": null
+     "file": "core/packs/packs.test.js",
+     "name": "T21-3 US-21-R06 US-21-R13 no consent, suppressed, over cap and duplicate sends are not delivered and the ledger says why"
+    },
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "T21-4 US-21-R06 below the act rung an action is queued as a decision card and not sent; approving delivers it"
+    },
+    {
+     "file": "packs/email/compose.test.js",
+     "name": "US-21-R06: the composed message still leaves only through guard.send: compose queues, send delivers to confirmed subscribers with the sender line"
     }
    ]
   },
@@ -8303,9 +8359,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "T21-5 US-21-R07 tripping one pack's switch stops that pack and no other; global and channel switches also hold"
+    },
+    {
+     "file": "core/packs/surface.test.js",
+     "name": "US-21-R07 and US-21-R18: engaging a pack switch through the route stops that pack and no other"
+    }
+   ]
   },
   {
    "id": "US-21-R08",
@@ -8314,11 +8379,19 @@
    "tagged": false,
    "must": true,
    "status": "met",
-   "proof": "test file cites it",
+   "proof": "named test",
    "tests": [
     {
-     "file": "core/packs/loader.test.js",
-     "name": null
+     "file": "core/packs/sandbox.test.js",
+     "name": "US-21-R08: a pack cannot read the approval queue content, the trust ledger, roles, gate cards, suppression list or the schema"
+    },
+    {
+     "file": "core/packs/sandbox.test.js",
+     "name": "US-21-R08: a pack cannot update or delete items or delete predictions, and writes to the shared tables need a row id it owns"
+    },
+    {
+     "file": "core/packs/sandbox.test.js",
+     "name": "US-21-R08: the id bound to a shared-table write must start with the pack id; another pack's, a core item's or the host's id is refused at bind time"
     }
    ]
   },
@@ -8329,11 +8402,11 @@
    "tagged": false,
    "must": true,
    "status": "met",
-   "proof": "test file cites it",
+   "proof": "named test",
    "tests": [
     {
-     "file": "core/packs/redact.test.js",
-     "name": null
+     "file": "core/packs/packs.test.js",
+     "name": "T21-8 US-21-R09 a secret value never appears in any table; the ledger holds hashes, not recipients or content"
     }
    ]
   },
@@ -8343,9 +8416,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/packs/offline.test.js",
+     "name": "US-21-R10: every shipped pack test file passes with the network globals replaced by throwers, and none is called"
+    },
+    {
+     "file": "packs/video/channels.test.js",
+     "name": "US-21-R10: the youtube channel runs without network and never puts a credential in an error or a URL"
+    }
+   ]
   },
   {
    "id": "US-21-R11",
@@ -8353,9 +8435,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/packs/offline.test.js",
+     "name": "US-21-R11: no shipped pack source or manifest names a tenant or a real host"
+    },
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "T21-2 US-21-R02 US-21-R11 manifest validation refuses missing fields, class C outbound, out-of-bounds scope, outbound without a block, tenant names"
+    }
+   ]
   },
   {
    "id": "US-21-R12",
@@ -8369,6 +8460,14 @@
     {
      "file": "core/packs/packs.test.js",
      "name": "R12 earned trust above the class ceiling does not remove approval: a class B pack is capped"
+    },
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "T21 US-21-R12 class C can never send, even if a manifest is forced into the registry; class D must route through deploy"
+    },
+    {
+     "file": "core/packs/trust.test.js",
+     "name": "US-21-R12: earned trust above the class ceiling is still clamped, and an unknown outcome is refused"
     }
    ]
   },
@@ -8381,6 +8480,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "T21-3 US-21-R06 US-21-R13 no consent, suppressed, over cap and duplicate sends are not delivered and the ledger says why"
+    },
     {
      "file": "core/packs/packs.test.js",
      "name": "R13 unsubscribe is immediate, needs no approval, revokes consent and cancels queued items"
@@ -8399,6 +8502,22 @@
     {
      "file": "core/packs/packs.test.js",
      "name": "R14 one guard implementation: packs get a bound view of it, with no way to name another pack"
+    },
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "US-21-R14: three simultaneous sends with one idempotency key deliver once and refuse the others as duplicates"
+    },
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "US-21-R14: simultaneous sends with different keys cannot pass a cap together (per_day is 2)"
+    },
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "US-21-R14: a failed delivery releases its reservation so the key can be retried, and a stale reservation (a crash) stops blocking after inflight_ttl_ms"
+    },
+    {
+     "file": "core/packs/packs.test.js",
+     "name": "US-21-R14: approving the same queued entry twice at once delivers once"
     }
    ]
   },
@@ -8408,9 +8527,30 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/packs/egress.test.js",
+     "name": "US-21-R15: a pack that calls global fetch, new WebSocket, XMLHttpRequest or imports cloudflare:sockets is refused at scan"
+    },
+    {
+     "file": "core/packs/egress.test.js",
+     "name": "US-21-R15: globalThis.fetch and self.fetch are refused even when the file also declares a fetch parameter"
+    },
+    {
+     "file": "core/packs/egress.test.js",
+     "name": "US-21-R15: a fetch the pack receives as a parameter or destructured binding is allowed"
+    },
+    {
+     "file": "core/packs/egress.test.js",
+     "name": "US-21-R15: the shipped packs and the example still pass the source scan"
+    },
+    {
+     "file": "core/packs/egress.test.js",
+     "name": "US-21-R15: a string holding // does not hide a global fetch call on the same line"
+    }
+   ]
   },
   {
    "id": "US-21-R16",
@@ -8418,9 +8558,26 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/packs/egress.test.js",
+     "name": "US-21-R16: createEgressFetch refuses http, an unlisted host and a lookalike suffix, and passes an allowed host and its subdomain"
+    },
+    {
+     "file": "core/packs/egress.test.js",
+     "name": "US-21-R16: validateManifest refuses an outbound.hosts entry with a scheme, path, port or empty string, and accepts a bare host list"
+    },
+    {
+     "file": "core/packs/egress.test.js",
+     "name": "US-21-R16: packs.egressFetch limits a pack's fetch to its manifest outbound.hosts, records a refusal, and gives a pack with no declared hosts no network"
+    },
+    {
+     "file": "core/packs/egress.test.js",
+     "name": "US-21-R16: the shipped packs that call a fixed provider declare their hosts, and the declared hosts are the ones their channel code names"
+    }
+   ]
   },
   {
    "id": "US-21-R17",
@@ -8428,9 +8585,30 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/packs/trust.test.js",
+     "name": "US-21-R17: twenty verified outcomes with a policy whose mapped surface allows execute raise the rung to the act rung and the next send is delivered, not queued"
+    },
+    {
+     "file": "core/packs/trust.test.js",
+     "name": "US-21-R17: with the shipped policy a class B pack never passes the act rung (outreach is propose) and keeps queueing"
+    },
+    {
+     "file": "core/packs/trust.test.js",
+     "name": "US-21-R17: a promotion needs a different agent than the one that opened the item; the same agent is refused"
+    },
+    {
+     "file": "core/packs/trust.test.js",
+     "name": "US-21-R17: a removed post (hidden failure) lowers the rung and the next send queues again"
+    },
+    {
+     "file": "core/packs/trust.test.js",
+     "name": "US-21-R17: the policy overlay gives each pack a surface bounded by the surface its class maps to, and outcome kinds are stated"
+    }
+   ]
   },
   {
    "id": "US-21-R18",
@@ -8438,9 +8616,30 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/packs/surface.test.js",
+     "name": "US-21-R18: an unauthenticated request to every /packs route is 401"
+    },
+    {
+     "file": "core/packs/surface.test.js",
+     "name": "US-21-R18: GET /packs shows the enable card text exactly as the manifest states it; enabling with different text is refused and nothing is recorded"
+    },
+    {
+     "file": "core/packs/surface.test.js",
+     "name": "US-21-R01 and US-21-R18: enable via the route records who, when and the card text; disable via the route stops the loops on the next tick"
+    },
+    {
+     "file": "core/packs/surface.test.js",
+     "name": "US-21-R18: approving a queued send through the route delivers it once; rejecting sends nothing and clears recipient and content"
+    },
+    {
+     "file": "core/packs/surface.test.js",
+     "name": "US-21-R07 and US-21-R18: engaging a pack switch through the route stops that pack and no other"
+    }
+   ]
   },
   {
    "id": "US-22-R01",

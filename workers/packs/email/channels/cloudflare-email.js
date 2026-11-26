@@ -8,6 +8,16 @@ export function cloudflareEmail({ fetch: doFetch, config = {}, env = {} }) {
   if (!config.from) throw new Error('config.from (sender address) is required');
   const apiBase = String(config.apiBase || 'https://api.cloudflare.com/client/v4').replace(/\/+$/, '');
   return {
+    // US-21-R25: read-only. Asks the provider whether the token is valid and active; sends nothing.
+    async probe() {
+      const token = env.EMAIL_PROVIDER_TOKEN;
+      if (!token) throw new Error('EMAIL_PROVIDER_TOKEN is not set');
+      const res = await doFetch(`${apiBase}/accounts/${encodeURIComponent(config.accountId)}/tokens/verify`, { method: 'GET', headers: { authorization: `Bearer ${token}`, accept: 'application/json' } });
+      let body = null;
+      try { body = await res.json(); } catch { /* non-JSON error page */ }
+      if (!res.ok || (body && body.success === false) || (body && body.result && body.result.status && body.result.status !== 'active')) throw new Error(`token not verified: status ${res.status}`);
+      return { ok: true, detail: 'token active' };
+    },
     async deliver({ to, subject, text, html, headers }) {
       const token = env.EMAIL_PROVIDER_TOKEN;
       if (!token) throw new Error('EMAIL_PROVIDER_TOKEN is not set');
