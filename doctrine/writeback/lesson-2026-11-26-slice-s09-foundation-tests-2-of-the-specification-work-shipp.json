@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-slice-s09-foundation-tests-2-of-the-specification-work-shipp",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "Slice S09-foundation-tests-2 of the specification work shipped on its own",
+  "body": "test: foundation tests for the specification requirements, part 2 (slice 10 of 11). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main with a three-way patch and checked locally before the push.",
+  "probe": "file:tests/foundation/test_spec_29_content.py",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "lesson",
+ "title": "Slice S09-foundation-tests-2 of the specification work shipped on its own",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}
