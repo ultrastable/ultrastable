@@ -1,33 +1,38 @@
 {
+ "https://replication-ledger.ultrastable.org/": {
+  "first_seen": "2026-11-26",
+  "hash": "0f98c923e3506d6b",
+  "last_changed": "2026-11-26"
+ },
  "https://tenant-ps-web.ultrastable.workers.dev/sitemap-en.xml": {
   "first_seen": "2026-11-25",
-  "hash": "31d1020b89bfca6a",
-  "last_changed": "2026-11-25"
+  "hash": "1d4645e23ac8bf6a",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/": {
   "first_seen": "2026-11-25",
-  "hash": "f23495e1cd0c1a4c",
-  "last_changed": "2026-11-25"
+  "hash": "82a0923a7881932e",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/claims": {
   "first_seen": "2026-11-25",
-  "hash": "9c6da03cbf5ca3e2",
-  "last_changed": "2026-11-25"
+  "hash": "c47ae5bb66064153",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/contact": {
   "first_seen": "2026-11-25",
-  "hash": "d55ce710a57d8ee3",
-  "last_changed": "2026-11-25"
+  "hash": "cbbacc37f75e73f9",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/decisions": {
   "first_seen": "2026-11-25",
-  "hash": "cee910aa24f4d359",
-  "last_changed": "2026-11-25"
+  "hash": "6b8651af0f4fbc91",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/directory": {
   "first_seen": "2026-11-25",
-  "hash": "28421b0dece0621c",
-  "last_changed": "2026-11-25"
+  "hash": "b440c949856ac2de",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/engineers": {
   "first_seen": "2026-11-25",
@@ -36,8 +41,8 @@
  },
  "https://ultrastable.io/faq": {
   "first_seen": "2026-11-25",
-  "hash": "f87ebe39d6de8ac7",
-  "last_changed": "2026-11-25"
+  "hash": "e4f71baa3c28d1d4",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/for": {
   "first_seen": "2026-11-25",
@@ -71,18 +76,18 @@
  },
  "https://ultrastable.io/goals": {
   "first_seen": "2026-11-25",
-  "hash": "e57a46cfd777bee6",
-  "last_changed": "2026-11-25"
+  "hash": "91de53a49d1275f8",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/how": {
   "first_seen": "2026-11-25",
-  "hash": "327ef35f2d95c01b",
-  "last_changed": "2026-11-25"
+  "hash": "2ea0ff525ff06fb6",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/left-alone": {
   "first_seen": "2026-11-25",
-  "hash": "635e3abecc1cfb94",
-  "last_changed": "2026-11-25"
+  "hash": "107ed67d70425874",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/ops": {
   "first_seen": "2026-11-25",
@@ -96,53 +101,53 @@
  },
  "https://ultrastable.io/pilot": {
   "first_seen": "2026-11-25",
-  "hash": "690753aef14e608c",
-  "last_changed": "2026-11-25"
+  "hash": "beb94e1a0fda8376",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/product": {
   "first_seen": "2026-11-25",
-  "hash": "bd49d5115b6aa7f8",
-  "last_changed": "2026-11-25"
+  "hash": "e3fcd69f0138a8f5",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/progress": {
   "first_seen": "2026-11-25",
-  "hash": "4af07f6a2d2f0f41",
-  "last_changed": "2026-11-25"
+  "hash": "2204ef28f4306f2e",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/research": {
   "first_seen": "2026-11-25",
-  "hash": "63b9d941fc9f5c6c",
-  "last_changed": "2026-11-25"
+  "hash": "5b6c7c9e2e8581c4",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/research/ashby-1952": {
   "first_seen": "2026-11-25",
-  "hash": "5ac16f61156c034c",
-  "last_changed": "2026-11-25"
+  "hash": "91730b6ad66d5ed2",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/research/chen-stratton-2026": {
   "first_seen": "2026-11-25",
-  "hash": "fd6948ac9f969b91",
-  "last_changed": "2026-11-25"
+  "hash": "ed90456d84d57946",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/research/knowledge-graph-2026": {
   "first_seen": "2026-11-25",
-  "hash": "142f0d0c438c5f79",
-  "last_changed": "2026-11-25"
+  "hash": "c31c7e20356cc154",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/research/open-loops-2026": {
   "first_seen": "2026-11-25",
-  "hash": "3a83b6e467ef76ce",
-  "last_changed": "2026-11-25"
+  "hash": "7ff536d96d49b6c6",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/research/safety-by-limits-2026": {
   "first_seen": "2026-11-25",
-  "hash": "9707e805043b113c",
-  "last_changed": "2026-11-25"
+  "hash": "8fa04f90dfc52323",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/research/second-loop-2026": {
   "first_seen": "2026-11-25",
-  "hash": "79cd031c567e2b3b",
-  "last_changed": "2026-11-25"
+  "hash": "530f51273d286d1c",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/roadmap": {
   "first_seen": "2026-11-25",
@@ -156,8 +161,8 @@
  },
  "https://ultrastable.io/showcase": {
   "first_seen": "2026-11-25",
-  "hash": "e7621520b5dbbf78",
-  "last_changed": "2026-11-25"
+  "hash": "d366a13f2fa71c35",
+  "last_changed": "2026-11-26"
  },
  "https://ultrastable.io/showcase/practical-solutions": {
   "first_seen": "2026-11-25",
@@ -176,462 +181,492 @@
  },
  "https://ultrastable.io/team": {
   "first_seen": "2026-11-25",
-  "hash": "86aab869851d16c4",
-  "last_changed": "2026-11-25"
+  "hash": "c7efdcd6edf02305",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/": {
   "first_seen": "2026-11-25",
-  "hash": "39bea96c606ca9b3",
-  "last_changed": "2026-11-25"
+  "hash": "673868a8115f59f6",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/change": {
   "first_seen": "2026-11-25",
-  "hash": "5b8239a1cfb35cf3",
-  "last_changed": "2026-11-25"
+  "hash": "b0d357a33f85864f",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/coach": {
   "first_seen": "2026-11-25",
-  "hash": "890a410d57263b81",
-  "last_changed": "2026-11-25"
+  "hash": "3b9bf5160154caad",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/d/5": {
   "first_seen": "2026-11-25",
-  "hash": "d85501b80fc88969",
-  "last_changed": "2026-11-25"
+  "hash": "9825c14c1987c3e5",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/abstinence-only": {
   "first_seen": "2026-11-25",
-  "hash": "a6ba88b48c6f63a2",
-  "last_changed": "2026-11-25"
+  "hash": "7728f48f73281e97",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/antibiotics-colds": {
   "first_seen": "2026-11-25",
-  "hash": "27f4b4985120d48b",
-  "last_changed": "2026-11-25"
+  "hash": "a82c3ee80fcf2a36",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/better-than-average": {
   "first_seen": "2026-11-25",
-  "hash": "2b6856e30626ef3b",
-  "last_changed": "2026-11-25"
+  "hash": "84cecbe04c4be891",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/boot-camps": {
   "first_seen": "2026-11-25",
-  "hash": "b4362df77760056c",
-  "last_changed": "2026-11-25"
+  "hash": "a05c0f1a6e56b035",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/broken-windows": {
   "first_seen": "2026-11-25",
-  "hash": "2b5bfa5c0dd2c66c",
-  "last_changed": "2026-11-25"
+  "hash": "2f27f0da670b237b",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/bystander-effect": {
   "first_seen": "2026-11-25",
-  "hash": "a7f0c761673d5172",
-  "last_changed": "2026-11-25"
+  "hash": "35d5733f65e0a99c",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/cash-transfers": {
   "first_seen": "2026-11-25",
-  "hash": "2b6d1110bce31ec4",
-  "last_changed": "2026-11-25"
+  "hash": "d4c7c2c59b1cb719",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/catharsis": {
   "first_seen": "2026-11-25",
-  "hash": "72e0d6cd0740df09",
-  "last_changed": "2026-11-25"
+  "hash": "654a3314e3882ea5",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/contact-conflict": {
   "first_seen": "2026-11-25",
-  "hash": "0714d6e71b5dce25",
-  "last_changed": "2026-11-25"
+  "hash": "fa4e2707d7093ea3",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/dare": {
   "first_seen": "2026-11-25",
-  "hash": "5b27eb9255fb1095",
-  "last_changed": "2026-11-25"
+  "hash": "08730d26f3dac86c",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/death-penalty": {
   "first_seen": "2026-11-25",
-  "hash": "779953136718a16b",
-  "last_changed": "2026-11-25"
+  "hash": "3d6b31f5466db7ca",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/disaster-panic": {
   "first_seen": "2026-11-25",
-  "hash": "9f0b51f85d1d0427",
-  "last_changed": "2026-11-25"
+  "hash": "695dc8d70048800a",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/drug-decriminalisation": {
   "first_seen": "2026-11-25",
-  "hash": "9f32ce7df80068f4",
-  "last_changed": "2026-11-25"
+  "hash": "822000fb32500e3f",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/ego-depletion": {
   "first_seen": "2026-11-25",
-  "hash": "f5fa0f8dec58264b",
-  "last_changed": "2026-11-25"
+  "hash": "8645d27cfeb51b71",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/growth-mindset": {
   "first_seen": "2026-11-25",
-  "hash": "4eb9357bf57dea12",
-  "last_changed": "2026-11-25"
+  "hash": "2a55136d57b14e3c",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/guns-safety": {
   "first_seen": "2026-11-25",
-  "hash": "33e18a87d6f853f8",
-  "last_changed": "2026-11-25"
+  "hash": "2b740b9c1f3191ea",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/harsher-sentences": {
   "first_seen": "2026-11-25",
-  "hash": "2c739bdbf49406bf",
-  "last_changed": "2026-11-25"
+  "hash": "cde127f2466a458d",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/housing-first": {
   "first_seen": "2026-11-25",
-  "hash": "ce37b265f999d990",
-  "last_changed": "2026-11-25"
+  "hash": "764603e0aba0792f",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/immigration-crime": {
   "first_seen": "2026-11-25",
-  "hash": "dbae1b941128b361",
-  "last_changed": "2026-11-25"
+  "hash": "3ad6111b9ea08824",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/learning-styles": {
   "first_seen": "2026-11-25",
-  "hash": "8029971fd7f774fa",
-  "last_changed": "2026-11-25"
+  "hash": "a22933ce9e7cf076",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/long-hours": {
   "first_seen": "2026-11-25",
-  "hash": "deb73ca7473be76b",
-  "last_changed": "2026-11-25"
+  "hash": "9a2ab6dcb04d6910",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/memory-video": {
   "first_seen": "2026-11-25",
-  "hash": "987aade25c43ff35",
-  "last_changed": "2026-11-25"
+  "hash": "392883d2ade11956",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/minimum-wage": {
   "first_seen": "2026-11-25",
-  "hash": "6c54adae13b19646",
-  "last_changed": "2026-11-25"
+  "hash": "8e4640b59b9e17b0",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/money-happiness": {
   "first_seen": "2026-11-25",
-  "hash": "3c2777177d67b8f6",
-  "last_changed": "2026-11-25"
+  "hash": "b5a4db78e7936eb5",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/more-police": {
   "first_seen": "2026-11-25",
-  "hash": "7fd815932ac93926",
-  "last_changed": "2026-11-25"
+  "hash": "824700141506d7aa",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/open-plan": {
   "first_seen": "2026-11-25",
-  "hash": "c12db6e6578f1f5d",
-  "last_changed": "2026-11-25"
+  "hash": "8cbcb75c535939a6",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/power-posing": {
   "first_seen": "2026-11-25",
-  "hash": "ff8d8bf1c7b8ca2e",
-  "last_changed": "2026-11-25"
+  "hash": "000fd6d386c061e6",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/prison-reoffending": {
   "first_seen": "2026-11-25",
-  "hash": "9e73a26d743c19ce",
-  "last_changed": "2026-11-25"
+  "hash": "52c54c253998128f",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/rewards-motivation": {
   "first_seen": "2026-11-25",
-  "hash": "a42a3f6155b653c6",
-  "last_changed": "2026-11-25"
+  "hash": "7983e7899c4dbb59",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/scared-straight": {
   "first_seen": "2026-11-25",
-  "hash": "78b5af5cd9f6554c",
-  "last_changed": "2026-11-25"
+  "hash": "5013f0e1c530f107",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/spanking": {
   "first_seen": "2026-11-25",
-  "hash": "2886236a8d21b408",
-  "last_changed": "2026-11-25"
+  "hash": "6291799407525e36",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/stanford-prison": {
   "first_seen": "2026-11-25",
-  "hash": "8a62ceb2b1ce8785",
-  "last_changed": "2026-11-25"
+  "hash": "205f839c4dd88980",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/study-rereading": {
   "first_seen": "2026-11-25",
-  "hash": "511eae81449def4c",
-  "last_changed": "2026-11-25"
+  "hash": "c7cd5e92a9168384",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/sugar-hyperactive": {
   "first_seen": "2026-11-25",
-  "hash": "e93779f9e0ab540a",
-  "last_changed": "2026-11-25"
+  "hash": "3456bdb642fd5c30",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/teach-vs-play": {
   "first_seen": "2026-11-25",
-  "hash": "6fe53bc4f67c51d6",
-  "last_changed": "2026-11-25"
+  "hash": "688623b170fe758e",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/three-strikes": {
   "first_seen": "2026-11-25",
-  "hash": "a66e3f7150c534f7",
-  "last_changed": "2026-11-25"
+  "hash": "90641dac6f4eb0cf",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/vaccines-autism": {
   "first_seen": "2026-11-25",
-  "hash": "ae194a81da738b99",
-  "last_changed": "2026-11-25"
+  "hash": "530ae0e374bbe1a0",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/e/welfare-work": {
   "first_seen": "2026-11-25",
-  "hash": "8b98f20fb83ff6ec",
-  "last_changed": "2026-11-25"
+  "hash": "2df5253a018a2e3a",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/graph": {
   "first_seen": "2026-11-25",
-  "hash": "76b0be3805f104ed",
-  "last_changed": "2026-11-25"
+  "hash": "ab584d3aff92e5be",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/how": {
   "first_seen": "2026-11-25",
-  "hash": "7f5680a18ec258cb",
-  "last_changed": "2026-11-25"
+  "hash": "dfd443fbb49e5ad8",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/lab": {
   "first_seen": "2026-11-25",
-  "hash": "7b24a37fd8038f50",
-  "last_changed": "2026-11-25"
+  "hash": "d165feef09ed343a",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/plan": {
   "first_seen": "2026-11-25",
-  "hash": "56dbe56c3d5824ca",
-  "last_changed": "2026-11-25"
+  "hash": "6cd98eb12be2a233",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/play": {
   "first_seen": "2026-11-25",
-  "hash": "b6f3df213b578e5e",
-  "last_changed": "2026-11-25"
+  "hash": "9c92f6185ab202d2",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics": {
   "first_seen": "2026-11-25",
-  "hash": "d612ab208d02b09d",
-  "last_changed": "2026-11-25"
+  "hash": "7c65e3fc3e9eb64f",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics/body": {
   "first_seen": "2026-11-25",
-  "hash": "8efb42e881a24b20",
-  "last_changed": "2026-11-25"
+  "hash": "b0e1a340a265e508",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics/children": {
   "first_seen": "2026-11-25",
-  "hash": "ab3f95cbabee6ecc",
-  "last_changed": "2026-11-25"
+  "hash": "4fe3e9cadf0bee4a",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics/crime": {
   "first_seen": "2026-11-25",
-  "hash": "04cdc454918403ff",
-  "last_changed": "2026-11-25"
+  "hash": "f06104627768d27c",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics/feelings": {
   "first_seen": "2026-11-25",
-  "hash": "4c3012d757c34160",
-  "last_changed": "2026-11-25"
+  "hash": "0502b052091a6863",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics/habits": {
   "first_seen": "2026-11-25",
-  "hash": "5b3f87a4f9d576be",
-  "last_changed": "2026-11-25"
+  "hash": "5fc3c85ae5b7bd9c",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics/health": {
   "first_seen": "2026-11-25",
-  "hash": "3b359928ee2fa3fe",
-  "last_changed": "2026-11-25"
+  "hash": "57af333bc7379659",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics/learning": {
   "first_seen": "2026-11-25",
-  "hash": "7ac931d4f1478899",
-  "last_changed": "2026-11-25"
+  "hash": "a94fbfe3d3363f54",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics/mind": {
   "first_seen": "2026-11-25",
-  "hash": "6a8fb6dc91629246",
-  "last_changed": "2026-11-25"
+  "hash": "566c03e23176f60f",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics/money": {
   "first_seen": "2026-11-25",
-  "hash": "ad7c3ac480ab1884",
-  "last_changed": "2026-11-25"
+  "hash": "5893816a46de7d7a",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics/people": {
   "first_seen": "2026-11-25",
-  "hash": "0ce8e2230c93b4ef",
-  "last_changed": "2026-11-25"
+  "hash": "f8a094391ed73932",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics/retold": {
   "first_seen": "2026-11-25",
-  "hash": "bde970cfd47a0122",
-  "last_changed": "2026-11-25"
+  "hash": "5855b162fe6fc724",
+  "last_changed": "2026-11-26"
  },
  "https://unlearn.ultrastable.org/topics/society": {
   "first_seen": "2026-11-25",
-  "hash": "038dd762a2ed7b2e",
-  "last_changed": "2026-11-25"
+  "hash": "fddab81b112d6770",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/": {
   "first_seen": "2026-11-25",
-  "hash": "2b91bca36655f29a",
-  "last_changed": "2026-11-25"
+  "hash": "6457c1e9ff232dea",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/area/children": {
   "first_seen": "2026-11-25",
-  "hash": "4a82af56cd3844b0",
-  "last_changed": "2026-11-25"
+  "hash": "3791c03b2cead78b",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/area/crime": {
   "first_seen": "2026-11-25",
-  "hash": "aee3a8a86d2b1b6a",
-  "last_changed": "2026-11-25"
+  "hash": "312070c30bdb8d51",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/area/democracy": {
   "first_seen": "2026-11-25",
-  "hash": "5dfbcf4d09590d20",
-  "last_changed": "2026-11-25"
+  "hash": "f1acf588380b0d42",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/area/development": {
   "first_seen": "2026-11-25",
-  "hash": "1dd953cc7d29ccc1",
-  "last_changed": "2026-11-25"
+  "hash": "0898ea5018309075",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/area/environment": {
   "first_seen": "2026-11-25",
-  "hash": "f7e44a9ecb165e9c",
-  "last_changed": "2026-11-25"
+  "hash": "67bd8f48f9876730",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/area/governance": {
   "first_seen": "2026-11-25",
-  "hash": "d199dc7a8785c251",
-  "last_changed": "2026-11-25"
+  "hash": "5d62694c54c6e753",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/area/health": {
   "first_seen": "2026-11-25",
-  "hash": "c6a37d8866072899",
-  "last_changed": "2026-11-25"
+  "hash": "97bd769638a247a7",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/area/housing": {
   "first_seen": "2026-11-25",
-  "hash": "f907a1f08dd68eb2",
-  "last_changed": "2026-11-25"
+  "hash": "187dff4fb18ca7b1",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/area/law": {
   "first_seen": "2026-11-25",
-  "hash": "73e9946b477a9452",
-  "last_changed": "2026-11-25"
+  "hash": "a933f2092bf36168",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/area/other": {
   "first_seen": "2026-11-25",
-  "hash": "18a6d390c9f1633c",
-  "last_changed": "2026-11-25"
+  "hash": "3d79b752cc256d98",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/area/poverty": {
   "first_seen": "2026-11-25",
-  "hash": "38c32c3d1fcf9f0e",
-  "last_changed": "2026-11-25"
+  "hash": "e6786d855ba37c44",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/area/work": {
   "first_seen": "2026-11-25",
-  "hash": "f1e55e052df283ed",
-  "last_changed": "2026-11-25"
+  "hash": "2ae73b6e735d346c",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/changes": {
   "first_seen": "2026-11-25",
-  "hash": "4ff178e514425cb2",
-  "last_changed": "2026-11-25"
+  "hash": "5f51c0a99406726b",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/connections": {
   "first_seen": "2026-11-25",
-  "hash": "f617967fcc3aca9d",
-  "last_changed": "2026-11-25"
+  "hash": "25f9df78ff708594",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/becoming-a-man": {
   "first_seen": "2026-11-25",
-  "hash": "56f4b482061baf2c",
-  "last_changed": "2026-11-25"
+  "hash": "18f8eeb8a8a2a538",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/cambridge-somerville": {
   "first_seen": "2026-11-25",
-  "hash": "aae35cb3bba20718",
-  "last_changed": "2026-11-25"
+  "hash": "f03d181b503c8f8a",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/class-size": {
   "first_seen": "2026-11-25",
-  "hash": "daf663a71b6173a3",
-  "last_changed": "2026-11-25"
+  "hash": "c0b1436d844828b4",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/conditional-cash": {
   "first_seen": "2026-11-25",
-  "hash": "2a0cf03c2fd341ba",
-  "last_changed": "2026-11-25"
+  "hash": "85537821991e85d2",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/dare": {
   "first_seen": "2026-11-25",
-  "hash": "0b2386cfc26810c0",
-  "last_changed": "2026-11-25"
+  "hash": "634b13a6b1d4126f",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/deworming": {
   "first_seen": "2026-11-25",
-  "hash": "6780207dabefbe97",
-  "last_changed": "2026-11-25"
+  "hash": "7e4e91522b60f15c",
+  "last_changed": "2026-11-26"
+ },
+ "https://what-works.ultrastable.org/p/government-social-franchise-model": {
+  "first_seen": "2026-11-26",
+  "hash": "f39fe90f68524c49",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/hot-spots-policing": {
   "first_seen": "2026-11-25",
-  "hash": "9c25732617baa72a",
-  "last_changed": "2026-11-25"
+  "hash": "7ad7db4462e6c300",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/housing-first": {
   "first_seen": "2026-11-25",
-  "hash": "e97ac82fcf8f3111",
-  "last_changed": "2026-11-25"
+  "hash": "2c8f20e87c07380e",
+  "last_changed": "2026-11-26"
+ },
+ "https://what-works.ultrastable.org/p/improving-nutritional-status-through-behavioural-change-less": {
+  "first_seen": "2026-11-26",
+  "hash": "8b85d82109b8d04c",
+  "last_changed": "2026-11-26"
+ },
+ "https://what-works.ultrastable.org/p/individual-and-group-based-parenting": {
+  "first_seen": "2026-11-26",
+  "hash": "a3e365a0ba6c96f6",
+  "last_changed": "2026-11-26"
+ },
+ "https://what-works.ultrastable.org/p/interventions-for-learning-disabled-sex-offenders": {
+  "first_seen": "2026-11-26",
+  "hash": "69f9fe183f21c93e",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/microcredit": {
   "first_seen": "2026-11-25",
-  "hash": "2118563075c6a04d",
-  "last_changed": "2026-11-25"
+  "hash": "84faffc5bb5deda3",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/moving-to-opportunity": {
   "first_seen": "2026-11-25",
-  "hash": "e3ec8f78157cf15c",
-  "last_changed": "2026-11-25"
+  "hash": "8fc0f2d7a202da9e",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/nurse-home-visiting": {
   "first_seen": "2026-11-25",
-  "hash": "ea1b7c29e086d80e",
-  "last_changed": "2026-11-25"
+  "hash": "0499d00f935538fc",
+  "last_changed": "2026-11-26"
+ },
+ "https://what-works.ultrastable.org/p/provider-initiated-hiv-aids-counselling-and-testing-at-healt": {
+  "first_seen": "2026-11-26",
+  "hash": "2ff3e6e6e151a215",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/public-pre-k": {
   "first_seen": "2026-11-25",
-  "hash": "750669c62ed2e8af",
-  "last_changed": "2026-11-25"
+  "hash": "85f79c3be38a20c7",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/scared-straight": {
   "first_seen": "2026-11-25",
-  "hash": "bd2c3b28a458a169",
-  "last_changed": "2026-11-25"
+  "hash": "10d1b9de9fac203f",
+  "last_changed": "2026-11-26"
+ },
+ "https://what-works.ultrastable.org/p/school-based-malaria-treatment-programme": {
+  "first_seen": "2026-11-26",
+  "hash": "f3b526f180a87843",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/summer-jobs": {
   "first_seen": "2026-11-25",
-  "hash": "6e6b5037a839585f",
-  "last_changed": "2026-11-25"
+  "hash": "cf46653983465056",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/p/unconditional-cash": {
   "first_seen": "2026-11-25",
-  "hash": "af67daffcbfcf0e1",
-  "last_changed": "2026-11-25"
+  "hash": "af6db800ae9aec39",
+  "last_changed": "2026-11-26"
  },
  "https://what-works.ultrastable.org/world": {
   "first_seen": "2026-11-25",
-  "hash": "568d0b9753980d1d",
-  "last_changed": "2026-11-25"
+  "hash": "a25989f2926d2eee",
+  "last_changed": "2026-11-26"
  }
 }
