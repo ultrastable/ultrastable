@@ -195,6 +195,7 @@ jobs:
           python3 -m foundation criticality --check
           python3 -m foundation ultrastability --check
           python3 -m foundation specgate --check  # SPEC-GATE-1: new items carry done check, prediction, out of scope, live proof
+          python3 workers/tools/spec_truth.py --spec-dir specs --code-dir workers --code-dir . --code-dir seed --strict  # SPEC-TRUTH-1: every BUILT line in specs/ names code that exists
           python3 -m foundation lessons --check  # LESSONS-1: every lesson enforced in code or carried by an open item
           python3 -m foundation verify --check
           python3 -m foundation selfmodel --check

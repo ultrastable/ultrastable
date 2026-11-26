@@ -100,3 +100,30 @@ test('TenantDO runs behind a fake platform base and returns errors as data', () 
   const e = d.query('acme', 'INSERT INTO a VALUES(2)');
   assert.equal(e.ok, false); assert.equal(e.error.code, 'budget_exceeded');
 });
+
+test('TS-9: past maxVectors a tenant with a VectorPort is promoted once, on record, and queries merge both', async () => {
+  const remote = new Map();
+  const port = {
+    async upsert(id, v, { ns }) { remote.set(id, { v, ns }); },
+    async query(v, { k, ns }) { return [...remote].filter(([, x]) => x.ns === ns).map(([id]) => ({ id, score: 0.5, meta: null })).slice(0, k); },
+  };
+  const s = new TenantStore({ tenantId: 'acme', sql: openTenantSql(), budget: { maxVectors: 1 }, vectorPort: port });
+  assert.deepEqual(await s.vectors.put('a', [1, 0]), { promoted: false });
+  assert.equal(s.vectors.promoted(), null);
+  assert.deepEqual(await s.vectors.put('b', [0, 1]), { promoted: true });
+  assert.ok(s.vectors.promoted().at);
+  assert.equal(s.vectors.count(), 1);
+  const r = await s.vectors.queryAll([1, 0], { k: 5 });
+  assert.deepEqual(r.map(x => x.id), ['a', 'b']);
+  const noPort = mk({ maxVectors: 1 });
+  await noPort.vectors.put('a', [1, 0]);
+  await assert.rejects(() => noPort.vectors.put('b', [0, 1]), (e) => e.code === 'vector_cap');
+});
+
+test('TS-10: self-metered usage diverging over 20 percent from platform analytics is a finding; a missing reading is unmeasured', async () => {
+  const { crossCheck } = await import('./crosscheck.js');
+  assert.equal(crossCheck({ reads: 100, writes: 10 }, { reads: 110, writes: 10 }).ok, true);
+  const r = crossCheck({ reads: 100, writes: 10, requests: 5 }, { reads: 150, writes: 10 });
+  assert.equal(r.ok, false);
+  assert.deepEqual(r.findings.map(f => [f.metric, f.kind]), [['reads', 'divergence'], ['requests', 'unmeasured']]);
+});

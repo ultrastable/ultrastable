@@ -91,3 +91,13 @@ test('manager operations can be switched off while measurement continues (US-03-
   await runL2(db, off);
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM kernel_step_evidence WHERE tick_id=4`).n, 0);
 });
+
+test('program_focus_log: a changed focus set is logged once, a steady one adds no row (US-SPEC-01 s4.2)', async () => {
+  const db = await world();
+  const now = Date.now();
+  for (const t of [1, 2]) { await snapshotRisk(db, { tickId: t, now }); await allocate(db, { tickId: t, now }); await setFocus(db, { tickId: t, now }); }
+  const log = rows(db, `SELECT tick_id, items FROM kernel_focus_log WHERE program_id = 'P1' ORDER BY id`);
+  assert.equal(log.length, 1);
+  assert.equal(log[0].tick_id, 1);
+  assert.deepEqual(JSON.parse(log[0].items), ['B', 'A', 'E', 'C', 'D']);
+});

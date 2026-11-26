@@ -133,6 +133,13 @@ export async function setFocus(db, { tickId, now, config = {} }) {
     for (const [n, i] of ranked.slice(0, a.slots).entries()) {
       await run(db, `INSERT INTO kernel_focus (program_id, item_id, rank, tier, has_doer, tick_id) VALUES (?,?,?,?,?,?)`, a.program_id, i.id, n + 1, i.tier, i.has_doer, tickId);
     }
+    // program_focus_log: append the set only when it differs from the last one logged (no row per steady tick).
+    const set = JSON.stringify(ranked.slice(0, a.slots).map(i => i.id));
+    // A database without migration 0003 has no log table: the focus itself still works, the history starts once it is applied.
+    const last = await first(db, `SELECT items FROM kernel_focus_log WHERE program_id = ? ORDER BY id DESC LIMIT 1`, a.program_id).then(r => ({ r }), () => null);
+    if (last && (!last.r || last.r.items !== set)) {
+      await run(db, `INSERT INTO kernel_focus_log (program_id, tick_id, items, at) VALUES (?,?,?,?)`, a.program_id, tickId, set, new Date(typeof now === 'function' ? now() : Date.now()).toISOString());
+    }
   }
   return result;
 }

@@ -58,5 +58,6 @@ Two profiles (`core/tenantstore/budget.js`). **Free** (the deployed default): pe
 
 | Req | Status | Evidence |
 |---|---|---|
-| TS-1 to TS-8, TS-11 | BUILT, and RUNNING on the ultrastable Cloudflare account as `ultrastable-tenants` (self-test passes) | `workers/core/tenantstore/tenantstore.test.js`, `workers/adapters/cloudflare/src/tenant-do.js` (tested against a fake; not deployed to a real account) |
-| TS-9, TS-10 | PLANNED | no file yet |
+| TS-1 to TS-8, TS-11 | BUILT, and RUNNING on the ultrastable Cloudflare account as `ultrastable-tenants` (deploy rows in `ops/deploys.jsonl` with the live version matching the commit) | `core/tenantstore/tenantstore.test.js`, `adapters/cloudflare/src/tenant-do.js` |
+| TS-9 | BUILT: `VectorIndex.put` promotes a tenant past `maxVectors` to a `VectorPort` once, recorded in `_vec_promo`, and `queryAll` merges both; without a port the cap still refuses. No Vectorize adapter fills the port yet | `core/tenantstore/vector.js`, test "TS-9" in `core/tenantstore/tenantstore.test.js` |
+| TS-10 | BUILT as a pure check: `crossCheck` flags a divergence over 20 percent and reports a missing platform reading as unmeasured. Nothing fetches the platform analytics for it yet | `core/tenantstore/crosscheck.js`, test "TS-10" in `core/tenantstore/tenantstore.test.js` |

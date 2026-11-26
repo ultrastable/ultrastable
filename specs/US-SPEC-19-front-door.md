@@ -13,7 +13,7 @@
 
 ## 1. Purpose
 
-The first step must not be "open a terminal". The intended person can state what they want and may not know what a code agent is. This specification defines how a person gets from nothing to a running Ultrastable organization, on **Cloudflare Workers, the only supported platform** (`docs/why-cloudflare.md`), with the fewest steps and no code. It also defines how the system packages and documents itself so that what it is, why it is useful, and what it will and will not do are clear at every step.
+The first step must not be "open a terminal". The intended person can state what they want and may not know what a code agent is. This specification defines how a person gets from nothing to a running Ultrastable organization, on **Cloudflare Workers, the only supported platform** (`docs/spec/why-cloudflare.md`), with the fewest steps and no code. It also defines how the system packages and documents itself so that what it is, why it is useful, and what it will and will not do are clear at every step.
 
 ## 2. The three doors
 
@@ -83,7 +83,7 @@ sequenceDiagram
 
 | ID | Requirement |
 |---|---|
-| US-19-R21 | Documentation MUST state that Cloudflare Workers is the supported platform and link to `docs/why-cloudflare.md`, which lists the limits of Workers that shape the design and when the platform is not the right choice. |
+| US-19-R21 | Documentation MUST state that Cloudflare Workers is the supported platform and link to `docs/spec/why-cloudflare.md`, which lists the limits of Workers that shape the design and when the platform is not the right choice. |
 | US-19-R22 | The portability seams (`US-SPEC-14`) remain a design discipline and the Cloud Run adapter remains a proof of it. Neither is a support commitment. |
 
 ## 7. Failure modes
@@ -113,7 +113,7 @@ sequenceDiagram
 | Capability | Status |
 |---|---|
 | Door C: bootstrapper CLI | BUILT (`bootstrap/bootstrap.py`, tests) |
-| Door B: skill, paste prompt, closing probe, lint and probe tests | BUILT (`agent-setup/`, `core/test/agent-setup.test.js`). First live trial 2026-11-11: uploaded, not verified; findings recorded in `docs/why-cloudflare.md` |
+| Door B: skill, paste prompt, closing probe, lint and probe tests | BUILT (`agent-setup/`, `core/test/agent-setup.test.js`). First live trial 2026-11-11: uploaded, not verified; findings recorded in `docs/spec/why-cloudflare.md` |
 | Probe reads a challenge page or foreign address as inconclusive | BUILT (`agent-setup/verify.mjs`) |
 | Door A: web launcher on the temporary-accounts API | BUILT (`apps/launcher/src/index.js`, `apps/launcher/src/provision.js`, `apps/launcher/src/page.js`; tests `apps/launcher/test/launcher.test.mjs`, `apps/launcher/test/provision.test.mjs`, `apps/launcher/test/pow.test.mjs`, `apps/launcher/test/turnstile.test.mjs`). Tested against a fake of the provisioning API; no live launch is recorded in the repository |
 | Released deployable bundle with hash | BUILT as a builder (`tools/release_bundle.mjs`, test `tools/release_bundle.test.mjs`): bundle, migrations, a manifest with the SHA-256 of each and the products and permissions needed; the launcher embeds that bundle and shows its hash (`apps/launcher/build.mjs`). Publication by CI for each tag (US-19-R16, T19-5) is PLANNED: `.github/workflows/release.yml` cuts the tag and the release without attaching the bundle, and changing it is a protected change |

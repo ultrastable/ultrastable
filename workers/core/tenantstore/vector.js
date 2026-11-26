@@ -7,6 +7,7 @@ export const SCHEMA = `
 CREATE TABLE IF NOT EXISTS _vec (id TEXT PRIMARY KEY, ns TEXT NOT NULL DEFAULT '', dim INTEGER NOT NULL, scale REAL NOT NULL, q BLOB NOT NULL, meta TEXT);
 CREATE INDEX IF NOT EXISTS _vec_ns ON _vec(ns);
 `;
+const PROMO = `CREATE TABLE IF NOT EXISTS _vec_promo (k TEXT PRIMARY KEY, at TEXT NOT NULL, max INTEGER NOT NULL)`;
 
 export function quantize(v) {
   let max = 0; for (const x of v) max = Math.max(max, Math.abs(x));
@@ -22,8 +23,23 @@ export function cosineQ(a, b) {
 const toI8 = (blob) => new Int8Array(blob.buffer ? blob.buffer.slice(blob.byteOffset, blob.byteOffset + blob.byteLength) : blob);
 
 export class VectorIndex {
-  constructor(sql, guard) { this.sql = sql; this.guard = guard; this.sql.exec(SCHEMA); }
+  // port (TS-9) is an optional VectorPort with upsert(id, vector, {ns, meta}) and query(vector, {k, ns}), for example a Vectorize
+  // namespace. Without one, the cap is a hard refusal; with one, the tenant is promoted once and the promotion is recorded.
+  constructor(sql, guard, port = null) { this.sql = sql; this.guard = guard; this.port = port; this.sql.exec(SCHEMA); this.sql.exec(PROMO); }
+  promoted() { const r = this.sql.exec("SELECT at, max FROM _vec_promo WHERE k='vectorize'").rows; return r.length ? r[0] : null; }
   count() { return this.sql.exec('SELECT COUNT(*) n FROM _vec').rows[0].n; }
+  // TS-9: like upsert, but past the cap a tenant with a port is promoted (once, recorded in _vec_promo) and the vector goes there.
+  async put(id, vector, { ns = '', meta = null } = {}) {
+    this.guard.check();
+    const exists = this.sql.exec('SELECT 1 x FROM _vec WHERE id=?', [id]).rows.length;
+    if (!exists && this.port && (this.promoted() || this.count() >= this.guard.budget.maxVectors)) {
+      if (!this.promoted()) this.sql.exec("INSERT INTO _vec_promo(k, at, max) VALUES('vectorize', ?, ?)", [new Date().toISOString(), this.guard.budget.maxVectors]);
+      await this.port.upsert(id, vector, { ns, meta });
+      return { promoted: true };
+    }
+    this.upsert(id, vector, { ns, meta });
+    return { promoted: false };
+  }
   upsert(id, vector, { ns = '', meta = null } = {}) {
     this.guard.check();
     const exists = this.sql.exec('SELECT 1 x FROM _vec WHERE id=?', [id]).rows.length;
@@ -34,6 +50,13 @@ export class VectorIndex {
   }
   remove(id) { const r = this.sql.exec('DELETE FROM _vec WHERE id=?', [id]); this.guard.record({ writes: r.rowsWritten }); }
   // Reads only the namespace's rows and charges every one of them: the cost of a query is its candidate count, visibly.
+  // After promotion, local and promoted results are merged by score, so nothing written before the cap is lost.
+  async queryAll(vector, { k = 5, ns = '' } = {}) {
+    const local = this.query(vector, { k, ns });
+    if (!this.port || !this.promoted()) return local;
+    const remote = await this.port.query(vector, { k, ns });
+    return [...local, ...remote].sort((a, b) => b.score - a.score).slice(0, k);
+  }
   query(vector, { k = 5, ns = '' } = {}) {
     this.guard.check();
     const { q } = quantize(vector);

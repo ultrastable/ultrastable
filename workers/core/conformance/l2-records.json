@@ -27,10 +27,9 @@
     "ops_config": ["router_switches", "packs_switches"],
     "metric_registry": ["kernel_metrics"],
     "metric_triggers": ["kernel_v_metric_trigger_state"],
-    "model_admission": ["router_calibration", "router_gate_records"]
+    "model_admission": ["router_calibration", "router_gate_records"],
+    "program_focus_log": ["kernel_focus_log"],
+    "model_task_matrix": ["ladder_model_task_matrix"]
   },
-  "missing": {
-    "program_focus_log": "kernel_focus holds the current focus set with the tick that wrote it; no table keeps the history of earlier sets",
-    "model_task_matrix": "the model for each kind of task is configuration read by core/router (router.rungs and providers), not a stored table"
-  }
+  "missing": {}
 }

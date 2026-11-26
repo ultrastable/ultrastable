@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-specs-drift-from-code-in-both-directions",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "Specs drift from code in both directions",
+  "body": "Spec audit 2026-11-26: model_task_matrix already had a table; program_focus_log, TS-9 and TS-10 were built with tests; five PLANNED status lines were behind platform code and now name it. checks.yml runs workers/tools/spec_truth.py --strict on specs/.",
+  "probe": "grep:.github/workflows/checks.yml::SPEC-TRUTH-1"
+ },
+ "kind": "lesson",
+ "title": "Specs drift from code in both directions",
+ "session": ""
+}
