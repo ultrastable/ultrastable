@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: feat(runtime): console and tick routes, launcher bundle and platform adapters (#2830)
 - 2026-11-27: feat(tools): text-form vendoring, install, self-start and release verification (#2829)
 - 2026-11-27: feat(packs): sandboxed hosted packs, egress guard and fleet stagger skips (#2828)
 - 2026-11-27: feat(storage): tenant store statement classes, vector port, migration apply and export classifier (#2827)
