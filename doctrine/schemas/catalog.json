@@ -19,6 +19,14 @@
       "url": "agent-budget.schema.json"
     },
     {
+      "name": "agent-entry.json",
+      "description": "Contract for doctrine/agent-entry.json",
+      "fileMatch": [
+        "doctrine/agent-entry.json"
+      ],
+      "url": "agent-entry.schema.json"
+    },
+    {
       "name": "agent-standards.json",
       "description": "Contract for doctrine/agent-standards.json",
       "fileMatch": [

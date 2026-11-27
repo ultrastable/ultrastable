@@ -74,7 +74,9 @@ test('HALT-1: every workflow job honours the repository variable HALT, and every
     const jobs = text.split(/^jobs:\s*$/m)[1] || '';
     const ids = [...jobs.matchAll(/^  ([A-Za-z0-9_-]+):\s*$/gm)].map((m) => m[1]);
     const guarded = (jobs.match(/^    if: \$\{\{ vars\.HALT != '1'/gm) || []).length;
-    if (ids.length !== guarded) bad.push(`${f}: ${guarded} of ${ids.length} jobs guarded`);
+    // SKIPPED-NOT-GREEN-1: the required status of checks.yml is the one job that is never skipped; it fails when halted instead
+    const gate = f === 'checks.yml' && /^  checks:\n    if: \$\{\{ always\(\) \}\}/m.test(jobs) && /if \[ "\$HALT" = 1 \]; then echo "::error::halted[^\n]*exit 1; fi/.test(jobs) ? 1 : 0;
+    if (ids.length !== guarded + gate) bad.push(`${f}: ${guarded} of ${ids.length} jobs guarded`);
   }
   assert.deepEqual(bad, []);
   assert.match(read('seed/worker/src/index.js'), /async scheduled\(_event, env, ctx\) \{\n    if \(halted\(config, env\)\)/);

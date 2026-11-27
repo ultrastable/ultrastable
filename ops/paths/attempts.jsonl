@@ -482,3 +482,4 @@
 {"at": "2026-11-26T21:45:11+00:00", "ask": "SOC-ACCOUNTS", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "2 commits"}
 {"at": "2026-11-26T21:45:11+00:00", "ask": "owner-social", "class": "prior-working-config", "route": "git:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "2 commits"}
 {"at": "2026-11-26T21:45:11+00:00", "ask": "bluesky", "class": "prior-working-config", "route": "regress:workers/packs/social/channels/bluesky.js", "ok": true, "detail": "2 suspect commits since None"}
+{"at": "2026-11-27T09:58:49+00:00", "ask": "ledger:deploys:ultrastable-seed-second-tenant", "class": "prior-working-config", "route": "regress:deploy/deploy-workers.mjs", "ok": true, "detail": "2 suspect commits since 44e1ee44a95f"}
