@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2712",
+  "title": "OL-PR-2712: land or supersede pull request #2712 (ci-failed)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2712 is ci-failed\n**Done check:** cmd:python3 -m foundation loopowner --closed 2712\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2712 (`claude/project-thread-tid0ko` at 5f36fd937b, opened by rwnq8): Show last-updated time and update schedule on every site page (RECENCY-1). The session that opened it is not its closer and is never asked to act. A check failed on the head commit. Read the failing run, then land the same change so that every check passes: push a fix to the branch, or open a new pull request from main that carries the change and close this one as superseded. Failed checks: checks. Files (6): doctrine/writeback/lesson-2026-11-27-live-pages-need-a-visible-date.json, seed/worker/src/recency.js, seed/worker/test/recency.test.js, site/recency.test.mjs, site/worker.js, tests/test_instructions_budget.py.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2712 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2712` exits 0 (pull request #2712 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

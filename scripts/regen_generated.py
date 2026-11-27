@@ -8,6 +8,7 @@ the result when anything changed. Every generator is a command whose failure fai
 
   python3 scripts/regen_generated.py            run all generators in place
   python3 scripts/regen_generated.py --list     print the generators
+  python3 scripts/regen_generated.py --pr-list  print the ones a pull request's checks also need (REGEN-PARITY-1), as scripts/regen_generated.sh spells them
 """
 from __future__ import annotations
 import os, subprocess, sys
@@ -40,6 +41,34 @@ GENERATORS = [
     (["python3", "scripts/claims.py", "--apply", "--fix"], "seed"),  # KIT-REGEN-1: the kit's own claims file and README counts follow its surfaces and tests
     (["python3", "scripts/system.py", "--write"], "seed"),  # KIT-REGEN-1: the kit's definition follows the rule file and the code of record
 ]
+# REGEN-PARITY-1: a pull request carries no generated file (PR-NO-GENERATED-1), so its checks read what scripts/regen_generated.sh writes in the
+# job's workspace. Every generator here therefore also runs there, except the ones below: each records an event or reads the network, which
+# belongs to a merge, not to a check run. tests/foundation/test_regen_generated.py fails when a generator is in neither place.
+POST_MERGE_ONLY = {
+    "python3 -c from foundation import writeback; print(writeback.fold())": "folds the merged change's write-back shards into the ledger",
+    "python3 -m foundation trajectory --run --apply": "appends the day's row to the trajectory ledger; a pull request runs `trajectory --page`",
+    "python3 -m foundation decisions --settle --apply": "settles decisions against outcomes and writes the ledger",
+    "python3 -m foundation decisions --page --apply": "the page reads the settle ledger; a pull request's check only needs the file to exist",
+    "python3 -m foundation research --refresh-prs-if-stale": "reads merged pull requests from GitHub",
+    "python3 -m foundation thought --run --apply": "schedules the next post in the social calendar",
+    "python3 -m foundation rescore --run --apply": "re-scores what settle just scored",
+    "python3 -m foundation executor --fold --apply": "records what became of each executor pull request",
+}
+
+
+def pr_form(cmd: list[str], cwd: str) -> str:
+    """A generator as scripts/regen_generated.sh runs it from the repository root."""
+    if cwd == ".":
+        return " ".join(cmd)
+    if cmd[1] == "-m":
+        return f"env -C {cwd} " + " ".join(cmd)
+    return " ".join([cmd[0], f"{cwd}/{cmd[1]}", *cmd[2:]])
+
+
+def pr_generators() -> list[str]:
+    return [pr_form(c, w) for c, w in GENERATORS if " ".join(c) not in POST_MERGE_ONLY]
+
+
 # Files the generators write; the workflow ignores pushes that touch only these, so the bot's own commit cannot retrigger it.
 OUTPUTS = ["doctrine/decision-ledger.json", "ops/provenance.jsonl", "README.md", "platform/adapters/README.md", "site/claims-data.js", "site/dashboard-data.js", "site/self-data.js", "site/trajectory-data.js", "ops/trajectory.json", "ops/trajectory.jsonl",
            "site/ultrastability-data.js", "site/decisions-data.js", "site/research-data.js", "research/papers/chen-stratton-2026.md", "research/papers/ashby-1952.md", "research/papers/open-loops-2026.md", "research/papers/safety-by-limits-2026.md", "social/calendar.json", "ops/research/prs.json", "ops/thought/log.jsonl", "ops/decisions/outcomes.jsonl", "ops/decisions/rescore.jsonl", "ops/executor-log.jsonl", "instances/ultrastable/own-database.json", "docs/security/multi-tenant-controls.json", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json", "seed/SYSTEM.md", "seed/docs/claims.json", "seed/README.md"]
@@ -57,6 +86,8 @@ def run_all(root: Path = ROOT) -> list[str]:
 def main(argv=None) -> int:
     if "--list" in (argv or sys.argv[1:]):
         print("\n".join(" ".join(c) for c, _ in GENERATORS)); return 0
+    if "--pr-list" in (argv or sys.argv[1:]):
+        print("\n".join(pr_generators())); return 0
     # MARKER-ROOT-1: conflict markers that reached main are flattened before the generators run, so no PR inherits a conflict from main itself.
     m = subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "no_markers.py"), "--fix"], capture_output=True, text=True)
     if m.stdout.strip(): print(m.stdout.strip())
