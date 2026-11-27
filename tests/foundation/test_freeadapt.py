@@ -1,8 +1,10 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
 """FREELY-ADAPTIVE-1: both verdicts on every action and the three survival levels (Pérez López, IESE WP 5, 1974). Ultrastable is the foundation for any autonomous system."""
-import datetime as dt, json, tempfile, unittest
+import datetime as dt, json, sys, unittest
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _repo import scratch  # removed when the test ends
 
 from foundation import freeadapt as FA, research as R, specgate
 
@@ -16,7 +18,7 @@ def reading(h, var, ok, value=1.0):
 
 class Base(unittest.TestCase):
     def setUp(self):
-        self.d = Path(tempfile.mkdtemp())
+        self.d = Path(scratch())
         for sub in ("ops/decisions", "ops/growth", "doctrine", "docs/issues", "research/studies"):
             (self.d / sub).mkdir(parents=True, exist_ok=True)
         (self.d / "doctrine/criticality.json").write_text(json.dumps({"k_floor": 1.0}))

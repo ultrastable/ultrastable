@@ -58,6 +58,7 @@ export default {
    "ok": false,
    "value": 3
   },
+  "survival_levels": null,
   "ui_findings": {
    "at": "2026-11-27T02:56:09Z",
    "ok": true,
@@ -75,10 +76,10 @@ export default {
   }
  },
  "readiness": {
-  "bounds": 0.357,
+  "bounds": 0.333,
   "horizon": 1.0,
   "learning": 0.5,
-  "score": 18
+  "score": 17
  },
  "scopes": {
   "platform": {
@@ -304,6 +305,21 @@ export default {
      ],
      "unit": "share of lessons in doctrine/lessons.json bound to a check, variable, detector or test",
      "why": "LESSONS-1 (Rowan, 2026-11-25): a lesson that lives in chat is learned again the hard way. Each one is bound to code, or carried by an open item until it is."
+    },
+    {
+     "first_order": [
+      "executor",
+      "criticality-loop"
+     ],
+     "id": "survival_levels",
+     "max": null,
+     "min": 3,
+     "name": "Survival levels held",
+     "steps": [
+      "build: run `python3 -m foundation freeadapt --levels`, take the level that fails (k under its floor, the executor's attempts mostly discarded, or that share falling) and change the loop that feeds it until the reading holds 3"
+     ],
+     "unit": "levels of three (effective, attractive, consistent) that hold now",
+     "why": "FREELY-ADAPTIVE-1 (P\u00e9rez L\u00f3pez, Organizational Theory: A Cybernetic Approach, IESE WP 5, 1974): an organization survives only if it is effective, attractive and consistent at once; one level alone buys time until it needs more to motivate its members than it obtains. Read by foundation/freeadapt.py."
     }
    ],
    "what": "Ultrastable running on itself (tenant 0)"
