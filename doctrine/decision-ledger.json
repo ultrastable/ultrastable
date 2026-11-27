@@ -7250,6 +7250,15 @@
    "body": "seed/analytics record() writes hits.at as Date.now(), epoch milliseconds, while growth.hits_metrics and reach.live_rows bounded their 7-day window in seconds, so every raw row up to the retention limit was read as the last 7 days and the growth and reach readings were inflated. Both bounds are now in milliseconds, and tests/foundation/test_hits_window.py runs the SQL each function sends against a real SQLite hits table, so the window tested is the one the database applies. Read a column's unit from the code that writes it before writing a bound on it.",
    "probe": "grep:foundation/growth.py::hits.at is epoch milliseconds",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-27-a-stack-of-slices-lands-one-at-a-time-and-a-main-side-red-is",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "A stack of slices lands one at a time, and a main-side red is proved on main before it is fixed",
+   "body": "Ten bounded slices carried round two onto a main that kept moving, each built on the main that had just merged the one before it. Evidence, observed live on GitHub: #2815, #2819, #2825, #2827, #2828, #2829, #2830, #2838, #2839 and #2843 merged in that order and each deployed through the handoff lane. Two reds on main surfaced on the way (the JavaScript substance classifier missing a generated path; an invented-number test whose figure had become a measured value); each was reproduced on a clean main checkout and then fixed at its cause in the slice that met it. A CI step stopped by the actions budget or a GitHub rate limit is not a test failure: it got one re-run after the same suite passed locally, and it cleared. Verified by shipplan --check, which now reads: every entry has landed.",
+   "probe": "grep:doctrine/ship-plan.json::workflow-output",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
