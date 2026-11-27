@@ -6702,6 +6702,24 @@
    "body": "PR-BOUND-2 closed a labelled pull request by minutes since it opened, so any pull request open past 30 minutes was closed on the first lane pass that saw a conflict. #2686 was closed 17 seconds after main moved under it, with the reason 'unresolved for 90 min'; #2664 and #2615 went the same way. The age is now minutes since the label was last put on, read from the issue events; the lane adds the label once per episode and removes it when the condition clears. A label time that cannot be read is unmeasured and closes nothing. A timer on a condition must start when the condition starts.",
    "probe": "grep:foundation/prbound.py::PR-BOUND-3",
    "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
+  },
+  {
+   "id": "decision-2026-11-27-deploy-drift-1-live-workers-read-against-main",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "DEPLOY-DRIFT-1: live Workers read against main",
+   "body": "foundation/deploydrift.py compares each live Worker's last verified deploy sha with commits to its code since; unmeasured counts as drift. The deploy-workers.yml header no longer claims a daily probe that nothing runs.",
+   "probe": "grep:foundation/deploydrift.py::DEPLOY-DRIFT-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-reply-schema-1-executor-refuses-a-model-reply-of-the-wrong-s",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "REPLY-SCHEMA-1: executor refuses a model reply of the wrong shape",
+   "body": "check_reply_shape in foundation/executor.py runs before any path is read: string path, string content or find/replace edits, no unknown keys.",
+   "probe": "grep:foundation/executor.py::REPLY-SCHEMA-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
   }
  ]
 }

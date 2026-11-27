@@ -45,7 +45,7 @@ export default {
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 43958,
+   "recent7": 43976,
    "series": [
     0,
     0,
@@ -76,16 +76,16 @@ export default {
     0,
     0,
     0,
-    43958
+    43976
    ],
-   "share_recent": 0.108,
-   "share_trend": 0.108,
-   "total": 43958
+   "share_recent": 0.109,
+   "share_trend": 0.109,
+   "total": 43976
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 43076,
+   "recent7": 43167,
    "series": [
     0,
     0,
@@ -116,11 +116,11 @@ export default {
     0,
     0,
     0,
-    43076
+    43167
    ],
-   "share_recent": 0.106,
-   "share_trend": 0.106,
-   "total": 43076
+   "share_recent": 0.107,
+   "share_trend": 0.107,
+   "total": 43167
   },
   {
    "area": "seed/worker",
@@ -165,7 +165,7 @@ export default {
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 28207,
+   "recent7": 28171,
    "series": [
     0,
     0,
@@ -196,16 +196,16 @@ export default {
     0,
     0,
     0,
-    28207
+    28171
    ],
    "share_recent": 0.07,
    "share_trend": 0.07,
-   "total": 28207
+   "total": 28171
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 26372,
+   "recent7": 26412,
    "series": [
     0,
     0,
@@ -236,11 +236,11 @@ export default {
     0,
     0,
     0,
-    26372
+    26412
    ],
    "share_recent": 0.065,
    "share_trend": 0.065,
-   "total": 26372
+   "total": 26412
   },
   {
    "area": "instances",
@@ -323,7 +323,7 @@ export default {
    "total": 17532
   }
  ],
- "at": "2026-11-27T10:13:50Z",
+ "at": "2026-11-27T10:17:52Z",
  "days": 30,
  "findings": [
   {
@@ -395,9 +395,9 @@ export default {
    0,
    0,
    0,
-   31
+   27
   ],
-  "closed": 1379,
+  "closed": 1383,
   "opened": 1410
  },
  "loops": [
@@ -552,7 +552,7 @@ export default {
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 613,
+   "rows": 614,
    "series": [
     0,
     0,
@@ -583,7 +583,7 @@ export default {
     55,
     88,
     189,
-    84
+    85
    ]
   },
   {
