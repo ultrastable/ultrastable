@@ -55,8 +55,14 @@ for (const w of deploy) {
   const ok = !!got && Object.entries(want).every(([k, h]) => got[k] === h);
   const bad = got ? Object.keys(want).filter(k => got[k] !== want[k]) : ["(script not found)"];
   console.log(ok ? "OK    " : "DRIFT ", w.id, ok ? "live code matches " + gitsha.slice(0, 7) : "differs in " + bad.join(", "));
+  // ROLLBACK-1 (ZHC-R6): a deploy whose live code does not match this commit goes back to the previous version, and the row says so.
+  let rolled_back = false;
+  if (!verifyOnly && !ok) {
+    try { sh("npx", ["-y", "wrangler@4", "rollback", "--name", w.id, "--message", "rollback-" + gitsha.slice(0, 12), "-y"], { cwd: ROOT }); rolled_back = true; console.log("ROLLED BACK", w.id, "to its previous version"); }
+    catch (e) { console.error("ROLLBACK FAILED", w.id, e.message); }
+  }
   results.push({ worker: w.id, ok });
-  if (!verifyOnly) appendFileSync(new URL("../ops/deploys.jsonl", import.meta.url), JSON.stringify({ at: new Date().toISOString(), worker: w.id, uploaded: true, live_matches_commit: ok, sha: gitsha, origin }) + "\n");
+  if (!verifyOnly) appendFileSync(new URL("../ops/deploys.jsonl", import.meta.url), JSON.stringify({ at: new Date().toISOString(), worker: w.id, uploaded: true, live_matches_commit: ok, rolled_back, sha: gitsha, origin }) + "\n");
 }
 // Health: the tick must have finished a run after the deploy (the same signal /health judges).
 if (!verifyOnly && results.every(r => r.ok)) console.log("deployed and verified:", results.map(r => r.worker).join(", "));
