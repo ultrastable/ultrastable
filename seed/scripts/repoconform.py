@@ -23,7 +23,7 @@ def read(root):
             rows.append({**f, "ok": False, "why": "missing"})
             continue
         text = p.read_text(errors="replace")
-        ok = f["contains"] in text
+        ok = f["contains"] in text or f["contains"] in text.replace('"', "")  # a generator may quote YAML scalars (apiVersion: "backstage.io/v1alpha1")
         rows.append({**f, "ok": ok, "why": "" if ok else "does not contain %r" % f["contains"]})
     return rows
 

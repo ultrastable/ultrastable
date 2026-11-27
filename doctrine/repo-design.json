@@ -1,0 +1,29 @@
+{
+  "_doc": "REPO-DESIGN-1 (Rowan, 2026-11-27): the questions a session asked about why the repositories are shaped as they are and what stops loops from making every commit. Each answer names the evidence it came from and a probe; tests/foundation/test_repo_design.py runs every probe, so an answer that stops being true fails CI.",
+  "questions": [
+    {"id": "who-merges", "q": "Who makes the merges today?",
+     "a": "Sessions. From 2026-11-20 to 2026-11-27, 47 of 349 merged PRs in ultrastable/ultrastable had a bot author (github-actions, the tick App); the rest came from claude/ and ccr- session branches. The target is the reverse.",
+     "evidence": "GET /repos/ultrastable/ultrastable/pulls?state=closed, grouped by head branch prefix and author",
+     "probe": "file:foundation/criticality.py"},
+    {"id": "why-executor-fails", "q": "Why does the self-executor not ship?",
+     "a": "On 2026-11-27 it failed 14 of 15 runs. GitHub Models answers every call with HTTP 200 'OK' (since 2026-11-19), and one 502 from glm-4.7-flash marked all of Workers AI down, so working models on that route were never asked. A model-level failure now downs only that model.",
+     "evidence": "executor.yml run 45956677746 log; direct Workers AI call to llama-3.3 answered",
+     "probe": "grep:foundation/agent_ladder.py::def down_keys"},
+    {"id": "archived-repos", "q": "Why do writes to workers, spec and license return 403?",
+     "a": "They are archived, so GitHub makes them read-only. Their code was moved into this repository. It is not an access problem and needs nobody.",
+     "evidence": "GET /repos/ultrastable/{workers,spec,license} archived=true",
+     "probe": "file:workers/AGENTS.md"},
+    {"id": "seed-copy", "q": "Why is seed its own repository if code is written here?",
+     "a": "seed/ is the kernel every system runs. ultrastable/seed is a published copy made by a workflow so a new system can be created from a template. Nobody edits the copy.",
+     "evidence": "doctrine/fleet-map.json, template-publish.yml",
+     "probe": "file:.github/workflows/template-publish.yml"},
+    {"id": "cold-read", "q": "What does an agent need to work in a repository it has never seen?",
+     "a": "The fifteen standard files in seed/autonomy/repo-conformance.json: AGENTS.md, llms.txt, REUSE.toml, a Keep a Changelog CHANGELOG, Conventional Commits in CONTRIBUTING, publiccode.yml, a Backstage catalog and the rest. Every writable org repository reads 15/15 on repoconform.",
+     "evidence": "python3 seed/scripts/repoconform.py --check <repo>",
+     "probe": "cmd:python3 seed/scripts/repoconform.py --check ."},
+    {"id": "size", "q": "How does a repository stay small enough for loops to maintain?",
+     "a": "Paths are classed by rate of change in doctrine/repo-shape.json, change size is gated by prsize, and an oversize branch is split into a stack, not deleted.",
+     "evidence": "REPO-SHAPE-1",
+     "probe": "file:doctrine/repo-shape.json"}
+  ]
+}

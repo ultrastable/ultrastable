@@ -1,0 +1,16 @@
+# Ultrastable
+
+> The platform repository: the tick Worker, the site, the dashboard, doctrine, checks and the seed/ kernel are written here. Licence: LicenseRef-Ultrastable-USL-1.0 (source-available, non-commercial use free).
+
+## Start here
+
+- [AGENTS.md](agents/AGENTS.md): the operating agreement every agent follows
+- [seed/SYSTEM.md](seed/SYSTEM.md): what a system is, generated from its code
+- [docs/PROJECT-MEMORY.md](docs/PROJECT-MEMORY.md): project memory
+- [doctrine/repo-design.json](doctrine/repo-design.json): why the repositories are shaped this way, each answer tied to a probe
+
+## Code
+
+- [foundation/](foundation/): the Python checks and loops (`python3 -m foundation <cmd>`)
+- [seed/worker/src/tick.js](seed/worker/src/tick.js): the heartbeat
+- [foundation/agent_ladder.py](foundation/agent_ladder.py): the executor's model ladder
