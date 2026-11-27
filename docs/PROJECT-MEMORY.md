@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: Live recency probe, per-section dates, and unstick the spinoff headroom refresh (#2739)
+- 2026-11-27: CYBERNETICS-PROGRAM-1: Beer, Powers, Ashby journal and von Foerster studies (#2721)
 - 2026-11-27: feat(deploy): watchdog redeploys a Worker behind main (R6) (#2718)
 - 2026-11-27: fix(research): the Conant and Ashby summary states its idea without addressing the reader (#2716)
 - 2026-11-27: build(deps): Bump ossf/scorecard-action from 2.4.4 to 2.6.0 in the actions group (#2710)

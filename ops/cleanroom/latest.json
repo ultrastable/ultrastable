@@ -1,7 +1,7 @@
 {
- "at": "2026-11-27T11:09:44Z",
+ "at": "2026-11-27T11:43:17Z",
  "ticks": 144,
- "passed": true,
+ "passed": false,
  "results": [
   {
    "id": "boot",
@@ -96,8 +96,8 @@
   {
    "id": "definition",
    "what": "the booted seed still meets its own definition (SYSTEM-SPEC-1: scripts/system.py --check against autonomy/system.json): SYSTEM.md is current, every clause's probe passes and every standing rule has its enforcement",
-   "ok": true,
-   "evidence": "system spec ok"
+   "ok": false,
+   "evidence": "SYSTEM.md is stale: run python3 scripts/system.py --write "
   },
   {
    "id": "human-voice",
@@ -124,5 +124,7 @@
    "evidence": "sandbox deleted"
   }
  ],
- "findings": []
+ "findings": [
+  "definition"
+ ]
 }

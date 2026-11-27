@@ -1,0 +1,111 @@
+{
+ "schema": "research-study/1",
+ "id": "beer-vsm-1972",
+ "order": 9,
+ "title": "Brain of the Firm",
+ "paper_title": "Five functions, one organization: reading the viable system model against an AI-run firm",
+ "paper_frame": "Stafford Beer applied Ashby's cybernetics to organizations in his viable system model: operations, coordination, control, intelligence and policy, each recursive. We ask whether an AI-run system has an owner for each function and an independent way to check that operations match the reports about them.",
+ "authors": [
+  "Stafford Beer"
+ ],
+ "institution": "Allen Lane, London",
+ "kind": "book",
+ "version": "1972",
+ "seeded_by": "owner, 2026-11-27 (CYBERNETICS-PROGRAM-1)",
+ "source_url": "https://archive.org/details/brainoffirmmanag0000beer",
+ "data": "Theory and case material from management practice. Beer extended the model in The Heart of Enterprise (1979).",
+ "summary": "A viable organization has operational units that do the work, coordination among them, control of their resources, an intelligence function that watches the outside and the future, and a policy function that settles identity. Each operational unit can itself be a viable system. A separate audit channel checks operations directly, rather than through the reports operations make about themselves.",
+ "perspectives": [
+  "systems",
+  "oversight",
+  "quality"
+ ],
+ "limits": [
+  "Reading. The source was not machine-read for this paper: its argument is stated in our own words from the publication's well-known content, with no quotation, and a reader should check the claim against the source linked above.",
+  "Mapping. Mapping an AI system's managers onto Beer's five systems is our interpretation; this paper measures that each manager is closed (owns code, clock, probe, settler) and that deploys are proven live by an independent read, not that the mapping is the only valid one.",
+  "Scope. Beer's model is also a claim about people in organizations; nothing here is a claim about people."
+ ],
+ "misperception": {
+  "belief": "If the reports from an AI system's agents all say green, the organization is healthy.",
+  "short": "Green reports mean a healthy organization.",
+  "counter": "Beer's model keeps a channel that checks operations directly instead of through their own reports. In software that means proving each deploy live against its commit, not reading the agent's account of it."
+ },
+ "findings": [
+  {
+   "id": "B1",
+   "concern": "A unit that is not itself viable",
+   "claim": "Each operational unit of the organization must be able to run and correct itself: its own code, clock, probe and settler. A unit that depends on a central manager for every correction is not an operational unit but an instruction.",
+   "where": "Chapters on operations and recursion (our statement)",
+   "perspective": "systems",
+   "mechanisms": [
+    {
+     "rule": "MANAGERS-1",
+     "path": "doctrine/managers.json",
+     "how": "every manager owns loops and the code that settles what it files"
+    },
+    {
+     "rule": "MANAGERS-1",
+     "path": "foundation/managers.py",
+     "how": "the managers check"
+    }
+   ],
+   "metric": "managers_closed_share",
+   "target": {
+    "op": ">=",
+    "value": 1.0
+   },
+   "prediction": "managers_closed_share >= 1 within 24 h"
+  },
+  {
+   "id": "B2",
+   "concern": "Operations judged by their own reports",
+   "claim": "An audit channel reads reality directly. A deploy is counted only when the live Worker's version matches the commit, read through a different path from the deploy itself.",
+   "where": "Chapter on the audit channel (our statement)",
+   "perspective": "quality",
+   "mechanisms": [
+    {
+     "rule": "DEPLOY-VERIFIED-1",
+     "path": "ops/deploys.jsonl",
+     "how": "each deploy row records whether the live version matched the commit"
+    },
+    {
+     "rule": "PROGRESS-1",
+     "path": "seed/worker/src/progress.js",
+     "how": "progress counts only merged behaviour change"
+    }
+   ],
+   "metric": "deploy_verified_share",
+   "target": {
+    "op": ">=",
+    "value": 0.95
+   },
+   "prediction": "deploy_verified_share >= 0.95 within 168 h"
+  },
+  {
+   "id": "B3",
+   "concern": "Intelligence with no memory of what it learned",
+   "claim": "The intelligence function must turn what it learns about the environment into something the rest of the organization can use. The system keeps a graph of its own data, and every system carries one.",
+   "where": "Chapters on intelligence and policy (our statement)",
+   "perspective": "systems",
+   "mechanisms": [
+    {
+     "rule": "DATAGRAPH-1",
+     "path": "doctrine/knowledge-graph.json",
+     "how": "every system declares a knowledge graph, built or pending"
+    },
+    {
+     "rule": "DATAGRAPH-1",
+     "path": "seed/worker/src/datagraph.js",
+     "how": "the graph is built and read each pass"
+    }
+   ],
+   "metric": "kg_systems_share",
+   "target": {
+    "op": ">=",
+    "value": 1.0
+   },
+   "prediction": "kg_systems_share >= 1 within 168 h"
+  }
+ ],
+ "source_id": "canon:beer-1972"
+}

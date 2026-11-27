@@ -31,3 +31,11 @@ test('a tenant stamps its newest finished tick and goes stale after 2 hours', ()
   assert.equal(tickRecency({ finished_at: '2026-11-27T07:00:00Z' }, NOW).stale, true);
   assert.equal(tickRecency(null, NOW).stale, true);
 });
+import { probeStamps } from '../src/recency.js';
+test('the probe passes stamped pages and names unstamped or stale ones', async () => {
+  const h = { '/': { 'X-Updated-At': '2026-11-27T11:16:37Z', 'X-Stale': 'false' }, '/a': {}, '/b': { 'X-Updated-At': '2026-11-20T00:00:00Z', 'X-Stale': 'true' } };
+  const f = async (u) => new Response('x', { headers: h[new URL(u).pathname] });
+  assert.equal((await probeStamps({ siteUrl: 'https://s', paths: ['/'], fetchImpl: f })).status, 'fresh');
+  const r = await probeStamps({ siteUrl: 'https://s', paths: ['/', '/a', '/b'], fetchImpl: f });
+  assert.equal(r.status, 'stale'); assert.deepEqual(r.bad, ['/a: no X-Updated-At', '/b: stale since 2026-11-20T00:00:00Z']);
+});
