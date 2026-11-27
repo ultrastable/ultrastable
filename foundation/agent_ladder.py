@@ -23,7 +23,7 @@ DOWN: set[str] = set()  # FREE-LLM-5: adapters whose transport failed in this pr
 
 def down_keys(a: dict, e: Exception) -> set:
     """LADDER-ROUTE-SCOPE-1 (2026-11-27): which keys a transport failure marks DOWN. A provider-wide answer (401, 403, 429, a 200 with a non-JSON body,
-    as GitHub Models gave every request from 2026-11-19) downs the whole route. A failure of one model (a 5xx, a timeout) downs only that model:
+    as GitHub Models gave every request from 2026-11-19) downs the whole provider route. A failure of one model (a 5xx, a timeout) downs only that model:
     glm-4.7-flash answered 502 and took qwen-coder and llama-3.3 on the same Workers AI route down with it, so the executor failed 14 of 15 runs
     on 2026-11-27 while llama-3.3 answered fine when probed directly."""
     code = getattr(e, "code", None)
