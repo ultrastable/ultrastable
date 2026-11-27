@@ -1,0 +1,12 @@
+{
+  "id": "Q-TRAJ-neglected-products",
+  "title": "Q-TRAJ-neglected-products: products had 507 lines of change, then nothing for 7 days while the rest of the system moved",
+  "body": "**Owner:** executor\n**Trigger:** trajectory pass (TRAJECTORY-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation trajectory --probe neglected:products\n**Status:** open\n\nproducts had 507 lines of change, then nothing for 7 days while the rest of the system moved. Evidence: quiet_days 7; system change in the last 7 days 345451.\n\nFind why it went quiet while the system moved: a loop that no longer fires, an area nothing consumes. Fix the loop or retire the area with a recorded disposition.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation trajectory --probe neglected:products` exits 0.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "trajectory"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
