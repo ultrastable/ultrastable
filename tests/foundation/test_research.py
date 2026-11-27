@@ -132,8 +132,8 @@ class NoMadeUpNumbers(unittest.TestCase):
         st = R.studies()[0]
         p = R.paper(R.REPO, st, ms, {})
         self.assertEqual(R.gate(p, st), [])
-        p["sections"]["summary"].append("This cut costs by 47%.")
-        self.assertTrue(any("47%" in b for b in R.gate(p, st)))
+        p["sections"]["summary"].append("This cut costs by 7919%.")
+        self.assertTrue(any("7919%" in b for b in R.gate(p, st)))
 
 
 class CyberneticsProgram(unittest.TestCase):
