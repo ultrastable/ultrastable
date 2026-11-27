@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-one-model-s-5xx-must-not-down-its-whole-provider-route",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "One model's 5xx must not down its whole provider route",
+  "body": "On 2026-11-27 glm-4.7-flash returned 502 and the ladder marked all Workers AI down, so working models were never asked; executor failed 14 of 15 runs. Sessions made 302 of 349 merges in the week before. down_keys now scopes a 5xx to the model.",
+  "probe": "grep:foundation/agent_ladder.py::def down_keys",
+  "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+ },
+ "kind": "lesson",
+ "title": "One model's 5xx must not down its whole provider route",
+ "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+}
