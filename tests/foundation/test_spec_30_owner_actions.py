@@ -365,15 +365,21 @@ class PointAndClick(unittest.TestCase):
         self.assertIn("seed/worker/src/**/*.js", json.loads((REPO / "doctrine/point-and-click.json").read_text())["scan_globs"])
 
 
-    @unittest.expectedFailure
-    def test_planned_the_ladder_card_texts_pass_the_no_token_prompt_patterns(self):
-        """Closing probe of the PLANNED part of US-SPEC-30 (no requirement id): no card of foundation/data/credential-routes.json tells a person to create, mint or set a token. Today
-        ORG-TOKEN and CF-TOKEN match the patterns of doctrine/point-and-click.json, and MODEL-KEY and SOC-ACCOUNTS read as the same kind of instruction; the file is not in scan_globs."""
+    def test_us_30_r14_the_ladder_card_texts_pass_the_no_token_prompt_patterns(self):
+        """US-30-R14, R59: no card of foundation/data/credential-routes.json tells a person to create, mint or set a token. ORG-TOKEN and CF-TOKEN once matched the patterns of
+        doctrine/point-and-click.json, and MODEL-KEY and SOC-ACCOUNTS read as the same kind of instruction; each now names one consent step and no credential to handle."""
         import re
         pol = json.loads((REPO / "doctrine/point-and-click.json").read_text()); pats = [re.compile(p, re.I) for p in pol["patterns"]]
         for name, c in json.loads((REPO / "foundation/data/credential-routes.json").read_text())["credentials"].items():
             card = c["card"]
             self.assertFalse(any(p.search(card["what"]) for p in pats), card["id"] + ": " + card["what"])
+            self.assertNotRegex(card["what"], r"\b[A-Z][A-Z0-9]*_(?:TOKEN|KEY|ID|SECRET)\b", card["id"] + ": a card names no binding for a person to fill")
+            self.assertNotRegex(card["what"], r"\bor\b.*\bor\b|\bmint\b.* or ", card["id"] + ": a card is one step, not a menu")
+
+    def test_the_ladder_cards_are_in_the_scan_globs(self):
+        """US-SPEC-30 section 7 (no requirement id): the ladder card texts pass the patterns above, and `pointclick --check` watches them, because
+        foundation/data/credential-routes.json is in `scan_globs` of doctrine/point-and-click.json."""
+        pol = json.loads((REPO / "doctrine/point-and-click.json").read_text())
         self.assertIn("foundation/data/credential-routes.json", pol["scan_globs"])
 
 

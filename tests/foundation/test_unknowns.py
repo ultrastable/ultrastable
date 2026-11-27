@@ -25,6 +25,7 @@ class Unknowns(unittest.TestCase):
         self.assertEqual(unknowns.check(REPO), [])
 
     def test_run_files_plus_items_and_ledgers_them(self):
+        """US-16-R21: one inverted question per unit and lens, the top ones filed as plus items within the per-run cap and written to the ledger."""
         picks = unknowns.run(self.tmp, apply=True)
         self.assertEqual(len(picks), 3)
         for c in picks:
@@ -38,6 +39,7 @@ class Unknowns(unittest.TestCase):
         self.assertFalse(a & b)
 
     def test_fresh_question_is_not_repeated_within_cadence_then_returns(self):
+        """US-16-R21: a question is not asked again inside its cadence and returns after it."""
         k = unknowns.run(self.tmp, apply=True)[0]["key"]
         today = dt.date.today()
         self.assertNotIn(k, {c["key"] for c in unknowns.candidates(self.tmp, today)})
@@ -45,6 +47,7 @@ class Unknowns(unittest.TestCase):
         self.assertIn(k, {c["key"] for c in unknowns.candidates(self.tmp, later)})
 
     def test_answer_needs_evidence_and_a_verdict(self):
+        """US-16-R21: an answer needs evidence and one of the verdicts none, gap, new-objective or cannot-know."""
         k = unknowns.run(self.tmp, apply=True)[0]["key"]
         with self.assertRaises(SystemExit):
             unknowns.answer(self.tmp, k, "gap", "too short")

@@ -76,6 +76,7 @@ class FailureAudit(unittest.TestCase):
         self.assertIn("**Status:** open", json.loads((d / "docs/issues/Q-AUDIT-t1.json").read_text())["body"], "a relapse reopens the same item")
 
     def test_root_cause_names_what_changed_since_the_last_pass(self):
+        """US-17-R20: the item a failing detector files names the files changed since its last passing commit."""
         import subprocess
         d = sandbox([sys.executable, "-c", "import sys,pathlib; sys.exit(0 if pathlib.Path('flag.py').read_text()=='ok' else print('flag.py is wrong') or 1)"])
         g = lambda *a: subprocess.run(["git", "-C", str(d), "-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "commit.gpgsign=false", *a], check=True, capture_output=True)
@@ -103,6 +104,7 @@ class FailureAudit(unittest.TestCase):
         self.assertFalse(fa.probe("nope", d)[0])
 
     def test_missing_tool_is_a_finding_not_a_pass(self):
+        """US-17-R16, US-17-T09: a detector whose tool is missing is recorded as a finding, not as a pass."""
         d = sandbox(["definitely-not-a-real-tool-xyz"])
         r = fa.run(d)[0]
         self.assertEqual(r["status"], "unavailable"); self.assertTrue((d / "docs/issues/Q-AUDIT-t1.json").exists())

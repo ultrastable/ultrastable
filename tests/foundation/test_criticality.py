@@ -101,6 +101,7 @@ class Ignorance(unittest.TestCase):
     """IGNORANCE-1: unknown = known - told; a changed statement is unknown again."""
 
     def test_unknown_is_known_minus_told(self):
+        """US-16-R20: what the owner has not been told is computed, unknown = known - told, from an append-only told log that refuses a repeat."""
         from foundation import ignorance as I
         d = repo([dict(GOOD, origin="outside")])
         (d / "ops/told.jsonl").write_text("", encoding="utf-8")

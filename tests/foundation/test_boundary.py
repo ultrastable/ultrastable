@@ -15,6 +15,7 @@ class Boundary(unittest.TestCase):
         self.assertEqual(boundary.drill(REPO), [])
 
     def test_egress_and_reserved_never_allowed_even_at_top_trust(self):
+        """US-06-R23, US-06-T09: egress and reserved action classes are denied at the top rung as at the bottom."""
         led = {"rows": {"s|x": {"rung": "self-extending", "score": 1}}}
         for a in ("credentials", "money", "secrets", "interrupt-gate", "harness-permissions"):
             self.assertFalse(boundary.decide("s", a, REPO, led)["allow"], a)

@@ -27,18 +27,6 @@
  "seed_verify": {
   "ultrastable": [
    {
-    "at": "2026-11-27T11:21:08Z",
-    "url": "https://ultrastable.io/health",
-    "status": 200,
-    "ok": true
-   },
-   {
-    "at": "2026-11-27T11:26:03Z",
-    "url": "https://ultrastable.io/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-27T11:35:17Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
@@ -202,6 +190,18 @@
    },
    {
     "at": "2026-11-27T16:16:48Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-27T16:25:44Z",
+    "url": "https://ultrastable.io/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-27T16:36:31Z",
     "url": "https://ultrastable.io/health",
     "status": 200,
     "ok": true
@@ -209,18 +209,6 @@
   ],
   "unlearn": [
    {
-    "at": "2026-11-27T11:21:08Z",
-    "url": "https://unlearn.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
-    "at": "2026-11-27T11:26:03Z",
-    "url": "https://unlearn.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-27T11:35:17Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
@@ -384,6 +372,18 @@
    },
    {
     "at": "2026-11-27T16:16:48Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-27T16:25:44Z",
+    "url": "https://unlearn.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-27T16:36:31Z",
     "url": "https://unlearn.ultrastable.org/health",
     "status": 200,
     "ok": true
@@ -573,18 +573,6 @@
   ],
   "what-works": [
    {
-    "at": "2026-11-27T11:21:08Z",
-    "url": "https://what-works.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
-    "at": "2026-11-27T11:26:03Z",
-    "url": "https://what-works.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-27T11:35:17Z",
     "url": "https://what-works.ultrastable.org/health",
     "status": 200,
@@ -748,6 +736,18 @@
    },
    {
     "at": "2026-11-27T16:16:48Z",
+    "url": "https://what-works.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-27T16:25:44Z",
+    "url": "https://what-works.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-27T16:36:31Z",
     "url": "https://what-works.ultrastable.org/health",
     "status": 200,
     "ok": true
@@ -755,18 +755,6 @@
   ],
   "replication-ledger": [
    {
-    "at": "2026-11-27T11:21:08Z",
-    "url": "https://replication-ledger.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
-    "at": "2026-11-27T11:26:03Z",
-    "url": "https://replication-ledger.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-27T11:35:17Z",
     "url": "https://replication-ledger.ultrastable.org/health",
     "status": 200,
@@ -930,6 +918,18 @@
    },
    {
     "at": "2026-11-27T16:16:48Z",
+    "url": "https://replication-ledger.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-27T16:25:44Z",
+    "url": "https://replication-ledger.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-27T16:36:31Z",
     "url": "https://replication-ledger.ultrastable.org/health",
     "status": 200,
     "ok": true
@@ -937,18 +937,6 @@
   ],
   "base-rates": [
    {
-    "at": "2026-11-27T11:21:08Z",
-    "url": "https://base-rates.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
-    "at": "2026-11-27T11:26:03Z",
-    "url": "https://base-rates.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-27T11:35:17Z",
     "url": "https://base-rates.ultrastable.org/health",
     "status": 200,
@@ -1112,6 +1100,18 @@
    },
    {
     "at": "2026-11-27T16:16:48Z",
+    "url": "https://base-rates.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-27T16:25:44Z",
+    "url": "https://base-rates.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-27T16:36:31Z",
     "url": "https://base-rates.ultrastable.org/health",
     "status": 200,
     "ok": true
@@ -1119,18 +1119,6 @@
   ],
   "open-questions": [
    {
-    "at": "2026-11-27T11:21:08Z",
-    "url": "https://open-questions.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
-    "at": "2026-11-27T11:26:03Z",
-    "url": "https://open-questions.ultrastable.org/health",
-    "status": 200,
-    "ok": true
-   },
-   {
     "at": "2026-11-27T11:35:17Z",
     "url": "https://open-questions.ultrastable.org/health",
     "status": 200,
@@ -1294,6 +1282,18 @@
    },
    {
     "at": "2026-11-27T16:16:48Z",
+    "url": "https://open-questions.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-27T16:25:44Z",
+    "url": "https://open-questions.ultrastable.org/health",
+    "status": 200,
+    "ok": true
+   },
+   {
+    "at": "2026-11-27T16:36:31Z",
     "url": "https://open-questions.ultrastable.org/health",
     "status": 200,
     "ok": true

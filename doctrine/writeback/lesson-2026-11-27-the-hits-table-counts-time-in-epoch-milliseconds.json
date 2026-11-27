@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-the-hits-table-counts-time-in-epoch-milliseconds",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "The hits table counts time in epoch milliseconds",
+  "body": "seed/analytics record() writes hits.at as Date.now(), epoch milliseconds, while growth.hits_metrics and reach.live_rows bounded their 7-day window in seconds, so every raw row up to the retention limit was read as the last 7 days and the growth and reach readings were inflated. Both bounds are now in milliseconds, and tests/foundation/test_hits_window.py runs the SQL each function sends against a real SQLite hits table, so the window tested is the one the database applies. Read a column's unit from the code that writes it before writing a bound on it.",
+  "probe": "grep:foundation/growth.py::hits.at is epoch milliseconds",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "lesson",
+ "title": "The hits table counts time in epoch milliseconds",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}

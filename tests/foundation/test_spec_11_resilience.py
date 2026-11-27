@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-"""US-SPEC-11 requirements the platform meets in foundation/: R16 (every watcher is watched by another on an independent host) and R19 (the cron budget)."""
+"""US-SPEC-11 requirements the platform meets in foundation/: R25 (every watcher is watched by another on an independent host) and R19 (the cron budget)."""
 import copy, json, unittest
 from pathlib import Path
 from unittest import mock
@@ -18,7 +18,7 @@ class Resilience(unittest.TestCase):
         with mock.patch.object(R, "load", return_value=cfg):
             return R.check(REPO)
 
-    def test_US_11_R16_the_repository_has_no_watcher_that_is_watched_by_itself_or_only_from_its_own_host(self):
+    def test_US_11_R25_the_repository_has_no_watcher_that_is_watched_by_itself_or_only_from_its_own_host(self):
         self.assertEqual(R.check(REPO), [])
         ws = R.load(REPO)["watchers"]
         self.assertGreaterEqual(len({w["host"] for w in ws}), 2)                       # independent hosts
@@ -26,13 +26,13 @@ class Resilience(unittest.TestCase):
         for w in ws:
             self.assertIn(w["watched_by"], ids); self.assertNotEqual(w["watched_by"], w["id"])
 
-    def test_US_11_R16_a_watcher_watched_by_itself_fails(self):
+    def test_US_11_R25_a_watcher_watched_by_itself_fails(self):
         def edit(cfg):
             w = cfg["watchers"][0]; w["watched_by"] = w["id"]
         errs = self._check_with(edit)
         self.assertTrue(any("itself, which is a single point of failure" in e for e in errs), errs)
 
-    def test_US_11_R16_a_watcher_watched_by_nobody_and_a_single_host_fail(self):
+    def test_US_11_R25_a_watcher_watched_by_nobody_and_a_single_host_fail(self):
         def nobody(cfg): cfg["watchers"][0]["watched_by"] = "no-such-watcher"
         self.assertTrue(any("is not a watcher" in e for e in self._check_with(nobody)))
         def one_host(cfg):

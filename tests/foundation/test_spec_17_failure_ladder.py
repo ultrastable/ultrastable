@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-"""US-SPEC-17 requirements whose reference implementation is the foundation, not workers/core: US-17-R17 (closure needs the probe seen
-failing and consecutive passes), US-17-R22 (a finding names root-cause suspects, closes with evidence, a recurring signature escalates) and
+"""US-SPEC-17 requirements whose reference implementation is the foundation, not workers/core: US-17-R28 (closure needs the probe seen
+failing and consecutive passes), US-17-R20 and US-17-R22 (a finding names root-cause suspects, closes with evidence, a recurring signature escalates) and
 US-17-R23 (unregistered failure modes are discovered from the ledgers). The wider behaviour is covered by test_contracts.py,
 test_failure_audit.py and test_failmine.py; each test here proves its requirement end to end on a scratch repository."""
 import json, shutil, subprocess, sys, unittest
@@ -44,14 +44,14 @@ def status(d, iid):
 
 
 class ClosureNeedsAProbeSeenFailing(unittest.TestCase):
-    def test_us_17_r17_a_probe_never_seen_failing_does_not_close_the_item(self):
+    def test_us_17_r28_a_probe_never_seen_failing_does_not_close_the_item(self):
         d = contracts_repo(); issue(d, "OL-1"); (d / "marker.txt").write_text("x")
         for m in (0, 10, 20):
             r = C.tick(d, apply=True, now=T0 + timedelta(minutes=m))
             self.assertEqual((status(d, "OL-1"), r["rows"][0]["action"]), ("open", "vacuous"))
         self.assertEqual(r["vacuous_open"], ["OL-1"])
 
-    def test_us_17_r17_a_relapsed_item_needs_more_than_one_consecutive_pass(self):
+    def test_us_17_r28_a_relapsed_item_needs_more_than_one_consecutive_pass(self):
         d = contracts_repo(); issue(d, "OL-2")
         C.tick(d, apply=True, now=T0 - timedelta(minutes=20)); (d / "marker.txt").write_text("x")
         C.tick(d, apply=True, now=T0 - timedelta(minutes=10)); C.tick(d, apply=True, now=T0)
@@ -64,7 +64,7 @@ class ClosureNeedsAProbeSeenFailing(unittest.TestCase):
 
 
 class FindingsNameRootCauseAndEscalate(unittest.TestCase):
-    def test_us_17_r22_a_finding_names_the_files_changed_since_the_detector_last_passed(self):
+    def test_us_17_r20_r22_a_finding_names_the_files_changed_since_the_detector_last_passed(self):
         d = audit_repo([sys.executable, "-c", "import sys,pathlib; sys.exit(0 if pathlib.Path('flag.py').read_text()=='ok' else print('flag.py is wrong') or 1)"])
         g = lambda *a: subprocess.run(["git", "-C", str(d), "-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "commit.gpgsign=false", *a], check=True, capture_output=True)
         (d / "flag.py").write_text("ok"); (d / "other.py").write_text("1")

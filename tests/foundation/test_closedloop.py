@@ -22,6 +22,7 @@ class ClosedLoop(unittest.TestCase):
         self.assertEqual(closedloop.lint("The merge lane merges on green."), [])
 
     def test_unconsumed_artifact_fails(self):
+        """US-12-R16: an output with no code consumer fails the check."""
         r = copy_repo(); (r / "docs/ops/new-note.md").write_text("A note for people.\n")
         self.assertTrue(any("new-note.md" in b and "no code consumer" in b for b in closedloop.check(r)))
 

@@ -10,6 +10,7 @@
     "site/**/*.html",
     "docs/BOOTSTRAP*.md",
     "foundation/data/needs-you.json",
+    "foundation/data/credential-routes.json",
     "NEEDS-YOU.md",
     "seed/README.md",
     "seed/docs/*.md",

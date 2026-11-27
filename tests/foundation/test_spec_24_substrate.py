@@ -2,7 +2,7 @@
 # Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 """US-SPEC-24 requirements whose only implementation is in the platform (foundation/, scripts/, github/), named by requirement id so
 the specification can cite them: R01 (items as issues, a one-way mirror), R02 (Discussions off), R06 (two routes per duty),
-R07 (the ruleset), R40 (public repositories relax nothing), R59 (no unpinned action reference), R60 (one repository standard,
+R07 (the ruleset), R40 (public repositories relax nothing), R18 (no unpinned action reference), R61 (one repository standard,
 read back)."""
 import json
 import sys
@@ -80,7 +80,7 @@ class Substrate(unittest.TestCase):
         self.assertFalse([n for n in inspect.signature(wl.lint_text).parameters if "public" in n or "private" in n], "the linter has no switch that treats a public repository differently")
         self.assertIs(STD["worker"]["settings"]["allow_squash_merge"] and not STD["worker"]["settings"]["allow_merge_commit"], True, "the settings of 7.4 are one default for public and private alike")
 
-    def test_us_24_r59_the_count_of_unpinned_action_references_does_not_rise_and_a_tag_reference_is_found(self):
+    def test_us_24_r18_the_count_of_unpinned_action_references_does_not_rise_and_a_tag_reference_is_found(self):
         base_count = json.loads((ROOT / "doctrine/supply-chain.json").read_text(encoding="utf-8"))["unpinned_baseline"]
         self.assertLessEqual(len(actionpins.unpinned(ROOT)), base_count)
         with tempfile.TemporaryDirectory() as d:
@@ -90,7 +90,7 @@ class Substrate(unittest.TestCase):
             (wf / "x.yml").write_text(f"jobs:\n  t:\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@{sha}\n      - uses: ./local\n", encoding="utf-8")
             self.assertEqual(actionpins.unpinned(Path(d)), ["x.yml: actions/checkout@v4"])
 
-    def test_us_24_r60_one_standard_is_read_back_gated_where_the_plan_withholds_it_and_unmeasured_where_it_cannot_be_read(self):
+    def test_us_24_r61_one_standard_is_read_back_gated_where_the_plan_withholds_it_and_unmeasured_where_it_cannot_be_read(self):
         repos = {"unlearn": base.good_live("unlearn", rs.desired("unlearn", root=ROOT))}
         want = rs.desired("unlearn", root=ROOT)
         ok = rs.measure(base.FakeApi(repos, {"unlearn": {"workflows": 2, "ruleset": True}}), "unlearn", want, STD)

@@ -605,7 +605,12 @@
   {
    "id": "US-06-T09",
    "spec": "US-SPEC-06",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_boundary.py",
+     "name": "test egress and reserved never allowed even at top trust - US-06-R23, US-06-T09: egress and reserved action classes are denied at the top rung as at the bottom."
+    }
+   ]
   },
   {
    "id": "US-07-T01",
@@ -966,6 +971,10 @@
     {
      "file": "core/install/bootstrap-spec10.test.js",
      "name": "US-10-T06 / US-10-R34: the nothing-public constraint adds KIT-6 at priority 5 and no id repeats in the backlog"
+    },
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-T06 US-10-R34 the seed writes every backlog id once and the nothing public item survives the seed sql"
     }
    ]
   },
@@ -975,7 +984,7 @@
    "tests": [
     {
      "file": "../tests/foundation/test_spec_10_seed_kernel.py",
-     "name": "test US-10-T07 US-10-R23 the templates example idea is not staffed in a persons own system"
+     "name": "test US-10-T07 US-10-R16 a one off is told so in one card and nothing is staffed while a system is"
     }
    ]
   },
@@ -985,7 +994,7 @@
    "tests": [
     {
      "file": "../tests/foundation/test_spec_10_seed_kernel.py",
-     "name": "test US-10-T08 US-10-R21 a hosted system is asked for no secret and no budget approval"
+     "name": "test US-10-T08 US-10-R18 a declared fault with no drill blocks the gate and the shipped drills pass"
     }
    ]
   },
@@ -995,7 +1004,7 @@
    "tests": [
     {
      "file": "../tests/foundation/test_spec_10_seed_kernel.py",
-     "name": "test US-10-T09 US-10-R19 a declared fault with no drill blocks the gate and the shipped drills pass"
+     "name": "test US-10-T09 US-10-R17 one objective per outcome nine liveness metrics and the declared measure breaches until probed"
     }
    ]
   },
@@ -1142,12 +1151,22 @@
   {
    "id": "US-12-T07",
    "spec": "US-SPEC-12",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_flows.py",
+     "name": "test dead end is caught - US-12-R15, US-12-T07: an outflow nothing consumes fails the check, which names it."
+    }
+   ]
   },
   {
    "id": "US-12-T08",
    "spec": "US-SPEC-12",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_docs_audit.py",
+     "name": "test orphan fails - US-12-R16, US-12-T08: a document nothing names is listed as an orphan and the audit fails."
+    }
+   ]
   },
   {
    "id": "US-13-T01",
@@ -1630,7 +1649,12 @@
   {
    "id": "US-17-T09",
    "spec": "US-SPEC-17",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_failure_audit.py",
+     "name": "test missing tool is a finding not a pass - US-17-R16, US-17-T09: a detector whose tool is missing is recorded as a finding, not as a pass."
+    }
+   ]
   },
   {
    "id": "T18-1",
@@ -2007,17 +2031,32 @@
   {
    "id": "T22-6",
    "spec": "US-SPEC-22",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_22_surfaces.py",
+     "name": "test US-22-R10 US-22-R14 a generated block that differs from what the code generates fails and fix rewrites it - T22-6: a generated number that no longer equals"
+    }
+   ]
   },
   {
    "id": "T22-7",
    "spec": "US-SPEC-22",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_22_surfaces.py",
+     "name": "test US-22-R11 US-22-R15 a shipped behaviour no surface mentions fails until it is described or exempt - T22-7: a page that is served and described nowhere is r"
+    }
+   ]
   },
   {
    "id": "T22-8",
    "spec": "US-SPEC-22",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_22_surfaces.py",
+     "name": "test US-22-R12 a probe that cannot run or reach its surface is drift never a pass - T22-8: a live probe that cannot reach its surface is reported as drift, not "
+    }
+   ]
   },
   {
    "id": "T22-9",
@@ -2096,17 +2135,32 @@
   {
    "id": "T23-7",
    "spec": "US-SPEC-23",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_23_loops.py",
+     "name": "test US-23-R12 US-23-R20 a loop whose only owner is a client session fails - T23-7: a loop with no server-side owner, or whose closing probe names a client sess"
+    }
+   ]
   },
   {
    "id": "T23-8",
    "spec": "US-SPEC-23",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_23_loops.py",
+     "name": "test US-23-R13 an artifact no code consumes fails and so does a human named as an approver - T23-8: an artifact with no registered consumer fails the build, and"
+    }
+   ]
   },
   {
    "id": "T23-9",
    "spec": "US-SPEC-23",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_23_loops.py",
+     "name": "test US-23-R14 US-23-R19 a change that adds code and no write back fails and a write back passes - T23-9: a change with code and no write-back fails the check; "
+    }
+   ]
   },
   {
    "id": "US-24-T01",
@@ -4548,9 +4602,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_boundary.py",
+     "name": "test egress and reserved never allowed even at top trust - US-06-R23, US-06-T09: egress and reserved action classes are denied at the top rung as at the bottom."
+    }
+   ]
   },
   {
    "id": "US-07-R01",
@@ -6179,6 +6238,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-R15 every seed card carries plain words and the needs you page shows only them"
+    },
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-R15 the idea card says it plainly with and without the template"
+    },
+    {
      "file": "core/install/bootstrap-spec10.test.js",
      "name": "US-10-R15: every card has plain words, no card names a variable, and the owner README shows those words"
     },
@@ -6189,14 +6256,6 @@
     {
      "file": "core/install/bootstrap-spec10.test.js",
      "name": "US-10-R15: the owner README lists the plain-words default for every card, never the capability names"
-    },
-    {
-     "file": "core/install/install.test.js",
-     "name": "US-10-R15 / US-10-R06 an installer card carries plain words; a card the bootstrapper wrote for the same probe is kept, and the cards come before the seed is applied"
-    },
-    {
-     "file": "tests/test_bootstrap_hardening.py",
-     "name": "test the seeded gate card rows hold the plain words lines - US-10-R15: the console reads `what` and `default_in_effect` from the table, so those columns hold wh"
     }
    ]
   },
@@ -6206,9 +6265,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-T07 US-10-R16 a one off is told so in one card and nothing is staffed while a system is"
+    }
+   ]
   },
   {
    "id": "US-10-R17",
@@ -6221,7 +6285,7 @@
    "tests": [
     {
      "file": "../tests/foundation/test_spec_10_seed_kernel.py",
-     "name": "test US-10-R17 a one off is told so in one card and nothing is staffed while a system is"
+     "name": "test US-10-T09 US-10-R17 one objective per outcome nine liveness metrics and the declared measure breaches until probed"
     }
    ]
   },
@@ -6236,7 +6300,7 @@
    "tests": [
     {
      "file": "../tests/foundation/test_spec_10_seed_kernel.py",
-     "name": "test US-10-R18 one objective per outcome nine liveness metrics and the declared measure breaches until probed"
+     "name": "test US-10-T08 US-10-R18 a declared fault with no drill blocks the gate and the shipped drills pass"
     }
    ]
   },
@@ -6251,7 +6315,11 @@
    "tests": [
     {
      "file": "../tests/foundation/test_spec_10_seed_kernel.py",
-     "name": "test US-10-T09 US-10-R19 a declared fault with no drill blocks the gate and the shipped drills pass"
+     "name": "test US-10-R19 a boot is live only when health answers 200 after serving 503 before the first tick"
+    },
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-R19 a health route that never answers 200 blocks the boot and a dry run probes nothing"
     }
    ]
   },
@@ -6266,11 +6334,7 @@
    "tests": [
     {
      "file": "../tests/foundation/test_spec_10_seed_kernel.py",
-     "name": "test US-10-R20 a boot is live only when health answers 200 after serving 503 before the first tick"
-    },
-    {
-     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
-     "name": "test US-10-R20 a health route that never answers 200 blocks the boot and a dry run probes nothing"
+     "name": "test US-10-R20 a constitution that disagrees with the code blocks the boot before any decision"
     }
    ]
   },
@@ -6619,18 +6683,6 @@
     {
      "file": "../seed/worker/test/spec-11-fleet-runtime.test.js",
      "name": "US-11-R16, US-11-R27 and US-11-T06: a loop that stops files one item on the second bad reading, only the same reading closes it, and a later stop reopens it"
-    },
-    {
-     "file": "../tests/foundation/test_spec_11_resilience.py",
-     "name": "test US-11-R16 the repository has no watcher that is watched by itself or only from its own host"
-    },
-    {
-     "file": "../tests/foundation/test_spec_11_resilience.py",
-     "name": "test US-11-R16 a watcher watched by itself fails"
-    },
-    {
-     "file": "../tests/foundation/test_spec_11_resilience.py",
-     "name": "test US-11-R16 a watcher watched by nobody and a single host fail"
     }
    ]
   },
@@ -6924,9 +6976,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_flows.py",
+     "name": "test every declared flow is on a cycle - US-12-R15: every declared flow of the registry lies on a feedback cycle."
+    },
+    {
+     "file": "../tests/foundation/test_flows.py",
+     "name": "test dead end is caught - US-12-R15, US-12-T07: an outflow nothing consumes fails the check, which names it."
+    },
+    {
+     "file": "../tests/foundation/test_flows.py",
+     "name": "test undeclared loop fails - US-12-R15: a registered loop that declares no flow fails the check."
+    }
+   ]
   },
   {
    "id": "US-12-R16",
@@ -6934,9 +6999,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_closedloop.py",
+     "name": "test unconsumed artifact fails - US-12-R16: an output with no code consumer fails the check."
+    },
+    {
+     "file": "../tests/foundation/test_docs_audit.py",
+     "name": "test orphan fails - US-12-R16, US-12-T08: a document nothing names is listed as an orphan and the audit fails."
+    },
+    {
+     "file": "../tests/foundation/test_docs_audit.py",
+     "name": "test removal ledger checks bytes and dangling references - US-12-R16: a removed document is kept in the ledger with its digest, and a reference to it fails."
+    }
+   ]
   },
   {
    "id": "US-12-R17",
@@ -7245,9 +7323,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_13_service_levels.py",
+     "name": "test US-13-R15 every merge state is read - US-13-R15: a request past its limit breaches in every merge state, merge-ready and draft included; a young one does n"
+    },
+    {
+     "file": "../tests/foundation/test_spec_13_service_levels.py",
+     "name": "test US-13-R15 items are read with their priority limit - US-13-R15: an open item past the limit of its priority breaches; the same age under a longer limit doe"
+    },
+    {
+     "file": "../tests/foundation/test_spec_13_service_levels.py",
+     "name": "test US-13-R15 the check fails on a breach and on an unreadable repository - US-13-R15: the command exits 1 when a request is past its limit or a repository can"
+    }
+   ]
   },
   {
    "id": "US-13-R16",
@@ -8332,9 +8423,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_criticality.py",
+     "name": "test unknown is known minus told - US-16-R20: what the owner has not been told is computed, unknown = known - told, from an append-only told log that refuses a "
+    }
+   ]
   },
   {
    "id": "US-16-R21",
@@ -8342,9 +8438,22 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_unknowns.py",
+     "name": "test run files plus items and ledgers them - US-16-R21: one inverted question per unit and lens, the top ones filed as plus items within the per-run cap and wri"
+    },
+    {
+     "file": "../tests/foundation/test_unknowns.py",
+     "name": "test fresh question is not repeated within cadence then returns - US-16-R21: a question is not asked again inside its cadence and returns after it."
+    },
+    {
+     "file": "../tests/foundation/test_unknowns.py",
+     "name": "test answer needs evidence and a verdict - US-16-R21: an answer needs evidence and one of the verdicts none, gap, new-objective or cannot-know."
+    }
+   ]
   },
   {
    "id": "US-16-R22",
@@ -8352,9 +8461,22 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_blindspots.py",
+     "name": "test unmeasured is not ok - US-16-R22: a probe that cannot run is unmeasured, never passed."
+    },
+    {
+     "file": "../tests/foundation/test_blindspots.py",
+     "name": "test failed probe files item but identity bound does not - US-16-R22: a failed need files its own item; an identity-bound need is a gate and files none."
+    },
+    {
+     "file": "../tests/foundation/test_blindspots.py",
+     "name": "test learn grows register and gate must be allowed - US-16-R22: the register only grows, and a gate must be one of the allowed identity-bound gates."
+    }
+   ]
   },
   {
    "id": "US-16-R23",
@@ -8720,6 +8842,10 @@
     {
      "file": "../seed/worker/test/selfaudit.test.js",
      "name": "US-17-R16: a probe that cannot run (not one SELECT, an error, no number) is a red finding with its error recorded, never read as healthy"
+    },
+    {
+     "file": "../tests/foundation/test_failure_audit.py",
+     "name": "test missing tool is a finding not a pass - US-17-R16, US-17-T09: a detector whose tool is missing is recorded as a finding, not as a pass."
     }
    ]
   },
@@ -8739,14 +8865,6 @@
     {
      "file": "../seed/worker/test/metricfresh.test.js",
      "name": "US-17-R17, US-05-R17, Q-LESSON-METRIC-FRESH: a probe that keeps failing keeps its old reading time and goes stale"
-    },
-    {
-     "file": "../tests/foundation/test_spec_17_failure_ladder.py",
-     "name": "test US-17-R17 a probe never seen failing does not close the item"
-    },
-    {
-     "file": "../tests/foundation/test_spec_17_failure_ladder.py",
-     "name": "test US-17-R17 a relapsed item needs more than one consecutive pass"
     }
    ]
   },
@@ -8790,9 +8908,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_failure_audit.py",
+     "name": "test root cause names what changed since the last pass - US-17-R20: the item a failing detector files names the files changed since its last passing commit."
+    },
+    {
+     "file": "../tests/foundation/test_spec_17_failure_ladder.py",
+     "name": "test US-17-R20 R22 a finding names the files changed since the detector last passed"
+    }
+   ]
   },
   {
    "id": "US-18-R01",
@@ -9573,12 +9700,12 @@
    "proof": "named test",
    "tests": [
     {
-     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
-     "name": "test US-19-R23 the form has one required question and the rest are optional with stated defaults"
+     "file": "../site/launchpath.test.mjs",
+     "name": "US-19-R23 story: a one-off is told so before anything is queued; the queue is closed to the public"
     },
     {
      "file": "../tests/foundation/test_spec_10_seed_kernel.py",
-     "name": "test US-19-R23 the workflow writes the idea from the form boots it and tells the person without a manual step"
+     "name": "test US-19-R23 a definite one off is refused in plain words before anything is stored and a maintained system passes"
     }
    ]
   },
@@ -9602,6 +9729,14 @@
     {
      "file": "../seed/worker/test/spec-10-repo-creation.test.js",
      "name": "US-19-R24 / US-19-R25 when the code host refuses a step the answer names what is waited on and the repository that exists stays"
+    },
+    {
+     "file": "../site/launchpath.test.mjs",
+     "name": "US-19-R24 story: a person types the atlas idea and gets a live, managed app with its own repository, doing nothing else"
+    },
+    {
+     "file": "../site/launchpath.test.mjs",
+     "name": "US-19-R24 story: they steer it in plain words; the page changes now and the request lands in the repository"
     }
    ]
   },
@@ -9617,6 +9752,22 @@
     {
      "file": "../seed/worker/test/spec-10-repo-creation.test.js",
      "name": "US-19-R24 / US-19-R25 when the code host refuses a step the answer names what is waited on and the repository that exists stays"
+    },
+    {
+     "file": "../site/launchpath.test.mjs",
+     "name": "US-19-R25 story: the platform cannot finish the repository; the app is still live and managed, and it says so plainly"
+    },
+    {
+     "file": "../site/launchpath.test.mjs",
+     "name": "US-19-R25 story: the host has no room for the app's own system; the page stays live, it says so plainly and the next pass finishes"
+    },
+    {
+     "file": "../site/launchpath.test.mjs",
+     "name": "US-19-R25 story: every place is taken, or GitHub refuses; what the visitor can read never carries backend words"
+    },
+    {
+     "file": "../site/launchpath.test.mjs",
+     "name": "US-19-R25 story: the model is unavailable when they type the idea; the idea is kept and the page is built later with nobody typing it again"
     }
    ]
   },
@@ -9626,9 +9777,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-19-R26 the form has one required question and the rest are optional with stated defaults"
+    },
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-19-R26 the workflow writes the idea from the form boots it and tells the person without a manual step"
+    }
+   ]
   },
   {
    "id": "US-20-R01",
@@ -10320,10 +10480,6 @@
    "proof": "named test",
    "tests": [
     {
-     "file": "../tests/foundation/test_spec_21_plugins.py",
-     "name": "test US-21-R16 an unlisted egress host is refused"
-    },
-    {
      "file": "core/packs/loader.test.js",
      "name": "US-21-R16: enabling applies the pack own migrations once with a recorded digest; the other packs tables stay absent"
     },
@@ -10374,9 +10530,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_21_plugins.py",
+     "name": "test US-21-R18 egress and reserved classes are denied to an inside decision at any rung"
+    },
+    {
+     "file": "../tests/foundation/test_spec_21_plugins.py",
+     "name": "test US-21-R18 trust widens only actions inside the boundary"
+    }
+   ]
   },
   {
    "id": "US-22-R01",
@@ -10571,9 +10736,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_22_surfaces.py",
+     "name": "test US-22-R10 US-22-R14 a generated block that differs from what the code generates fails and fix rewrites it - T22-6: a generated number that no longer equals"
+    }
+   ]
   },
   {
    "id": "US-22-R11",
@@ -10581,9 +10751,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_22_surfaces.py",
+     "name": "test US-22-R11 US-22-R15 a shipped behaviour no surface mentions fails until it is described or exempt - T22-7: a page that is served and described nowhere is r"
+    }
+   ]
   },
   {
    "id": "US-22-R12",
@@ -10591,9 +10766,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_22_surfaces.py",
+     "name": "test US-22-R12 a probe that cannot run or reach its surface is drift never a pass - T22-8: a live probe that cannot reach its surface is reported as drift, not "
+    }
+   ]
   },
   {
    "id": "US-22-R13",
@@ -10611,10 +10791,6 @@
     {
      "file": "../seed/worker/test/spec-22-contract.test.js",
      "name": "US-22-R13 and US-22-R16: the sentence a page shows is the string the claims feed serves, so deleting it from the page fails the check"
-    },
-    {
-     "file": "../tests/foundation/test_spec_22_surfaces.py",
-     "name": "test US-22-R13 a sentence that states a cadence with no bound claim fails and a bound one passes"
     }
    ]
   },
@@ -10861,9 +11037,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_23_loops.py",
+     "name": "test US-23-R12 US-23-R20 a loop whose only owner is a client session fails - T23-7: a loop with no server-side owner, or whose closing probe names a client sess"
+    }
+   ]
   },
   {
    "id": "US-23-R13",
@@ -10876,7 +11057,7 @@
    "tests": [
     {
      "file": "../tests/foundation/test_spec_23_loops.py",
-     "name": "test US-23-R13 a change that adds code and no write back fails and a write back passes"
+     "name": "test US-23-R13 an artifact no code consumes fails and so does a human named as an approver - T23-8: an artifact with no registered consumer fails the build, and"
     }
    ]
   },
@@ -10891,11 +11072,7 @@
    "tests": [
     {
      "file": "../tests/foundation/test_spec_23_loops.py",
-     "name": "test US-23-R14 a loop without its record fails the registry check"
-    },
-    {
-     "file": "../tests/foundation/test_spec_23_loops.py",
-     "name": "test US-23-R14 a loop whose only owner is a client session fails"
+     "name": "test US-23-R14 US-23-R19 a change that adds code and no write back fails and a write back passes - T23-9: a change with code and no write-back fails the check; "
     }
    ]
   },
@@ -11157,6 +11334,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../tests/foundation/test_spec_24_substrate.py",
+     "name": "test US-24-R18 the count of unpinned action references does not rise and a tag reference is found"
+    },
+    {
      "file": "core/ghcost/tools-bridge.test.js",
      "name": "US-24-R18: --sha-report lists the tag pins and exits 0, and --require-sha fails on a tag"
     },
@@ -11171,10 +11352,6 @@
     {
      "file": "tests/test_workflow_sha_pin.py",
      "name": "test US-24-R18 branch ref stays w06 and local actions are exempt"
-    },
-    {
-     "file": "tests/test_workflow_sha_pin.py",
-     "name": "test US-24-R18 cli gate and report"
     }
    ]
   },
@@ -11699,9 +11876,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_checksrun.py",
+     "name": "test actions only steps are named not failed - US-24-R57: a step only the hosted runner can run is named with its reason, not failed."
+    },
+    {
+     "file": "../tests/foundation/test_checksrun.py",
+     "name": "test a skipped step is neither a failure nor a pass - US-24-R57: the second route runs the same steps and a skipped step is neither a failure nor a pass."
+    }
+   ]
   },
   {
    "id": "US-24-R58",
@@ -11738,10 +11924,6 @@
     {
      "file": "../tests/foundation/test_lint_workflows.py",
      "name": "test US-24-R59 a public repository is exempt from the pause and a run the pause cannot cancel fails"
-    },
-    {
-     "file": "../tests/foundation/test_spec_24_substrate.py",
-     "name": "test US-24-R59 the count of unpinned action references does not rise and a tag reference is found"
     }
    ]
   },
@@ -11765,10 +11947,6 @@
     {
      "file": "../seed/worker/test/lane.test.js",
      "name": "US-24-R60: the lane stops at the per-tick call cap (default 40)"
-    },
-    {
-     "file": "../tests/foundation/test_spec_24_substrate.py",
-     "name": "test US-24-R60 one standard is read back gated where the plan withholds it and unmeasured where it cannot be read"
     }
    ]
   },
@@ -11778,9 +11956,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_24_substrate.py",
+     "name": "test US-24-R61 one standard is read back gated where the plan withholds it and unmeasured where it cannot be read"
+    }
+   ]
   },
   {
    "id": "US-24-R62",
@@ -11788,9 +11971,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_cost.py",
+     "name": "test guard - US-24-R62: a stale, empty or unmeasured cost reading fails the guard and is never read as zero."
+    }
+   ]
   },
   {
    "id": "US-24-R63",
