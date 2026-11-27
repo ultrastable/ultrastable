@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Triggers (US-SPEC-08 s2, s3, US-08-R03, US-08-R16): an item's trigger names the items, or the gate cards, that must be done
+// Triggers (US-SPEC-08 s2, s3, US-08-R03, US-08-R28): an item's trigger names the items, or the gate cards, that must be done
 // first. `items.trigger_on` holds one item id, a comma list of item ids, or `gate:<card id>` tokens mixed into that list.
 // Pure reads here; the step that acts on them is enforceTriggers in gate.js. Ports: ctx = { db }.
 

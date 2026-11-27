@@ -22,7 +22,7 @@ function mk(reviewers = []) {
 }
 const green = (over = {}) => ({ change_id: 'PR-7', head: 'abc1234', head_committed_at: ago(60 * MIN), checks: [done('ci'), done('checks')], suites: [], required: ['checks'], ...over });
 
-test('US-07-R18, US-07-T07: a hold marker, a queued required check, an empty list on a fresh head, an unreadable answer and a failed check each refuse; a new push with green required checks allows', async () => {
+test('US-07-R18, US-07-R26, US-07-T07, US-07-T10: a hold marker, a queued required check, an empty list on a fresh head, an unreadable answer and a failed check each refuse; a new push with green required checks allows', async () => {
   const reviewer = (name, family, findings) => ({ name, family, async review() { return { findings, cost_usd: 0 }; } });
   const high = { severity: 'high', title: 'authentication bypass', trigger: 'send any request with the header x-debug set', evidence_line: LINE };
   const { gate, guard } = mk([reviewer('r1', 'family-b', [high]), reviewer('r2', 'family-c', [])]);
@@ -49,7 +49,7 @@ test('US-07-R18, US-07-T07: a hold marker, a queued required check, an empty lis
   assert.equal((await clean.decide(green({ checks: [], suites: [], head_committed_at: ago(FRESH_MS + MIN), required: [] }))).ok, true);
 });
 
-test('US-07-R18: an unreadable review gate holds, and the merge lane\'s own check can be ignored by name', async () => {
+test('US-07-R26: an unreadable review gate holds, and the merge lane\'s own check can be ignored by name', async () => {
   const broken = createMergeGuard({ reviewGate: { mergeAllowed: async () => { throw new Error('store down'); } }, now: () => NOW });
   assert.match((await broken.decide(green())).reasons[0], /^review gate unreadable: store down/);
   const odd = createMergeGuard({ reviewGate: { mergeAllowed: async () => undefined }, now: () => NOW });
@@ -60,7 +60,7 @@ test('US-07-R18: an unreadable review gate holds, and the merge lane\'s own chec
   assert.match((await createMergeGuard({ now: () => NOW }).decide(green({ checks: [done('ci'), done('checks'), withLane] }))).reasons.join(), /lane still running/);
 });
 
-test('US-07-R11, US-07-R18: the guard decides from verified findings through mergeAllowed, never from a reviewer verdict', async () => {
+test('US-07-R11, US-07-R26: the guard decides from verified findings through mergeAllowed, never from a reviewer verdict', async () => {
   // a reviewer that says "approve" but carries a verified high finding still holds; one that says "block" with an unverifiable finding does not
   const approving = { name: 'r1', family: 'family-b', async review() { return { verdict: 'approve', findings: [{ severity: 'high', title: 'bypass', trigger: 'send header x-debug', evidence_line: LINE }] }; } };
   const blocking = { name: 'r2', family: 'family-c', async review() { return { verdict: 'block', findings: [{ severity: 'high', title: 'imagined', trigger: 'something', evidence_line: 'line that is not in the diff' }] }; } };

@@ -23,7 +23,7 @@ export async function step(ctx) {
       await ctx.db.prepare("UPDATE items SET blocker=?, updated_at=datetime('now') WHERE id=?").bind('no artifact from any source: ' + JSON.stringify(tried), it.id).run();
       out.push({ item: it.id, status: 'no_artifact', tried }); continue;
     }
-    // US-06-R21: the item's own surface and action class are what the deploy path authorizes (default runtime/deploy_production).
+    // US-06-R25: the item's own surface and action class are what the deploy path authorizes (default runtime/deploy_production).
     const r = await ctx.deploy.deploy({ unit: req.unit, artifact, expectedVersion: await ctx.liveVersion(req.unit), actor: ctx.actor || 'ops-agent',
       ...(it.surface ? { surface: it.surface } : {}), ...(it.action_class ? { action_class: it.action_class } : {}), ...(ctx.confidence !== undefined ? { confidence: ctx.confidence } : {}), ...(ctx.decision_type ? { decision_type: ctx.decision_type } : {}) });
     if (r.status === 'kept') await ctx.db.prepare("UPDATE items SET status='done', disposition=?, blocker=NULL, updated_at=datetime('now') WHERE id=?").bind('deployed ' + req.unit + ' to ' + (r.toVersion ?? 'new version') + ' (ledger ' + r.id + ')', it.id).run();

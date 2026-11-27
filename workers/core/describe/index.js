@@ -70,7 +70,7 @@ export function assertReadOnlySql(sql) {
 
 const OPS = { '>=': (a, b) => a >= b, '<=': (a, b) => a <= b, '>': (a, b) => a > b, '<': (a, b) => a < b, '=': (a, b) => a === b, '!=': (a, b) => a !== b };
 
-// An expect may end with `| unmeasured:quiet` (US-22-R10): when the probe has nothing to measure yet (no row, a NULL value, or a table this
+// An expect may end with `| unmeasured:quiet` (US-22-R18): when the probe has nothing to measure yet (no row, a NULL value, or a table this
 // deployment does not have) the claim is withdrawn as unmeasured and no repair item is filed, because nothing is broken. Without it, no
 // row or a missing table is a failure and files its repair item as before. Unmeasured is never published as zero.
 export function splitExpect(expect) {
@@ -284,7 +284,7 @@ export async function buildSelfModel({ db, specStatus = null, packs = [], scope 
   const n = async (sql) => (await first(db, sql))?.n ?? 0;
   const purposeRow = await first(db, `SELECT value FROM org WHERE key = 'purpose'`);
   const lastTick = await first(db, `SELECT finished_at FROM tick_runs WHERE finished_at IS NOT NULL AND steps_completed = steps_total ORDER BY id DESC LIMIT 1`);
-  // Figures whose table or denominator may not exist yet: null with the reason, never 0 (US-22-R10, NO-FABRICATION-1).
+  // Figures whose table or denominator may not exist yet: null with the reason, never 0 (US-22-R18, NO-FABRICATION-1).
   const not_measured = {};
   const tryFirst = async (key, sql, ...a) => { try { return await first(db, sql, ...a); } catch (e) { not_measured[key] = `unmeasured: ${String(e.message).slice(0, 100)}`; return null; } };
   const merged = await n(`SELECT COUNT(*) AS n FROM outcomes WHERE action_class = 'merge' AND result = 'verified'`);
@@ -465,7 +465,7 @@ const ROUTES = { '/describe': 'page', '/describe.json': 'json', '/llms.txt': 'll
 export const FEED_ROUTES = ['/describe/claims.json', '/describe/claims', '/describe/claims/probe'];
 export const DESCRIBE_ROUTES = [...Object.keys(ROUTES), ...FEED_ROUTES];
 
-// The claims feed (US-22-R11): every claim that may be published now, with its probe, expectation, last result, check time, freshness and
+// The claims feed (US-22-R19): every claim that may be published now, with its probe, expectation, last result, check time, freshness and
 // evidence, so a reader can re-run the check. Non-public claims are absent; a withdrawn public claim appears only as an id and its last result
 // (never its text), so the withdrawal is visible without publishing a sentence that is no longer true. Its claim ids are those of /describe.json.
 export async function claimsFeed(db, now = Date.now()) {
@@ -506,7 +506,7 @@ const json = (body, status = 200, headers = {}) => new Response(JSON.stringify(b
 // handle(request, { db, now, specStatus, packs, scope, compose, voiceRules, probe, min_probe_interval_seconds }).
 // Serves the latest stored output only while every claim in it is still publishable; otherwise it re-renders from the live registry
 // (nothing is written), so a withdrawn or stale claim never stays on the page (US-22-R02). /describe/claims.json and /describe/claims
-// are read from the registry on every request. POST /describe/claims/probe re-runs every public probe (US-22-R12) through the ports the
+// are read from the registry on every request. POST /describe/claims/probe re-runs every public probe (US-22-R20) through the ports the
 // host supplies in ctx.probe ({ fetch, readFile, specStatus }), at most once per min_probe_interval_seconds (default 300): 429 inside the
 // interval, 503 when the host supplied no ports.
 export async function handle(request, ctx) {

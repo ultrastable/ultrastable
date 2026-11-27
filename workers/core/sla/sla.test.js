@@ -65,7 +65,7 @@ test('US-13-T03 and R08: an open SEV3 row due in 30 days is set to now plus the 
   assert.equal(row(db, 'S4').due_at, stamp(T0 + 7 * D), 'a due date never slides later');
 });
 
-test('US-13-R17 and US-13-R09: a row past due is raised one priority level and the manager notified, once per missed date', async () => {
+test('US-13-R28 and US-13-R09: a row past due is raised one priority level and the manager notified, once per missed date', async () => {
   const { db, t, sla } = mk();
   item(db, 'A', { priority: 10 }); item(db, 'TOP', { priority: 0 });
   await sla.classify('A', { severity: 'SEV1' }); await sla.classify('TOP', { severity: 'SEV1' });
@@ -99,7 +99,7 @@ test('US-13-R10: the count of items that wait on a person is a metric with targe
   assert.deepEqual(db.raw.prepare(`SELECT value, target FROM sla_metrics ORDER BY id`).all().map(r => [r.value, r.target]), [[0, 0], [2, 0], [2, 0]]);
 });
 
-test('US-13-R18: weekly audit: an open row with neither a due date nor an executor fails and gets one item; the audit is stored', async () => {
+test('US-13-R29: weekly audit: an open row with neither a due date nor an executor fails and gets one item; the audit is stored', async () => {
   const { db, sla } = mk();
   db.raw.exec(`INSERT INTO roles (id, role, model) VALUES ('ops-1', 'operations', 'small')`);
   item(db, 'HAS-ROLE', { owner: 'operations' }); item(db, 'ORPHAN', { owner: 'nobody' }); item(db, 'DATED', { owner: 'nobody' });
@@ -234,7 +234,7 @@ test('US-13-R05: an exact 0.5 fall between two monthly cards files an item', asy
   void t;
 });
 
-test('US-13-R16 and US-13-R10: a breach after the item was closed reopens it, once', async () => {
+test('US-13-R27 and US-13-R10: a breach after the item was closed reopens it, once', async () => {
   const { db, sla } = mk();
   db.raw.exec(`INSERT INTO gate_cards (id,what,why_gated,default_in_effect,closing_probe) VALUES ('G1','Approve','money','zero','manual')`);
   await sla.waitingOnPerson();
@@ -248,7 +248,7 @@ test('US-13-R16 and US-13-R10: a breach after the item was closed reopens it, on
   assert.equal(get(db, `SELECT COUNT(*) AS n FROM items WHERE id LIKE 'SLA-WAITING%'`).n, 1);
 });
 
-test('US-13-R16: weekly audit and path gap items reopen when the finding recurs', async () => {
+test('US-13-R27: weekly audit and path gap items reopen when the finding recurs', async () => {
   const { db, sla } = mk();
   item(db, 'ORPHAN', { owner: 'nobody' });
   await sla.weeklyAudit();
@@ -262,7 +262,7 @@ test('US-13-R16: weekly audit and path gap items reopen when the finding recurs'
   assert.equal(get(db, `SELECT status FROM items WHERE id='SLA-PATHGAP-PUBLISH-BUILD'`).status, 'open');
 });
 
-test('US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question (through the service-level step)', async () => {
+test('US-13-T10 and US-13-R27 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question (through the service-level step)', async () => {
   const { db, t, sla, l3 } = mk();
   await sla.defineProcess({ process: 'change', done_check: 'merged', steps: [{ step: 'review', budget_hours: 4, paths: ['a', 'b'] }] });
   const s1 = await sla.startStep({ process: 'change', step: 'review' });
@@ -275,7 +275,7 @@ test('US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the ite
   assert.equal(get(db, `SELECT COUNT(*) AS n FROM gate_cards WHERE status='open'`).n, 1);
 });
 
-test('US-13-R17 and US-13-R09: a row at priority 0 is noticed once with the words "already at top priority"; the priority is not lowered below 0', async () => {
+test('US-13-R28 and US-13-R09: a row at priority 0 is noticed once with the words "already at top priority"; the priority is not lowered below 0', async () => {
   const { db, t, sla } = mk();
   item(db, 'TOP', { priority: 0 }); await sla.classify('TOP', { severity: 'SEV1' });
   await sla.recompute(); t.v += 25 * H;
@@ -547,7 +547,7 @@ test('recompute with nothing new, changed or past due reads counts and no rows; 
   t.v += 8 * D; const late = await sla.recompute(); assert.equal(late.rows, 4); assert.equal(late.raised, 4, 'every row is now past its due date');
 });
 
-test('US-13-R18 and US-13-R19: a failed card or weekly audit leaves its register row due, so the next tick retries; a part after the card that throws files an item and the card is not recorded twice', async () => {
+test('US-13-R29 and US-13-R19: a failed card or weekly audit leaves its register row due, so the next tick retries; a part after the card that throws files an item and the card is not recorded twice', async () => {
   const { db, t, sla, l3 } = mk();
   seedMonth(db); item(db, 'A');
   // the card writer throws once: step() throws, the dated row for the card is not advanced
@@ -575,4 +575,62 @@ test('US-13-R18 and US-13-R19: a failed card or weekly audit leaves its register
   w.db.raw.exec('DROP TABLE sla_audits');
   await assert.rejects(() => w.sla.step({}, {}));
   assert.equal(get(w.db, `SELECT COUNT(*) AS n FROM sla_register WHERE name='weekly_audit'`).n, 0);
+});
+
+test('US-13-R20 and US-13-R19: while the card writer fails, thirteen ticks store one objective row for the period, so calibration still refuses for want of history', async () => {
+  const { db, t, sla, l3 } = mk();
+  seedMonth(db); item(db, 'A');
+  const refusing = { ...l3, recordCard: async () => ({ ok: false, errors: ['store refused the write'] }) };
+  for (let i = 0; i < 13; i++) { await sla.step({}, { l3: refusing }); t.v += 10 * 60e3; }
+  assert.equal(get(db, `SELECT COUNT(*) AS n FROM sla_objective`).n, 1, 'one stored cycle, not one per tick');
+  assert.equal(get(db, `SELECT status FROM items WHERE id='SLA-AUTONOMY-CARD-FAILED'`).status, 'open');
+  const c = await sla.calibrate({ l3 });
+  assert.equal(c.ok, false); assert.equal(c.refused, 'history');
+  // the card succeeds on a later tick: the period keeps its one row and the card is recorded once
+  const r = await sla.step({}, { l3 });
+  assert.ok(r.card.ok); assert.equal(r.objective.reused, true);
+  assert.equal(get(db, `SELECT COUNT(*) AS n FROM sla_objective`).n, 1);
+  // the next period stores its own row
+  t.v += 31 * D; await sla.step({}, { l3 });
+  assert.equal(get(db, `SELECT COUNT(*) AS n FROM sla_objective`).n, 2);
+});
+
+test('US-13-R19 and US-13-R27: the card failure items carry a closing probe that the tick reads; it passes once the work is recorded and fails again when the failure recurs', async () => {
+  const { db, t, sla, l3 } = mk();
+  seedMonth(db); item(db, 'A');
+  const probeOf = id => get(db, `SELECT * FROM items WHERE id=?`, id);
+  const refusing = { ...l3, recordCard: async () => ({ ok: false, errors: ['store refused the write'] }) };
+  await sla.step({}, { l3: refusing });
+  const failed = probeOf('SLA-AUTONOMY-CARD-FAILED');
+  assert.match(failed.closing_probe, /^SELECT /, 'a probe the tick can read, not manual');
+  assert.equal((await evalProbe(db, {}, failed)).ok, false, 'no card is recorded yet');
+  t.v += H; await sla.step({}, { l3 });
+  assert.equal((await evalProbe(db, {}, probeOf('SLA-AUTONOMY-CARD-FAILED'))).ok, true, 'the card of the period is recorded');
+  db.raw.exec(`UPDATE items SET status='done', disposition='closed by its probe' WHERE id='SLA-AUTONOMY-CARD-FAILED'`);
+  // the next month the writer fails again: the item reopens and its probe asks for the new month's card, not the old one
+  t.v += 31 * D; await sla.step({}, { l3: refusing });
+  const again = probeOf('SLA-AUTONOMY-CARD-FAILED');
+  assert.equal(again.status, 'open');
+  assert.equal((await evalProbe(db, {}, again)).ok, false, 'the old card does not close the new failure');
+  // a throwing card audit: its item closes when an audit is stored after the failure
+  const b = mk(); seedMonth(b.db); item(b.db, 'A');
+  b.db.raw.exec('ALTER TABLE sla_card_audits RENAME TO sla_card_audits_away');
+  await b.sla.step({}, { l3: b.l3 });
+  b.db.raw.exec('ALTER TABLE sla_card_audits_away RENAME TO sla_card_audits');
+  const audit = get(b.db, `SELECT * FROM items WHERE id='SLA-CARD-AUDIT-FAILED'`);
+  assert.match(audit.closing_probe, /^SELECT .*sla_card_audits/);
+  assert.equal((await evalProbe(b.db, {}, audit)).ok, false);
+  await b.sla.auditCard({ name: 'autonomy' });
+  assert.equal((await evalProbe(b.db, {}, audit)).ok, true);
+  // a throwing systems card: its item closes when a systems card is recorded after the failure
+  const c = mk(); seedMonth(c.db); item(c.db, 'A');
+  const sysFails = createSla({ db: c.db, now: () => c.t.v, config: {} });
+  const realRecord = c.l3.recordCard;
+  const noSystems = { ...c.l3, recordCard: async a => { if (a.name === SYSTEMS) throw new Error('systems write failed'); return realRecord(a); } };
+  await sysFails.step({}, { l3: noSystems });
+  const sys = get(c.db, `SELECT * FROM items WHERE id='SLA-SYSTEMS-CARD-FAILED'`);
+  assert.match(sys.closing_probe, /^SELECT .*l3_cards/);
+  assert.equal((await evalProbe(c.db, {}, sys)).ok, false);
+  c.t.v += H; await sysFails.recomputeSystemsCard({ l3: c.l3 });
+  assert.equal((await evalProbe(c.db, {}, sys)).ok, true);
 });

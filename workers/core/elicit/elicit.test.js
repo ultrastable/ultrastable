@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import { makeDb } from '../_shared/testdb.js';
-import { createElicit, validateCard } from './index.js';
+import { createElicit, validateCard, elicitMetrics, DEFAULT_HOLDS_METRIC } from './index.js';
 
 const MIG = fileURLToPath(new URL('./migrations/', import.meta.url));
 const T0 = Date.UTC(2026, 10, 12, 12, 0, 0);
@@ -90,7 +90,7 @@ test('R10: an unanswered Ask expires to its default after 72 hours and is logged
   assert.equal(db.raw.prepare('SELECT reason FROM elicit_assumptions').get().reason, 'timeout');
 });
 
-test('US-16-R07, US-16-R09 and US-16-R19: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary', async () => {
+test('US-16-R07, US-16-R09 and US-16-R28: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary', async () => {
   const { db, e } = mk(); await e.registerNeeds(P, [need('colour')]); await e.nextAsks(P);
   const more = await e.answer(P, 'colour', { choice: 'Tell me more' });
   assert.match(more.explain, /changes the colour/); assert.equal(more.card.need_id, 'colour');
@@ -191,7 +191,7 @@ test('US-16-R03: the glossary maps system terms to the person\'s own words in ev
   assert.deepEqual((await e.glossary()).map(g => [g.term, g.person_term]), [['backend', 'engine room'], ['latency', null]]);
 });
 
-test('US-16-R03 and US-16-R20: reviewCards reports a stored card whose jargon is neither mapped nor defined', async () => {
+test('US-16-R03 and US-16-R29: reviewCards reports a stored card whose jargon is neither mapped nor defined', async () => {
   const { db, e } = mk({ jargon: ['webhook'] });
   await e.registerNeeds(P, [need('notify')]);
   db.raw.exec(`UPDATE elicit_needs SET question='Which webhook should fire?' WHERE id='notify'`);
@@ -242,18 +242,21 @@ test('US-16-R08: options are neutral: they keep the catalog order, none is pre-s
   assert.ok(!('selected' in card) && !('preselected' in card) && !('recommended' in card));
 });
 
-test('section 5.3: a default in effect is logged as a prediction and scored when the person answers, corrects or the review time passes', async () => {
+test('US-16-R19 (section 5.3): a default in effect is logged as a prediction the kernel can read and scored when the person answers, corrects or the review time passes', async () => {
   const { e, db, t } = mk({ default_review_hours: 48 });
   await e.registerNeeds(P, [need('a', { p_wrong: 0.2 }), need('b', { p_wrong: 0.8 }), need('c', { p_wrong: 0.5 })]);
   await e.nextAsks(P);
   for (const id of ['a', 'b', 'c']) assert.equal((await e.answer(P, id, { choice: 'Not sure' })).state, 'defaulted');
   const preds = (await db.prepare(`SELECT id, metric, op, target, due_at, verdict FROM predictions ORDER BY id`).all()).results;
   assert.deepEqual(preds.map(p => p.id), ['ELICIT-demo-a', 'ELICIT-demo-b', 'ELICIT-demo-c']);
-  assert.equal(preds[0].metric, 'elicit_default_holds:demo:a'); assert.equal(preds[0].verdict, null);
-  assert.equal(preds[0].due_at, new Date(T0 + 48 * 3600e3).toISOString());
+  assert.equal(preds[0].metric, DEFAULT_HOLDS_METRIC); assert.equal(preds[0].verdict, null);
+  assert.equal(preds[0].due_at, new Date(T0 + 48 * 3600e3).toISOString().replace('T', ' ').slice(0, 19), 'due_at is in the format the kernel scorer compares with');
   assert.deepEqual(await e.voiCalibration(P), { scored: 0, pending: 3, wrong: 0, wrong_rate: null, mean_p_wrong: null, brier: null });
   await e.answer(P, 'a', { choice: 'first' });            // the person picks the default: the prediction held
   await e.correct(P, 'b', 'second');                      // a read-back correction away from the default: it did not
+  const read = id => elicitMetrics[DEFAULT_HOLDS_METRIC](db, t.v, { id });
+  assert.deepEqual([await read('ELICIT-demo-a'), await read('ELICIT-demo-b'), await read('ELICIT-demo-c')], [1, 0, 1], 'the kernel reads 1 while the default stands or was chosen, 0 once it was changed');
+  assert.ok(Number.isNaN(await read('ELICIT-demo-zz')), 'a prediction whose need is gone is unmeasured, never a hit');
   assert.equal(await e.scoreDefaults(P), 0, 'c is not due yet');
   t.v = T0 + 49 * 3600e3;
   assert.equal(await e.scoreDefaults(P), 1);
@@ -301,7 +304,7 @@ test('US-16-R06: a gate card closed while its need is still gated is reopened by
   assert.equal((await e.nextAsks(P)).reopened, 0);
 });
 
-test('US-16-R10 and US-16-R20: expireAll defaults every project\'s overdue Ask once and reviewAll reports a stored card with undefined jargon across projects', async () => {
+test('US-16-R10 and US-16-R29: expireAll defaults every project\'s overdue Ask once and reviewAll reports a stored card with undefined jargon across projects', async () => {
   const { db, t, e } = mk({ jargon: ['webhook'] });
   await e.registerNeeds('p1', [need('colour')]); await e.registerNeeds('p2', [need('colour')]); await e.nextAsks('p1'); await e.nextAsks('p2');
   db.raw.exec(`UPDATE elicit_needs SET question='Which webhook should fire?' WHERE project='p2'`);
@@ -312,4 +315,16 @@ test('US-16-R10 and US-16-R20: expireAll defaults every project\'s overdue Ask o
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM elicit_assumptions WHERE reason='timeout'").get().n, 2);
   assert.deepEqual(await e.reviewAll(), [], 'a defaulted need is no longer a card that would be shown');
   assert.equal((await e.readiness('p1')).threshold, 0.7);
+});
+
+test('US-16-R19: a default prediction written in the older shape (metric with the need in its name, ISO due_at) is rewritten once so the kernel can read it', async () => {
+  const { e, db } = mk();
+  await e.registerNeeds(P, [need('a')]); await e.nextAsks(P); await e.answer(P, 'a', { choice: 'Not sure' });
+  db.raw.prepare(`UPDATE predictions SET metric='elicit_default_holds:demo:a', due_at='2026-12-12T12:00:00.000Z' WHERE id='ELICIT-demo-a'`).run();
+  db.raw.prepare(`INSERT INTO predictions (id, metric, op, target, due_at) VALUES ('ELICIT-OTHER-x', 'items_done', '>=', 1, '2026-12-12T12:00:00.000Z')`).run();
+  assert.equal(await e.repairDefaultPredictions(), 1);
+  const r = db.raw.prepare(`SELECT metric, due_at FROM predictions WHERE id='ELICIT-demo-a'`).get();
+  assert.deepEqual({ ...r }, { metric: DEFAULT_HOLDS_METRIC, due_at: '2026-12-12 12:00:00' });
+  assert.equal(db.raw.prepare(`SELECT metric FROM predictions WHERE id='ELICIT-OTHER-x'`).get().metric, 'items_done', 'a prediction with another metric is left alone');
+  assert.equal(await e.repairDefaultPredictions(), 0, 'idempotent');
 });

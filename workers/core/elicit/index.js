@@ -18,6 +18,21 @@ export const validTimezone = tz => { try { new Intl.DateTimeFormat('en', { timeZ
 const SATISFIED = ['answered', 'defaulted', 'derived'];
 const words = s => String(s || '').trim().split(/\s+/).filter(Boolean);
 const iso = ms => new Date(ms).toISOString();
+/** The kernel's time format (core/src/tick.js compares the predictions table's due_at with it as text), so a default prediction falls due on its own hour. */
+const kernelTime = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
+
+/** US-16-R19: the metric a default-holds prediction names in the kernel's predictions table. The organization passes `elicitMetrics` to the tick (the
+ *  `metrics` option of runTick), so the kernel scorer reads the need instead of grading an unknown metric as a miss. */
+export const DEFAULT_HOLDS_METRIC = 'elicit_default_holds';
+/** Read a default-holds prediction row (section 5.3): 1 when its need still stands on the default value (or the person later chose that value), 0 when it ended
+ *  on another value. NaN when the need is gone, has no default, or is not settled: that is unmeasured, and the kernel records the miss with that reason. */
+export async function defaultHolds(db, _nowMs, row) {
+  const n = await db.prepare(`SELECT state, value, default_value FROM elicit_needs WHERE 'ELICIT-' || project || '-' || id = ?`).bind(String(row?.id ?? '')).first();
+  if (!n || n.default_value == null || !SATISFIED.includes(n.state)) return NaN;
+  return String(n.value) === String(n.default_value) ? 1 : 0;
+}
+/** The domain metrics of this module for the kernel scorer: { name: async (db, nowMs, predictionRow) => number }. */
+export const elicitMetrics = Object.freeze({ [DEFAULT_HOLDS_METRIC]: defaultHolds });
 /** A model family as a comparable name: trimmed and lower-cased; '' when none is given. */
 const familyOf = f => String(f ?? '').trim().toLowerCase();
 const priorityOf = n => Number(n.p_wrong) * Number(n.rework) * Number(n.dependents);
@@ -120,7 +135,7 @@ export function createElicit({ db, now = () => Date.now(), config = {}, predict 
     await settle(n.project, n.id, n.default_value);
   }
 
-  /** US-16-R23: the value of information of an Ask is a prediction. When a need is first asked, its outcome row is opened and the estimate is logged as a
+  /** US-16-R32: the value of information of an Ask is a prediction. When a need is first asked, its outcome row is opened and the estimate is logged as a
    *  decision with a parsable prediction (`elicit_default_held.<row> >= 1 within <expiry + 24> h`, confidence 1 - p_wrong); when the need leaves the asked
    *  state the row is settled, and the scorer in core/predict grades the prediction from it. */
   const learnedOf = async id => {
@@ -168,12 +183,13 @@ export function createElicit({ db, now = () => Date.now(), config = {}, predict 
     }
   }
 
-  // Section 5.3: a default in effect is a prediction that the default holds. It is written to the prediction table when the default
+  // Section 5.3 and US-16-R19: a default in effect is a prediction that the default holds. It is written to the prediction table when the default
   // is taken and scored when the person answers or corrects (hit when they choose the default value, miss otherwise) or when its
-  // review time passes with the default still standing. p_wrong on the need is the estimate the score is compared with.
+  // review time passes with the default still standing: then the kernel scorer reads DEFAULT_HOLDS_METRIC (`elicitMetrics`), and `scoreDefaults` is the
+  // same reading for a host that runs no kernel tick. p_wrong on the need is the estimate the score is compared with. due_at is in the kernel's format.
   const predId = n => `ELICIT-${n.project}-${n.id}`;
   const predictDefault = n => run(`INSERT OR IGNORE INTO predictions (id, item_id, metric, op, target, due_at) VALUES (?,?,?,?,?,?)`,
-    predId(n), null, `elicit_default_holds:${n.project}:${n.id}`, '=', 1, iso(clock() + cfg.default_review_hours * 3600e3));
+    predId(n), null, DEFAULT_HOLDS_METRIC, '=', 1, kernelTime(clock() + cfg.default_review_hours * 3600e3));
   const scoreDefault = (n, value) => run(`UPDATE predictions SET observed=?, verdict=? WHERE id=? AND verdict IS NULL`,
     String(value) === String(n.default_value) ? 1 : 0, String(value) === String(n.default_value) ? 'hit' : 'miss', predId(n));
 
@@ -315,14 +331,17 @@ export function createElicit({ db, now = () => Date.now(), config = {}, predict 
       return n;
     },
 
-    /** US-16-R01 and R21: try to settle each open need before asking, on every surface in order (idea, existing records, tool probes, cited research),
+    /** US-16-R01 and R30: try to settle each open need before asking, on every surface in order (idea, existing records, tool probes, cited research),
      *  and record every attempt. Ports are data: records[need_id] and probes[need_id] are async () => value | null; research is async (need) => { value, sources: [{ url, title }] } | null.
      *  A research value with no source is never applied (a system-unknown is researched with a source or escalated, never guessed silently). A port that throws is
-     *  logged as an error and the next surface is still tried. A value a later contradiction ruled out is not applied again. */
-    async derive(project, { records = {}, probes = {}, research = null } = {}) {
+     *  logged as an error and the next surface is still tried. A value a later contradiction ruled out is not applied again. With `every_hours` (the tick's cadence) a need
+     *  whose last record, probe or research attempt is newer than that is skipped (counted in `skipped`), so a pass on every tick does not log a row per surface each time. */
+    async derive(project, { records = {}, probes = {}, research = null, every_hours = null } = {}) {
       if (!(await hasDerivations())) throw new Error('derive needs the tables of outcomes/migrations');
-      const out = { derived: [], attempts: 0 };
+      const out = { derived: [], attempts: 0, skipped: 0 };
+      const since = Number.isFinite(Number(every_hours)) && every_hours !== null && Number(every_hours) > 0 ? iso(clock() - Number(every_hours) * 3600e3) : null;
       for (const n of await all(`SELECT * FROM elicit_needs WHERE project=? AND state='open' ORDER BY priority DESC, id`, project)) {
+        if (since && (await one(`SELECT MAX(at) AS at FROM elicit_derivations WHERE project=? AND need_id=? AND surface IN ('record','probe','research')`, project, n.id))?.at > since) { out.skipped++; continue; }
         const banned = new Set((await all(`SELECT value FROM elicit_assumptions WHERE project=? AND need_id=? AND reason='contradicted'`, project, n.id)).map(r => r.value));
         const options = JSON.parse(n.options);
         const valid = v => v != null && String(v).trim() !== '' && (n.free_text || options.includes(String(v)));
@@ -356,7 +375,7 @@ export function createElicit({ db, now = () => Date.now(), config = {}, predict 
     assumptionLog: project => draftAssumptionLog(db, project),
     lintDraft: (project, text) => lintDraft(db, project, text),
 
-    /** US-16-R22 (section 4: Answered -> Open and Derived -> Open): later evidence contradicts a settled need. It returns to open (asked again, or gated again), the previous
+    /** US-16-R31 (section 4: Answered -> Open and Derived -> Open): later evidence contradicts a settled need. It returns to open (asked again, or gated again), the previous
      *  value stays in the assumption log with the evidence, readiness drops and the artifact it feeds is queued to be redone. The same evidence twice changes nothing more. */
     async contradict(project, id, { evidence, source = 'evidence' } = {}) {
       const n = await needRow(project, id);
@@ -413,14 +432,23 @@ export function createElicit({ db, now = () => Date.now(), config = {}, predict 
       return { ok: true, state: 'answered', value };
     },
 
-    /** Section 5.3: score the defaults whose review time has passed with the default still in effect (the prediction held). */
+    /** Section 5.3: score the defaults whose review time has passed with the default still in effect (the prediction held). A due_at written in the older
+     *  ISO form is read the same way. */
     async scoreDefaults(project) {
       let n = 0;
       for (const r of await all(`SELECT * FROM elicit_needs WHERE project=? AND state='defaulted'`, project)) {
-        const res = await run(`UPDATE predictions SET observed=1, verdict='hit' WHERE id=? AND verdict IS NULL AND due_at<=?`, predId(r), iso(clock()));
+        const res = await run(`UPDATE predictions SET observed=1, verdict='hit' WHERE id=? AND verdict IS NULL AND replace(substr(due_at,1,19),'T',' ')<=?`, predId(r), kernelTime(clock()));
         n += res?.meta?.changes || 0;
       }
       return n;
+    },
+
+    /** US-16-R19: an unscored default prediction written before the kernel could read it (metric `elicit_default_holds:<project>:<need>`, due_at in ISO form)
+     *  is rewritten to the metric and the time format the kernel scorer reads. Idempotent; returns the number of rows changed. */
+    async repairDefaultPredictions() {
+      const r = await run(`UPDATE predictions SET metric=?, due_at=replace(substr(due_at,1,19),'T',' ') WHERE id LIKE 'ELICIT-%' AND verdict IS NULL
+        AND (substr(metric,1,21)='elicit_default_holds:' OR (metric=? AND instr(due_at,'T')>0))`, DEFAULT_HOLDS_METRIC, DEFAULT_HOLDS_METRIC);
+      return r?.meta?.changes || 0;
     },
 
     /** Section 5.3: how good were the value-of-information estimates? Over the scored defaults: the share that turned out wrong against the

@@ -17,7 +17,7 @@ const need = (id, extra = {}) => ({ id, label: `Thing ${id}`, artifact: 'charter
 const mk = (config = {}, t = { v: T0 }) => { const db = makeDb(MIGS); return { db, t, e: createElicit({ db, now: () => t.v, config: { defer_below: 0, ...config } }) }; };
 const attempts = (db, id) => db.raw.prepare('SELECT surface, result FROM elicit_derivations WHERE need_id=? ORDER BY id').all(id).map(r => `${r.surface}:${r.result}`);
 
-test('T16-1, US-16-R01 and US-16-R21: a need answerable from a record or a tool probe is derived and never asked, with an attempts row per surface', async () => {
+test('T16-1, US-16-R01 and US-16-R30: a need answerable from a record or a tool probe is derived and never asked, with an attempts row per surface', async () => {
   const { db, e } = mk();
   await e.registerNeeds(P, [need('host'), need('repo'), need('colour', { derive_from: 'blue' })], { idea: 'a bakery page' });
   const out = await e.derive(P, { records: { host: async () => 'second' }, probes: { repo: async () => 'third' } });
@@ -28,7 +28,7 @@ test('T16-1, US-16-R01 and US-16-R21: a need answerable from a record or a tool 
   assert.equal((await e.readBack(P)).statements.find(s => s.need_id === 'host').provenance, 'derived');
 });
 
-test('US-16-R21: research with a source derives with provenance researched and the URL; research without a source is logged no_source and the need stays open', async () => {
+test('US-16-R30: research with a source derives with provenance researched and the URL; research without a source is logged no_source and the need stays open', async () => {
   const { db, e } = mk();
   await e.registerNeeds(P, [need('a'), need('b')]);
   const research = async n => (n.id === 'a' ? { value: 'second', sources: [{ url: 'https://example.org/guide', title: 'Guide' }] } : { value: 'third', sources: [] });
@@ -40,7 +40,7 @@ test('US-16-R21: research with a source derives with provenance researched and t
   assert.equal((await e.derive(P, { research: async () => ({ value: 'not an option', sources: [{ url: 'https://x.example/' }] }) })).derived.length, 0, 'a value that is not an option is never applied');
 });
 
-test('US-16-R21: a failing port is logged as an error and the next surface is still tried', async () => {
+test('US-16-R30: a failing port is logged as an error and the next surface is still tried', async () => {
   const { db, e } = mk();
   await e.registerNeeds(P, [need('a')]);
   const out = await e.derive(P, { records: { a: async () => { throw new Error('store is down'); } }, probes: { a: async () => 'second' } });
@@ -49,7 +49,7 @@ test('US-16-R21: a failing port is logged as an error and the next surface is st
   assert.match(db.raw.prepare("SELECT detail FROM elicit_derivations WHERE result='error'").get().detail, /store is down/);
 });
 
-test('US-16-R21: with require_exhaustion a need is not asked or gated until every configured surface has an attempt row', async () => {
+test('US-16-R30: with require_exhaustion a need is not asked or gated until every configured surface has an attempt row', async () => {
   const { e } = mk({ require_exhaustion: true });
   await e.registerNeeds(P, [need('a'), need('risky', { reversible: false })]);
   const before = await e.nextAsks(P);
@@ -62,7 +62,7 @@ test('US-16-R21: with require_exhaustion a need is not asked or gated until ever
   assert.equal((await part.e.nextAsks(P)).length, 1, 'only the configured surfaces are required');
 });
 
-test('T16-11 and US-16-R22: a stated answer contradicted by evidence returns to open, keeps its history, lowers readiness and queues a re-run', async () => {
+test('T16-11 and US-16-R31: a stated answer contradicted by evidence returns to open, keeps its history, lowers readiness and queues a re-run', async () => {
   const { db, e } = mk(); await e.registerNeeds(P, [need('a'), need('b')]); await e.nextAsks(P);
   await e.answer(P, 'a', { choice: 'second', text: 'the second' }); await e.answer(P, 'b', { choice: 'first' });
   assert.equal((await e.readiness(P)).score, 1);
@@ -157,7 +157,7 @@ test('US-16-R13, US-16-R25 and A-INI-4: after a correction the redrafted artifac
   assert.equal((await e.draft(P, 'A-INI-4')).artifact, 'A-INI-4');
 });
 
-test('US-16-R21: a value that evidence contradicted is not derived again while the need is open, but another value is', async () => {
+test('US-16-R30: a value that evidence contradicted is not derived again while the need is open, but another value is', async () => {
   const { db, e } = mk(); await e.registerNeeds(P, [need('a')]);
   await e.derive(P, { records: { a: async () => 'third' } });
   await e.contradict(P, 'a', { evidence: 'the record was stale' }); // back to open, not yet asked

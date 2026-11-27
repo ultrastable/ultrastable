@@ -104,7 +104,7 @@ export function createDeploy({ db, deployer, fetch: fetchPort, now = () => Date.
     const gate = await first(`SELECT id FROM deploy_records WHERE kind='gate' AND unit=? AND status='open'`, unit);
     if (gate) return refuse(base, 'loop_breaker_open', { gate: gate.id });
     if (artifact.sha256 && artifact.sha256 !== base.sha) return refuse(base, 'artifact_digest_mismatch');
-    // US-06-R21: an action on a policy surface is authorized before it executes; an authorizer that fails, or answers anything
+    // US-06-R25: an action on a policy surface is authorized before it executes; an authorizer that fails, or answers anything
     // but allowed, refuses (unknown is not allowed). A refusal is a ledger row with its reason, and nothing is published.
     if (authorize) {
       let a;

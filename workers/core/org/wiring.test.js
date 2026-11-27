@@ -76,7 +76,7 @@ test('US-04-R09: a registered product is read through the first-party usage read
   assert.match(p.usage_label, /human requests/);
 });
 
-test('US-08-R19, R22: pull-request release and the daily retention are steps of the tick, and a merged pull request releases its claim', async () => {
+test('US-08-R31, R22: pull-request release and the daily retention are steps of the tick, and a merged pull request releases its claim', async () => {
   const none = boot();
   const r0 = await none.tick();
   assert.match(one(none.db, `SELECT report FROM tick_runs WHERE id = ?`, r0.tickId).report, /claims_pr_reap: skipped, no readPull port[\s\S]*claims pruned: /);
@@ -126,7 +126,7 @@ test('US-11-R01, US-03-R20, US-13-R21: /health carries the fleet contract, judge
   assert.deepEqual([s.ok, s.status, s.verdict], [false, 'degraded', 'stalled']);
 });
 
-test('US-22-R11, R12: the claims feed, the statement and the re-probe are served; the re-probe has the host ports and answers 429 inside its interval', async () => {
+test('US-22-R19, R20: the claims feed, the statement and the re-probe are served; the re-probe has the host ports and answers 429 inside its interval', async () => {
   const { db, org, clock, tick } = boot();
   await addClaims(db, [{ id: 'operation.items', text: 'As of {date}, {value} work items exist.', probe: 'sql:SELECT COUNT(*) AS value FROM items', expect: '>=0', max_age_hours: 24 }]);
   await tick();
@@ -235,4 +235,35 @@ test('US-14-R10, R17: a Vertex endpoint is offered when the configuration names 
   assert.equal((await narrow.org.scheduledTick()).ran, true);
   const dflt = boot(); stuck(dflt.db);
   assert.equal((await dflt.org.scheduledTick()).overlap, true, 'with the default bound (two slots) the earlier tick is still running');
+});
+
+test('US-21-R29, R28: a class B pack hosted by core/org is bounded by the shipped policy (it stays at assisted), and its channel fetch is the org fetch limited to the hosts it declares', async () => {
+  const { loadManifest } = await import('../packs/index.js');
+  const EXAMPLE_DIR = new URL('../packs/example/', import.meta.url).pathname;
+  const seen = [];
+  const recordingFetch = async (u) => { seen.push(String(u)); return new Response('{}', { status: 200 }); };
+  const { db, org, tick } = boot({ config: baseConfig({ packs: { step_timeout_ms: 500, packs: { example: { recipients: ['person@example.com'] } } } }), extra: { fetch: recordingFetch } });
+  const base = loadManifest(EXAMPLE_DIR);
+  assert.equal(base.class, 'B');
+  assert.equal((await org.packs.register({ ...base, outbound: { ...base.outbound, hosts: ['api.example.com'] } }, { dir: EXAMPLE_DIR })).ok, true);
+  assert.equal(await org.packs.trust.policyCeiling('example'), 'assisted', 'the policy surface outreach (max_permission propose) bounds the pack');
+  const refreshed = await org.packs.trust.refresh();
+  assert.equal(refreshed.ok, true, 'the policy reached the packs, so the trust refresh is not refused with policy_required');
+  assert.deepEqual((await org.packs.trust.apply('NO-SUCH-ITEM', 'reviewer')).reason, 'not_a_pack_transition');
+  await tick();
+  const f = await org.packs.egressFetch('example');
+  assert.equal((await f('https://api.example.com/v1/x')).status, 200);
+  await assert.rejects(f('https://evil.example/x'), /egress_refused:evil\.example/);
+  assert.deepEqual(seen, ['https://api.example.com/v1/x'], 'the declared host went through the org fetch; the undeclared one never left');
+  await new Promise(r => setImmediate(r));
+  assert.equal(one(db, `SELECT COUNT(*) AS n FROM packs_runs WHERE pack_id = 'example' AND outcome = 'egress_refused'`).n, 1);
+});
+
+test('US-21-R29: a deployment that gives the packs their own policy keeps it over the whole config.policy', async () => {
+  const { loadManifest } = await import('../packs/index.js');
+  const EXAMPLE_DIR = new URL('../packs/example/', import.meta.url).pathname;
+  const strict = JSON.parse(JSON.stringify(policy)); strict.surfaces.outreach.max_permission = 'none';
+  const { org } = boot({ config: baseConfig({ packs: { step_timeout_ms: 500, policy: strict } }) });
+  assert.equal((await org.packs.register(loadManifest(EXAMPLE_DIR), { dir: EXAMPLE_DIR })).ok, true);
+  assert.equal(await org.packs.trust.policyCeiling('example'), 'observed');
 });

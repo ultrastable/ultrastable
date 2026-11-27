@@ -54,7 +54,7 @@ export const MODULES = [
   { id: 'ownerlink', dir: 'core/ownerlink/migrations' },
   { id: 'audit', dir: 'core/audit/migrations' },
   // The caps switches and drills (US-SPEC-09), and the value-of-information outcomes, derivations, need feeds and audit runs of the
-  // elicitation register (US-SPEC-16 5.3, R21, R23, R24): code that is wired in core/org reads their tables. Appended last, so earlier migration numbers never shift.
+  // elicitation register (US-SPEC-16 5.3, R24, R30, R32): code that is wired in core/org reads their tables. Appended last, so earlier migration numbers never shift.
   { id: 'router_caps', dir: 'core/router/caps/migrations' },
   { id: 'elicit_outcomes', dir: 'core/elicit/outcomes/migrations' },
 ];

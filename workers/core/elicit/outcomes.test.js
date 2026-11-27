@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// US-SPEC-16 5.3 and R01: value-of-information estimates are logged as predictions, scored, and learned from outcomes (US-16-R23).
+// US-SPEC-16 5.3 and R01: value-of-information estimates are logged as predictions, scored, and learned from outcomes (US-16-R32).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
@@ -15,7 +15,7 @@ const need = (id, extra = {}) => ({ id, label: `Thing ${id}`, artifact: 'charter
   options: ['first', 'second', 'third'], default: 'first', default_consequence: 'We rebuild one page; change it any time.', p_wrong: 0.3, ...extra });
 const mk = (config = {}, withPredict = true) => { const db = makeDb(MIGS); const t = { v: T0 }; return { db, t, e: createElicit({ db, now: () => t.v, config: { max_open: 9, daily_cap: 99, ...config }, predict: withPredict ? predict : null }) }; };
 
-test('T16-10 and US-16-R23: asking a need logs a decision and a parsable prediction with confidence 1 - p_wrong and registers its metric', async () => {
+test('T16-10 and US-16-R32: asking a need logs a decision and a parsable prediction with confidence 1 - p_wrong and registers its metric', async () => {
   const { db, e } = mk(); await e.registerNeeds('demo', [need('colour')]); await e.nextAsks('demo'); await e.nextAsks('demo');
   const d = db.raw.prepare("SELECT * FROM predict_decisions WHERE id='ELICIT-VOI-demo-colour'").get();
   assert.equal(d.parsable, 1); assert.equal(d.decision_type, 'elicit_voi'); assert.ok(Math.abs(d.confidence - 0.7) < 1e-9); assert.match(d.revert_path, /read-back/);

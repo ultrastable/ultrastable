@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Tests for triggers at dispatch and the held-item release (US-SPEC-08 R03, R05, R16, R17, T04).
+// Tests for triggers at dispatch and the held-item release (US-SPEC-08 R03, R05, R27, R28, R29, T04).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
@@ -23,7 +23,7 @@ const card = (ctx, id, probe = 'item_done:never', st = 'open') =>
   ctx.db.prepare(`INSERT INTO gate_cards (id, what, why_gated, default_in_effect, closing_probe, status) VALUES (?,?,?,?,?,?)`).bind(id, `do ${id}`, 'only the principal can', 'nothing changes', probe, st).run();
 const tickCtx = (clock, extra = {}) => ({ now: clock.t, nowIso: new Date(clock.t).toISOString().replace('T', ' ').slice(0, 19), tickId: 1, notes: [], env: {}, config: { max_wip_per_role: 3, claim_ttl_minutes: 120 }, ...extra });
 
-test('US-08-R16: a trigger is one item, a comma list of items, or gate:<card>', () => {
+test('US-08-R28: a trigger is one item, a comma list of items, or gate:<card>', () => {
   assert.deepEqual(parseTriggers('A'), { items: ['A'], gates: [] });
   assert.deepEqual(parseTriggers(' A, B ,gate:G1,A'), { items: ['A', 'B'], gates: ['G1'] });
   assert.deepEqual(parseTriggers(null), { items: [], gates: [] });
@@ -47,7 +47,7 @@ test('US-08-R03: a ready item whose trigger item is reopened is demoted to open 
   assert.equal((await one(ctx, `SELECT 1 AS x FROM outcomes WHERE item_id='C' AND action_class='trigger_guard'`)).x, 1);
 });
 
-test('US-08-R16: a trigger naming two items becomes ready only when both are done with a disposition', async () => {
+test('US-08-R28: a trigger naming two items becomes ready only when both are done with a disposition', async () => {
   const { ctx } = mk();
   await item(ctx, 'A', 'done', { disposition: 'ok' }); await item(ctx, 'B', 'ready');
   await item(ctx, 'C', 'open', { trigger: 'A,B' });
@@ -60,7 +60,7 @@ test('US-08-R16: a trigger naming two items becomes ready only when both are don
   assert.equal(await status(ctx, 'C'), 'ready');
 });
 
-test('US-08-R16: a trigger gate:<card> waits for the card to close, then the item becomes ready', async () => {
+test('US-08-R28: a trigger gate:<card> waits for the card to close, then the item becomes ready', async () => {
   const { ctx } = mk();
   await card(ctx, 'G1');
   await item(ctx, 'C', 'open', { trigger: 'gate:G1' });
@@ -96,7 +96,32 @@ test('US-08-R03: a single-id trigger behaves as before: not done refuses, done a
   assert.equal((await acquire(ctx, { item_id: 'C', holder: 'x' })).acquired, true);
 });
 
-test('US-08-R17: an item held by gate card G returns to ready with its blocker cleared when G closes', async () => {
+test('US-08-R03: a dispatched item whose list or gate trigger is not done loses its claim and returns to open; a claim granted by acquire stays with its holder', async () => {
+  const { ctx } = mk();
+  await item(ctx, 'A', 'open'); await item(ctx, 'B', 'done', { disposition: 'merged' });
+  await item(ctx, 'L', 'claimed', { trigger: 'A,B' }); await item(ctx, 'G', 'claimed', { trigger: 'gate:card-1' });
+  // a dispatcher that does not read list or gate triggers (the seed's pickForRole, or a host's) has claimed both in the tick's claims table
+  await ctx.db.prepare(`INSERT INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES ('L','staff-1','2026-03-02 12:00:00','2026-03-02 12:00:00'), ('G','staff-1','2026-03-02 12:00:00','2026-03-02 12:00:00')`).run();
+  const claimed = async () => (await ctx.db.prepare(`SELECT item_id FROM claims ORDER BY item_id`).all()).results.map(r => r.item_id);
+  assert.deepEqual(await claimed(), ['G', 'L']);
+  // M was claimed through acquire while its trigger was done; the trigger is reopened afterwards
+  await item(ctx, 'R', 'done', { disposition: 'ok' }); await item(ctx, 'M', 'ready', { trigger: 'R' });
+  assert.equal((await acquire(ctx, { item_id: 'M', holder: 'agent' })).acquired, true);
+  await ctx.db.prepare(`UPDATE items SET status='open', disposition=NULL WHERE id='R'`).run();
+  const s = await gate.step(ctx);
+  assert.deepEqual(s.triggers_released, ['G', 'L']);
+  assert.deepEqual([await status(ctx, 'G'), await status(ctx, 'L'), await status(ctx, 'M')], ['open', 'open', 'claimed']);
+  assert.deepEqual(await claimed(), ['M'], 'only the claim acquire granted is kept');
+  const why = (await one(ctx, `SELECT evidence FROM outcomes WHERE item_id='L' AND action_class='trigger_guard'`)).evidence;
+  assert.match(why, /^claim of staff-1 released, back to open: trigger not done \(A: status open\)$/);
+  assert.equal((await one(ctx, `SELECT COUNT(*) AS n FROM claims_events WHERE event='trigger-not-done'`)).n, 2);
+  // once the trigger is done the item is promoted again and can be dispatched
+  await ctx.db.prepare(`UPDATE items SET status='done', disposition='ok' WHERE id='A'`).run();
+  assert.deepEqual((await gate.step(ctx)).triggers_promoted, ['L']);
+  assert.equal((await gate.step(ctx)).triggers_released, undefined, 'a step with nothing to release reports nothing');
+});
+
+test('US-08-R29: an item held by gate card G returns to ready with its blocker cleared when G closes', async () => {
   const { ctx } = mk();
   await item(ctx, 'X', 'ready'); await item(ctx, 'ship', 'ready');
   const held = await gate.routeToPrincipal(ctx, { item_id: 'ship', what: 'Sign the filing', why_gated: 'legal signature', default_in_effect: 'the filing stays a draft', closing_probe: 'item_done:X', identity_bound_line: 'A legal signature of the owner.' });
@@ -114,7 +139,7 @@ test('US-08-R17: an item held by gate card G returns to ready with its blocker c
   assert.equal((await gate.releaseHeld(ctx)).released.length, 0);          // idempotent
 });
 
-test('US-08-R17: an item blocked with another blocker text is never released by the step', async () => {
+test('US-08-R29: an item blocked with another blocker text is never released by the step', async () => {
   const { ctx } = mk();
   await card(ctx, 'G2', 'manual', 'closed');
   await item(ctx, 'P', 'blocked');
@@ -138,7 +163,7 @@ test('US-08-R05: a gate card closes itself when its closing probe passes (env: a
   assert.equal(tc.openGates, 1);
 });
 
-test('US-08-R16: the trigger step reads in a number of statements that does not grow with the number of triggered items', async () => {
+test('US-08-R28: the trigger step reads in a number of statements that does not grow with the number of triggered items', async () => {
   const { ctx } = mk();
   await item(ctx, 'ROOT', 'done', { disposition: 'ok' });
   for (let i = 0; i < 150; i++) await item(ctx, `I${i}`, 'open', { trigger: i % 3 === 0 ? 'ROOT' : i % 3 === 1 ? 'ROOT,NOPE' : 'gate:NOGATE' });
@@ -151,7 +176,7 @@ test('US-08-R16: the trigger step reads in a number of statements that does not 
   assert.deepEqual([...states.values()].map(s => s.done), [true, false, false]);
 });
 
-test('US-08-R16: the trigger scan pages past trigger_scan_max, so old items waiting on a trigger do not starve a newer item that is ready to promote', async () => {
+test('US-08-R27: the trigger scan pages past trigger_scan_max, so old items waiting on a trigger do not starve a newer item that is ready to promote', async () => {
   const { ctx } = mk();
   ctx.config = { ...(ctx.config || {}), trigger_scan_max: 2 };
   await item(ctx, 'NEVER', 'open');
@@ -165,7 +190,7 @@ test('US-08-R16: the trigger scan pages past trigger_scan_max, so old items wait
   assert.equal(r.scanned, 3);
 });
 
-test('US-08-R16: a trigger scan cut by the page budget is reported (truncated, scanned) and written to claims_events, never silent', async () => {
+test('US-08-R27: a trigger scan cut by the page budget is reported (truncated, scanned) and written to claims_events, never silent', async () => {
   const { ctx } = mk();
   ctx.config = { ...(ctx.config || {}), trigger_scan_max: 2, trigger_scan_pages: 1 };
   await item(ctx, 'NEVER', 'open');

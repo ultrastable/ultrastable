@@ -38,7 +38,7 @@ test('US-13-R11 and US-13-T04 and US-13-R19 in the wired org: a step 9 h into a 
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM gate_cards WHERE id LIKE 'stepq-change-review%'`).n, 1);
 });
 
-test('US-13-T07 and US-13-R19: the wired org computes the autonomy card and the stored objective on its first tick', async () => {
+test('US-13-T11 and US-13-R19: the wired org computes the autonomy card and the stored objective on its first tick', async () => {
   const { db, org, clock } = await wired();
   clock.t += 60e3; await org.tick();
   assert.ok(one(db, `SELECT name FROM sla_register WHERE name='autonomy_card'`), 'a dated register row for the card');
@@ -51,7 +51,7 @@ test('US-13-T07 and US-13-R19: the wired org computes the autonomy card and the 
   assert.deepEqual(Object.keys(terms).filter(k => !terms[k].measured).sort(), ['cost_overrun', 'drift_count', 'integration_gap']);
 });
 
-test('US-13-T07 and US-13-R19: through buildoutSteps with l3 supplied: the card, F and the step-budget sweep run on a tick (the behaviour the wiring must reach)', async () => {
+test('US-13-T11 and US-13-R19: through buildoutSteps with l3 supplied: the card, F and the step-budget sweep run on a tick (the behaviour the wiring must reach)', async () => {
   const db = makeDb([OUT_DIR, SLA_MIG]); const clock = { t: T0 };
   const l3 = createConsoleL3({ db, now: () => clock.t });
   db.raw.exec(`INSERT INTO sla_processes (process, done_check, steps, updated_at) VALUES ('change','merged','[{"step":"review","budget_hours":4,"paths":["a","b"]}]','${stamp(T0)}');

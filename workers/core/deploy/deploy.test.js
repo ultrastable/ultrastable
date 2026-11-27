@@ -80,7 +80,7 @@ test('a probe that passes only after a delay inside the window is kept', async (
   assert.equal((await d2.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' })).status, 'kept');
 });
 
-test('US-07-R19: a stale expectedVersion is refused, nothing is published and the refused ledger row carries the reason', async () => {
+test('US-07-R27: a stale expectedVersion is refused, nothing is published and the refused ledger row carries the reason', async () => {
   const { d, deployer } = setup();
   const r = await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v0', actor: 'a' });
   assert.equal(r.status, 'refused');
@@ -114,7 +114,7 @@ test('an expired lock is taken over; an injected lock port is used instead of th
   assert.deepEqual(calls, ['acq:api', 'rel:T']);
 });
 
-test('US-07-R19: loop breaker: N consecutive reverts trip a gate-style record and further deploys are refused until closed', async () => {
+test('US-07-R27: loop breaker: N consecutive reverts trip a gate-style record and further deploys are refused until closed', async () => {
   const { d, web } = setup({ config: { breakerThreshold: 3 } });
   web.healthy = false;
   let last;
@@ -128,7 +128,7 @@ test('US-07-R19: loop breaker: N consecutive reverts trip a gate-style record an
   assert.equal((await d.deploy({ unit: 'api', artifact: art('v5'), expectedVersion: 'v1' })).status, 'kept');
 });
 
-test('US-07-R19: a kept deploy resets the breaker count', async () => {
+test('US-07-R27: a kept deploy resets the breaker count', async () => {
   const { d, web } = setup({ config: { breakerThreshold: 2 } });
   web.healthy = false;
   assert.equal((await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' })).gate, undefined);
@@ -138,7 +138,7 @@ test('US-07-R19: a kept deploy resets the breaker count', async () => {
   assert.equal((await d.deploy({ unit: 'api', artifact: art('v4'), expectedVersion: 'v3' })).gate, undefined);
 });
 
-test('US-07-R20: an unverifiable rollback opens a gate record and reports failed', async () => {
+test('US-07-R28: an unverifiable rollback opens a gate record and reports failed', async () => {
   const { d, web } = setup({ deployer: fakeDeployer('v1', { brokenRollback: true }) });
   web.healthy = false;
   const r = await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' });
@@ -147,7 +147,7 @@ test('US-07-R20: an unverifiable rollback opens a gate record and reports failed
   assert.ok(r.gate);
 });
 
-test('US-07-R21: unlogged mutation: reconcile files a record when live differs from the ledger', async () => {
+test('US-07-R29: unlogged mutation: reconcile files a record when live differs from the ledger', async () => {
   const { d, deployer, db } = setup();
   assert.equal((await d.reconcile('api')).status, 'no_baseline');
   await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' });
@@ -163,7 +163,7 @@ test('US-07-R21: unlogged mutation: reconcile files a record when live differs f
   assert.equal((await d.reconcile('api')).status, 'consistent'); // baseline moved, no duplicate record
 });
 
-test('US-07-R21: after a revert, reconcile expects the prior version', async () => {
+test('US-07-R29: after a revert, reconcile expects the prior version', async () => {
   const { d, web } = setup();
   web.healthy = false;
   await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' });
@@ -190,7 +190,7 @@ test('artifact digest mismatch is refused (US-07-R13)', async () => {
   assert.deepEqual(deployer.calls, []);
 });
 
-test('US-07-R19, US-09-R02: the kill switch refuses deploys, via config row or injected port', async () => {
+test('US-07-R27, US-09-R02: the kill switch refuses deploys, via config row or injected port', async () => {
   const { d, db, deployer } = setup();
   db.raw.exec(`INSERT INTO deploy_config VALUES ('kill_switch','on')`);
   assert.equal((await d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1' })).reason, 'kill_switch');
@@ -279,7 +279,7 @@ test('US-05-R09: a probe marked revert:false (shared resource under load) is rec
   assert.equal(deployer.live, 'v2');
 });
 
-// ---- US-06-R21, US-05-R13: the deploy path asks the authorizer and the confidence gate before it acts ----
+// ---- US-06-R25, US-05-R13: the deploy path asks the authorizer and the confidence gate before it acts ----
 const POLICY = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
 function governed({ required_rung = 'assisted', threshold, limits, authorizeOverride } = {}) {
   const db = makeDb([MIG, fileURLToPath(Trust.MIGRATIONS_DIR), fileURLToPath(Predict.MIGRATIONS_DIR)]);
@@ -295,7 +295,7 @@ function governed({ required_rung = 'assisted', threshold, limits, authorizeOver
 }
 const ask = (d, over = {}) => d.deploy({ unit: 'api', artifact: art('v2'), expectedVersion: 'v1', actor: 'agent-a', ...over });
 
-test('US-06-R21: a deploy is refused with the reason and a ledger row when the rung is below the one required, and published when it is at or above', async () => {
+test('US-06-R25: a deploy is refused with the reason and a ledger row when the rung is below the one required, and published when it is at or above', async () => {
   const low = governed({ required_rung: 'delegated' });
   const r = await ask(low.d);
   assert.deepEqual([r.status, r.reason], ['refused', 'unauthorized: effective rung assisted is below delegated']);
@@ -308,7 +308,7 @@ test('US-06-R21: a deploy is refused with the reason and a ledger row when the r
   assert.equal((await ask(ok.d)).status, 'kept');
 });
 
-test('US-06-R21: an authorizer that throws or answers anything but allowed refuses: unknown is not allowed', async () => {
+test('US-06-R25: an authorizer that throws or answers anything but allowed refuses: unknown is not allowed', async () => {
   const boom = governed({ authorizeOverride: async () => { throw new Error('policy store down'); } });
   assert.equal((await ask(boom.d)).reason, 'unauthorized: the authorizer failed: policy store down');
   const none = governed({ authorizeOverride: async () => undefined });
@@ -318,7 +318,7 @@ test('US-06-R21: an authorizer that throws or answers anything but allowed refus
   for (const g of [boom, none, truthy]) assert.deepEqual(g.deployer.calls, []);
 });
 
-test('US-06-R21, US-06-R08: an irreversible, identity-bound class yields a gate card and publishes nothing', async () => {
+test('US-06-R25, US-06-R08: an irreversible, identity-bound class yields a gate card and publishes nothing', async () => {
   const g = governed();
   const r = await ask(g.d, { action_class: 'delete_database_or_bucket' });
   assert.equal(r.status, 'refused'); assert.match(r.reason, /^unauthorized: interrupt_gate|^unauthorized: irreversible and identity-bound/);
@@ -327,7 +327,7 @@ test('US-06-R21, US-06-R08: an irreversible, identity-bound class yields a gate 
   assert.deepEqual(g.deployer.calls, []);
 });
 
-test('US-06-R13, US-06-R21: a standing-limit refusal is recorded and the same deploy is not resubmitted', async () => {
+test('US-06-R13, US-06-R25: a standing-limit refusal is recorded and the same deploy is not resubmitted', async () => {
   const g = governed({ limits: { harness: { refused: true, reason: 'the permission check refused this change' } } });
   const first = await ask(g.d);
   assert.deepEqual([first.status, first.reason, first.next], ['refused', 'unauthorized: the permission check refused this change', 'correct_condition_and_retry_once']);
@@ -338,7 +338,7 @@ test('US-06-R13, US-06-R21: a standing-limit refusal is recorded and the same de
   assert.deepEqual(rec.map(x => [x.check_name, x.attempts]), [['harness', 2]]);
 });
 
-test('US-05-R13, US-06-R21: a stated confidence that clears the threshold uncorrected but not after the stored correction refuses the deploy', async () => {
+test('US-05-R13, US-06-R25: a stated confidence that clears the threshold uncorrected but not after the stored correction refuses the deploy', async () => {
   const g = governed({ threshold: 0.8 });
   const st = g.db.raw.prepare(`INSERT INTO predict_predictions (id, form, subject, op, value, due_at, confidence, decision_type, matched) VALUES (?, 'metric','m','>=',1,'2026-11-11 00:00:00',0.85,'merge',?)`);
   for (let i = 0; i < 40; i++) st.run(`c-${i}`, i < 28 ? 1 : 0);
@@ -351,7 +351,7 @@ test('US-05-R13, US-06-R21: a stated confidence that clears the threshold uncorr
   assert.match(none.reason, /^confidence_below_gate: stated null/);
 });
 
-test('US-06-R21: the ops agent passes the item\'s surface and action class to the deploy path, so an unauthorized item stays open with the reason as its blocker', async () => {
+test('US-06-R25: the ops agent passes the item\'s surface and action class to the deploy path, so an unauthorized item stays open with the reason as its blocker', async () => {
   const g = governed();
   g.db.raw.prepare(`INSERT INTO items (id, title, owner_role, done_check, status, surface, action_class) VALUES ('I1','drop','operations','deploy-unit: api; version: v2','ready','runtime','delete_database_or_bucket')`).run();
   const out = await opsStep({ db: g.db, deploy: g.d, liveVersion: async () => 'v1', sources: [{ name: 's', fetch: async () => art('v2') }] });

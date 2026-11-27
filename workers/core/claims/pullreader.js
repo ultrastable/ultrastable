@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// A readPull port over a code host's REST API (US-SPEC-08 US-08-R19). reapClosedPulls (index.js) takes readPull(repo, pr) ->
+// A readPull port over a code host's REST API (US-SPEC-08 US-08-R31). reapClosedPulls (index.js) takes readPull(repo, pr) ->
 // { state: 'open' | 'closed' | 'merged', merged_at?, closed_at? }. This factory builds one from three things the host supplies:
 // `fetch` (the platform's), `apiBase` (the code host's REST root, no default here: core names no host) and `headers` (an object, or a
 // function returning one, so a token is read by the host at call time and never held or logged here). The endpoint is

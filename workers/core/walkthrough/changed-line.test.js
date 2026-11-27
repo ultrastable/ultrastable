@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// US-SPEC-16 R22 through the console: a Need that evidence contradicted is asked again with the plain line "This changed: ...", on the walkthrough card, on the Needs-you card
+// US-SPEC-16 R31 through the console: a Need that evidence contradicted is asked again with the plain line "This changed: ...", on the walkthrough card, on the Needs-you card
 // and on the page that draws them.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -51,7 +51,7 @@ async function draw(consoleData, walk) {
   return els;
 }
 
-test('US-16-R22: the walkthrough card of a reopened Need carries the plain line "This changed: ..." and an untouched Need carries none', async () => {
+test('US-16-R31: the walkthrough card of a reopened Need carries the plain line "This changed: ..." and an untouched Need carries none', async () => {
   const { wt, id } = await reopened();
   const step = await wt.current('ana');
   assert.equal(step.kind, 'ask'); assert.equal(step.card.need_id, id);
@@ -62,7 +62,7 @@ test('US-16-R22: the walkthrough card of a reopened Need carries the plain line 
   assert.ok(other.length === 0 || other.every(c => c.changed === null), 'only the reopened Need says it changed');
 });
 
-test('US-16-R22: the Needs-you card built from a reopened Need keeps the line, and so does a gate card that stands for it', async () => {
+test('US-16-R31: the Needs-you card built from a reopened Need keeps the line, and so does a gate card that stands for it', async () => {
   const { db, wt, id } = await reopened();
   const screens = await wt.screens('ana', await buildConsole(db, {}));
   const card = screens.needs_you.cards.find(c => c.need_id === id);
@@ -73,7 +73,7 @@ test('US-16-R22: the Needs-you card built from a reopened Need keeps the line, a
   assert.equal(setup.cards.find(c => c.need_id === id).changed, CHANGED);
 });
 
-test('US-16-R22: the console page draws the "This changed" line on its own line on the Needs-you card and on the walkthrough step, and nothing when there is none', async () => {
+test('US-16-R31: the console page draws the "This changed" line on its own line on the Needs-you card and on the walkthrough step, and nothing when there is none', async () => {
   const { db, wt, id } = await reopened();
   const consoleData = await buildConsole(db, {}); const screens = await wt.screens('ana', consoleData);
   const els = await draw({ ...consoleData, screens }, await wt.current('ana'));

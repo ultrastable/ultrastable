@@ -293,7 +293,7 @@ test('seed tick still dispatches around item claims taken here', async () => {
   assert.equal(db.raw.prepare(`SELECT COUNT(*) n FROM claims WHERE item_id='A'`).get().n, 1);
 });
 
-// ---- US-08-R08 / R21 guarded writes and R18 check under the kill switch ----
+// ---- US-08-R08 / R21 guarded writes and R30 check under the kill switch ----
 test('US-08-R21: a stale holder (fence 1 after holder 2 took 2) is refused by guardedWrite and the write function is not called', async () => {
   const { ctx, clock } = setup();
   const h1 = await C.acquire(ctx, { path: 'doc', holder: 'one' });
@@ -336,7 +336,7 @@ test('US-08-R08: a refused write records a write-refused event without any token
   await assert.rejects(() => C.guardedWrite(ctx, { path: 'w', token: a.token, fence: 1 }), /write function/);
 });
 
-test('US-08-R18: with the kill switch on, check answers invalid with reason kill-switch, guardedWrite refuses and the router answers 503', async () => {
+test('US-08-R30: with the kill switch on, check answers invalid with reason kill-switch, guardedWrite refuses and the router answers 503', async () => {
   const { db, ctx, clock } = setup();
   const a = await C.acquire(ctx, { path: 'k', holder: 'one' });
   assert.equal((await C.check(ctx, { path: 'k', token: a.token, fence: 1 })).valid, true);
@@ -358,10 +358,10 @@ test('US-08-R18: with the kill switch on, check answers invalid with reason kill
   assert.equal((await C.check(ctx, { path: 'k', token: a.token, fence: 1 })).valid, true);
 });
 
-// ---- US-08-R19 pull-request release ----
+// ---- US-08-R31 pull-request release ----
 const pulls = map => async (repo, pr) => { const v = map[`${repo}#${pr}`]; if (v instanceof Error) throw v; return v; };
 
-test('US-08-R19: a claim linked to a merged pull request is released at once with outcome merged and the item returns to ready', async () => {
+test('US-08-R31: a claim linked to a merged pull request is released at once with outcome merged and the item returns to ready', async () => {
   const { db, ctx } = setup(); item(db, 'A');
   await C.acquire(ctx, { item_id: 'A', holder: 'agent', repo: 'org/app', pr: 7 });
   const r = await C.reapClosedPulls(ctx, { readPull: pulls({ 'org/app#7': { state: 'merged', merged_at: '2026-11-11T09:50:00Z' } }) });
@@ -372,7 +372,7 @@ test('US-08-R19: a claim linked to a merged pull request is released at once wit
   assert.equal((await C.reapClosedPulls(ctx, { readPull: pulls({ 'org/app#7': { state: 'merged' } }) })).released.length, 0, 'running twice releases once');
 });
 
-test('US-08-R19: a claim linked to a pull request closed 10 minutes ago is kept; after 30 minutes it is released as closed', async () => {
+test('US-08-R31: a claim linked to a pull request closed 10 minutes ago is kept; after 30 minutes it is released as closed', async () => {
   const { db, ctx, clock } = setup(); item(db, 'A');
   await C.acquire(ctx, { item_id: 'A', holder: 'agent', repo: 'org/app', pr: 8 });
   const closedAt = new Date(T0 + 50 * MIN).toISOString();
@@ -385,7 +385,7 @@ test('US-08-R19: a claim linked to a pull request closed 10 minutes ago is kept;
   assert.equal(db.raw.prepare(`SELECT outcome FROM claims_lock`).get().outcome, 'closed');
 });
 
-test('US-08-R19: a claim on an open pull request or with no link is never touched', async () => {
+test('US-08-R31: a claim on an open pull request or with no link is never touched', async () => {
   const { db, ctx } = setup(); item(db, 'A'); item(db, 'B');
   await C.acquire(ctx, { item_id: 'A', holder: 'agent', repo: 'org/app', pr: 9 });
   await C.acquire(ctx, { item_id: 'B', holder: 'agent' });
@@ -395,7 +395,7 @@ test('US-08-R19: a claim on an open pull request or with no link is never touche
   assert.deepEqual((await C.releaseForPull(ctx, { repo: 'org/other', pr: 9, merged: true })).claims, []);
 });
 
-test('US-08-R19: an unreadable pull request releases nothing and is reported as unmeasured', async () => {
+test('US-08-R31: an unreadable pull request releases nothing and is reported as unmeasured', async () => {
   const { db, ctx } = setup(); item(db, 'A'); item(db, 'B');
   await C.acquire(ctx, { item_id: 'A', holder: 'agent', repo: 'org/app', pr: 1 });
   await C.acquire(ctx, { item_id: 'B', holder: 'agent', repo: 'org/app', pr: 2 });
@@ -407,7 +407,26 @@ test('US-08-R19: an unreadable pull request releases nothing and is reported as 
   await assert.rejects(() => C.reapClosedPulls(ctx, {}), /readPull/);
 });
 
-test('US-08-R19: releaseForPull ends the claims of one pull request directly', async () => {
+test('US-08-R31: an unreadable pull request keeps the cause it could not be read, in the result and once per cause in the events log, with no credential in it', async () => {
+  const { db, ctx } = setup(); item(db, 'A'); item(db, 'B');
+  await C.acquire(ctx, { item_id: 'A', holder: 'agent', repo: 'org/app', pr: 1 });
+  await C.acquire(ctx, { item_id: 'B', holder: 'agent', repo: 'org/app', pr: 2 });
+  const leaked = 'ghp_' + 'a'.repeat(36);
+  const read = pulls({ 'org/app#1': new Error(`http 404 with Bearer ${leaked}`), 'org/app#2': undefined });
+  const r = await C.reapClosedPulls(ctx, { readPull: read });
+  assert.deepEqual(r.unmeasured, ['item:A', 'item:B']);
+  assert.match(r.reasons['item:A'], /^http 404 with Bearer \[masked\]$/);
+  assert.equal(r.reasons['item:B'], 'the reader answered nothing');
+  const rows = () => db.raw.prepare(`SELECT key, detail FROM claims_events WHERE event = 'unmeasured' ORDER BY id`).all().map(x => [x.key, x.detail]);
+  assert.deepEqual(rows(), [['item:A', 'pull request org/app#1 could not be read: http 404 with Bearer [masked]'], ['item:B', 'pull request org/app#2 could not be read: the reader answered nothing']]);
+  assert.ok(!JSON.stringify(rows()).includes(leaked), 'the events log never holds the token');
+  await C.reapClosedPulls(ctx, { readPull: read });
+  assert.equal(rows().length, 2, 'the same cause on the next pass adds no row');
+  await C.reapClosedPulls(ctx, { readPull: pulls({ 'org/app#1': new Error('http 502'), 'org/app#2': undefined }) });
+  assert.deepEqual(rows().at(-1), ['item:A', 'pull request org/app#1 could not be read: http 502'], 'a new cause is recorded');
+});
+
+test('US-08-R31: releaseForPull ends the claims of one pull request directly', async () => {
   const { ctx, db } = setup(); item(db, 'A');
   await C.acquire(ctx, { item_id: 'A', holder: 'agent', repo: 'org/app', pr: 3 });
   assert.deepEqual(await C.releaseForPull(ctx, { repo: 'org/app', pr: 3, merged: true }), { released: 1, claims: ['item:A'] });
@@ -457,8 +476,8 @@ test('US-08-R22: reconcile prunes at most once a day and keeps the newest loop r
   assert.ok((await C.reconcile(ctx)).pruned);
 });
 
-// ---- US-08-R20 unworked release (the tick's reaper; the claims module's own store agrees) ----
-test('US-08-R20: a claim released with no heartbeat is recorded as an unworked release, and the item is parked after max_unworked_releases', async () => {
+// ---- US-08-R32 unworked release (the tick's reaper; the claims module's own store agrees) ----
+test('US-08-R32: a claim released with no heartbeat is recorded as an unworked release, and the item is parked after max_unworked_releases', async () => {
   const { db, clock } = setup();
   item(db, 'A');
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('staff-1','staff',1,'m')`);
@@ -476,7 +495,7 @@ test('US-08-R20: a claim released with no heartbeat is recorded as an unworked r
   assert.match(db.raw.prepare(`SELECT blocker FROM items WHERE id='A'`).get().blocker, /dispatched and released unworked 2 times/);
 });
 
-test('US-08-R20: a claim that was heartbeated is released without an unworked outcome', async () => {
+test('US-08-R32: a claim that was heartbeated is released without an unworked outcome', async () => {
   const { db, clock } = setup(); item(db, 'B');
   const at = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
   db.raw.exec(`INSERT INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES ('B','staff-1','${at(clock.t - 300 * MIN)}','${at(clock.t - 200 * MIN)}')`);

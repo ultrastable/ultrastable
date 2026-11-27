@@ -56,7 +56,7 @@ export function createSurfaces({ db, config = {}, env = {}, fetch, now = () => D
   const presence = e => Object.fromEntries(Object.entries(e || {}).map(([k, v]) => [k, typeof v === 'string' ? v !== '' : v != null && v !== false]));
 
   // ---- routes ----
-  // The walkthrough asks through one elicit instance. It is given the predict port, so the value of an Ask is logged as a prediction and scored (US-16-R23), and its
+  // The walkthrough asks through one elicit instance. It is given the predict port, so the value of an Ask is logged as a prediction and scored (US-16-R32), and its
   // read-back is recorded on the kernel project when the person is shown it, which is what the lifecycle gate G2 reads (US-15, US-16-R12). A project the kernel does not
   // have is a no-op (the update matches no row).
   const walkthroughElicit = off(config, 'walkthrough') ? null : (elicit || createElicit({ db, now: clock, config: config.elicit, predict }));

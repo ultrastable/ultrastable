@@ -47,6 +47,7 @@ Claims use probe kinds `sql:<one SELECT>` (the token `{now}` is the injected tim
 | US-22-R09 writes only to the db, never publishes | BUILT | `describeExtraSteps`; `handle` serves, writes nothing |
 | T22-1 to T22-5 | BUILT | `describe.test.js` |
 | Self-model s3: Purpose, Capabilities, Scope, Operation, Performance, Packs, Limits | BUILT from claims plus record facts; the JSON form publishes claims only, record facts stay in the model | `buildSelfModel` |
-| US-22-R11, R12 claims feed and a page that re-probes on request | BUILT (`GET /describe/claims.json`, `GET /describe/claims`, `POST /describe/claims/probe`; rate limited; 503 without probe ports). Routing the paths in a deployment is the host's (`DESCRIBE_ROUTES`); no live account is serving it | `claimsFeed`, `renderClaimsPage`, `handle` |
+| US-22-R19, R20 claims feed and a page that re-probes on request | BUILT (`GET /describe/claims.json`, `GET /describe/claims`, `POST /describe/claims/probe`; rate limited; 503 without probe ports). Routing the paths in a deployment is the host's (`DESCRIBE_ROUTES`); no live account is serving it | `claimsFeed`, `renderClaimsPage`, `handle` |
 | Cost per merged change, changes merged and rejected, uptime, open unknowns | BUILT as claims (`performance.cost-per-merged-change` is withdrawn as unmeasured, never 0, while nothing merged) and as model facts | `seed-claims.json`, `buildSelfModel` |
-| T22-6 to T22-8 | BUILT | `describe.test.js` |
+| US-22-R18 quiet claims with no row or no table are withdrawn as unmeasured, not shown as 0 | BUILT (`\| unmeasured:quiet` withdraws without a repair item) | `runProbes`, `buildSelfModel` |
+| T22-10 to T22-12 | BUILT | `describe.test.js` |

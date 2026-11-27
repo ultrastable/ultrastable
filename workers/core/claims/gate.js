@@ -14,20 +14,24 @@ const first = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).first()
 const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 const hasTable = async (db, name) => !!(await first(db, `SELECT name FROM sqlite_master WHERE type='table' AND name=?`, name).catch(() => null));
 
-// ---- triggers at dispatch (US-08-R03, R16) -----------------------------------------------------
+// ---- triggers at dispatch (US-08-R03, R27, R28) -----------------------------------------------------
 
 /**
  * Keep status in step with triggers, whatever the trigger form (one item, several items, `gate:<card>`). (a) An `open` item
  * whose triggers are all done becomes `ready`: the core tick's own promotion only matches one item id. (b) A `ready` item
  * whose trigger is not done (a trigger reopened by silent-drop reconcile, a relapse) goes back to `open` with an outcome
- * naming what it waits on, so no dispatch picks it. A claimed item is never touched: work in progress finishes or is reaped.
+ * naming what it waits on, so no dispatch picks it. (c) A `claimed` item whose trigger is not done and whose claim is a bare row of
+ * the tick's `claims` table, with no live claim of this module, was taken by a dispatcher that did not judge the trigger (a list or a
+ * gate the dispatch query does not read) or kept while its trigger was reopened: its claim is released, the item goes back to `open`
+ * and the outcome and a `trigger-not-done` event name what it waits on. A claim granted by `acquire`, which judged the trigger, is its
+ * holder's to finish or to let expire, and an item marked claimed with no claim row is left to the reaper.
  * The scan reads triggered items in pages of `trigger_scan_max` (default 500), at most `trigger_scan_pages` pages (default 20) per
  * status, so a backlog of old items that wait on a trigger cannot starve the newer ones behind them. When the page budget ends
  * before the items do, the cut is reported and never silent: `truncated` names the statuses, `scanned` the items read, and one
  * `scan-truncated` row is written to claims_events.
  */
 export async function enforceTriggers(ctx) {
-  const at = iso(nowMs(ctx)), out = { promoted: [], demoted: [], scanned: 0, truncated: [] };
+  const at = iso(nowMs(ctx)), out = { promoted: [], demoted: [], released: [], scanned: 0, truncated: [] };
   const limit = Number(cfg(ctx).trigger_scan_max) > 0 ? Number(cfg(ctx).trigger_scan_max) : 500;
   const pages = Number(cfg(ctx).trigger_scan_pages) > 0 ? Math.floor(Number(cfg(ctx).trigger_scan_pages)) : 20;
   const scan = async status => {
@@ -41,11 +45,11 @@ export async function enforceTriggers(ctx) {
       page = await triggered(ctx, status, limit, after);
     }
   };
-  const open = await scan('open'), ready = await scan('ready');
-  out.scanned = open.length + ready.length;
+  const open = await scan('open'), ready = await scan('ready'), claimed = await scan('claimed');
+  out.scanned = open.length + ready.length + claimed.length;
   if (out.truncated.length) await run(ctx.db, `INSERT INTO claims_events (at, kind, key, holder, event, detail) VALUES (?, 'work', 'triggers:scan', NULL, 'scan-truncated', ?)`,
     at, `trigger scan stopped after ${pages} page(s) of ${limit} for status ${out.truncated.join(', ')}; ${out.scanned} item(s) read`);
-  const states = await triggerStates(ctx, [...open, ...ready].map(i => i.trigger_on));   // a handful of statements, not two per item
+  const states = await triggerStates(ctx, [...open, ...ready, ...claimed].map(i => i.trigger_on));   // a handful of statements, not two per item
   for (const it of open) {
     if (!states.get(it.trigger_on).done) continue;
     const r = await run(ctx.db, `UPDATE items SET status = 'ready', updated_at = ? WHERE id = ? AND status = 'open'`, at, it.id);
@@ -60,10 +64,27 @@ export async function enforceTriggers(ctx) {
       it.id, `demoted to open: trigger not done (${t.waiting_on.map(w => `${w}: ${t.reasons[w]}`).join('; ')})`.slice(0, 500));
     out.demoted.push(it.id);
   }
+  const tickClaims = claimed.some(it => !states.get(it.trigger_on).done) && await hasTable(ctx.db, 'claims');
+  for (const it of claimed) {
+    const t = states.get(it.trigger_on);
+    if (t.done || !tickClaims) continue;
+    const held = await first(ctx.db, `SELECT agent FROM claims WHERE item_id = ?`, it.id);
+    if (!held) continue;                                                                  // no claim row: the reaper's, not this step's
+    if (await first(ctx.db, `SELECT id FROM claims_lock WHERE kind = 'work' AND item_id = ? AND released_at IS NULL`, it.id)) continue;   // granted by acquire
+    const r = await run(ctx.db, `UPDATE items SET status = 'open', updated_at = ? WHERE id = ? AND status = 'claimed'`, at, it.id);
+    if (!r.meta.changes) continue;
+    await run(ctx.db, `DELETE FROM claims WHERE item_id = ?`, it.id);
+    const waits = t.waiting_on.map(w => `${w}: ${t.reasons[w]}`).join('; ');
+    await run(ctx.db, `INSERT INTO outcomes (item_id, surface, action_class, result, evidence) VALUES (?, 'work_tracker', 'trigger_guard', 'failed', ?)`,
+      it.id, `claim of ${held.agent} released, back to open: trigger not done (${waits})`.slice(0, 500));
+    await run(ctx.db, `INSERT INTO claims_events (at, kind, key, holder, event, detail) VALUES (?, 'work', ?, ?, 'trigger-not-done', ?)`,
+      at, `item:${it.id}`, held.agent, `claim released: trigger not done (${waits})`.slice(0, 500));
+    out.released.push(it.id);
+  }
   return out;
 }
 
-// ---- a held item returns when its gate card closes (US-08-R17) ---------------------------------
+// ---- a held item returns when its gate card closes (US-08-R29) ---------------------------------
 
 /**
  * An item blocked with `gate card <id>` (written by escalateToGate and routeToPrincipal) returns to `ready` when that card
@@ -282,6 +303,7 @@ export async function step(ctx) {
   if (held.released.length) acted.held_released = held.released;
   if (triggers.promoted.length) acted.triggers_promoted = triggers.promoted;
   if (triggers.demoted.length) acted.triggers_demoted = triggers.demoted;
+  if (triggers.released.length) acted.triggers_released = triggers.released;
   if (triggers.truncated.length) acted.triggers_truncated = triggers.truncated;
   return { ...acted, gate, rerouted: queue.rerouted.length, cards_without_identity_line: queue.cards_without_identity_line, visibility: vis && { ratio: vis.ratio, fired: vis.fired } };
 }
