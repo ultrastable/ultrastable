@@ -1097,6 +1097,10 @@
    "spec": "US-SPEC-13",
    "tests": [
     {
+     "file": "core/console-l3/console-l3.test.js",
+     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one"
+    },
+    {
      "file": "core/sla/sla.test.js",
      "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question (through the service-level step)"
     }
@@ -1118,15 +1122,15 @@
    "tests": [
     {
      "file": "adapters/postgres/live.test.js",
-     "name": "US-14-T01: the L1 tick over a live Postgres ends in the same state as over SQLite"
+     "name": "US-14-T01 and US-14-R15: the L1 tick over a live Postgres ends in the same state as over SQLite"
     },
     {
      "file": "adapters/shared/store-suite.test.js",
-     "name": "US-14-T01 and US-14-R07: the L1 tick suite passes over the SQLite adapter's own handle"
+     "name": "US-14-T01 and US-14-R07 and US-14-R13: the L1 tick suite passes over the SQLite adapter's own handle"
     },
     {
      "file": "adapters/shared/store-suite.test.js",
-     "name": "US-14-T01 and US-14-R07: the same suite passes with every statement also translated by the Postgres shim, and the translations are Postgres"
+     "name": "US-14-T01 and US-14-R07 and US-14-R13: the same suite passes with every statement also translated by the Postgres shim, and the translations are Postgres"
     }
    ]
   },
@@ -4798,7 +4802,11 @@
     },
     {
      "file": "core/governance/scan.test.js",
-     "name": "US-07-R23: step() runs the scan when sources are declared and reports it"
+     "name": "US-07-R23: a source that honours `since` still returns a draft the limit left unscanned (the cursor is the draft time, not the pass time)"
+    },
+    {
+     "file": "core/governance/scan.test.js",
+     "name": "US-07-R23: a cut source whose drafts carry no time keeps its old cursor, so a draft the limit left is read again"
     }
    ]
   },
@@ -5095,6 +5103,10 @@
     {
      "file": "core/claims/triggers.test.js",
      "name": "US-08-R16: the trigger step reads in a number of statements that does not grow with the number of triggered items"
+    },
+    {
+     "file": "core/claims/triggers.test.js",
+     "name": "US-08-R16: the trigger scan pages past trigger_scan_max, so old items waiting on a trigger do not starve a newer item that is ready to promote"
     }
    ]
   },
@@ -6115,6 +6127,10 @@
     {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R01 and US-11-R02: reconcile compares the registered crons and reads the deployed {ok} health shape as a status"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R02: a paused worker is paused even when its health is bad: paused is checked before health, and files no degraded item"
     }
    ]
   },
@@ -6290,6 +6306,10 @@
     {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R11: two concurrent dispatchers queue one run of a task; the store enforces it, not a read before the write"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R11: a running row older than the running ttl ends failed as stale_running and files FLEET-STALE; a younger one is left"
     }
    ]
   },
@@ -6635,6 +6655,10 @@
     {
      "file": "core/graph/wiring.test.js",
      "name": "US-12-R12: comments and prose are not read as table access; SQL inside strings still is"
+    },
+    {
+     "file": "core/graph/wiring.test.js",
+     "name": "US-12-R12: a block-comment opener inside a string is text, so SQL after it is still read; a template line that begins with a star is read"
     }
    ]
   },
@@ -6692,6 +6716,10 @@
     {
      "file": "core/graph/graph.test.js",
      "name": "US-12-R15: Python relative imports, TypeScript type imports and dynamic import() are topology edges"
+    },
+    {
+     "file": "core/graph/graph.test.js",
+     "name": "US-12-R15: a file the source no longer lists loses its edges and node; other sources, declared edges and a failed listing keep theirs"
     }
    ]
   },
@@ -6719,6 +6747,10 @@
     {
      "file": "core/graph/graph.test.js",
      "name": "US-12-R16: blast radius follows Python, TypeScript and extensionless importers back to the changed file"
+    },
+    {
+     "file": "core/graph/graph.test.js",
+     "name": "US-12-R16: one hub with many dependents never returns more than maxNodes, and says it truncated"
     }
    ]
   },
@@ -6746,6 +6778,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/console-l3/console-l3.test.js",
+     "name": "US-13-R21 / R01: the console serves /api/console/fleet/health behind sign-in with the graded verdict"
+    },
     {
      "file": "core/console-l3/dashboard.test.js",
      "name": "US-13-T01 and R01: /health and /api/state return JSON with version and counts; /health fails when the last check did not finish"
@@ -6823,16 +6859,16 @@
      "name": "US-13-R05: a fall of exactly 0.5 in one-decimal scores files an item (2.3 to 1.8, 0.7 to 0.2, 1.4 to 0.9, 4.1 to 3.6); 0.4 and a stated cause do not"
     },
     {
+     "file": "core/console-l3/console-l3.test.js",
+     "name": "US-13-R05 / R16: a claimed drop item survives a second fall in the same dimension; a closed one reopens; created_at follows the injected clock"
+    },
+    {
      "file": "core/sla/sla.test.js",
      "name": "US-13-T05 and R05: a dimension that falls 0.6 on the recomputed card with no cause becomes a work item; a stated cause does not"
     },
     {
      "file": "core/sla/sla.test.js",
      "name": "US-13-R05: an exact 0.5 fall between two monthly cards files an item"
-    },
-    {
-     "file": "core/sla/sla.test.js",
-     "name": "US-13-R22: systems card: a fall of 0.5 with no cause files a work item through the same writer (R05)"
     }
    ]
   },
@@ -6938,7 +6974,7 @@
     },
     {
      "file": "core/console-l3/console-l3.test.js",
-     "name": "US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one"
+     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one"
     },
     {
      "file": "core/sla/sla.test.js",
@@ -6998,9 +7034,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/console-l3/dashboard.test.js",
+     "name": "US-13-R14: the dashboard is served only to the signed-in owner and a state-changing request from another origin is refused"
+    }
+   ]
   },
   {
    "id": "US-13-R15",
@@ -7008,9 +7049,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/console-l3/dashboard.test.js",
+     "name": "US-13-R15 and US-18-R10: the page escapes every stored value and loads nothing from another host"
+    }
+   ]
   },
   {
    "id": "US-13-R16",
@@ -7021,6 +7067,14 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/console-l3/console-l3.test.js",
+     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one"
+    },
+    {
+     "file": "core/console-l3/console-l3.test.js",
+     "name": "US-13-R05 / R16: a claimed drop item survives a second fall in the same dimension; a closed one reopens; created_at follows the injected clock"
+    },
     {
      "file": "core/sla/sla.test.js",
      "name": "US-13-R16 and US-13-R10: a breach after the item was closed reopens it, once"
@@ -7138,7 +7192,7 @@
     },
     {
      "file": "adapters/shared/slot.test.js",
-     "name": "US-14-R03: a tick still running when the next slot starts is not overlapped; a claim abandoned past the bound is taken over"
+     "name": "US-14-R03 and US-14-R17: a tick still running when the next slot starts is not overlapped; a claim abandoned past the bound is taken over"
     }
    ]
   },
@@ -7234,11 +7288,11 @@
     },
     {
      "file": "adapters/shared/store-suite.test.js",
-     "name": "US-14-T01 and US-14-R07: the L1 tick suite passes over the SQLite adapter's own handle"
+     "name": "US-14-T01 and US-14-R07 and US-14-R13: the L1 tick suite passes over the SQLite adapter's own handle"
     },
     {
      "file": "adapters/shared/store-suite.test.js",
-     "name": "US-14-T01 and US-14-R07: the same suite passes with every statement also translated by the Postgres shim, and the translations are Postgres"
+     "name": "US-14-T01 and US-14-R07 and US-14-R13: the same suite passes with every statement also translated by the Postgres shim, and the translations are Postgres"
     }
    ]
   },
@@ -8819,7 +8873,7 @@
    "tests": [
     {
      "file": "core/console-l3/dashboard.test.js",
-     "name": "the page escapes every stored value and loads nothing from another host (US-18-R10)"
+     "name": "US-13-R15 and US-18-R10: the page escapes every stored value and loads nothing from another host"
     },
     {
      "file": "core/test/console-ui.test.js",
@@ -10190,6 +10244,10 @@
     },
     {
      "file": "core/describe/describe.test.js",
+     "name": "US-22-R01, US-22-R05: markdown-looking lines are sentences, so an unmarked claim cannot hide behind a hashtag, quote, italics or table row"
+    },
+    {
+     "file": "core/describe/describe.test.js",
      "name": "R01 completeness: every claim id in the registry has a probe kind and expect; seeds name no tenant"
     }
    ]
@@ -10258,6 +10316,14 @@
    "tests": [
     {
      "file": "core/describe/describe.test.js",
+     "name": "US-22-R01, US-22-R05: markdown-looking lines are sentences, so an unmarked claim cannot hide behind a hashtag, quote, italics or table row"
+    },
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "US-22-R05, US-22-R06: the digits of a claim's own date are not figures a writer may state"
+    },
+    {
+     "file": "core/describe/describe.test.js",
      "name": "R05: a compose port may phrase text but cannot add a claim; the loop rejects and files an item"
     },
     {
@@ -10278,6 +10344,10 @@
     {
      "file": "core/describe/describe.test.js",
      "name": "R06: numbers carry their date; every sentence carries a claim id"
+    },
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "US-22-R05, US-22-R06: the digits of a claim's own date are not figures a writer may state"
     },
     {
      "file": "core/describe/describe.test.js",

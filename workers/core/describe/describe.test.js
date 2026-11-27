@@ -181,7 +181,7 @@ test('R06: numbers carry their date; every sentence carries a claim id', async (
   await runProbes(ports(db));
   const claims = await publishableClaims(db, T0);
   const out = await render(await buildSelfModel({ db, specStatus: SPEC, now: T0 }), claims);
-  for (const f of ['statement', 'page', 'llms']) assert.deepEqual(checkVoice(out[f], claims, voice).violations, [], f);
+  for (const f of ['statement', 'page', 'llms']) assert.deepEqual(checkVoice(out[f], claims, voice, { structural: out.structural }).violations, [], f);
   assert.match(out.page, /As of 2026-11-11, 12 specified capabilities are marked BUILT \[claim:capabilities\.built\]\./);
   // a claim whose text has {value} but no {date} gets the date appended
   await addClaims(db, [{ id: 'performance.nodate', text: '{value} things happened.', probe: 'sql:SELECT 4 AS value', expect: '=4' }]);
@@ -209,6 +209,33 @@ test('T22-2: a sentence with no registry claim is rejected by the checker', asyn
   // a claim that exists in the registry but was withdrawn is not "a registry claim" for output purposes
   const without = claims.filter(c => c.id !== 'capabilities.built');
   assert.equal(checkVoice(good, without, voice).violations[0].rule, 'unknown_claim');
+});
+
+test('US-22-R01, US-22-R05: markdown-looking lines are sentences, so an unmarked claim cannot hide behind a hashtag, quote, italics or table row', () => {
+  const claims = [{ id: 'k.n', text: 'There are 5 things.', evidence: null, last_checked_at: '2026-11-11 10:00:00' }];
+  for (const text of ['#1 provider with 500% growth and guaranteed uptime', '> We guarantee 100% uptime', '_We guarantee 100% uptime_', '| We have 500 customers |', '- #1 provider in the world']) {
+    const r = checkVoice(text, claims, voice);
+    assert.equal(r.ok, false, text);
+    assert.equal(r.violations[0].rule, 'no_claim', text);
+  }
+  // only the lines the renderer says it generated are exempt
+  assert.equal(checkVoice('# About us', claims, voice, { structural: ['# About us'] }).ok, true);
+  assert.equal(checkVoice('# We guarantee 100% uptime', claims, voice, { structural: ['# About us'] }).ok, false);
+});
+
+test('US-22-R05, US-22-R06: the digits of a claim\'s own date are not figures a writer may state', () => {
+  const claims = [{ id: 'perf.merged', text: '{value} changes merged {date}', evidence: JSON.stringify({ value: 7 }), last_checked_at: '2026-11-26 09:00:00' }];
+  const ok = 'We merged 7 changes as of 2026-11-26 [claim:perf.merged].';
+  assert.equal(checkVoice(ok, claims, voice).ok, true);
+  for (const wrong of [11, 26, 2026]) {
+    const r = checkVoice(`We merged ${wrong} changes as of 2026-11-26 [claim:perf.merged].`, claims, voice);
+    assert.equal(r.ok, false, String(wrong));
+    assert.equal(r.violations[0].rule, 'number_not_in_claim', String(wrong));
+  }
+  // strictDates also requires the sentence's date to be a date of the claim
+  assert.equal(checkVoice('We merged 7 changes as of 2026-11-11 [claim:perf.merged].', claims, voice).ok, true, 'off by default');
+  assert.equal(checkVoice('We merged 7 changes as of 2026-11-11 [claim:perf.merged].', claims, voice, { strictDates: true }).violations[0].rule, 'date_not_in_claim');
+  assert.equal(checkVoice(ok, claims, voice, { strictDates: true }).ok, true);
 });
 
 test('R06/R07: numbers without a date, estimates labeled, banned phrases from the rules data', async () => {
@@ -256,7 +283,8 @@ test('R07: the checker is injected, so a different agent from the writer can run
   const checker = (text, claims, rules, opts) => { calls.push(opts); return { ok: false, version: 'x', violations: [{ sentence: 's', rule: 'external', detail: 'no' }] }; };
   const r = await describeOnce(ports(db, { voiceRules: voice, checker, packs: [{ id: 'outreach', enabled: true }] }));
   assert.equal(r.stored, false);
-  assert.deepEqual(calls[0], { enabledPacks: ['outreach'] });
+  assert.deepEqual(calls[0].enabledPacks, ['outreach']);
+  assert.ok(calls[0].structural.includes('# About this organization'), 'the checker is told which lines the renderer generated');
 });
 
 test('R09: the describe step plugs into runTick, writes only to the db and never calls fetch for publishing', async () => {

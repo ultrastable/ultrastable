@@ -822,12 +822,12 @@ const collisionCount = occupied => [...occupied.values()].filter(n => n > 1).len
  * Spread the minutes at which enabled schedules fire. Only an expression whose minute field is a periodic or single minute set
  * (a star-slash-n form for n dividing 60, a literal, or the comma-list form of either) and whose other fields are `*` is moved; the firings per hour
  * never change. Greedy: the busiest schedule first, each taking the offset that adds the fewest collisions. A name in
- * `config.stagger_pin` keeps its minutes. `apply` rewrites the rows (`setCron`, clearing next_fire), the matching procedure
+ * `config.stagger_pin` keeps its minutes. `apply` rewrites the rows (`setCron`; next_fire moves to the first new slot at or after the old one, so a move never fires a schedule twice in its period), the matching procedure
  * expression and the stagger log; without it the plan is only returned.
  */
 export async function staggerHourly(ctx, { apply = false } = {}) {
   const c = cfg(ctx), pin = new Set(c.stagger_pin || []);
-  const rows = await all(ctx.db, `SELECT name, expr, task_id FROM fleet_crons WHERE enabled = 1 ORDER BY name`);
+  const rows = await all(ctx.db, `SELECT name, expr, task_id, next_fire FROM fleet_crons WHERE enabled = 1 ORDER BY name`);
   const skipped = [], movable = [], occupied = new Map();
   const take = (shape, off) => { for (const m of minutesOf(shape, off)) occupied.set(m, (occupied.get(m) || 0) + 1); };
   for (const r of rows) {
@@ -859,6 +859,13 @@ export async function staggerHourly(ctx, { apply = false } = {}) {
   for (const ch of result.changes) {
     const cr = rows.find(r => r.name === ch.name);
     await setCron(ctx, { name: ch.name, expr: ch.to, task_id: cr.task_id, enabled: true });
+    // setCron clears next_fire, which reads as due: a schedule that had already fired this period would fire again at once. A schedule
+    // whose next old slot is still ahead keeps that period: it next fires at the first new slot at or after the old one.
+    const due = cr.next_fire ? parseIso(cr.next_fire) : null;
+    if (due !== null && due > nowMs(ctx)) {
+      const nf = nextFire(ch.to, due - MINUTE);
+      if (nf !== null) await run(ctx.db, `UPDATE fleet_crons SET next_fire = ? WHERE name = ?`, iso(nf), ch.name);
+    }
     await run(ctx.db, `UPDATE fleet_procedures SET expr = ? WHERE name = ? AND expr = ?`, ch.to, ch.name, ch.from); // the dead-man check must expect the new slots
     await run(ctx.db, `INSERT INTO fleet_stagger_log (at, name, old_expr, new_expr, collisions_before, collisions_after) VALUES (?,?,?,?,?,?)`, at, ch.name, ch.from, ch.to, collisions_before, collisions_after);
   }

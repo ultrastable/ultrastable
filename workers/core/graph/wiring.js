@@ -24,12 +24,41 @@ const WRITE_RE = /\b(?:insert\s+(?:or\s+\w+\s+)?into|replace\s+into|update|delet
 const READ_RE = /\b(?:from|join)\s+["'`]?([A-Za-z_][A-Za-z0-9_]*)/gi;
 const NOT_TABLES = new Set(['select', 'set', 'values', 'where', 'the', 'a', 'an', 'this', 'that', 'it', 'sqlite_master', 'json_each']);
 /**
- * Source text without its comments: block comments, lines that begin with a comment marker and trailing `//` comments, so a prose
- * sentence such as "sent from users" is not read as a table. Strings are left alone: that is where the SQL is.
+ * Source text without its comments, read by a small scanner that knows where strings are: a block comment or `//` comment that
+ * begins outside a string is removed, and one that begins inside a string (a route such as '/api/*', a URL) is text. A line that
+ * begins with a comment marker (`*`, `#`, `--`) outside a string is dropped, as is a line of a template literal that begins with
+ * `--` (an SQL comment). Prose such as "sent from users" in a comment is therefore not read as a table, and SQL inside strings and
+ * template literals still is. A quote opened and never closed ends at the end of its line; a template literal runs to its closing backtick.
  */
 export function stripComments(text) {
-  return String(text || '').replace(/\/\*[\s\S]*?\*\//g, ' ').split('\n')
-    .map(line => (/^\s*(?:\/\/|\*|#|--)/.test(line) ? '' : line.replace(/(^|\s)\/\/.*$/, '$1'))).join('\n');
+  const src = String(text || '');
+  let out = '', i = 0, q = null, atStart = true;
+  const skipLine = () => { while (i < src.length && src[i] !== '\n') i++; };
+  while (i < src.length) {
+    const c = src[i], d = src[i + 1];
+    if (c === '\n') { if (q && q !== '`') q = null; out += c; i++; atStart = true; continue; }
+    if (atStart && /[ \t]/.test(c)) { out += c; i++; continue; }
+    if (atStart) {
+      const rest = src.slice(i, i + 2);
+      if (q === '`' ? rest === '--' : (c === '*' || c === '#' || rest === '--') && !q) { skipLine(); continue; }
+      atStart = false;
+    }
+    if (q) {
+      if (c === '\\' && d !== undefined && d !== '\n') { out += c + d; i += 2; continue; }
+      if (c === q) q = null;
+      out += c; i++; continue;
+    }
+    if (c === '"' || c === "'" || c === '`') { q = c; out += c; i++; continue; }
+    if (c === '/' && d === '*') {
+      const end = src.indexOf('*/', i + 2);
+      const stop = end < 0 ? src.length : end + 2;
+      out += src.slice(i, stop).replace(/[^\n]/g, ' ');   // keep line breaks so line-start rules still see real lines
+      i = stop; continue;
+    }
+    if (c === '/' && d === '/') { skipLine(); continue; }
+    out += c; i++;
+  }
+  return out;
 }
 /** Tables a script writes and reads, from the SQL in its text (comments excluded). `DELETE FROM t` is a write, not a read. */
 export function extractTableAccess(text) {

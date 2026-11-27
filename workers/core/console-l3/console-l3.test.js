@@ -131,7 +131,7 @@ test('US-13-R05: a fall of exactly 0.5 in one-decimal scores files an item (2.3 
   assert.deepEqual(r.items, []);
 });
 
-test('US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one', async () => {
+test('US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one', async () => {
   const { db, t, l3 } = mk();
   const H = 3600e3;
   const run1 = { process: 'review', step: 'check', started_at: T0 - 9 * H, budget_hours: 4 };
@@ -174,4 +174,30 @@ test('US-13-R21: no check ever is stalled; an unfinished check, recorded errors,
   const h = await l3.health();
   assert.equal(h.verdict, 'degraded'); assert.equal(h.ok, false);
   assert.deepEqual(h.reasons, ['the last check did not finish all its steps', 'the last check recorded 1 error(s)', 'every dispatch of the last check is still queued', '1 item(s) wait on a person']);
+});
+
+test('US-13-R05 / R16: a claimed drop item survives a second fall in the same dimension; a closed one reopens; created_at follows the injected clock', async () => {
+  const { db, t, l3 } = mk();
+  const card = s => l3.recordCard({ name: 'autonomy', rubric: 'r1', limits: LIMITS, scores: [good('loops', s)] });
+  await card(4); await card(3); // first fall files L3-DROP-AUTONOMY-LOOPS
+  const row = () => ({ ...db.raw.prepare("SELECT status, created_at FROM items WHERE id='L3-DROP-AUTONOMY-LOOPS'").get() });
+  assert.equal(row().status, 'open'); assert.equal(row().created_at, '2026-11-12 12:00:00');
+  db.raw.exec("UPDATE items SET status='claimed' WHERE id='L3-DROP-AUTONOMY-LOOPS'");
+  t.v += 3600e3; await card(2); // a third, falling card
+  assert.equal(row().status, 'claimed', 'an active item is not reset to open');
+  db.raw.exec("UPDATE items SET status='done' WHERE id='L3-DROP-AUTONOMY-LOOPS'");
+  t.v += 3600e3; await card(1);
+  assert.equal(row().status, 'open', 'a closed item reopens when the dimension falls again');
+});
+
+test('US-13-R21 / R01: the console serves /api/console/fleet/health behind sign-in with the graded verdict', async () => {
+  const { db, l3 } = mk(); seed(db);
+  const env = { DB: db, CONSOLE_TOKEN: 'console-token-1234' };
+  const o = { l3, now: () => T0 };
+  const cookie = 'us_console=' + encodeURIComponent(env.CONSOLE_TOKEN);
+  assert.equal((await handleConsole(new Request('https://x.example/api/console/fleet/health'), env, o)).status, 401);
+  const res = await handleConsole(new Request('https://x.example/api/console/fleet/health', { headers: { cookie } }), env, o);
+  const h = await res.json();
+  assert.ok(['healthy', 'degraded', 'stalled'].includes(h.verdict)); assert.ok(Array.isArray(h.reasons));
+  assert.equal(res.status, h.verdict === 'stalled' ? 503 : 200, 'the status follows the verdict, so the route is served, not a 404');
 });

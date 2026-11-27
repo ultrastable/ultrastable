@@ -53,7 +53,7 @@ const STATE = [
 ];
 const read = async db => { const out = []; for (const q of STATE) out.push((await db.prepare(q).bind().all()).results); return JSON.parse(JSON.stringify(out)); };
 
-test('US-14-T01: the L1 tick over a live Postgres ends in the same state as over SQLite', async t => {
+test('US-14-T01 and US-14-R15: the L1 tick over a live Postgres ends in the same state as over SQLite', async t => {
   if (reason) return t.skip(reason);
   const pg = await fresh();
   try {
@@ -72,7 +72,7 @@ test('US-14-T01: the L1 tick over a live Postgres ends in the same state as over
   } finally { await pg.drop(); }
 });
 
-test('US-14-R11: twenty-five concurrent claimers over two connections produce exactly one claim', async t => {
+test('US-14-R11 and US-14-R15: twenty-five concurrent claimers over two connections produce exactly one claim', async t => {
   if (reason) return t.skip(reason);
   const pg = await fresh();
   try {

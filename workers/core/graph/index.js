@@ -63,7 +63,17 @@ export async function ingest(ctx) {
         await ctx.db.prepare("DELETE FROM graph_edges WHERE src = ? AND source = ?").bind(f.path, s.name).run();
         for (const d of extractEdges(f.path, f.text, { known })) await ctx.db.prepare("INSERT OR IGNORE INTO graph_edges (src, dst, rel, source) VALUES (?,?, 'imports', ?)").bind(f.path, d, s.name).run();
       }
-      report.push({ source: s.name, ok: true, files: files.length });
+      // A file the source no longer lists loses the edges this source produced for it (US-12-R15); only after a listing that succeeded,
+      // so a failing source never erases the graph. Its node goes too when no other source still has an edge from it.
+      const listed = new Set(files.map(f => f.path)), pruned = [];
+      for (const r of (await ctx.db.prepare('SELECT DISTINCT src FROM graph_edges WHERE source = ?').bind(s.name).all()).results || []) {
+        if (listed.has(r.src)) continue;
+        await ctx.db.prepare('DELETE FROM graph_edges WHERE src = ? AND source = ?').bind(r.src, s.name).run();
+        const left = await ctx.db.prepare('SELECT COUNT(*) AS n FROM graph_edges WHERE src = ?').bind(r.src).first();
+        if (!left.n) await ctx.db.prepare("DELETE FROM graph_nodes WHERE id = ? AND kind = 'file'").bind(r.src).run();
+        pruned.push(r.src);
+      }
+      report.push(pruned.length ? { source: s.name, ok: true, files: files.length, pruned: pruned.sort() } : { source: s.name, ok: true, files: files.length });
     } catch (e) { report.push({ source: s.name, ok: false, error: String(e?.message || e).slice(0, 200) }); }
   }
   return report;
@@ -92,15 +102,24 @@ export function dstSpellings(n) {
   return [...out];
 }
 /**
- * Everything that transitively depends on any of the changed paths (breadth first, cycle safe, bounded by `maxNodes`).
- * `truncated` is true when the bound stopped the walk with nodes still to visit.
+ * Everything that transitively depends on any of the changed paths (breadth first, cycle safe). `affected` never holds more than
+ * `maxNodes` paths, however many dependents one node has: the walk stops adding at the bound. `truncated` is true exactly when a
+ * dependent was left out because of the bound.
  */
 export async function blastRadius(ctx, changed, { maxNodes = 500 } = {}) {
   const seen = new Set(changed), queue = [...changed], hit = [];
-  while (queue.length && hit.length < maxNodes) {
-    const n = queue.shift(), sp = dstSpellings(n);
-    const rows = (await ctx.db.prepare(`SELECT DISTINCT src FROM graph_edges WHERE dst IN (${sp.map(() => '?').join(',')})`).bind(...sp).all()).results;
-    for (const r of rows) if (!seen.has(r.src)) { seen.add(r.src); hit.push(r.src); queue.push(r.src); }
+  const dependents = async n => {
+    const sp = dstSpellings(n);
+    return (await ctx.db.prepare(`SELECT DISTINCT src FROM graph_edges WHERE dst IN (${sp.map(() => '?').join(',')}) ORDER BY src`).bind(...sp).all()).results;
+  };
+  let truncated = false;
+  while (queue.length && !truncated) {
+    const rows = await dependents(queue.shift());
+    for (const r of rows) {
+      if (seen.has(r.src)) continue;
+      if (hit.length >= maxNodes) { truncated = true; break; }
+      seen.add(r.src); hit.push(r.src); queue.push(r.src);
+    }
   }
-  return { changed, affected: hit.sort(), truncated: queue.length > 0 };
+  return { changed, affected: hit.sort(), truncated };
 }

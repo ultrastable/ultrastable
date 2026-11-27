@@ -148,3 +148,16 @@ test('US-12-R12: comments and prose are not read as table access; SQL inside str
   ].join('\n');
   assert.deepEqual(wiring.extractTableAccess(src), { writes: ['runs'], reads: ['orders'] });
 });
+
+// ---- round 2 additions: findings of the verification of US-SPEC-12 --------------------------------
+
+test('US-12-R12: a block-comment opener inside a string is text, so SQL after it is still read; a template line that begins with a star is read', () => {
+  const route = "const route = '/api/*';\ndb.prepare('INSERT INTO secret_t (a) VALUES (1)').run();\n/** doc */\n";
+  assert.deepEqual(wiring.extractTableAccess(route), { writes: ['secret_t'], reads: [] });
+  const tpl = 'const q = `SELECT\n * FROM users\n -- from ghost\n`;';
+  assert.deepEqual(wiring.extractTableAccess(tpl), { writes: [], reads: ['users'] });      // `-- from ghost` is an SQL comment line
+  const globs = "const g = ['src/**/*.js', \"lib/*\"];\nawait db.prepare(`DELETE FROM jobs WHERE id = ?`).run(1);\n/* UPDATE legacy SET x = 1 */\n";
+  assert.deepEqual(wiring.extractTableAccess(globs), { writes: ['jobs'], reads: [] });
+  const unclosed = "// don't read this: FROM prose\ndb.prepare(\"SELECT 1 FROM kept\");";           // an apostrophe in a comment opens no string
+  assert.deepEqual(wiring.extractTableAccess(unclosed), { writes: [], reads: ['kept'] });
+});

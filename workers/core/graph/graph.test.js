@@ -82,3 +82,37 @@ test('US-12-R16: blast radius follows Python, TypeScript and extensionless impor
   assert.deepEqual((await blastRadius(ctx, ['web/lazy.mjs'])).affected, ['web/page.mjs']);                // imported without an extension
   assert.ok(dstSpellings('pkg/__init__.py').includes('pkg'));                                            // a package is its __init__ file
 });
+
+// ---- round 2 additions: findings of the verification of US-SPEC-12 --------------------------------
+
+test('US-12-R16: one hub with many dependents never returns more than maxNodes, and says it truncated', async () => {
+  const hub = [{ path: 'm/hub.js', text: '' }, ...Array.from({ length: 10 }, (_, i) => ({ path: `m/u${String(i).padStart(2, '0')}.js`, text: "import './hub.js';" }))];
+  const ctx = mk([{ name: 's', list: async () => hub }]);
+  await ingest(ctx);
+  const cut = await blastRadius(ctx, ['m/hub.js'], { maxNodes: 2 });
+  assert.deepEqual([cut.affected, cut.truncated], [['m/u00.js', 'm/u01.js'], true]);            // the first two by path, not all ten
+  const exact = await blastRadius(ctx, ['m/hub.js'], { maxNodes: 10 });
+  assert.deepEqual([exact.affected.length, exact.truncated], [10, false]);                       // the bound met exactly drops nothing
+  const under = await blastRadius(ctx, ['m/hub.js'], { maxNodes: 9 });
+  assert.deepEqual([under.affected.length, under.truncated], [9, true]);
+  assert.deepEqual([(await blastRadius(ctx, ['m/hub.js'])).affected.length, (await blastRadius(ctx, ['m/hub.js'])).truncated], [10, false]);
+});
+
+test('US-12-R15: a file the source no longer lists loses its edges and node; other sources, declared edges and a failed listing keep theirs', async () => {
+  let listing = [{ path: 'lib.js', text: '' }, { path: 'a.js', text: "import './lib.js';" }, { path: 'old.js', text: "import './lib.js';" }];
+  let other = [{ path: 'z.js', text: "import './lib.js';" }];
+  let fail = false;
+  const ctx = mk([{ name: 'one', list: async () => listing }, { name: 'two', list: async () => { if (fail) throw new Error('down'); return other; } }]);
+  await ingest(ctx); await declare(ctx, 'decl.js', 'lib.js');
+  assert.deepEqual((await blastRadius(ctx, ['lib.js'])).affected, ['a.js', 'decl.js', 'old.js', 'z.js']);
+  listing = [{ path: 'lib.js', text: '' }, { path: 'a.js', text: "import './lib.js';" }];            // old.js was deleted from the tree
+  fail = true;                                                                                      // and source two fails this time
+  const rep = await ingest(ctx);
+  assert.deepEqual(rep, [{ source: 'one', ok: true, files: 2, pruned: ['old.js'] }, { source: 'two', ok: false, error: 'down' }]);
+  assert.deepEqual((await blastRadius(ctx, ['lib.js'])).affected, ['a.js', 'decl.js', 'z.js']);   // old.js is gone; z.js survives its source failing
+  assert.equal(await ctx.db.prepare(`SELECT id FROM graph_nodes WHERE id = 'old.js'`).first(), null);
+  assert.ok(await ctx.db.prepare(`SELECT id FROM graph_nodes WHERE id = 'a.js'`).first());
+  fail = false; other = [];                                                                         // source two now lists nothing: its edges go
+  await ingest(ctx);
+  assert.deepEqual((await blastRadius(ctx, ['lib.js'])).affected, ['a.js', 'decl.js']);
+});

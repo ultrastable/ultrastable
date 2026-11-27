@@ -147,8 +147,9 @@ export function createConsoleL3({ db, now = () => Date.now(), config = {}, track
       // Scores are one-decimal numbers, so compare in integer millionths: 2.3 - 1.8 is 0.4999999999999998 in IEEE arithmetic (US-13-R05).
       if (prev && Math.round((prev.score - s.score) * 1e6) >= 5e5 && !String(s.cause || '').trim()) {
         const id = `L3-DROP-${name}-${s.dimension}`.toUpperCase().replace(/[^A-Z0-9-]+/g, '-');
-        await run(`INSERT INTO items (id, title, kind, project, owner_role, done_check, closing_probe, priority, status) VALUES (?,?,'work','report-card','portfolio-manager',?,'manual',20,'open')
-          ON CONFLICT(id) DO UPDATE SET status='open', updated_at=datetime('now')`, id, `${name}: ${s.dimension} fell from ${prev.score} to ${s.score} with no documented cause`, `cause of the fall in ${s.dimension} recorded with evidence`);
+        // fileOrReopen (core/_shared/items.js): a new id inserts, a closed one reopens, and an item that is claimed, blocked or in progress is left alone so a later fall never orphans its claim.
+        await fileOrReopen(db, { id, title: `${name}: ${s.dimension} fell from ${prev.score} to ${s.score} with no documented cause`, kind: 'work', project: 'report-card', owner_role: 'portfolio-manager',
+          done_check: `cause of the fall in ${s.dimension} recorded with evidence`, closing_probe: 'manual', priority: 20, at: new Date(clock()).toISOString().replace('T', ' ').slice(0, 19) });
         items.push(id);
       }
     }
@@ -215,13 +216,13 @@ export function createConsoleL3({ db, now = () => Date.now(), config = {}, track
     return filed;
   }
 
-  /** Routes: GET /health, /api/state, /api/report-card?name=. Returns null for other paths. Auth is the caller's job
+  /** Routes: GET /health (also /api/health, which the console reaches as /api/console/fleet/health), /api/state, /api/digest, /api/report-card?name=. Returns null for other paths. Auth is the caller's job
    *  (the console routes the /api/console/fleet prefix behind its sign-in). */
   async function handle(request) {
     const url = new URL(request.url);
     const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
     if (request.method !== 'GET') return null;
-    if (url.pathname === '/health') { const h = await health(); return json(h, h.verdict === 'stalled' ? 503 : 200); }
+    if (url.pathname === '/health' || url.pathname === '/api/health') { const h = await health(); return json(h, h.verdict === 'stalled' ? 503 : 200); }
     if (url.pathname === '/api/state') return json(await state());
     if (url.pathname === '/api/digest') return json(await digest());
     if (url.pathname === '/api/report-card') {

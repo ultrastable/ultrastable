@@ -66,5 +66,11 @@ export async function triggerStates(ctx, specs) {
   return new Map([...parsed].map(([spec, t]) => [spec, judge(t, itemRows, gateRows)]));
 }
 
-/** Items whose trigger is set, by status, for the step in gate.js (oldest first, at most `limit`). */
-export const triggered = (ctx, status, limit = 500) => all(ctx.db, `SELECT id, trigger_on FROM items WHERE status = ? AND trigger_on IS NOT NULL AND trim(trigger_on) <> '' ORDER BY created_at, id LIMIT ?`, status, limit);
+/**
+ * Items whose trigger is set, by status, for the step in gate.js: oldest first, at most `limit`, starting after the cursor
+ * `after` ({ created_at, id } of the last row of the previous page) so a caller can page to the end instead of stopping at the first page.
+ */
+export const triggered = (ctx, status, limit = 500, after = null) => after
+  ? all(ctx.db, `SELECT id, trigger_on, created_at FROM items WHERE status = ? AND trigger_on IS NOT NULL AND trim(trigger_on) <> '' AND (created_at > ? OR (created_at = ? AND id > ?)) ORDER BY created_at, id LIMIT ?`,
+    status, after.created_at, after.created_at, after.id, limit)
+  : all(ctx.db, `SELECT id, trigger_on, created_at FROM items WHERE status = ? AND trigger_on IS NOT NULL AND trim(trigger_on) <> '' ORDER BY created_at, id LIMIT ?`, status, limit);

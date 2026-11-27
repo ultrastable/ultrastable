@@ -10,7 +10,7 @@ import { recognize } from './engine.js';
 import { adoptGoals, similarity } from './objectives.js';
 
 /**
- * US-07-R23. Each source returns [{ ref, draft, scope?, ctx? }] for the drafts written since the time it is given. A draft whose
+ * US-07-R23. Each source returns [{ ref, draft, at?, scope?, ctx? }] for the drafts written at or after the time it is given (`at` is the draft's own ISO time). A draft whose
  * (source, ref) was scanned before is skipped; the others go through recognize(), which stores the scan, records hits and
  * applies the redirect. A source that throws is reported in `errors` and the other sources still run. At most `limit` drafts are scanned per call.
  * `ports` are recognize()'s own (classifier, deduct, execute, dispatch, ...). Returns { scanned, skipped, hits, errors, truncated }.
@@ -25,12 +25,23 @@ export async function scanSources(db, { sources = [], now = Date.now(), limit = 
     let drafts;
     try { drafts = await src.read(since, limit); }
     catch (e) { out.errors.push({ source: src.name, error: String(e && e.message).slice(0, 160) }); continue; }
+    // Unscanned drafts, oldest first when every draft carries its own `at`, so a truncated pass leaves the newer ones for the next.
+    const fresh = [];
     for (const d of Array.isArray(drafts) ? drafts : []) {
       if (!d || !d.ref || typeof d.draft !== 'string') { out.errors.push({ source: src.name, error: 'a draft needs a ref and a draft text' }); continue; }
       if (await first(db, `SELECT 1 AS x FROM governance_scan_cursor WHERE source = ? AND ref = ?`, src.name, d.ref)) { out.skipped++; continue; }
+      fresh.push(d);
+    }
+    if (fresh.length && fresh.every(d => typeof d.at === 'string' && d.at)) fresh.sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
+    // The cursor of a source is MAX(scanned_at) and is handed to its next read as `since`. A row therefore records the draft's own
+    // time (`at`, never later than this pass), so a draft left unscanned by the limit is not older than the cursor and the next read
+    // returns it. A draft with no `at` is stamped with this pass only when its source was not cut; a cut source keeps its old cursor.
+    const cut = fresh.length > Math.max(0, limit - out.scanned);
+    for (const d of fresh) {
       if (out.scanned >= limit) { out.truncated.push(`${src.name}:${d.ref}`); continue; } // not scanned, not marked: the next pass takes it
       const r = await recognize(db, { draft: d.draft, source: src.name, source_ref: d.ref, scope: d.scope || src.scope || 'report', ctx: d.ctx }, { ...ports, now });
-      await run(db, `INSERT INTO governance_scan_cursor (source, ref, scan_id, scanned_at) VALUES (?,?,?,?)`, src.name, d.ref, r.scan_id ?? null, nowIso);
+      const at = typeof d.at === 'string' && d.at ? (d.at < nowIso ? d.at : nowIso) : (cut ? since : nowIso);
+      await run(db, `INSERT INTO governance_scan_cursor (source, ref, scan_id, scanned_at) VALUES (?,?,?,?)`, src.name, d.ref, r.scan_id ?? null, at);
       out.scanned++; out.hits += r.hits.length;
     }
   }

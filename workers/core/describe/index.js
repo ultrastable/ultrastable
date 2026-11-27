@@ -355,38 +355,50 @@ export async function render(model, claims, { compose = defaultCompose, title = 
     title, generated_at: model.generated_at, claim_ids: ids,
     sections: secs.map(s => ({ key: s.key, title: s.title, claims: s.items.map(i => ({ id: i.id, text: i.text, as_of: (i.claim.last_checked_at || '').slice(0, 10), evidence: parseJson(i.claim.evidence, {}) })) })),
   }, null, 2);
-  return { statement: statement + '\n', page, json, llms, claim_ids: ids };
+  // The lines render() itself emits that are not sentences (headings, the generated-from line, the purpose quote, the empty-section note). The voice
+  // checker skips exactly these and nothing else: a line a writer produces that merely looks like markdown structure is still a sentence (US-22-R05).
+  const structural = [`# ${title}`, ...secs.map(s => `## ${s.title}`), ...quote, `_Generated ${model.generated_at} from records. Every sentence carries a claim id._`, '_No published claim for this section._'];
+  return { statement: statement + '\n', page, json, llms, claim_ids: ids, structural };
 }
 
 // ---------- voice checker (run by a different agent from the writer, US-22-R07) ----------
 
 const stripMarkers = s => s.replace(MARKER, '');
 const DATE = /\b\d{4}-\d{2}-\d{2}\b/;
+const DATE_G = /\b\d{4}-\d{2}-\d{2}\b/g;
 
-function* sentences(text) {
+function* sentences(text, structural = new Set()) {
   for (const raw of String(text).split('\n')) {
-    const line = raw.trim().replace(/^([-*]|\d+\.)\s+/, '');
-    if (!line || /^(#|>|\|)/.test(line) || /^_.*_$/.test(line)) continue;
-    for (const s of line.split(/(?<=[.!?])\s+(?=[A-Z[])/)) if (s.trim()) yield s.trim();
+    const line = raw.trim();
+    if (!line || structural.has(line)) continue;   // only lines the renderer generated are exempt; hashtags, quotes, tables and italics are prose
+    for (const s of line.replace(/^([-*]|\d+\.)\s+/, '').split(/(?<=[.!?])\s+(?=[A-Z[])/)) if (s.trim()) yield s.trim();
   }
 }
 
 // Pure function of (text, claims, rules): it never sees or calls the writer. claims = the registry claims allowed in output.
-export function checkVoice(text, claims, voiceRules = {}, { enabledPacks = [] } = {}) {
+export function checkVoice(text, claims, voiceRules = {}, { enabledPacks = [], structural = [], strictDates = false } = {}) {
   const byId = new Map((claims || []).map(c => [c.id, c]));
   const negation = new RegExp(`\\b(${(voiceRules.negation || ['not', 'never', 'no']).join('|')})\\b`, 'i');
   const violations = [];
   const bad = (sentence, rule, detail) => violations.push({ sentence, rule, detail });
-  for (const s of sentences(text)) {
+  const skip = new Set((structural || []).map(l => String(l).trim()));
+  for (const s of sentences(text, skip)) {
     const ids = [...s.matchAll(MARKER)].map(m => m[1]);
     if (!ids.length) { bad(s, 'no_claim', 'sentence carries no claim id'); continue; }
     const unknown = ids.filter(id => !byId.has(id));
     if (unknown.length) { bad(s, 'unknown_claim', `not in the registry: ${unknown.join(', ')}`); continue; }
     const body = stripMarkers(s);
-    const allowedNums = new Set(ids.map(id => renderClaimText(byId.get(id))).join(' ').match(/\d+(?:\.\d+)?/g) || []);
-    const nums = body.match(/\d+(?:\.\d+)?/g) || [];
+    // Numbers are compared without date tokens: the digits of a claim's own date (2026, 11, 26) are not figures a writer may reuse. The
+    // dates a sentence states must be dates its claims carry (the date in the claim text or the day it was last checked) when `strictDates` is set (off by
+    // default: the outward packs' tests state literal dates that predate the claim's check time).
+    const claimTexts = ids.map(id => renderClaimText(byId.get(id)));
+    const stripDates = t => t.replace(DATE_G, ' ');
+    const claimDates = new Set([...claimTexts.join(' ').matchAll(DATE_G)].map(m => m[0]).concat(ids.map(id => String(byId.get(id).last_checked_at || '').slice(0, 10)).filter(Boolean)));
+    const allowedNums = new Set(stripDates(claimTexts.join(' ')).match(/\d+(?:\.\d+)?/g) || []);
+    const nums = stripDates(body).match(/\d+(?:\.\d+)?/g) || [];
     if (nums.length && !DATE.test(body) && !/\bestimate/i.test(body)) bad(s, 'number_without_date', 'numbers must carry a date or be labeled as an estimate');
     for (const num of nums) if (!allowedNums.has(num)) { bad(s, 'number_not_in_claim', `number ${num} is not in the cited claim`); break; }
+    if (strictDates) for (const d of body.match(DATE_G) || []) if (!claimDates.has(d)) { bad(s, 'date_not_in_claim', `date ${d} is not a date of the cited claim`); break; }
     for (const b of voiceRules.banned || []) if (body.toLowerCase().includes(b.toLowerCase())) bad(s, 'banned_phrase', b);
     for (const g of voiceRules.out_of_scope || []) {
       if (enabledPacks.includes(g.pack) || negation.test(body)) continue;
@@ -407,7 +419,7 @@ async function generate({ db, now, specStatus, packs, scope, compose, voiceRules
   const rules = effectiveVoiceRules(voiceRules, scope);
   const problems = [];
   for (const f of ['statement', 'page', 'llms']) {
-    const r = checker(out[f], claims, rules, { enabledPacks });
+    const r = checker(out[f], claims, rules, { enabledPacks, structural: out.structural });
     if (!r.ok) problems.push({ form: f, violations: r.violations });
   }
   return { model, out, problems };
