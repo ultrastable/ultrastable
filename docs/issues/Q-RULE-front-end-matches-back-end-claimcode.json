@@ -1,7 +1,7 @@
 {
   "id": "Q-RULE-front-end-matches-back-end-claimcode",
   "title": "Q-RULE-front-end-matches-back-end-claimcode: standing rule front-end-matches-back-end violated (claimcode)",
-  "body": "**Owner:** staff\n**Trigger:** every lane pass (rules --run --due)\n**Done check:** cmd:python3 -m foundation claimcode --check\n**Status:** open\n\nRULES-1: the standing rule `front-end-matches-back-end` is violated: Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1).\nProbe `claimcode` says: claimcode: 1 problems\n\nFix the cause in code so the probe passes; the tick re-runs it every pass. Never weaken the probe or the registry.",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass (rules --run --due)\n**Done check:** cmd:python3 -m foundation claimcode --check\n**Status:** open\n\nRULES-1: the standing rule `front-end-matches-back-end` is violated: Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1).\nProbe `claimcode` says: claimcode: 1 problems\n\nFix the cause in code so the probe passes; the tick re-runs it every pass. Never weaken the probe or the registry.\n\n**Vacuous:** 2026-11-27T05:08:33Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "role:staff",
     "ci-failure"

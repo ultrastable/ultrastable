@@ -117,6 +117,25 @@ export async function knobValues(db, tenant) {
   return Object.fromEntries(rows.map(r => [r.id, { value: r.value, default: r.default_value, min: r.min, max: r.max, config_path: r.config_path }]));
 }
 // A copy of config with every core knob that names a config_path ("pace.idle_runs") applied. The tick reads this, so a knob turns a real parameter.
+// ASHBY step 3 (KNOB-SNAPSHOT-1): the values of every knob, taken before each step and kept in the goal.knob audit record.
+export async function knobSnapshot(db) {
+  const rows = await all(db, 'SELECT id, value FROM goal_knobs ORDER BY id');
+  return Object.fromEntries(rows.map(r => [r.id, r.value]));
+}
+
+// Put every knob back to a snapshot, clamped to its bounds; returns the ids that changed.
+export async function restoreSnapshot(db, snapshot, { now = Date.now() } = {}) {
+  const changed = [];
+  for (const [id, value] of Object.entries(snapshot || {})) {
+    const k = await first(db, 'SELECT value FROM goal_knobs WHERE id=?', id);
+    if (!k || k.value === value) continue;
+    await run(db, 'UPDATE goal_knobs SET value=MIN(MAX(?, min), max), last_changed_at=? WHERE id=?', value, now, id);
+    changed.push(id);
+  }
+  if (changed.length) await record(db, { kind: 'goal.restore', actor: 'goals', ref: changed.join(','), summary: `restored ${changed.length} knob(s) to a snapshot`, data: { snapshot, changed } }, { now });
+  return changed;
+}
+
 export async function withKnobs(db, config, tenant = 'core') {
   let rows = []; try { await ensure(db); rows = await all(db, `SELECT value, config_path FROM goal_knobs WHERE tenant=? AND config_path IS NOT NULL`, tenant); } catch (e) { console.error('goals: knobs unread:', e && e.message); return config; }
   if (!rows.length) return config;
@@ -266,9 +285,10 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
         cand.sort((x, y) => (x.search - y.search) || (x.search ? x.far - y.far : y.room - x.room));  // a declared step before any searched one; among searched ones the nearest
         if (cand.length) {
           const { k, nv, search } = cand[0], pred = `${g.id} moves toward ${g.op} ${g.target} (from ${v}) within ${k.review_h} h`;
+          const snapshot = await knobSnapshot(db);  // ASHBY step 3: every knob value before the step, so any step can be undone whole
           await run(db, 'UPDATE goal_knobs SET value=?, last_changed_at=? WHERE id=?', nv, now, k.id);
           const r = await run(db, `INSERT INTO goal_adjustments (at, knob_id, goal_id, old, new, why, prediction, baseline, review_after) VALUES (?,?,?,?,?,?,?,?,?)`, now, k.id, g.id, k.value, nv, `${g.id} reads ${v}; target ${g.op} ${g.target}${search ? '; the declared direction is spent, searching the remaining values' : ''}`, pred, v, now + k.review_h * 3600e3);
-          await record(db, { kind: 'goal.knob', actor: 'goals', ref: k.id, summary: `${k.id}: ${k.value} -> ${nv} to move ${g.id} (${v} vs ${g.op} ${g.target}); ${pred}`, data: { goal: g.id, old: k.value, new: nv, adjustment: r && r.meta && r.meta.last_row_id } }, { now });
+          await record(db, { kind: 'goal.knob', actor: 'goals', ref: k.id, summary: `${k.id}: ${k.value} -> ${nv} to move ${g.id} (${v} vs ${g.op} ${g.target}); ${pred}`, data: { goal: g.id, old: k.value, new: nv, adjustment: r && r.meta && r.meta.last_row_id, snapshot } }, { now });
           out.adjusted.push({ knob: k.id, old: k.value, new: nv, goal: g.id, ...(search ? { search: true } : {}) }); adjusts++; moved = true; searching = search;
         }
       }

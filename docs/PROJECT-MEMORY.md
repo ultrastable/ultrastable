@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: feat(kernel): second-loop mechanisms and Perez Lopez's organisation as seed code, with tick step second_goal (SECOND-LOOP-KERNEL-1, ORG-THEORY-1) (#2629)
 - 2026-11-27: ZERO-MINUTES-1: worker merged #2644
 - 2026-11-27: queue: closing-probe verdicts for 3 item(s) (QUEUE-PERSIST-1) [skip ci] (#2644)
 - 2026-11-27: feat(goals): essential variables hold objective knobs (PEREZ-LOPEZ-1) (#2631)
