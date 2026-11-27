@@ -146,12 +146,29 @@ class Drift(World):
         r = self.read("o/seed", fetch=lambda url: {"tree": [], "truncated": True}, clones=None)
         self.assertEqual(r["status"], "unmeasured")
 
+    def github(self, tree, manifest):
+        """GitHub as fleetmap reads it: the tree API for the blob ids, raw.githubusercontent.com for the manifest itself."""
+        return lambda url: {"tree": tree} if "/git/trees/" in url else manifest if "raw.githubusercontent.com" in url else {"error": "HTTP 404"}
+
     def test_the_public_tree_is_compared_by_blob_id_without_a_clone(self):
         tree = [{"path": p, "type": "blob", "sha": s} for p, s in fm.local_tree(self.core / "seed").items()]
-        self.assertEqual(self.read("o/seed", fetch=lambda url: {"tree": tree}, clones=None)["status"], "equal")
+        seed_manifest = json.loads((self.core / "seed/ultrastable.json").read_text())
+        self.assertEqual(self.read("o/seed", fetch=self.github(tree, seed_manifest), clones=None)["status"], "equal")
         tree[0]["sha"] = "0" * 40
-        r = self.read("o/seed", fetch=lambda url: {"tree": tree}, clones=None)
+        r = self.read("o/seed", fetch=self.github(tree, seed_manifest), clones=None)
         self.assertEqual((r["status"], r["how"], len(r["differ"])), ("drifted", "github", 1))
+
+    def test_an_older_manifest_is_named_on_the_github_path_too_and_an_unreadable_one_is_unmeasured(self):
+        tree = [{"path": "v/k.js", "type": "blob", "sha": fm.blob_sha(b"k1\n")}, {"path": "ultrastable.json", "type": "blob", "sha": "1" * 40},
+                {"path": "AGENTS.md", "type": "blob", "sha": "2" * 40}]
+        old = {"identity": {"name": "App", "slug": "app", "summary": "A tenant.", "repo": "o/app", "layer": "tenant", "planned_url": "https://x.example",
+                            "runs_as": {"platform": "cloudflare-workers", "worker": "app", "deployed": False}}}
+        r = self.read("o/app", fetch=self.github(tree, old), clones=None)
+        self.assertEqual(r["how"], "github")
+        self.assertTrue(any("older tenant-standard shape" in n for n in r["notes"]), r["notes"])  # replication-ledger, what-works and unlearn were read this way
+        r = self.read("o/app", fetch=self.github(tree, {"error": "HTTP 502"}), clones=None)
+        self.assertTrue(any("could not be read from GitHub" in n for n in r["notes"]), r["notes"])
+        self.assertEqual(r["status"], "drifted")
 
     def test_blob_sha_is_gits(self):
         self.assertEqual(fm.blob_sha(b"hello\n"), "ce013625030ba8dba906f756967f9e9ca394464a")
@@ -337,6 +354,21 @@ class Manifests(unittest.TestCase):
             self.assertTrue(any("ultrastable/ops: no ultrastable.json manifest" in e for e in fm.check(root)))
             (clones / "unlearn/ultrastable.json").write_text(json.dumps({"identity": {**ident, "stage": "autonomous"}}))
             self.assertTrue(any("stage" in x for x in fm.gen(root, clones, remote)["invalid"]))
+
+    def test_the_map_reads_an_older_manifest_through_the_one_converter(self):
+        old = {"name": "Base Rates", "slug": "base-rates", "summary": "Before you decide, see what usually happens: graded base rates and your own record.",
+               "repo": "ultrastable/base-rates", "public_url": "https://base-rates.ultrastable.org", "planned_url": "https://base-rates.ultrastable.org",
+               "license": "LicenseRef-Ultrastable-USL-1.0", "layer": "tenant",
+               "runs_as": {"platform": "github", "worker": None, "deployed": True, "deployed_by": "ultrastable/base-rates loop.yml (GitHub Actions to GitHub Pages)"}}
+        i, converted = fm.normalize(old, REPO)
+        self.assertTrue(converted)
+        from foundation import tenantstd
+        self.assertEqual(i, tenantstd.normalize_identity(old, json.loads((REPO / "doctrine/topology.json").read_text()), json.loads((REPO / "github/repo-standard.json").read_text()),
+                                                         json.loads((REPO / tenantstd.STD_CORE).read_text())["core_repo"]))
+        self.assertEqual(i["parent"], "ultrastable/ultrastable")  # a tenant names the platform it runs on, as a new tenant's identity does
+        self.assertEqual(fm._surfaces().validate({"identity": i}, fm._surfaces().schema(REPO)), [])
+        self.assertEqual(fm.row_from_identity({}, i)["deploys"], ["ultrastable-base-rates"])  # the Worker topology runs, not the Pages route
+        self.assertEqual(fm.normalize(i, REPO), (i, False))
 
     def test_adopt_gives_a_filled_repository_its_own_identity_and_is_idempotent(self):
         from foundation import livelinks

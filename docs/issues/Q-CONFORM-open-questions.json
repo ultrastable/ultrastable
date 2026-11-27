@@ -1,0 +1,9 @@
+{
+  "id": "Q-CONFORM-open-questions",
+  "title": "Q-CONFORM-open-questions: ultrastable/open-questions carries every machine-readable file of the conformance register, each valid",
+  "body": "**Owner:** operations\n**Trigger:** failure-audit detector `repo-conform` (daily, reads every repository of doctrine/fleet-map.json); tenant-sync's vendor-sync pull request in ultrastable/open-questions\n**Done check:** cmd:python3 -m foundation repoconform --remote ultrastable/open-questions\n**Status:** open\n\nREPO-CONFORM-2 (Rowan, 2026-11-27): \"Research and implement best practices for refactored repos for autonomous development. Must be AI/machine-readable and compatible with all open standards.\" ultrastable/open-questions was created before doctrine/tenant-standard.json required the full conformance set (seed/autonomy/repo-conformance.json) and vendored its reader. Its own pull request carries what the core writes into a checkout of it: `python3 -m foundation tenantstd --normalize <checkout>` (the manifest into the schema's shape) and `python3 -m foundation tenantstd --scaffold <checkout> --slug open-questions`, which write and render every file of the register and vendor vendor/ultrastable/tools/repoconform.py, surfaces.py and deprot.py with the register and the system schema. Until then the dated exception `conformance: pending` in doctrine/tenant-standard.json holds the tenant's own reading and prints every held finding.\n\n**Closing probe:** cmd:python3 -m foundation repoconform --remote ultrastable/open-questions\n\n**Prediction:** spec_quality >= 0.7 within 336 h (read by `python3 -m foundation specgate --report`; this item closing by its done check keeps the share of well-specified open items at or above today's reading)\n\n**Out of scope:** relaxing a validator, editing a rendered file by hand, or removing the exception before the reading passes.\n",
+  "labels": [
+    "standards",
+    "agent-ready"
+  ]
+}

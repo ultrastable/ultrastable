@@ -33,7 +33,12 @@
     "seed/worker/src/contract.js": "vendor/ultrastable/contract.js",
     "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
     "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
-    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
+    "seed/scripts/repoconform.py": "vendor/ultrastable/tools/repoconform.py",
+    "seed/scripts/surfaces.py": "vendor/ultrastable/tools/surfaces.py",
+    "seed/scripts/deprot.py": "vendor/ultrastable/tools/deprot.py",
+    "seed/autonomy/repo-conformance.json": "vendor/ultrastable/autonomy/repo-conformance.json",
+    "seed/standards/system.schema.json": "vendor/ultrastable/standards/system.schema.json"
    },
    "worker": "ultrastable-unlearn",
    "ai": true,
@@ -71,7 +76,12 @@
     "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
     "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
     "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
-    "workers/core/kgraph/insight.js": "vendor/ultrastable/kgraph.js"
+    "workers/core/kgraph/insight.js": "vendor/ultrastable/kgraph.js",
+    "seed/scripts/repoconform.py": "vendor/ultrastable/tools/repoconform.py",
+    "seed/scripts/surfaces.py": "vendor/ultrastable/tools/surfaces.py",
+    "seed/scripts/deprot.py": "vendor/ultrastable/tools/deprot.py",
+    "seed/autonomy/repo-conformance.json": "vendor/ultrastable/autonomy/repo-conformance.json",
+    "seed/standards/system.schema.json": "vendor/ultrastable/standards/system.schema.json"
    },
    "worker": "ultrastable-what-works",
    "ai": true,
@@ -107,7 +117,12 @@
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
     "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
     "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
-    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
+    "seed/scripts/repoconform.py": "vendor/ultrastable/tools/repoconform.py",
+    "seed/scripts/surfaces.py": "vendor/ultrastable/tools/surfaces.py",
+    "seed/scripts/deprot.py": "vendor/ultrastable/tools/deprot.py",
+    "seed/autonomy/repo-conformance.json": "vendor/ultrastable/autonomy/repo-conformance.json",
+    "seed/standards/system.schema.json": "vendor/ultrastable/standards/system.schema.json"
    },
    "worker": "ultrastable-replication-ledger",
    "ai": false,
@@ -144,7 +159,12 @@
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
     "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
     "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
-    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
+    "seed/scripts/repoconform.py": "vendor/ultrastable/tools/repoconform.py",
+    "seed/scripts/surfaces.py": "vendor/ultrastable/tools/surfaces.py",
+    "seed/scripts/deprot.py": "vendor/ultrastable/tools/deprot.py",
+    "seed/autonomy/repo-conformance.json": "vendor/ultrastable/autonomy/repo-conformance.json",
+    "seed/standards/system.schema.json": "vendor/ultrastable/standards/system.schema.json"
    },
    "scaffold": {
     "beat_hours": 1,
@@ -186,7 +206,12 @@
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
     "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
     "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
-    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
+    "seed/scripts/repoconform.py": "vendor/ultrastable/tools/repoconform.py",
+    "seed/scripts/surfaces.py": "vendor/ultrastable/tools/surfaces.py",
+    "seed/scripts/deprot.py": "vendor/ultrastable/tools/deprot.py",
+    "seed/autonomy/repo-conformance.json": "vendor/ultrastable/autonomy/repo-conformance.json",
+    "seed/standards/system.schema.json": "vendor/ultrastable/standards/system.schema.json"
    },
    "scaffold": {
     "beat_hours": 24,
@@ -212,7 +237,12 @@
     "seed/worker/src/promoqueue.js": "vendor/ultrastable/promoqueue.js",
     "doctrine/tenant-standard.json": "vendor/ultrastable/tenant-standard.json",
     "foundation/tenantstd.py": "vendor/ultrastable/tools/tenantstd.py",
-    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs"
+    "workers/tools/vendor_sync.mjs": "vendor/ultrastable/tools/vendor_sync.mjs",
+    "seed/scripts/repoconform.py": "vendor/ultrastable/tools/repoconform.py",
+    "seed/scripts/surfaces.py": "vendor/ultrastable/tools/surfaces.py",
+    "seed/scripts/deprot.py": "vendor/ultrastable/tools/deprot.py",
+    "seed/autonomy/repo-conformance.json": "vendor/ultrastable/autonomy/repo-conformance.json",
+    "seed/standards/system.schema.json": "vendor/ultrastable/standards/system.schema.json"
    },
    "scaffold": {
     "beat_hours": 168,

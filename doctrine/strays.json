@@ -53,8 +53,8 @@
     },
     {
       "path": "publiccode.yml",
-      "standard": "publiccode.yml 0.4",
-      "why": "software catalogs read publiccode.yml at the root; rendered by seed/scripts/surfaces.py (REPO-CONFORM-1)"
+      "standard": "publiccode.yml v0",
+      "why": "the standard fixes publiccode.yml at the repository root; rendered from ultrastable.json by seed/scripts/surfaces.py and validated by seed/scripts/repoconform.py (REPO-CONFORM-2)"
     }
   ]
 }

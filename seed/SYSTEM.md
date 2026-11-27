@@ -21,33 +21,33 @@ the index of the code that makes them true, clause by clause, step by step and r
 
 ## How it runs
 
-- **RUN-1.** The heartbeat is one tick every 10 minutes from the Worker's cron. A second producer, POST /pulse/watch, runs a tick when the newest one is older than two intervals, so one silent trigger never stops the clock. (probe: `grep:worker/src/index.js::async scheduled\(`, `grep:worker/src/index.js::/pulse/watch`)
-- **RUN-2.** A tick runs every step listed below, and the same cron runs the loops listed after them. A failing step is recorded and filed as work, and the other steps still run. Each tick writes its report to tick_runs and /health. (probe: `grep:worker/src/tick.js::export const STEPS`, `grep:worker/src/index.js::/health`)
-- **RUN-3.** Work is items with a claim, a prediction logged before the change and a closing probe after it. An item leaves the active set only with a disposition; reconcile reopens any that left without one. (probe: `grep:worker/src/tick.js::silent_drop`)
-- **RUN-4.** The only pause is the interrupt gate: a step that is irreversible and identity-bound with no reversible path. It becomes one gate card with a default in effect and a closing probe; the system works on in the meantime. (probe: `grep:autonomy/policy.json::interrupt`)
-- **RUN-5.** One halt stops every recurring path: the Worker variable HALT=1 stops the cron, the watch route and the webhooks. Pages keep serving. (probe: `grep:worker/src/budget.js::export function halted`)
-- **RUN-6.** Every model call is paid from the owner's monthly budget through one governor; the budget is a number in the repository, never a promise. (probe: `grep:worker/src/budget.js::governedAI`)
+- **RUN-1.** The heartbeat is one tick every 10 minutes from the Worker's cron. A second producer, POST /pulse/watch, runs a tick when the newest one is older than two intervals, so one silent trigger never stops the clock. (probe: `grep:worker/src/index.js::async scheduled\(`, `grep:worker/src/index.js::/pulse/watch`, `test:worker/test/pulse.test.js::watchdog: a stale heartbeat is restarted by the second producer`)
+- **RUN-2.** A tick runs every step listed below, and the same cron runs the loops listed after them. A failing step is recorded and filed as work, and the other steps still run. Each tick writes its report to tick_runs and /health. (probe: `grep:worker/src/tick.js::export const STEPS`, `grep:worker/src/index.js::/health`, `test:worker/test/tick.test.js::a failing step never kills the tick and becomes a backlog item`)
+- **RUN-3.** Work is items with a claim, a prediction logged before the change and a closing probe after it. An item leaves the active set only with a disposition; reconcile reopens any that left without one. (probe: `grep:worker/src/tick.js::silent_drop`, `test:worker/test/tick.test.js::items that left the active set without a disposition are reopened`)
+- **RUN-4.** The only pause is the interrupt gate: a step that is irreversible and identity-bound with no reversible path. It becomes one gate card with a default in effect and a closing probe; the system works on in the meantime. (probe: `grep:autonomy/policy.json::interrupt`, `test:worker/test/tick.test.js::gate cards close when their probe shows the owner step is done`)
+- **RUN-5.** One halt stops every recurring path: the Worker variable HALT=1 stops the cron, the watch route and the webhooks. Pages keep serving. (probe: `grep:worker/src/budget.js::export function halted`, `test:worker/test/budget.test.js::HALT-1: the worker variable wins over the committed file`)
+- **RUN-6.** Every model call is paid from the owner's monthly budget through one governor; the budget is a number in the repository, never a promise. (probe: `grep:worker/src/budget.js::governedAI`, `test:worker/test/budget.test.js::every call is metered in the ledger`)
 
 Tick steps, in order (from `worker/src/tick.js`):
 
 1. `migrate`: MIGRATE-SELF-1: apply pending D1 migrations through the tick's own binding (no credential), ledgered in _migrations.
 2. `reconcile`: Every item that left the active set has a disposition; items whose trigger is done become ready.
 3. `reap_claims`: Claims with no heartbeat for claim_ttl_minutes are released so work never stalls.
-4. `connector_health`: CONNECTOR-HEALTH-1: every linked connector is read each tick (no new cron): last_ok, expires_at and the result of the refresh attempt refreshDue made just before this tick. A connector whose last two refresh attempts both failed raises one 
+4. `connector_health`: CONNECTOR-HEALTH-1: every linked connector is read each tick (no new cron): last_ok, expires_at and the result of the refresh attempt refreshDue made just before this tick.
 5. `probe_gates`: Gate cards close themselves when their probe shows the owner's step is done.
 6. `score_predictions`: Predictions due now are graded against built-in metrics.
-7. `measure`: OBJECTIVES-1: read every metric through its probe. Outside its healthy condition it files its own remedy item (owner, done check, closing probe) and closes that item when the probe passes again. A new system gets grace_hours before liveness
+7. `measure`: OBJECTIVES-1: read every metric through its probe. Outside its healthy condition it files its own remedy item (owner, done check, closing probe) and closes that item when the probe passes again. A new system gets grace_hours before liveness can breach.
 8. `second_goal`: SECOND-LOOP-KERNEL-1: the second goal. An objective measured only by its own target files EV-COVERAGE; a breached guard under a healthy target is repaired first.
 9. `accrue_trust`: Trust per (surface, action_class) from recorded outcomes; a crossed threshold opens a ladder PR item.
 10. `selfaudit`: SELFAUDIT-1: probe the failure-mode register; red files or reopens FM-<id>, green closes it with evidence.
-11. `unknowns`
-12. `goals`: UNKNOWNS-1: question what the system does not know; the questions are plus items. GOALS-1: read every goal, sample it, move at most one knob per goal toward its target, review earlier moves, propose stretch goals, retire stale ones.
-13. `plan`: PLAN-1: turn the goal furthest out of bounds into a task tree (audit > implement > verify > fix > integrate > gate), advance live plans, turn knobs itself, and gate each plan on a fresh reading of its goal. "Better" means a measured goal mo
+11. `unknowns`: UNKNOWNS-1: question what the system does not know; the questions are plus items.
+12. `goals`: GOALS-1: read every goal, sample it, move at most one knob per goal toward its target, review earlier moves, propose stretch goals, retire stale ones.
+13. `plan`: PLAN-1: turn the goal furthest out of bounds into a task tree (audit > implement > verify > fix > integrate > gate), advance live plans, turn knobs itself, and gate each plan on a fresh reading of its goal. "Better" means a measured goal moved toward its target.
 14. `dispatch`: Roles whose tick is due pull the top ready item for their role and get a dispatch row.
 15. `execute`: DOER-1: every claimed item ends done, parked with a reason, or waiting with its claim kept; nothing is left for the reaper to release unworked.
 16. `check_plus_share`: Plus share over the last 20 closed items; below target opens a rebalance item for the portfolio manager.
-17. `age_sla`: Q-PARITY-4 (SLA-120M): an item open past 120 minutes is raised to the top, and the cause is filed once a day; nothing ages silently. One indexed COUNT-first read (status, created_at); the per-item work only runs when the count is above zero
-18. `cost_probe`: Q-COST-PROOF-2 (cost-probe): once a day, only while the free tier is ok, turn each breached cost sample into a queue item. It adds one indexed read per budget and nothing when the account is degraded (FREE_TIER_WIDE_STEPS), so it can never 
+17. `age_sla`: Q-PARITY-4 (SLA-120M): an item open past 120 minutes is raised to the top, and the cause is filed once a day; nothing ages silently. One indexed COUNT-first read (status, created_at); the per-item work only runs when the count is above zero.
+18. `cost_probe`: Q-COST-PROOF-2 (cost-probe): once a day, only while the free tier is ok, turn each breached cost sample into a queue item. It adds one indexed read per budget and nothing when the account is degraded (FREE_TIER_WIDE_STEPS), so it can never add reads to a read breach.
 19. `pulse`: LOOPPROOF-1: every loop's expected slots against the slots it ran in; a loop that did not run files MISSED-<loop>.
 20. `criticality`: CRITICALITY-1: k_eff over the rolling window; a tick may not end idle or under k_min without originating the highest-value item at the head.
 21. `ignition`: BOOT-KNOWS-1: the stage from bootstrap to criticality, read from the system's own tables; the first unmet stage is IGNITE-<stage>.
@@ -60,7 +60,7 @@ Loops the same cron runs beside the tick (from `worker/src/index.js`):
 - `fleet-changes`: PROGRESS-1: the other repositories, at most hourly each
 - `substance`: SUBSTANCE-1: two merged PRs per pass are classified from their diff, so trivial merges never count as progress
 - `stickiness`: STICKY-1: freshness, breadth, depth and diversity of every system's content; a stale or thin one files STICKY-<system>, and its unpromoted entries become the social queue
-- `knowledge-graph`: DATAGRAPH-1: every table of this system's own D1 becomes a graph (rows are nodes, references and mentioned ids are edges), kept bi-temporally; hubs, communities, bridges and orphans are read each pass
+- `knowledge-graph`: DATAGRAPH-1: every table of this system's own D1 becomes a graph (rows are nodes, references and mentioned ids are edges), kept bi-temporally; hubs, communities, bridges and orphans are read each pass, Adamic-Adar link leads are settled against later data, and a mostly unconnected kind files KG-ORPHANS-<kind>
 - `graph-ai`: KGRAPH-AI-1: embeddings, extracted relations and community summaries on new graph nodes, scaled by the spend throttle
 - `progress`: PROGRESS-1: release cadence monitor; a slow system has its producers dispatched, a stalled one files STALL-<system>
 - `freshness`
@@ -71,40 +71,61 @@ Loops the same cron runs beside the tick (from `worker/src/index.js`):
 - `repo-visibility`: declared visibility wins over drift
 - `cost-samples`: D1-SNAPSHOT-1: the daily copy of D1 into the AUDIT bucket, read back before it counts
 
+## What an autonomous development system does
+
+- **DEV-1.** Work enters as items. A person's idea becomes IDEA.md through the repository's own issue form, taken only from the people who run the project; after that the tick files every need it finds (a breach, a failed step, a goal out of bounds, a question about what it does not know) as an item with an owner role, a done check and a closing probe. (probe: `test:tests/test_happy_path.py::test_2_the_idea_typed_in_a_form_becomes_a_planned_system_with_one_link`, `test:tests/test_happy_path.py::test_4_only_the_people_who_run_the_project_can_give_it_its_idea`, `test:worker/test/measure.test.js::OBJECTIVES-1: a metric outside its healthy condition files its own remedy and closes it on recovery`)
+- **DEV-2.** Large work is planned before it is built. The plan step turns the goal furthest out of bounds into a task tree of small items (audit, implement, verify, fix, integrate, gate), and an item the single-shot executor failed is split into steps that each name the files they write and the steps they wait for; a plan that could stall or overwrite is refused. (probe: `test:worker/test/planner.test.js::decompose builds audit > implement > verify > integrate > gate with roles`, `test:worker/test/orchestrate.test.js::a plan is refused when it could stall or overwrite`)
+- **DEV-3.** The Worker's own executors write code on a branch and open one pull request. The backlog lane (runDbQueue) and the orchestrator put a Handoff block in it, so the handoff loop deploys and verifies the change after the merge; the repository-queue lane opens its pull request without one and leaves the item to its own closing probe. Every lane refuses a change that shrinks a file or leaves a stub, and the orchestrator also refuses a step that writes outside its own files. (probe: `test:worker/test/nativeexec.test.js::the D1 lane opens a PR for a needs-code item and marks it in-pr with the model`, `test:worker/test/nativeexec.test.js::shrink guard refuses gutted files, dropped JSON keys and dropped exports`, `test:worker/test/nativeexec.test.js::NATIVE-STUB-1: a new file of placeholder bodies, or outside the directories the repository runs, is refused`, `test:worker/test/orchestrate.test.js::a failed single-shot item is planned, worked in parallel, reviewed and opened as one PR`, `test:worker/test/orchestrate.test.js::a step that writes outside its own files, shrinks a file or leaves a stub is refused`)
+- **DEV-4.** A different agent verifies. An evidence reviewer and an adversarial reviewer read the change, never a model that wrote a step while another model is available, and a review that did not run is recorded as not run, never as passed. No server-side merge happens while a check is running, queued or red, or before a fresh commit has reported any check. (probe: `test:worker/test/orchestrate.test.js::the reviewer is never a model that wrote a step while another exists`, `test:worker/test/orchestrate.test.js::when no reviewer answers the PR says the review did not run`, `test:worker/test/greenguard.test.js::NO-RUNS-NOT-GREEN-1: no runs yet is not green`)
+- **DEV-5.** The server ships. The lane merges a clean, green pull request and holds the rest, and the handoff loop deploys the workers a merged pull request names from its merge commit; with no deploy route bound it reports that and fakes nothing. (probe: `test:worker/test/lane.test.js::merges a clean PR, holds a HOLD one`, `test:worker/test/handoff.test.js::no deployer is reported, not faked`)
+- **DEV-6.** Done means proven live. The boot is accepted only when the deployed /health answers 200. A handoff whose pull request carries a verify line closes its item only when that line passes against production and, where the host reports versions, only after the live version changed; a probe still red after its retries, or an unchanged version, rolls the deploy back and puts the item back in the queue. (probe: `grep:bootstrap/bootstrap.py::def verify_live\(`, `test:worker/test/handoff.test.js::open PR -> registered -> merged -> deployed -> verified closes the item`, `test:worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready`, `test:worker/test/handoff.test.js::a deploy whose live deployment did not change is rolled back`)
+- **DEV-7.** It learns from what happened. Each prediction is graded against the metric it named when it falls due, and the goals step moves at most one bounded knob one step toward its target, reviews the move after review_h and reverts it when the goal did not move. (probe: `test:worker/test/tick.test.js::predictions are scored against built-in metrics`, `test:worker/test/goals.test.js::an off-target goal moves its knob one step in the right direction`, `test:worker/test/goals.test.js::a change that did not help is reverted at review`)
+
 ## How it bootstraps
 
-- **BOOT-1.** bootstrap/bootstrap.py runs the stages below in order. It is idempotent: running it again changes nothing that is already true. (probe: `grep:bootstrap/bootstrap.py::for name in \("read", "constitute", "qualify"`)
-- **BOOT-2.** A stage that cannot finish is recorded as blocked with its reason and becomes a backlog item with a closing probe; the boot continues with the next stage. A missing credential never stops the boot. (probe: `grep:bootstrap/bootstrap.py::def guard\(`)
-- **BOOT-3.** The boot is accepted only when the system's own drills show at least a year unattended (year_gate) and its /health answers live (verify_live). (probe: `grep:bootstrap/bootstrap.py::def year_gate\(`, `grep:bootstrap/bootstrap.py::def verify_live\(`)
-- **BOOT-4.** From its first deploy every system serves all of its public surfaces together: a web page with the Built on Ultrastable footer, /health, the discovery manifest, the knowledge graph's read side, and a listing in the ultrastable.io directory. No gate may hide one of them. (probe: `grep:worker/src/visibility.js::PUBLIC_READS`, `grep:worker/src/discover.js::export function manifest`, `grep:worker/src/datagraph.js::export async function readGraph`)
-- **BOOT-5.** A system needs no key from its owner when it is hosted: the platform deploys it through its own OIDC route and gives it its repository from the seed. (probe: `grep:IDEA.md::hosted_by|owner_contact`, `grep:worker/src/apprepos.js::.`)
+- **BOOT-1.** bootstrap/bootstrap.py runs the stages below in order. It is idempotent: running it again changes nothing that is already true. (probe: `grep:bootstrap/bootstrap.py::for name in \("read", "constitute", "qualify"`, `test:tests/test_seed.py::test_idempotent`)
+- **BOOT-2.** A stage that cannot finish is recorded as blocked with its reason and becomes a backlog item with a closing probe; the boot continues with the next stage. A missing credential never stops the boot. (probe: `grep:bootstrap/bootstrap.py::def guard\(`, `test:tests/test_seed.py::test_missing_idea_degrades_not_dies`, `test:tests/test_seed.py::test_apply_without_credentials_is_blocked_item_not_crash`)
+- **BOOT-3.** The boot is accepted only when the system's own drills show at least a year unattended (year_gate) and its /health answers live (verify_live). (probe: `grep:bootstrap/bootstrap.py::def year_gate\(`, `grep:bootstrap/bootstrap.py::def verify_live\(`, `test:tests/test_seed.py::test_year_gate_refuses_a_fault_with_no_exercised_drill`, `test:tests/test_system.py::test_verify_live_accepts_the_boot_only_on_a_200_from_health`)
+- **BOOT-4.** From its first deploy every system serves all of its public surfaces together: a web page with the Built on Ultrastable footer, /health, the discovery manifest, the knowledge graph's read side, and a listing in the ultrastable.io directory. No gate may hide one of them. (probe: `grep:worker/src/visibility.js::PUBLIC_READS`, `grep:worker/src/discover.js::export function manifest`, `grep:worker/src/datagraph.js::export async function readGraph`, `test:worker/test/discover.test.js::footer links back to Ultrastable and the directory`, `test:worker/test/discover.test.js::heartbeat posts the public URL once a day and respects opt-out`, `test:worker/test/datagraph.test.js::the read side answers: summary, insights, a node with its neighbourhood, search, and the page`)
+- **BOOT-5.** A system needs no key from its owner when it is hosted: the platform deploys it through its own OIDC route and gives it its repository from the seed. (probe: `grep:IDEA.md::hosted_by|owner_contact`, `grep:worker/src/apprepos.js::.`, `test:tests/test_seed.py::test_hosted_system_asks_its_owner_for_no_secret_and_no_budget_approval`, `test:worker/test/apprepos.test.js::a hosted app asks its host for its token and holds no App key of its own`)
 
 Boot stages, in order (from `bootstrap/bootstrap.py`):
 
 1. `read`
-2. `constitute`: CONSTITUTION-1: the system reads what it is before it decides anything. The constitution (doctrine/constitution.json) is checked against the code it describes and assembled into org/constitution.json (rungs, tick steps, detectors, criticali
-3. `qualify`: doctrine/VISION.md: Ultrastable is for systems. Fail closed, before any role is hired or anything is provisioned.
-4. `instrument`: OBJECTIVES-1: objectives and metrics are the setup that differs for every system; the liveness set is the same for all. The metric the owner declared in IDEA.md '# System test' is recorded as 'declared': a breach until a probe exists for it
-5. `detect`
-6. `select`
-7. `cases`: Match the starting conditions against the case library: routes around each blocker, at most one owner card per blocker.
-8. `plan`
-9. `write`
-10. `surfaces`: Health-check every route before relying on it (BG-9, BG-12). Recorded, never fatal.
-11. `org`: Org initialization plan (BG-1 to BG-7, BG-11). Applied only with an admin token.
-12. `provision`
-13. `start`
-14. `year_gate`: SEED-LAUNCH-1: the year-unattended gate is a required acceptance check for every seed. The seed's own drills run against its real recovery code (scripts/yearsim.py, autonomy/yearsim.json); the boot is accepted only when the simulated horizo
-15. `verify_live`: SEED-LAUNCH-1: a boot is done only when the deployed Worker answers /health live with 200. /health answers 503 until the first complete tick, so the probe waits through one full cron interval (tick_cron, every 10 minutes) plus propagation: 
+2. `adopt`: IDENTITY-AT-BIRTH-1: a copy of the template takes its own identity before anything is decided from it.
+3. `constitute`: CONSTITUTION-1: the system reads what it is before it decides anything. The constitution (doctrine/constitution.json) is checked against the code it describes and assembled into org/constitution.json (rungs, tick steps, detectors, criticality conditions) for the stages after it.
+4. `qualify`: doctrine/VISION.md: Ultrastable is for systems. Fail closed, before any role is hired or anything is provisioned.
+5. `instrument`: OBJECTIVES-1: objectives and metrics are the setup that differs for every system; the liveness set is the same for all. The metric the owner declared in IDEA.md '# System test' is recorded as 'declared': a breach until a probe exists for it.
+6. `detect`
+7. `select`
+8. `cases`: Match the starting conditions against the case library: routes around each blocker, at most one owner card per blocker.
+9. `plan`
+10. `write`
+11. `surfaces`: Health-check every route before relying on it (BG-9, BG-12). Recorded, never fatal.
+12. `org`: Org initialization plan (BG-1 to BG-7, BG-11). Applied only with an admin token.
+13. `provision`
+14. `start`
+15. `year_gate`: SEED-LAUNCH-1: the year-unattended gate is a required acceptance check for every seed. The seed's own drills run against its real recovery code (scripts/yearsim.py, autonomy/yearsim.json); the boot is accepted only when the simulated horizon p10 reaches target_days.
+16. `verify_live`: SEED-LAUNCH-1: a boot is done only when the deployed Worker answers /health live with 200. /health answers 503 until the first complete tick, so the probe waits through one full cron interval (tick_cron, every 10 minutes) plus propagation: a 200 proves the Worker serves and its own loop ran.
+
+## How it deploys
+
+- **DEP-1.** Hosted: the platform deploys the system on its own account through its OIDC route. An IDEA.md that names its host (hosted_by) has the bootstrap record the runtime and models as the host's, so no secret and no budget approval is asked of the owner. (probe: `grep:bootstrap/bootstrap.py::HOSTED-1`, `test:tests/test_seed.py::test_hosted_system_asks_its_owner_for_no_secret_and_no_budget_approval`)
+- **DEP-2.** Own account: the Deploy to Cloudflare button reads the root wrangler.jsonc, which holds no placeholder and no database id. The person signs in to Cloudflare and authorizes GitHub on those services' own pages; the deploy script in package.json runs wrangler deploy, which creates the D1 database, and then applies the migrations by binding. A tick whose config carries the migrations applies them itself before it writes its first heartbeat row. (probe: `file:wrangler.jsonc`, `grep:package.json::wrangler deploy && wrangler d1 migrations apply DB --remote`, `grep:scripts/surfaces.py::deploy.workers.cloudflare.com/button`, `test:worker/test/deploy-config.test.js::the root wrangler.jsonc parses, holds no placeholder and needs nothing a person fills in`, `test:worker/test/deploy-config.test.js::the root package.json pins wrangler, deploys before it migrates by binding, and describes every binding`, `test:worker/test/deploy-config.test.js::MIGRATE-FIRST-1: an empty database reaches a complete first tick`)
+
+## Machine-readable by birth
+
+- **MR-1.** Every repository is held to the files agents and tools read before the code, each on an open standard and listed with the validator it must pass in autonomy/repo-conformance.json (AGENTS.md, llms.txt, LICENSE, REUSE.toml, README.md, SECURITY.md, CONTRIBUTING.md, CHANGELOG.md, CITATION.cff, publiccode.yml, catalog-info.yaml, ultrastable.json, .editorconfig, Dependabot and the dev container). scripts/repoconform.py reads each against its own standard, and a file or repository it cannot read is unmeasured, never passing. (probe: `grep:scripts/repoconform.py::VALIDATORS = \{`, `test:tests/test_repoconform.py::test_seed_conforms`, `test:tests/test_repoconform.py::test_junk_repo_fails_every_row`, `test:tests/test_repoconform.py::test_unreadable_repository_and_file_are_unmeasured`)
+- **MR-2.** scripts/surfaces.py renders the identity files from ultrastable.json (the README blocks, CITATION.cff, publiccode.yml, catalog-info.yaml, codemeta.json, llms.txt, REUSE.toml and the licence copy under LICENSES/) and creates CHANGELOG.md, CONTRIBUTING.md and SECURITY.md only when they are missing. A rendered file that differs from its render fails scripts/repoconform.py, and a copy of the template adopts its own identity at boot before anything is decided from the manifest. (probe: `grep:scripts/surfaces.py::def codemeta\(`, `grep:bootstrap/bootstrap.py::IDENTITY-AT-BIRTH-1`, `test:tests/test_repoconform.py::test_generated_files_must_equal_their_render`, `test:tests/test_surfaces.py::test_reuse_toml_licenses_and_codemeta`, `test:tests/test_surfaces.py::test_scaffold_files_are_written_once_and_never_overwritten`)
 
 ## How it becomes autonomous and reaches criticality
 
-- **AUT-1.** The system reads its own stage every tick from evidence it recorded itself; nothing is declared. A stage is reached when the reading holds for it and every stage below, and lost when it stops holding. The first unmet stage is filed as IGNITE-<stage> with the numbers that block it, and only the same reading closes it. (probe: `grep:worker/src/ignition.js::export function judge`, `grep:worker/src/ignition.js::IGNITE-`)
-- **AUT-2.** Bootstrapped means instrumented or above: the system stands, runs and measures itself. Critical and self-sustaining are the two stages above that. (probe: `grep:worker/src/ignition.js::BOOTSTRAPPED_AT = 'instrumented'`)
-- **AUT-3.** Criticality is a number. k_eff = (credited verified deploys + credited loop-originated items) / (spend units + human touches) over the window. The system is critical when k_eff stays at or above k_min, and self-sustaining when it stays critical with no open ignition gaps and no human touches. (probe: `file:autonomy/criticality.json`, `grep:worker/src/criticality.js::k_eff`)
-- **AUT-4.** Self-reference is the multiplier: k_self counts only deploys the system originated and shipped on itself. A deploy an outside session drove raises k_eff, never k_self. (probe: `grep:autonomy/criticality.json::"self"`)
-- **AUT-5.** The standing goal is a year unattended: a simulated 10th-percentile horizon of at least 365 days, with every fault class it names drilled against the real recovery code. (probe: `grep:autonomy/goals.json::core.year.unattended`, `file:autonomy/yearsim.json`, `file:scripts/yearsim.py`)
-- **AUT-6.** Trust is computed per surface and action class from recorded outcomes, and widens scope only through a reviewed change to autonomy/policy.json. Trust never reaches the interrupt gate, secrets or harness permissions. (probe: `grep:worker/src/tick.js::accrue_trust`)
+- **AUT-1.** The system reads its own stage every tick from evidence it recorded itself; nothing is declared. A stage is reached when the reading holds for it and every stage below, and lost when it stops holding. The first unmet stage is filed as IGNITE-<stage> with the numbers that block it, and only the same reading closes it. (probe: `grep:worker/src/ignition.js::export function judge`, `grep:worker/src/ignition.js::IGNITE-`, `test:worker/test/pulse.test.js::ignition step: the system records each stage it reaches or loses`)
+- **AUT-2.** Bootstrapped means instrumented or above: the system stands, runs and measures itself. Critical and self-sustaining are the two stages above that. (probe: `grep:worker/src/ignition.js::BOOTSTRAPPED_AT = 'instrumented'`, `test:worker/test/pulse.test.js::ignition ladder: the stage is the highest whose condition and every one below it hold`)
+- **AUT-3.** Criticality is a number. k_eff = (credited verified deploys + credited loop-originated items) / (spend units + human touches) over the window, and the credit for loop-originated items is capped so filing noise cannot raise it. The ignition stage critical is reached when k_eff stays at or above k_min, and the stage self-sustaining when it stays critical for sustained_ticks with no open ignition gaps and no human touches. (probe: `file:autonomy/criticality.json`, `grep:worker/src/criticality.js::k_eff`, `test:worker/test/criticality.test.js::k_eff is credited work over spend plus human touches`, `test:worker/test/criticality.test.js::originated credit is capped so filing noise cannot inflate k_eff`)
+- **AUT-4.** Self-reference is the multiplier: k_self counts only the verified deploys whose recorded origin is one the system ships on itself. A deploy an outside session drove raises k_eff, never k_self, and the reading self_regime says which source keeps the system critical: subcritical (k_eff under k_min), driven (critical on outside work) or self-sustaining (k_self at or above k_min). (probe: `grep:autonomy/criticality.json::"self"`, `test:worker/test/criticality.test.js::SELF-REFERENCE-1: an outside-origin deploy raises k_eff but not k_self`)
+- **AUT-5.** The standing goal is a year unattended: a simulated 10th-percentile horizon of at least 365 days, with every fault class it names drilled against the real recovery code. (probe: `grep:autonomy/goals.json::core.year.unattended`, `file:autonomy/yearsim.json`, `file:scripts/yearsim.py`, `test:tests/test_yearsim.py::test_undrilled_fault_is_not_a_pass`)
+- **AUT-6.** Trust is computed per surface and action class from recorded outcomes, and widens scope only through a reviewed change to autonomy/policy.json. Trust never reaches the interrupt gate, secrets or harness permissions. (probe: `grep:worker/src/tick.js::accrue_trust`, `test:worker/test/tick.test.js::trust promotes only inside the surface ceiling and only by opening a PR item`)
 
 The ladder from bootstrap to criticality (from `worker/src/ignition.js`; every stage is computed, never declared):
 
@@ -117,7 +138,7 @@ The ladder from bootstrap to criticality (from `worker/src/ignition.js`; every s
 6. `critical`: k_eff has been at or above k_min for min_streak ticks in a row
 7. `self-sustaining`: critical for sustained_ticks, with 0 open ignition gaps and 0 human touches
 
-Criticality numbers (from `autonomy/criticality.json`): window 14 days, k_min 1, self-shipped origins executor, self-agent.
+Criticality numbers (from `autonomy/criticality.json`): `k_eff = (credited verified deploys + credited loop-originated items) / (spend_units + human_touches)`, window 14 days, k_min 1, self-shipped origins executor, self-agent.
 
 ## Standing rules
 
@@ -167,7 +188,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **FRONT-BACKED-1**: The front end is always backed by the back end. In this kit: `worker/src/livechanges.js`, `worker/test/livechanges.test.js`.
 - **REPO-STANDARD-1**: One repository standard, applied at creation and every day. In this kit: `scripts/branch_cleanup.py`, `worker/src/repostandard.js`, `worker/test/apprepos.test.js`.
 - **MANAGERS-1**: Every manager is a running loop that owns code. In this kit: `agents/roles/`, `autonomy/managers.json`, `worker/src/managers.js`, `worker/test/managers.test.js`.
-- **FLEET-MAP-1**: One map, one manifest, no hand-copied mirrors. In this kit: ``, `scripts/surfaces.py`, `standards/system.schema.json`, `tests/test_surfaces.py`.
+- **FLEET-MAP-1**: One map, one manifest, no hand-copied mirrors. In this kit: `scripts/surfaces.py`, `standards/system.schema.json`, `tests/test_surfaces.py`.
 - **CLONE-PATH-1**: Both start paths are user stories that run. In this kit: `.github/ISSUE_TEMPLATE/start.yml`, `.github/workflows/bootstrap.yml`, `bootstrap/intake.py`, `tests/test_happy_path.py`.
 - **RULE-REFS-1**: Every reference a rule names resolves. In this kit: checked by the platform.
 - **STANDARDS-FIRST-1**: Standards are measured, with a decision per standard. In this kit: `scripts/surfaces.py`, `standards/standards.json`, `worker/src/cloudevents.js`, `worker/src/contract.js`.
@@ -189,7 +210,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **IMPROVE-1**: Automate back-end and front-end development; improve on its own. In this kit: `.github/workflows/improve.yml`, `autonomy/improve.json`, `scripts/improve.py`.
 - **SYNC-BOTH-WAYS-1**: Every system updates itself and the platform. In this kit: `.github/workflows/platform-sync.yml`.
 - **REDTEAM-1**: Red-team the system's own blind spots; the owner should never find a failure first. In this kit: `scripts/redteam.py`.
-- **REPO-SHAPE-1**: A repository the system writes stays small enough for the system to maintain; split by rate of change and owner, not by topic. In this kit: ``, `autonomy/prsize.json`, `scripts/prsize.py`.
+- **REPO-SHAPE-1**: A repository the system writes stays small enough for the system to maintain; split by rate of change and owner, not by topic. In this kit: `autonomy/prsize.json`, `scripts/prsize.py`.
 - **COLLISION-1**: Today's failures are guarded in code, not remembered. In this kit: `scripts/branch_cleanup.py`, `worker/src/ghfetch.js`, `worker/src/lane.js`, `worker/test/apprepos.test.js`.
 - **BLINDSPOT-RED-1**: Blind spots are measured, not assumed safe. In this kit: `worker/src/apprepos.js`, `worker/src/costsample.js`.
 - **INTENT-YIELD-1**: The owner's words are the input; what stays true is the output. In this kit: checked by the platform.
@@ -200,7 +221,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **OPEN-STANDARDS-1**: Open standards, never a home-grown format. In this kit: `autonomy/`, `doctrine/`, `doctrine/open-standards-baseline.json`, `doctrine/open-standards.json`.
 - **BOOT-ACCEPT-1**: Every surface works together from the first deploy; one command proves it. In this kit: `worker/src/visibility.js`, `worker/test/bootaccept.test.js`.
 - **SYSTEM-SPEC-1**: Every system carries its own definition, generated from its code. In this kit: `autonomy/system.json`, `scripts/system.py`, `tests/test_system.py`.
-- **CLEANROOM-1**: A fresh seed proves the whole; no surface contradicts the axiom. In this kit: ``, `scripts/humanvoice.py`, `tests/test_system.py`.
+- **CLEANROOM-1**: A fresh seed proves the whole; no surface contradicts the axiom. In this kit: `scripts/humanvoice.py`, `tests/test_system.py`.
 - **ORCHESTRATE-1**: Large work is planned and worked in steps on the server. In this kit: `worker/src/executor.js`, `worker/src/orchestrate.js`, `worker/test/orchestrate.test.js`.
 - **WORK-RECORD-1**: Every piece of work has one server-side record. In this kit: checked by the platform.
 - **PHASED-WORK-1**: Large change is phased: audit, coverage, implement, verify, fix, integrate, final gate. In this kit: `autonomy/phases.json`, `scripts/phasework.py`, `tests/test_phasework.py`, `worker/src/orchestrate.js`.

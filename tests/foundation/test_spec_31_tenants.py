@@ -295,7 +295,9 @@ class Standard(unittest.TestCase):
         self.assertIn("exception for zz needs a reason, a queue item and an `until` date", bad)
         self.assertIn("exempt yy needs a reason", bad)
         self.assertIn("standard file nowhere.txt is written by no part of the scaffold", bad)
-        self.assertEqual(set(STD["vendor"]["base"].values()), {f"vendor/ultrastable/{n}" for n in ("contract.js", "promoqueue.js", "tenant-standard.json", "tools/tenantstd.py", "tools/vendor_sync.mjs")})
+        self.assertEqual(set(STD["vendor"]["base"].values()), {f"vendor/ultrastable/{n}" for n in ("contract.js", "promoqueue.js", "tenant-standard.json", "tools/tenantstd.py", "tools/vendor_sync.mjs",
+                                                                         # REPO-CONFORM-2: the conformance reader and what it reads, so a tenant reads itself offline
+                                                                         "tools/repoconform.py", "tools/surfaces.py", "tools/deprot.py", "autonomy/repo-conformance.json", "standards/system.schema.json")})
 
     def test_US_31_R15_a_repository_is_read_against_the_standard_part_by_part_and_a_scaffolded_one_meets_it(self):
         empty = tmp(self)
