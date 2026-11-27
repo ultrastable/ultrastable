@@ -138,7 +138,7 @@ def ignition_stages(root=ROOT) -> list[str]:
 
 
 def check_definition(c: dict, root=ROOT) -> list[str]:
-    """The canonical definition: one text, the same in platform and seed, imported by both CLAUDE.md files, naming every part of the contract."""
+    """The canonical definition: one text, the same in platform and seed, named by the entry both CLAUDE.md files load, naming every part of the contract."""
     root, d, bad = Path(root), c["definition"], []
     plat, seed = root / d["platform"], root / d["seed"]
     if not plat.exists() or not seed.exists():
@@ -147,8 +147,10 @@ def check_definition(c: dict, root=ROOT) -> list[str]:
     if seed.read_text(encoding="utf-8") != text:
         bad.append(f"{d['seed']} differs from {d['platform']}: a new system would be born with a different definition")
     for f, want in (("CLAUDE.md", d["platform"]), ("seed/CLAUDE.md", str(Path(d["seed"]).relative_to("seed")))):
-        if want not in _imports(root / f):
-            bad.append(f"{f}: does not import {want}, so an agent starting there never loads the definition")
+        from .agentrules import named  # AGENT-ENTRY-1: the entry names the definition; it no longer loads it whole
+        rel = want if f == "CLAUDE.md" else "seed/" + want
+        if rel not in named(root, f):
+            bad.append(f"{f}: neither imports nor names {want}, so an agent starting there cannot find the definition")
     stages = ignition_stages(root)
     if not stages:
         bad.append(f"{d['stages_from']}: no STAGES list found")
@@ -168,7 +170,13 @@ def check(root=ROOT) -> list[str]:
     bad = check_schema(c, root)
     if bad:
         return bad
-    return check_capabilities(c, root) + check_definition(c, root) + check_commands(c, root) + check_instructions(c, root)
+    return check_capabilities(c, root) + check_definition(c, root) + check_commands(c, root) + check_instructions(c, root) + check_entry(root)
+
+
+def check_entry(root=ROOT) -> list[str]:
+    """AGENT-ENTRY-1: what an agent loads before it starts stays inside its budget, in the platform and in the kernel a new system is born from."""
+    from . import agentrules
+    return agentrules.check(root) if (Path(root) / agentrules.CONFIG).is_file() else []
 
 
 def _get(url: str, timeout=20):

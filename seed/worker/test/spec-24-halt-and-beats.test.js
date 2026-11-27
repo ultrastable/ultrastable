@@ -29,7 +29,11 @@ test('US-24-R58: every job of every workflow of the kit, and of the platform whe
     for (const f of readdirSync(dir).filter(x => /\.ya?ml$/.test(x))) {
       files++;
       const c = haltCoverage(readFileSync(new URL(f, dir), 'utf8'));
-      if (c.jobs !== c.guarded) bad.push(`${f}: ${c.guarded} of ${c.jobs} jobs guarded`);
+      // SKIPPED-NOT-GREEN-1: the required status of the platform's checks.yml is the one job that never skips, because GitHub reads a skipped
+      // required check as passed (#2661 merged red that way). It honours the halt by failing: nothing is green while halted.
+      const text = readFileSync(new URL(f, dir), 'utf8');
+      const gate = f === 'checks.yml' && /^  checks:\n    if: \$\{\{ always\(\) \}\}/m.test(text) && /if \[ "\$HALT" = 1 \]; then echo "::error::halted[^\n]*exit 1; fi/.test(text) ? 1 : 0;
+      if (c.jobs !== c.guarded + gate) bad.push(`${f}: ${c.guarded} of ${c.jobs} jobs guarded`);
     }
   }
   assert.ok(files > 0, 'the workflows were read');

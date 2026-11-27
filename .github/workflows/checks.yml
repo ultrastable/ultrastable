@@ -320,15 +320,24 @@ jobs:
       - name: Business index (BIZ-3)
         run: python3 scripts/check_business_index.py
   checks:
-    if: ${{ vars.HALT != '1' && always() && github.event.pull_request.draft != true }}  # HALT-1
-    # LANE-FAST-1: the one required status. It stays named `checks`; the three jobs above run in parallel so wall time is the slowest one, not the sum.
+    if: ${{ always() }}  # SKIPPED-NOT-GREEN-1: the one job with no HALT or draft condition, because a skipped required status counts as passed
+    # LANE-FAST-1: the one required status. It stays named `checks`; the jobs above run in parallel so wall time is the slowest one, not the sum.
+    # SKIPPED-NOT-GREEN-1 (#2661, 2026-11-27): GitHub reads a skipped required check as passed. A re-run of a run whose event said "draft" skipped
+    # every job, this one included, and auto-merge landed a pull request whose real run had failed; it overwrote the Actions kill switch.
+    # So this job always runs and always ends success or failure: halted, draft and "a job did not pass" are all failures. It costs seconds.
     needs: [fast, foundation, tests-a, tests-b, rest]
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     steps:
       - name: Every parallel job passed
+        env:
+          HALT: ${{ vars.HALT }}
+          DRAFT: ${{ github.event.pull_request.draft }}
         run: |
-          [ "${{ needs.fast.result }}" = success ] && [ "${{ needs.foundation.result }}" = success ] && [ "${{ needs.rest.result }}" = success ] && [ "${{ needs.tests-a.result }}" = success ] && [ "${{ needs.tests-b.result }}" = success ] || { echo "::error::a parallel checks job did not pass"; exit 1; }
+          if [ "$HALT" = 1 ]; then echo "::error::halted (HALT-1): no check ran, so nothing is green and nothing merges"; exit 1; fi
+          if [ "$DRAFT" = true ]; then echo "::error::this run's event says draft, so no check ran; a run started after the pull request is ready gives the verdict"; exit 1; fi
+          results="${{ needs.fast.result }} ${{ needs.foundation.result }} ${{ needs.rest.result }} ${{ needs.tests-a.result }} ${{ needs.tests-b.result }}"
+          for r in $results; do [ "$r" = success ] || { echo "::error::a parallel checks job did not pass ($results)"; exit 1; }; done
   lane:
     needs: [checks]
     if: ${{ vars.HALT != '1' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}  # HALT-1

@@ -18,7 +18,7 @@ REPO = Path(__file__).resolve().parents[1]
 LOG = "ops/executor-log.jsonl"
 SKIP_LABELS = {"hold", "blocked", "owner", "gate", "identity-bound", "wontfix", "in-progress", "executor-failed"}
 CLAIM_LABEL = "in-progress"
-DENY_PREFIXES = (".git/", ".github/", "autonomy/", "ops/executor-log")
+DENY_PREFIXES = (".git/", ".github/", "autonomy/", "ops/executor-log", "actions-budget.json", "ops/halt.json")  # KILL-SWITCH-GUARD-1: #2661 overwrote the Actions kill switch with an unrelated config
 DENY_NAMES = (".env", "id_rsa", "credentials")
 MAX_FILES, MAX_BYTES = 8, 200_000
 # Generated files are derived from the queue and docs, so any change makes them stale; the executor regenerates them instead of failing its own checks.
@@ -230,7 +230,7 @@ def safe_path(p: str) -> str | None:
     if not p or p.startswith("/") or ".." in Path(p).parts or "\\" in p:
         return "path escapes the repository"
     if p.startswith(DENY_PREFIXES) or Path(p).name in DENY_NAMES:
-        return "path is on the deny list (workflows, policy, git, secrets)"
+        return "path is on the deny list (workflows, policy, kill switches, git, secrets)"
     return None
 
 

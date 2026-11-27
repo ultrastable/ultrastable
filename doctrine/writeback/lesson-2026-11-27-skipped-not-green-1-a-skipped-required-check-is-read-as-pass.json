@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-skipped-not-green-1-a-skipped-required-check-is-read-as-pass",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "SKIPPED-NOT-GREEN-1: a skipped required check is read as passed",
+  "body": "Executor PR #2661 replaced actions-budget.json (the Actions kill switch) with an unrelated config. Its dispatched checks run failed, but a re-run of the pull_request run whose event said draft skipped every job, the required checks job included, and GitHub auto-merge reads skipped as passed, so it merged and main went red. The checks gate job now always runs and ends success or failure (halted and draft are failures), the lane and the Worker green guard take the newest run per check name and never count skipped as the required pass, and both kill switches are on every protected-path list.",
+  "probe": "grep:.github/workflows/checks.yml::SKIPPED-NOT-GREEN-1"
+ },
+ "kind": "lesson",
+ "title": "SKIPPED-NOT-GREEN-1: a skipped required check is read as passed",
+ "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
+}

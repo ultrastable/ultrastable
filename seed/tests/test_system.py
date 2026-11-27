@@ -26,8 +26,9 @@ class SystemSpec(unittest.TestCase):
             self.assertIn(word, md)
 
     def test_every_agent_entry_point_loads_it(self):
-        self.assertTrue((KIT / "CLAUDE.md").read_text().startswith("@SYSTEM.md"))
-        self.assertIn("SYSTEM.md", (KIT / "AGENTS.md").read_text())
+        # AGENT-ENTRY-1: CLAUDE.md loads the short entry, and the entry names the definition for the work that needs it
+        self.assertEqual((KIT / "CLAUDE.md").read_text().strip(), "@AGENTS.md")
+        self.assertIn("](SYSTEM.md)", (KIT / "AGENTS.md").read_text())
 
     def _copy(self):
         d = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, d, True)
