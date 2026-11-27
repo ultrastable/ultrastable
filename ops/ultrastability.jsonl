@@ -24764,3 +24764,42 @@
 {"at": "2026-11-27T18:36:36Z", "ev": "reading", "ok": false, "seq": 24763, "value": 226.9, "var": "portfolio-board:spend"}
 {"at": "2026-11-27T18:36:36Z", "ev": "reading", "ok": false, "seq": 24764, "unmeasured": true, "value": null, "var": "portfolio-board:claims_drift"}
 {"at": "2026-11-27T18:36:36Z", "ev": "reading", "ok": false, "seq": 24765, "unmeasured": true, "value": null, "var": "portfolio-board:value"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24766, "value": 11.345, "var": "spend"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24767, "value": 0.94, "var": "deploy_health"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": true, "seq": 24768, "value": 0, "var": "claims_drift"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": true, "seq": 24769, "value": 28.823, "var": "value"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24770, "value": 3, "var": "stalled_clocks"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": true, "seq": 24771, "value": 0, "var": "ui_findings"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": true, "seq": 24772, "value": 1.0, "var": "happy_paths"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": true, "seq": 24773, "value": 730, "var": "unattended_horizon"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24774, "value": 0.786, "var": "self_shipping"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24775, "value": 85, "var": "owner_interventions"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24776, "value": 0.033, "var": "second_loop_keep_rate"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24777, "value": 0.222, "var": "spec_quality"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24778, "value": 0.6, "var": "research_in_code"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24779, "value": 0.692, "var": "lessons_enforced"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": true, "seq": 24780, "value": 3, "var": "survival_levels"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24781, "value": 226.9, "var": "access-check:spend"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24782, "unmeasured": true, "value": null, "var": "access-check:claims_drift"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24783, "value": 0.0, "var": "access-check:value"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24784, "value": 226.9, "var": "air-quality:spend"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24785, "unmeasured": true, "value": null, "var": "air-quality:claims_drift"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24786, "value": 0.0, "var": "air-quality:value"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24787, "value": 11.345, "var": "blindspot:spend"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24788, "unmeasured": true, "value": null, "var": "blindspot:claims_drift"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": true, "seq": 24789, "value": 2.02, "var": "blindspot:value"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24790, "value": 226.9, "var": "country-snapshot:spend"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24791, "unmeasured": true, "value": null, "var": "country-snapshot:claims_drift"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24792, "value": 0.0, "var": "country-snapshot:value"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24793, "value": 226.9, "var": "free-tier-meter:spend"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24794, "unmeasured": true, "value": null, "var": "free-tier-meter:claims_drift"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24795, "unmeasured": true, "value": null, "var": "free-tier-meter:value"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24796, "unmeasured": true, "value": null, "var": "loop-ledger:spend"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24797, "unmeasured": true, "value": null, "var": "loop-ledger:claims_drift"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24798, "unmeasured": true, "value": null, "var": "loop-ledger:value"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24799, "value": 226.9, "var": "numbers-board:spend"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24800, "unmeasured": true, "value": null, "var": "numbers-board:claims_drift"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24801, "unmeasured": true, "value": null, "var": "numbers-board:value"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24802, "value": 226.9, "var": "portfolio-board:spend"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24803, "unmeasured": true, "value": null, "var": "portfolio-board:claims_drift"}
+{"at": "2026-11-27T18:46:42Z", "ev": "reading", "ok": false, "seq": 24804, "unmeasured": true, "value": null, "var": "portfolio-board:value"}
