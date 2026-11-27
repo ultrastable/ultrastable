@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-filed-audit-items-must-meet-the-spec-gate-the-sample-audit-t",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "Filed audit items must meet the spec gate: the sample-audit template lacked prediction, scope and proof",
+  "body": "16 open Q-AUDIT items failed specgate (spec_quality 0.59); tests pass after the template gained all three parts and a regression test verified it.",
+  "probe": "grep:foundation/sampleaudit.py::Closing probe",
+  "session": "session_0156nqDsxJd4poRv2mkbug9e"
+ },
+ "kind": "lesson",
+ "title": "Filed audit items must meet the spec gate: the sample-audit template lacked prediction, scope and proof",
+ "session": "session_0156nqDsxJd4poRv2mkbug9e"
+}
