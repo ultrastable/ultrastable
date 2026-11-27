@@ -1608,7 +1608,7 @@ export default {
   {
    "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
    "detail": "",
-   "how": "file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
+   "how": "file:AGENTS.md + file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
    "id": "cited-32424bab79",
    "kind": "claim",
    "pass": true,
@@ -2040,7 +2040,7 @@ export default {
   {
    "claim": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
    "detail": "",
-   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
+   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:AGENTS.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
    "id": "cited-badeab1b44",
    "kind": "claim",
    "pass": true,
@@ -2407,10 +2407,28 @@ export default {
    "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
   },
   {
-   "claim": "Platform: `python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability,",
+   "claim": "`doctrine/coldstart.json` (JSON Schema `doctrine/schemas/coldstart.schema.json`) or the code they name drift apart. The owner never",
+   "detail": "",
+   "how": "file:doctrine/coldstart.json + file:doctrine/schemas/coldstart.schema.json",
+   "id": "cited-b4d6cc4189",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/SYSTEM.md"
+  },
+  {
+   "claim": "default in effect, never a task in prose (`doctrine/open-loops.json`, `foundation/data/needs-you.json`). Anything else handed to a person",
+   "detail": "",
+   "how": "file:doctrine/open-loops.json + file:foundation/data/needs-you.json",
+   "id": "cited-94e4bb2cbb",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/SYSTEM.md"
+  },
+  {
+   "claim": "`python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability, when this",
    "detail": "",
    "how": "file:foundation/coldstart.py + grep:.github/workflows/checks.yml::foundation[ .]coldstart\\b",
-   "id": "cited-bce1597ca0",
+   "id": "cited-a191183c3c",
    "kind": "claim",
    "pass": true,
    "surface": "seed/doctrine/SYSTEM.md"
@@ -2508,7 +2526,7 @@ export default {
   {
    "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
    "detail": "",
-   "how": "file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
+   "how": "file:AGENTS.md + file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
    "id": "mirror-1586e98ac2",
    "kind": "claim",
    "pass": true,
@@ -2931,7 +2949,7 @@ export default {
   {
    "claim": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
    "detail": "",
-   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
+   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:AGENTS.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
    "id": "mirror-23cc6eb0f0",
    "kind": "claim",
    "pass": true,
@@ -3667,7 +3685,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 185 Python and 1118 Worker tests",
+   "claim": "seed-tests: 175 Python and 1118 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3712,7 +3730,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1571",
+   "claim": "live-deploys: 1583",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3935,7 +3953,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 434,
-  "total": 434
+  "pass": 436,
+  "total": 436
  }
 };
