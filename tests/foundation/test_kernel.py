@@ -25,6 +25,12 @@ class Kernel(unittest.TestCase):
         r = copy_repo(); (r / "doctrine/kernel.lock").unlink()
         self.assertTrue(kernel.check_lock(r))
 
+    def test_lint_catches_every_pinned_signature(self):
+        self.assertGreater(len(kernel.pinned_signatures(ROOT)), 30)
+        self.assertEqual(kernel.check_recognitions(ROOT), [])
+        r = copy_repo(); edit(r / "doctrine/kernel.json", lambda d: [x.update(lint=[]) for x in d["recognitions"] if x["id"] == "menu"])
+        self.assertTrue(any("two options" in m for m in kernel.check_recognitions(r)))
+
     def test_kernel_text_is_verbatim_where_it_matters(self):
         t = (ROOT / "doctrine/kernel-8.2.1.md").read_text()
         for s in ("IC-ACTOR-001: The System Is The Actor", "The wheel turns: action, outcome, trust, scope, action.", "Falls on: unnecessary question -0.05"):

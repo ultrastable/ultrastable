@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-kernel-9-2-0-recognitions-run-as-a-lint-checked-against-the-",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "Kernel 9.2.0 recognitions run as a lint checked against the pinned text",
+  "body": "kernel --check now fails if any quoted signature in the pinned kernel's RECOGNITIONS section is not caught by the recognition lint in doctrine/kernel.json. All 38 signatures in 9.2.0 are caught today.",
+  "probe": "grep:foundation/kernel.py::def check_recognitions",
+  "session": "session_0156nqDvPawiALe47iATg79o"
+ },
+ "kind": "decision",
+ "title": "Kernel 9.2.0 recognitions run as a lint checked against the pinned text",
+ "session": "session_0156nqDvPawiALe47iATg79o"
+}
