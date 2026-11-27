@@ -4,74 +4,74 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": false,
    "value": 1
   },
   "deploy_health": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": false,
    "value": 0.915
   },
   "happy_paths": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": false,
    "value": 74
   },
   "research_in_code": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": false,
    "value": 0.621
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": false,
    "value": 0.0
   },
   "self_shipping": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": false,
    "value": 0.786
   },
   "spec_quality": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": false,
-   "value": 0.391
+   "value": 0.333
   },
   "spend": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": false,
    "value": 8.491
   },
   "stalled_clocks": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": false,
    "value": 3
   },
   "ui_findings": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-27T04:42:07Z",
+   "at": "2026-11-27T04:55:59Z",
    "ok": true,
-   "value": 32.976
+   "value": 34.272
   }
  },
  "readiness": {
@@ -382,6 +382,15 @@ export default {
  },
  "self_changes": [
   {
+   "after": 70,
+   "at": "2026-11-27T04:55:59Z",
+   "before": 50,
+   "reading": 1,
+   "var": "claims_drift",
+   "verdict": "pending",
+   "what": "shift executor capacity to say-do fixes (raise the repair-claims weight)"
+  },
+  {
    "after": 7,
    "at": "2026-11-26T23:25:47Z",
    "before": 4,
@@ -479,15 +488,6 @@ export default {
    "var": "deploy_health",
    "verdict": "reverted",
    "what": "search: goals.#repair-deploys.weight = 150 (untried in this episode)"
-  },
-  {
-   "after": 110,
-   "at": "2026-11-26T08:55:10Z",
-   "before": 50,
-   "reading": 0.989,
-   "var": "deploy_health",
-   "verdict": "reverted",
-   "what": "search: goals.#repair-deploys.weight = 110 (untried in this episode)"
   }
  ]
 };
