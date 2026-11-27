@@ -1,7 +1,7 @@
 {
- "at": "2026-11-27T04:28:34Z",
- "gaps": 7,
- "match_share": 0.988,
+ "at": "2026-11-27T04:43:56Z",
+ "gaps": 9,
+ "match_share": 0.984,
  "sources": {
   "changes": [
    {
@@ -160,7 +160,12 @@
   ],
   "claims": [
    {
-    "drift": 0,
+    "detail": "site/saydo-data.js: the sentence is no longer on the surface: update the registry or restore the words",
+    "id": "cited-91e6fd7e7e",
+    "ok": false
+   },
+   {
+    "drift": 1,
     "id": "claims-total",
     "ok": true,
     "total": 437
@@ -480,10 +485,12 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation claims --check: DRIFT cited-91e6fd7e7e [claim] site/saydo-data.js: the sentence is no longer on the surface: update the registry or restore the words; claims: 436 verified of 437; 1 drift"
+    ],
     "id": "CLAIMS-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -1101,7 +1108,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 110.9 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 111.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1173,7 +1180,7 @@
    "total": 17
   },
   "claims": {
-   "gaps": 0,
+   "gaps": 1,
    "total": 437
   },
   "loops": {
@@ -1181,7 +1188,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 4,
+   "gaps": 5,
    "total": 106
   },
   "year": {
