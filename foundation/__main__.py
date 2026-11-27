@@ -503,6 +503,15 @@ def main(argv=None) -> int:
     if _av[:1] == ["routehealth"]:  # ROUTE-CANARY-1: foundation/routehealth.py
         from . import routehealth
         return routehealth.main(_av[1:])
+    if _av[:1] == ["conclusions"]:  # CONCLUSION-CACHE-1: foundation/conclusions.py
+        from . import conclusions
+        return conclusions.main(_av[1:])
+    if _av[:1] == ["impact"]:  # IMPACT-TESTS-1: foundation/impact.py
+        from . import impact
+        return impact.main(_av[1:])
+    if _av[:1] == ["repomap"]:  # REPO-MAP-1: foundation/repomap.py
+        from . import repomap
+        return repomap.main(_av[1:])
     if _av[:1] == ["churn"]:  # CHURN-GUARD-1: foundation/churn.py
         from . import churn
         return churn.main(_av[1:])
