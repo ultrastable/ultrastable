@@ -1597,15 +1597,6 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "\"detail\": \"python3 -m foundation claimcode --check: FAIL agents/AGENTS.md:42: states a number, cadence or guarantee with no registered",
-   "detail": "",
-   "how": "file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b",
-   "id": "cited-91e6fd7e7e",
-   "kind": "claim",
-   "pass": true,
-   "surface": "site/saydo-data.js"
-  },
-  {
    "claim": "+ \"<div class=\\\"us-grid c2\\\">\" + card(\"Loops\", \"Each loop has a trigger, owner, definition of done, two independent paths and a closing",
    "detail": "",
    "how": "file:foundation/loops.py + grep:.github/workflows/checks.yml::foundation[ .]loops\\b",
@@ -3694,7 +3685,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 129 Python and 1077 Worker tests",
+   "claim": "seed-tests: 129 Python and 1100 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3703,7 +3694,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 1077 Worker tests",
+   "claim": "seed-worker-tests: 1100 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3962,7 +3953,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 437,
-  "total": 437
+  "pass": 436,
+  "total": 436
  }
 };
