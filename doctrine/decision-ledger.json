@@ -6631,6 +6631,24 @@
    "body": "RULE-OF-TWO-1 (ZHC-R12 #2677): executor.pick skips issues not by an owner, member, collaborator or the org's own bots; crossrepo reads REST issues so the author is known; issue text is wrapped in a random-marker data block.",
    "probe": "grep:foundation/executor.py::def trusted",
    "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-workflow-tokens-no-new-top-level-write-identities-registered",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Workflow tokens: no new top-level write, identities registered",
+   "body": "IDENTITIES-1 (ZHC-R4 #2669): 52 workflows grant write at the top today and are listed; the list only shrinks, a new one fails checks. Merge, agent and administration identities with scopes and never-lists are in doctrine/identities.json.",
+   "probe": "grep:.github/workflows/checks.yml::foundation identities --check",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "lesson-2026-11-27-a-window-in-seconds-against-a-millisecond-column-read-the-wh",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "A window in seconds against a millisecond column read the whole ultrastable-ops hits table on every call",
+   "body": "READ-BUDGET-12: growthHits bound a seconds window to hits.at (milliseconds), so the three aggregate queries matched every row: all-time counts and about 24,000 rows read per query, every 90 seconds, 3.4M rows an hour against a 50,000 budget; the D1 query analytics named the queries. Fixed: a millisecond window and a 10-minute Cache API entry; tests pass (site/growth-hits.test.mjs), verified by the second call making no database read.",
+   "probe": "grep:site/worker.js::READ-BUDGET-12",
+   "session": "https://claude.ai/code/session_0156nqDsxJd4poRv2mkbug9e"
   }
  ]
 }
