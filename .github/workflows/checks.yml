@@ -324,11 +324,11 @@ jobs:
         env:
           HALT: ${{ vars.HALT }}
           DRAFT: ${{ github.event.pull_request.draft }}
-          RESULTS: ${{ needs.fast.result }} ${{ needs.foundation.result }} ${{ needs.rest.result }} ${{ needs.tests-a.result }} ${{ needs.tests-b.result }}
         run: |
           if [ "$HALT" = 1 ]; then echo "::error::halted (HALT-1): no check ran, so nothing is green and nothing merges"; exit 1; fi
           if [ "$DRAFT" = true ]; then echo "::error::this run's event says draft, so no check ran; a run started after the pull request is ready gives the verdict"; exit 1; fi
-          for r in $RESULTS; do [ "$r" = success ] || { echo "::error::a parallel checks job did not pass ($RESULTS)"; exit 1; }; done
+          results="${{ needs.fast.result }} ${{ needs.foundation.result }} ${{ needs.rest.result }} ${{ needs.tests-a.result }} ${{ needs.tests-b.result }}"
+          for r in $results; do [ "$r" = success ] || { echo "::error::a parallel checks job did not pass ($results)"; exit 1; }; done
   lane:
     needs: [checks]
     if: ${{ vars.HALT != '1' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}  # HALT-1

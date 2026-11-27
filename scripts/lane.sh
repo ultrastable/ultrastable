@@ -66,6 +66,15 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
     fi
     continue
   fi
+  if [ "$bad" -gt 0 ] && [ "$draft" = true ]; then
+    # SKIPPED-NOT-GREEN-1: this pass marked it ready, and the runs its head has so far saw a draft: their `checks` gate failed without
+    # checking anything, which is not a ci-failed verdict. The run that gives one starts by the ready event when a workflow-capable
+    # credential marked it ready, else it is dispatched here; the next pass reads its result.
+    if [ -z "${LANE_PAT:-}" ]; then
+      if gh workflow run checks.yml -R "$repo" --ref "$br" >/dev/null 2>&1; then echo "#$n dispatched checks"; else echo "lane: dispatching checks on #$n failed" >&2; fi
+    fi
+    echo "#$n pending: marked ready this pass"; continue
+  fi
   if [ "$bad" -gt 0 ]; then
     case "$labels" in
       *,ci-failed,*) ;;
