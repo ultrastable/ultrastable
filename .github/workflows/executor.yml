@@ -66,6 +66,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - run: pip install pyyaml
+      - name: Canary every coder route (ROUTE-CANARY-1); a failed rung sits out 6 h
+        if: needs.spark.outputs.go == 'true'
+        continue-on-error: true  # a dead route is recorded in ops/route-health.jsonl and demoted, never a stop
+        run: python3 -m foundation routehealth --run --apply
       - name: Gate and feed the agent (budget caps, kill switch, Q-UNK work)
         id: work
         if: needs.spark.outputs.go == 'true'

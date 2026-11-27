@@ -2,8 +2,10 @@
 # Append this run's executor provenance (ops/executor-log.jsonl) to branch loop-evidence, the shared evidence branch.
 # Failures are loud: a failed push exits non-zero.
 set -euo pipefail
-[ -f ops/executor-log.jsonl ] || { echo "no executor rows this run"; exit 0; }
-cp ops/executor-log.jsonl "${RUNNER_TEMP:-/tmp}/rows.jsonl"
+[ -f ops/executor-log.jsonl ] || [ -f ops/route-health.jsonl ] || { echo "no executor rows this run"; exit 0; }
+[ -f ops/executor-log.jsonl ] && cp ops/executor-log.jsonl "${RUNNER_TEMP:-/tmp}/rows.jsonl" || : > "${RUNNER_TEMP:-/tmp}/rows.jsonl"
+# ROUTE-CANARY-1: the canary rows travel with the rest, so routehealth --probe reads them from loop-evidence
+[ -f ops/route-health.jsonl ] && cp ops/route-health.jsonl "${RUNNER_TEMP:-/tmp}/health.jsonl" || : > "${RUNNER_TEMP:-/tmp}/health.jsonl"
 # SELFCODE-1: the self-code ledger (filed, kept, reverted per signal kind) travels on the same evidence branch
 [ -f ops/selfcode/ledger.jsonl ] && cp ops/selfcode/ledger.jsonl "${RUNNER_TEMP:-/tmp}/selfcode.jsonl" || : > "${RUNNER_TEMP:-/tmp}/selfcode.jsonl"
 # FREE-LLM-1: per-call model outcomes (which rung answered, why one failed) travel on the same branch
@@ -28,7 +30,10 @@ grep -vxFf ops/selfcode/ledger.jsonl "${RUNNER_TEMP:-/tmp}/selfcode.jsonl" > "${
 touch ops/agent-cost.jsonl
 grep -vxFf ops/agent-cost.jsonl "${RUNNER_TEMP:-/tmp}/cost.jsonl" > "${RUNNER_TEMP:-/tmp}/costnew.jsonl" || true
 cat "${RUNNER_TEMP:-/tmp}/costnew.jsonl" >> ops/agent-cost.jsonl
-[ -s "${RUNNER_TEMP:-/tmp}/costnew.jsonl" ] || [ -s "${RUNNER_TEMP:-/tmp}/new.jsonl" ] || [ -s "${RUNNER_TEMP:-/tmp}/selfnew.jsonl" ] || { echo "no new executor or self-code rows this run"; exit 0; }
+touch ops/route-health.jsonl
+grep -vxFf ops/route-health.jsonl "${RUNNER_TEMP:-/tmp}/health.jsonl" > "${RUNNER_TEMP:-/tmp}/healthnew.jsonl" || true
+cat "${RUNNER_TEMP:-/tmp}/healthnew.jsonl" >> ops/route-health.jsonl
+[ -s "${RUNNER_TEMP:-/tmp}/healthnew.jsonl" ] || [ -s "${RUNNER_TEMP:-/tmp}/costnew.jsonl" ] || [ -s "${RUNNER_TEMP:-/tmp}/new.jsonl" ] || [ -s "${RUNNER_TEMP:-/tmp}/selfnew.jsonl" ] || { echo "no new executor or self-code rows this run"; exit 0; }
 cat "${RUNNER_TEMP:-/tmp}/new.jsonl" >> ops/executor-log.jsonl
 cat "${RUNNER_TEMP:-/tmp}/selfnew.jsonl" >> ops/selfcode/ledger.jsonl
-git add ops/executor-log.jsonl ops/selfcode/ledger.jsonl ops/agent-cost.jsonl; git commit -m "executor provenance"; git push origin loop-evidence
+git add ops/executor-log.jsonl ops/selfcode/ledger.jsonl ops/agent-cost.jsonl ops/route-health.jsonl; git commit -m "executor provenance"; git push origin loop-evidence
