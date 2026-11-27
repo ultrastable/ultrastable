@@ -1,11 +1,11 @@
 {
-  "id": "OL-20261127-6",
-  "title": "OL-20261127-6: Q-ASHBY-ledger: Step trials, commits and rollbacks have no table, so interference() and failureRecall() cannot read live data",
-  "body": "**Owner:** product-manager\n**Trigger:** ASHBY-KERNEL-1 merged\n**Done check:** grep:seed/worker/src/ashby.js::step_trials\n**Status:** open\n\nProblem: Step trials, commits and rollbacks have no table, so interference() and failureRecall() cannot read live data. Done check: migration adding step_trials(partition, candidate, start_tick, outcome) and a tick read that calls interference and evoke. Out of scope: copying any text or image from ashby.info; blind random search. Prediction: research_findings_met_share >= 0.5 within 336 h.",
-  "labels": [
-    "role:product-manager",
-    "open-loop"
-  ],
-  "milestone": "Now",
-  "workstream": "Open loops"
+ "id": "OL-20261127-6",
+ "title": "OL-20261127-6: Q-ASHBY-ledger: Step trials, commits and rollbacks have no table, so interference() and failureRecall() cannot read live data",
+ "body": "**Owner:** product-manager\n**Trigger:** ASHBY-KERNEL-1 merged (PR 2629); work record issue 2620\n**Done check:** cmd:grep -q step_trials seed/worker/src/ashby.js\n**Closing probe:** `node --test seed/worker/test/ashby.test.js seed/worker/test/organization.test.js` passes with a test that exercises it, and grep -q step_trials seed/worker/src/ashby.js exits 0\n**Prediction:** ashby_concepts_implemented >= 18 within 336 h\n**Out of scope:** copying any text or image from ashby.info; blind random search\n**Status:** open\n\nProblem: Step trials, commits and rollbacks have no table, so interference() and failureRecall() cannot read live data. Build: a migration adding step_trials(partition, candidate, start_tick, outcome) and a tick read that calls interference and evoke.",
+ "labels": [
+  "role:product-manager",
+  "open-loop"
+ ],
+ "milestone": "Now",
+ "workstream": "Open loops"
 }

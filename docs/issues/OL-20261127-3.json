@@ -1,11 +1,11 @@
 {
-  "id": "OL-20261127-3",
-  "title": "OL-20261127-3: Q-ASHBY-org-live: controlSystem, prescribe and horizon run only on rows passed in tests; no tick reads contribution, spend and side effects per role",
-  "body": "**Owner:** product-manager\n**Trigger:** ASHBY-KERNEL-1 merged\n**Done check:** grep:seed/worker/src/tick.js::controlSystem\n**Status:** open\n\nProblem: controlSystem, prescribe and horizon run only on rows passed in tests; no tick reads contribution, spend and side effects per role. Done check: a tick read that builds task rows per role from outcomes and budget_ledger and writes org.organisation. Out of scope: copying any text or image from ashby.info; blind random search. Prediction: research_findings_met_share >= 0.5 within 336 h.",
-  "labels": [
-    "role:product-manager",
-    "open-loop"
-  ],
-  "milestone": "Now",
-  "workstream": "Open loops"
+ "id": "OL-20261127-3",
+ "title": "OL-20261127-3: Q-ASHBY-org-live: controlSystem, prescribe and horizon run only on rows passed in tests; no tick reads contribution, spend and side effects per role",
+ "body": "**Owner:** product-manager\n**Trigger:** ASHBY-KERNEL-1 merged (PR 2629); work record issue 2620\n**Done check:** cmd:grep -q controlSystem seed/worker/src/tick.js\n**Closing probe:** `node --test seed/worker/test/ashby.test.js seed/worker/test/organization.test.js` passes with a test that exercises it, and grep -q controlSystem seed/worker/src/tick.js exits 0\n**Prediction:** ashby_concepts_implemented >= 18 within 336 h\n**Out of scope:** copying any text or image from ashby.info; blind random search\n**Status:** open\n\nProblem: controlSystem, prescribe and horizon run only on rows passed in tests; no tick reads contribution, spend and side effects per role. Build: a tick read that builds task rows per role from outcomes and budget_ledger and writes org.organisation.",
+ "labels": [
+  "role:product-manager",
+  "open-loop"
+ ],
+ "milestone": "Now",
+ "workstream": "Open loops"
 }

@@ -1,11 +1,11 @@
 {
-  "id": "OL-20261127-5",
-  "title": "OL-20261127-5: Q-ASHBY-dispersion: Disturbances are not routed to parts by kind (journal 3851)",
-  "body": "**Owner:** product-manager\n**Trigger:** ASHBY-KERNEL-1 merged\n**Done check:** grep:seed/worker/src/ashby.js::disturbance_class\n**Status:** open\n\nProblem: Disturbances are not routed to parts by kind (journal 3851). Done check: disturbance classes recorded per breach and passed to varietyLedger in the ashby step. Out of scope: copying any text or image from ashby.info; blind random search. Prediction: research_findings_met_share >= 0.5 within 336 h.",
-  "labels": [
-    "role:product-manager",
-    "open-loop"
-  ],
-  "milestone": "Now",
-  "workstream": "Open loops"
+ "id": "OL-20261127-5",
+ "title": "OL-20261127-5: Q-ASHBY-dispersion: Disturbances are not routed to parts by kind (journal 3851)",
+ "body": "**Owner:** product-manager\n**Trigger:** ASHBY-KERNEL-1 merged (PR 2629); work record issue 2620\n**Done check:** cmd:grep -q disturbance_class seed/worker/src/ashby.js\n**Closing probe:** `node --test seed/worker/test/ashby.test.js seed/worker/test/organization.test.js` passes with a test that exercises it, and grep -q disturbance_class seed/worker/src/ashby.js exits 0\n**Prediction:** ashby_concepts_implemented >= 18 within 336 h\n**Out of scope:** copying any text or image from ashby.info; blind random search\n**Status:** open\n\nProblem: Disturbances are not routed to parts by kind (journal 3851). Build: disturbance classes recorded per breach and passed to varietyLedger in the ashby step.",
+ "labels": [
+  "role:product-manager",
+  "open-loop"
+ ],
+ "milestone": "Now",
+ "workstream": "Open loops"
 }
