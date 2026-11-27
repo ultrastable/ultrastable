@@ -223,6 +223,31 @@ test('READ-BUDGET-9: /api/live/changes reads the rows again only after a refresh
   assert.match(plan(db, 'SELECT COUNT(*) AS n FROM live_changes WHERE substance IS NULL'), /live_changes_pending/);
 });
 
+test('READ-BUDGET-11: a refresh that finds the same pull requests costs no reading of the rows, in a new isolate too', async () => {
+  const { readLiveChanges, refreshLiveChanges } = await import('../src/livechanges.js');
+  const db = makeDb();
+  let prs = [{ number: 1, title: 'one', merged_at: '2026-11-20T10:00:00Z', html_url: 'u1', user: { login: 'a' }, head: { ref: 'b' }, labels: [] }];
+  const f = async () => ({ ok: true, status: 200, text: async () => JSON.stringify(prs) });
+  const rowReads = seen => seen.filter(e => /SELECT n, title, by_origin/.test(e.sql)).length;
+  await refreshLiveChanges({ db, token: 't', repo: 'o/r', fetch: f, now: NOW });
+  db.raw.prepare(`UPDATE live_changes SET substance = 'substantive'`).run();
+  const a = await readLiveChanges(db, 'o/r');
+  await refreshLiveChanges({ db, token: 't', repo: 'o/r', fetch: f, now: NOW + 600e3 });           // the next tick: same pull requests, a newer refresh time
+  let seen = spy(db);
+  const b = await readLiveChanges(db, 'o/r');
+  assert.equal(rowReads(seen), 0, 'same signature: the rows are not read again');
+  assert.deepEqual(b.changes, a.changes); assert.equal(b.refreshed_at, new Date(NOW + 600e3).toISOString(), 'the refresh time it reports is the newest one');
+  const other = { raw: db.raw, prepare: (...x) => db.prepare(...x), batch: (...x) => db.batch(...x) };  // another isolate: a new binding object, nothing in memory
+  seen = spy(other);
+  assert.deepEqual(await readLiveChanges(other, 'o/r'), b); assert.equal(rowReads(seen), 0, 'another isolate is served from the kept answer');
+  prs = [...prs, { number: 2, title: 'two', merged_at: '2026-11-20T11:00:00Z', html_url: 'u2', user: { login: 'a' }, head: { ref: 'b' }, labels: [] }];
+  await refreshLiveChanges({ db, token: 't', repo: 'o/r', fetch: f, now: NOW + 1200e3 });
+  assert.equal((await readLiveChanges(other, 'o/r')).changes.length, 2, 'a new pull request is read at once');
+  db.raw.prepare(`DELETE FROM org WHERE key = 'live_sig:o/r'`).run();
+  db.raw.prepare(`UPDATE live_changes SET title = 'renamed' WHERE n = 2`).run(); db.raw.prepare(`UPDATE live_changes_meta SET refreshed_at = 'later'`).run();
+  assert.equal((await readLiveChanges(other, 'o/r')).changes[0].title, 'renamed', 'no signature: the refresh time decides, as before');
+});
+
 test('READ-BUDGET-9: the cap on live changes keeps the newest 400 of a repository', async () => {
   const { refreshLiveChanges } = await import('../src/livechanges.js');
   const db = makeDb();
