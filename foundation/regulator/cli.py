@@ -6,6 +6,7 @@ map [--focus F ...]   byte-stable ranked map for the context prefix (P1/P11)
 impact F [F ...]      affected tests for changed files (P7)
 ask Q                 conclusion-cache lookup (P2); exit 1 on miss/stale
 tell Q A -e FILE ...  store a conclusion with its evidence files
+hook                  read a PostToolUse payload on stdin into the token ledger
 tokens                token share by kind + cache-read share (experiment 1 baseline)
 """
 import argparse
@@ -44,6 +45,10 @@ def main(argv=None):
     elif a.cmd == "tell":
         q, ans = a.args[0], a.args[1]
         ConclusionCache(s, a.repo).put(q, ans, a.evidence)
+    elif a.cmd == "hook":
+        import sys
+        from .ledger_hook import record
+        record(s, json.loads(sys.stdin.read() or "{}"))
     elif a.cmd == "tokens":
         print(json.dumps({"share_by_kind": s.token_share_by_kind(),
                           "cache_read_share": s.cache_read_share()}))
