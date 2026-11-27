@@ -56,3 +56,8 @@ class Store:
         r = self.db.execute(
             "SELECT SUM(cache_read_tokens) c, SUM(input_tokens) i FROM token_log").fetchone()
         return (r["c"] or 0) / (r["i"] or 1)
+
+
+def schema_sql():
+    """The ledger contract as plain SQL, for a D1 mirror (`wrangler d1 execute --file`)."""
+    return SCHEMA.strip() + "\n"

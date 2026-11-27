@@ -80,8 +80,7 @@
   {
    "id": "publication-files",
    "files": [
-    "NOTICE",
-    "CITATION.cff"
+    "NOTICE"
    ],
    "repos": [
     ".github",
@@ -93,6 +92,23 @@
     "workers"
    ],
    "rule": "contains:LicenseRef-Ultrastable-USL-1.0"
+  },
+  {
+   "id": "citation-licence",
+   "_doc": "REPO-CONFORM-2: Citation File Format 1.2.0 takes only an SPDX licence list id in `license`; a LicenseRef licence is named by `license-url` (seed/scripts/surfaces.py renders it, seed/scripts/repoconform.py validates it).",
+   "files": [
+    "CITATION.cff"
+   ],
+   "repos": [
+    ".github",
+    "license",
+    "ops",
+    "seed",
+    "spec",
+    "ultrastable",
+    "workers"
+   ],
+   "rule": "contains:license-url:"
   }
  ],
  "dependencies": [

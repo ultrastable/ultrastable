@@ -1,7 +1,7 @@
 {
- "at": "2026-11-27T12:48:58Z",
- "gaps": 6,
- "match_share": 0.989,
+ "at": "2026-11-27T13:28:38Z",
+ "gaps": 7,
+ "match_share": 0.988,
  "sources": {
   "changes": [
    {
@@ -863,10 +863,12 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation openstd --check: new bespoke format: ops/perception-cost.jsonl (event ledger that is not CloudEvents 1.0); declare the standard in doctrine/open-standards.json or meet it now"
+    ],
     "id": "OPEN-STANDARDS-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -1118,7 +1120,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 119.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 119.9 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1198,7 +1200,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 4,
+   "gaps": 5,
    "total": 107
   },
   "year": {

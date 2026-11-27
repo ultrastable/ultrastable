@@ -31,7 +31,8 @@ def _validate(schema, value, path="$"):
 def probe(root, spec: str) -> str:
     """One measured reading of a register row. '' when it holds, else why not.
     file:PATH | grep:PATH::REGEX | absent:GLOB (a homegrown or foreign artefact must not exist) | glob:GLOB (at least one match)
-    | schemas (python3 -m foundation configschema --check) | commits (python3 -m foundation standards --commits)."""
+    | schemas (python3 -m foundation configschema --check) | commits (python3 -m foundation standards --commits)
+    | conform:DIR::FILE (FILE under DIR passes its named validator in seed/scripts/repoconform.py, the one conformance reader, REPO-CONFORM-2)."""
     root = Path(root)
     kind, _, arg = spec.partition(":")
     if kind == "file":
@@ -55,6 +56,12 @@ def probe(root, spec: str) -> str:
         from . import commitlint
         bad = commitlint.check(root)
         return f"{len(bad)} commit-title finding(s), first: {bad[0]}" if bad else ""
+    if kind == "conform":
+        d, _, f = arg.partition("::")
+        from . import repoconform
+        rows = repoconform.engine().read(root / d, only=f)
+        bad = next((r for r in rows if not r.get("ok")), None)
+        return f"{f} is not in the conformance register" if not rows else f"{d}/{f}: {bad['state']}: {bad['why']}" if bad else ""
     return f"unknown probe {spec!r}"
 
 

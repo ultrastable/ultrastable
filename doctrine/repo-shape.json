@@ -33,6 +33,7 @@
   {"path": "evals", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "core-manifest", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "licensing", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
+  {"path": "LICENSES", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "metrics", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "uptime", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "social", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},

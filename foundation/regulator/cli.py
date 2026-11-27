@@ -7,6 +7,7 @@ impact F [F ...]      affected tests for changed files (P7)
 ask Q                 conclusion-cache lookup (P2); exit 1 on miss/stale
 tell Q A -e FILE ...  store a conclusion with its evidence files
 hook                  read a PostToolUse payload on stdin into the token ledger
+schema                print the ledger SQL (D1-compatible)
 tokens                token share by kind + cache-read share (experiment 1 baseline)
 """
 import argparse
@@ -26,6 +27,10 @@ def main(argv=None):
     ap.add_argument("--budget", type=int, default=1024)
     a = ap.parse_args(argv)
 
+    if a.cmd == "schema":  # no ledger needed: do not create the default database file as a side effect
+        from .store import schema_sql
+        print(schema_sql(), end="")
+        return 0
     s = Store(a.db)
     model = RepoModel(s, a.repo)
     if a.cmd == "index":

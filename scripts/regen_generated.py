@@ -40,6 +40,8 @@ GENERATORS = [
     (["python3", "-m", "plugins", "self", "--write"], "seed"),
     (["python3", "scripts/claims.py", "--apply", "--fix"], "seed"),  # KIT-REGEN-1: the kit's own claims file and README counts follow its surfaces and tests
     (["python3", "scripts/system.py", "--write"], "seed"),  # KIT-REGEN-1: the kit's definition follows the rule file and the code of record
+    (["python3", "seed/scripts/surfaces.py", "--render", "--root", "."], "."),  # REPO-CONFORM-2: the core's identity files follow its ultrastable.json
+    (["python3", "scripts/surfaces.py", "--render", "--root", "."], "seed"),  # REPO-CONFORM-2: the kit's identity files follow its ultrastable.json
 ]
 # REGEN-PARITY-1: a pull request carries no generated file (PR-NO-GENERATED-1), so its checks read what scripts/regen_generated.sh writes in the
 # job's workspace. Every generator here therefore also runs there, except the ones below: each records an event or reads the network, which

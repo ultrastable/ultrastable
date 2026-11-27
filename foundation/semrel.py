@@ -26,6 +26,22 @@ def last_tag(root) -> str | None:
     return t.stdout.strip() or None
 
 
+def last_release(root) -> tuple[str | None, str]:
+    """(where the commits of the next release start, the last released version): the newest v* tag reachable from HEAD, else the commit that
+    last wrote VERSION, else nothing. A tag put on a commit that never landed on main is not reachable; planning from 0.0.0 then wrote 0.1.0
+    into CHANGELOG.md a second time."""
+    tag = last_tag(root)
+    if tag:
+        return tag, tag[1:]
+    v = Path(root) / "VERSION"
+    ver = v.read_text(encoding="utf-8").strip() if v.is_file() else ""
+    if re.fullmatch(r"\d+\.\d+\.\d+", ver):
+        sha = git(root, "log", "-1", "--format=%H", "--", "VERSION").strip()
+        if sha:
+            return sha, ver
+    return None, "0.0.0"
+
+
 def classify(subject: str, body: str = "") -> tuple[str, str, str] | None:
     """(bump, section, text) or None for a commit that is left out."""
     if "[skip ci]" in subject:
@@ -44,7 +60,7 @@ def bump(version: str, kind: str) -> str:
 
 
 def plan(root=REPO, today: str | None = None) -> dict:
-    tag = last_tag(root)
+    tag, base = last_release(root)
     rng = f"{tag}..HEAD" if tag else "HEAD"
     raw = git(root, "log", rng, "--format=%s%x1f%b%x1e", *([] if tag else ["-n", "100"]))
     items = []
@@ -55,7 +71,6 @@ def plan(root=REPO, today: str | None = None) -> dict:
         c = classify(subj.strip(), body)
         if c:
             items.append(c)
-    base = tag[1:] if tag else "0.0.0"
     order = {"patch": 0, "minor": 1, "major": 2}
     top = max((i[0] for i in items), key=order.get, default=None)
     version = bump(base, top) if top else base
@@ -75,18 +90,27 @@ def render(p: dict) -> str:
     return "\n".join(out)
 
 
-HEAD = "# Changelog\n\ngenerated-by: python3 -m foundation semrel --apply\n\nAll notable changes, in the Keep a Changelog 1.1 format; versions follow Semantic Versioning 2.0.\n\n"
+UNRELEASED = "## [Unreleased]"
+HEAD = "# Changelog\n\ngenerated-by: python3 -m foundation semrel --apply\n\nAll notable changes, in the Keep a Changelog 1.1 format; versions follow Semantic Versioning 2.0.\n\n" + UNRELEASED + "\n\n"
 
 
 def apply(root=REPO) -> dict:
+    """Write the release below `## [Unreleased]`, which stays the first release heading (Keep a Changelog 1.1; it is added when missing).
+    A version CHANGELOG.md already lists is refused, never written twice."""
     p = plan(root)
     if not p["bump"]:
         return p
     f = Path(root) / "CHANGELOG.md"
-    old = (f.read_text(encoding="utf-8") if f.exists() else HEAD).replace("\n## [Unreleased]\n", "\n")
-    body = old.split("\n## [", 1)
-    # Keep a Changelog 1.1: an [Unreleased] heading stays on top of the newest release (REPO-CONFORM-1 reads it)
-    new = (body[0] if len(body) > 1 else old).rstrip("\n") + "\n\n## [Unreleased]\n\n" + render(p) + ("\n## [" + body[1] if len(body) > 1 else "")
+    old = f.read_text(encoding="utf-8") if f.exists() else HEAD
+    if f"\n## [{p['version']}]" in "\n" + old:
+        return {**p, "bump": None, "refused": f"{p['version']} is already listed in CHANGELOG.md"}
+    if UNRELEASED not in old.splitlines():
+        head, sep, rest = old.partition("\n## [")
+        old = head.rstrip("\n") + "\n\n" + UNRELEASED + "\n" + (sep + rest if sep else "\n")
+    at = old.index(UNRELEASED + "\n") + len(UNRELEASED)
+    nxt = old.find("\n## [", at)
+    pre, post = (old[:nxt], old[nxt:]) if nxt != -1 else (old, "")
+    new = pre.rstrip("\n") + "\n\n" + render(p) + post
     f.write_text(new.rstrip("\n") + "\n", encoding="utf-8")
     (Path(root) / "VERSION").write_text(p["version"] + "\n", encoding="utf-8")
     return p
@@ -97,7 +121,7 @@ def main(argv: list[str]) -> int:
         p = apply()
     else:
         p = plan()
-    print(p["version"], "(no change)" if not p["bump"] else render(p)[:2000])
+    print(p["version"], p.get("refused") or "(no change)" if not p["bump"] else render(p)[:2000])
     return 0
 
 

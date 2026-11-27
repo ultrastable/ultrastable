@@ -4,79 +4,79 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": false,
-   "value": 0.914
+   "value": 0.918
   },
   "happy_paths": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": false,
    "value": 83
   },
   "research_in_code": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": false,
    "value": 0.564
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": false,
    "value": 0.033
   },
   "self_shipping": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": false,
    "value": 0.786
   },
   "spec_quality": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": false,
-   "value": 0.511
+   "value": 0.477
   },
   "spend": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": false,
    "value": 8.491
   },
   "stalled_clocks": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": false,
    "value": 3
   },
   "survival_levels": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": true,
    "value": 3
   },
   "ui_findings": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-27T12:47:12Z",
+   "at": "2026-11-27T13:26:12Z",
    "ok": true,
-   "value": 41.456
+   "value": 38.158
   }
  },
  "readiness": {
