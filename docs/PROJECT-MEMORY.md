@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: feat(executor): refuse a model reply of the wrong shape (R12) (#2708)
+- 2026-11-27: feat(deploy): read live Workers against main (R6) (#2706)
 - 2026-11-27: feat(deploy): roll back drifted Worker deploys (R6) (#2701)
 - 2026-11-27: fix(lane): a pull request carries no generator-owned files, so main moving under it cannot kill it (PR-NO-GENERATED-1) (#2694)
 - 2026-11-27: feat(checks): workflow tokens read-only at the top, identities registered (ZHC-R4) (#2697)
@@ -998,6 +1000,10 @@ Rowan: "these are grave shortcomings of the ultra-stable system ... something's 
 - Site statements that were false and are corrected: "every change is rolled back automatically" (only handed-off changes are; `Q-RULEREFS-deploy-revert`), "a person replies within two working days" (nothing reads pilot applications; `Q-RULEREFS-pilot-consumer`). The seed's rule file names 353 files and commands the seed does not carry (`Q-RULEREFS-seed-rules`).
 - Lessons for any session integrating parallel work: two workers each made a standard for the same file (branch cleanup) and every tenant's CI went red until one owner was named; give every shared file one owner before fanning out. A targeted check list that omits `doctrine --check` misses the README brand block. The generated-system workflow lint said weekly while the rule said daily; one rule now (daily).
 
+## 2026-11-27: every pure generator runs at pull-request time (REGEN-PARITY-1) (Session: session_0156nqDsPJ1YLdic5NVSU9iG)
+
+- Measured: `scripts/regen_generated.sh` (pull-request time) ran 18 generators and `scripts/regen_generated.py` (after merge) 24; six pure ones were only in the second (`ultrastability --data`, `admit`, `owndb`, `tenantcontrols`, `upstream contract`, `plugins self`). After PR-NO-GENERATED-1 a pull request no longer carries generated files, so one that added an essential variable (#2615) failed on a stale `site/ultrastability-data.js` that nothing in its run rebuilt.
+- Now: `POST_MERGE_ONLY` in `scripts/regen_generated.py` names the eight generators that record an event or read the network, each with its reason; every other generator is in the shell list, and `tests/foundation/test_regen_generated.py` fails one that is in neither. `regen_generated.py --pr-list` prints the pull-request-time set. A full pull-request-time regenerate measured 13 seconds here.
 ## 2026-11-27: the pull request closer times a condition from when it began (PR-BOUND-3) (Session: session_0156nqDsPJ1YLdic5NVSU9iG)
 
 - Measured: #2686 was closed by `prbound --apply` 17 seconds after main moved under it, with the reason "unresolved for 90 min". PR-BOUND-2 counted minutes since the pull request opened, so any pull request open past 30 minutes was closed on the first lane pass that saw a conflict, and past 60 minutes on the first failed check. #2664 and #2615 were closed the same way.

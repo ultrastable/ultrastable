@@ -121,5 +121,91 @@
       },
       "prediction": "pr_closed_unmerged_share <= 0.2 within 336 h"
     }
-  ]
+  ],
+  "canon": {
+    "_doc": "CANON-1 (Rowan, 2026-11-27): a standing research program on Ashby and his contemporaries. Each pass of research --intake files the next primary source not yet ingested as one Q-RES-CANON item (at most per_pass); the executor reads the original and writes research/studies/<id>.json with source_id canon:<id>, findings bound to this system's metrics. The paper and its posts then follow from the existing research and thought loops.",
+    "per_pass": 1,
+    "sources": [
+      {
+        "id": "ashby-1956",
+        "title": "An Introduction to Cybernetics",
+        "authors": "W. Ross Ashby",
+        "year": 1956,
+        "url": "http://pespmc1.vub.ac.be/books/IntroCyb.pdf",
+        "perspective": "systems"
+      },
+      {
+        "id": "conant-ashby-1970",
+        "title": "Every good regulator of a system must be a model of that system",
+        "authors": "Roger C. Conant and W. Ross Ashby",
+        "year": 1970,
+        "url": "http://pespmc1.vub.ac.be/books/Conant_Ashby.pdf",
+        "perspective": "systems"
+      },
+      {
+        "id": "ashby-journal",
+        "title": "Journal and card indexes",
+        "authors": "W. Ross Ashby",
+        "year": 1972,
+        "url": "https://ashby.info/",
+        "perspective": "systems"
+      },
+      {
+        "id": "wiener-1948",
+        "title": "Cybernetics: Or Control and Communication in the Animal and the Machine",
+        "authors": "Norbert Wiener",
+        "year": 1948,
+        "url": null,
+        "perspective": "systems"
+      },
+      {
+        "id": "mcculloch-1945",
+        "title": "A heterarchy of values determined by the topology of nervous nets",
+        "authors": "Warren S. McCulloch",
+        "year": 1945,
+        "url": null,
+        "perspective": "oversight"
+      },
+      {
+        "id": "beer-1972",
+        "title": "Brain of the Firm",
+        "authors": "Stafford Beer",
+        "year": 1972,
+        "url": null,
+        "perspective": "oversight"
+      },
+      {
+        "id": "bateson-1972",
+        "title": "Steps to an Ecology of Mind",
+        "authors": "Gregory Bateson",
+        "year": 1972,
+        "url": null,
+        "perspective": "systems"
+      },
+      {
+        "id": "vonfoerster-1974",
+        "title": "Cybernetics of Cybernetics",
+        "authors": "Heinz von Foerster (ed.)",
+        "year": 1974,
+        "url": null,
+        "perspective": "systems"
+      },
+      {
+        "id": "pask-1976",
+        "title": "Conversation Theory: Applications in Education and Epistemology",
+        "authors": "Gordon Pask",
+        "year": 1976,
+        "url": null,
+        "perspective": "quality"
+      },
+      {
+        "id": "perez-lopez-1974",
+        "title": "Organizational Theory: A Cybernetic Approach (IESE, code: PR 2625)",
+        "authors": "Juan Antonio Pérez López",
+        "year": 1974,
+        "url": null,
+        "perspective": "oversight"
+      }
+    ]
+  }
 }
