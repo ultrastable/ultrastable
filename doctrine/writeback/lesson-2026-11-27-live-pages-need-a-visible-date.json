@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-live-pages-need-a-visible-date",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "Live pages need a visible date",
+  "body": "A page with no date reads as stale even when its data is current. Every site page and response now carries a recency line and headers from seed/worker/src/recency.js (the site through site/edge.js); site/recency.test.mjs fails a page without them.",
+  "probe": "grep:seed/worker/src/recency.js::RECENCY-1"
+ },
+ "kind": "lesson",
+ "title": "Live pages need a visible date",
+ "session": "session_0156nqDtsm3xWA5HrxzuWq8X"
+}

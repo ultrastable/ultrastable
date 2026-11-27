@@ -13,7 +13,7 @@ It is written for people who build or run AI systems and want them to keep worki
 
 ## 1. The problem
 
-Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of something requires a model of it, and the quality of control is bounded by the quality of the model. [1]
+Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of a system requires a model of it, and the quality of control is bounded by the quality of the model. [1]
 
 This matters now because the usual answer, the model is in the weights, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.
 
@@ -41,7 +41,7 @@ To apply this to your own system, one step per problem:
 2. A model with no stated outcomes to hold. Put in place: essential variables declared with limits. Check it with one number, share of declared essential variables that have limits (doctrine/ultrastability.json), and set a limit for it (>= 1.0 is the limit we use).
 3. Work items too vague to map to a state. Put in place: fails items with no done check, prediction, out-of-scope line or live probe. Check it with one number, share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py), and set a limit for it (>= 0.9 is the limit we use).
 
-In our own system, 2 of 3 of these checks pass today. Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending reads 1.0 (n = 5; source: doctrine/knowledge-graph.json (declared)). Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.714 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes.
+In our own system, 3 of 3 of these checks pass today. Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending reads 1.0 (n = 5; source: doctrine/knowledge-graph.json (declared)). Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 19; source: doctrine/ultrastability.json). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 1.0 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes.
 
 ## 4. Trade-offs and limits
 

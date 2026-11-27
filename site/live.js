@@ -3,6 +3,7 @@
 // Changing anything stays behind the owner's e-mailed code (dashboard worker, /owner).
 const JSON_H = { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=60", "access-control-allow-origin": "*", "x-content-type-options": "nosniff" };
 
+import { recency, recencyHeaders } from "../seed/worker/src/recency.js"; // RECENCY-1: live pages state the time of their latest reading
 export async function load(env) {
   if (!env || !env.DB) return null;
   try {
@@ -44,6 +45,10 @@ export async function ignitionResponse(env, now = Date.now()) {
 async function liveChanges(env) {
   try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/live/changes")); if (r.ok) return await r.json(); } } catch (e) { console.error("live changes", e && e.message); }
   return null;
+}
+// RECENCY-1: a page that reads the snapshot shows the snapshot's time, not the time the page was built.
+export function readingRecency(generated, now = Date.now()) {
+  return recency({ updatedAt: generated, maxAgeS: CADENCE_S.snapshot, schedule: "Republished by the transparency loop at least every 26 hours", source: "transparency snapshot", now });
 }
 export async function overlay(d, env, generated, now = Date.now(), bundleAt = null) {
   const live = await liveChanges(env);
@@ -177,15 +182,15 @@ export async function liveResponse(u, request, env, shell, HTML, bundleAt = null
   if (u.pathname === "/api/live") {
     const r = await load(env);
     if (!r) return new Response(JSON.stringify({ error: "No snapshot published yet." }), { status: 503, headers: JSON_H });
-    return new Response(JSON.stringify(await overlay(JSON.parse(r.body), env, r.generated, Date.now(), bundleAt)), { headers: JSON_H });
+    { const rc = readingRecency(r.generated); return new Response(JSON.stringify({ recency: rc, ...(await overlay(JSON.parse(r.body), env, r.generated, Date.now(), bundleAt)) }), { headers: { ...JSON_H, ...recencyHeaders(rc) } }); }
   }
   // REDTEAM-1: the page used to say only "Loading..." until its script ran, so crawlers, AI readers and no-JS visitors saw no figures.
   // The server now renders the snapshot time and the latest merged changes; the script replaces them with the full view.
-  let asof = "The live record could not be read just now.", first = "";
+  let asof = "The live record could not be read just now.", first = "", rc = readingRecency(null);
   try {
     const r = await load(env);
-    if (r) { const d = await overlay(JSON.parse(r.body), env, r.generated, Date.now(), bundleAt); ({ asof, first } = serverView(d, r.generated)); }
+    if (r) { rc = readingRecency(r.generated); const d = await overlay(JSON.parse(r.body), env, r.generated, Date.now(), bundleAt); ({ asof, first } = serverView(d, r.generated)); }
   } catch (e) { console.error("live ssr", e && e.message); }
   const body = "<div class=\"head\"><h1>Ultrastable running on Ultrastable</h1><p>Everything here is read-only and open to everyone. It is the same record the managers and agents work from.</p><p class=\"meta\" id=\"asof\">" + asof + "</p><p class=\"meta\">Subscribe to merged changes: <a href=\"/changelog.xml\">RSS</a> or <a href=\"/changelog.json\">JSON</a>.</p></div><div id=\"live\">" + first + "</div><script>" + JS + "</script>";
-  return new Response(shell({ path: "/live", title: "Live: Ultrastable running on Ultrastable", description: "Read-only view of the managers, loops, claim checks and code changes behind Ultrastable." }, body), { headers: HTML });
+  return new Response(shell({ path: "/live", title: "Live: Ultrastable running on Ultrastable", description: "Read-only view of the managers, loops, claim checks and code changes behind Ultrastable.", recency: rc }, body), { headers: { ...HTML, ...recencyHeaders(rc) } });
 }

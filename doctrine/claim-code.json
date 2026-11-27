@@ -539,6 +539,24 @@
     "file": "tests/foundation/test_prsafe.py",
     "contains": "def test_unknown_state_is_not_a_conflict"
    }
+  },
+  {
+   "id": "recency-page-schedule",
+   "source": "site/edge.js",
+   "quote": "Rebuilt after every merge and live within 26 hours",
+   "probe": {
+    "file": "site/recency.test.mjs",
+    "contains": "assert.equal(j.recency.max_age_s, 26 * 3600)"
+   }
+  },
+  {
+   "id": "recency-live-schedule",
+   "source": "site/live.js",
+   "quote": "Republished by the transparency loop at least every 26 hours",
+   "probe": {
+    "file": "site/recency.test.mjs",
+    "contains": "assert.match(r.schedule, /26 hours/)"
+   }
   }
  ],
  "baseline": [
