@@ -1085,6 +1085,22 @@
       "remedy": "The lane runs prbound --apply each pass (closes past the bound, branch kept) and resolve_generated merges additive conflicts model-free; never raise the bound to clear a breach."
     },
     {
+      "id": "pr-lost",
+      "failure_mode": "fm-pr-lost",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "prsafe",
+        "--check"
+      ],
+      "timeout": 90,
+      "root_cause": "a closer trusted a stale conflict reading and the branch was then deleted, so unmerged work was discarded (PR #2615)",
+      "owner": "operations",
+      "remedy": "The lane runs prsafe --recover --apply each pass, which reopens the pull request; fix the closer that closed it so it goes through prsafe.safe_close; never delete the archive ref or the marker comment to clear a breach."
+    },
+    {
       "id": "clock-measured",
       "failure_mode": "fm-loop-unmeasured",
       "kind": "command",

@@ -830,6 +830,18 @@
       "probe": "grep:foundation/prbound.py::def read"
     },
     {
+      "id": "fm-pr-lost",
+      "trigger": "automation closes an unmerged pull request, or deletes its branch, while main still lacks its commits",
+      "symptom": "a session's work is closed unmerged on a stale conflict label (PR #2615 closed while its branch merged cleanly with main) and its branch is then deleted, so the work lives only in a container that is reclaimed",
+      "blast_radius": "every session, executor and tenant repository: committed work is discarded",
+      "detection": "python3 -m foundation prsafe --check",
+      "root_cause": "PR-BOUND-1 trusted a `conflict` label set earlier instead of re-reading the live merge state; the Worker SLA ladder treated an unknown state as closable; branch_cleanup deleted a closed-unmerged branch with no archive; nothing recovered a wrongly closed PR",
+      "remediation": "PR-NEVER-LOSE-1: every closer goes through prsafe.safe_close / seed/worker/src/prsafe.js (live re-read, never closes a mergeable PR, update-branch first, head pinned under refs/archive), branch_cleanup archives any tip main lacks, and the lane runs prsafe --recover --apply to reopen a PR automation closed",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:foundation/prsafe.py::def safe_close"
+    },
+    {
       "id": "fm-loop-unmeasured",
       "trigger": "a clock in ops/transparency.json reads 'unmeasured'",
       "symptom": "the site shows a loop with no status, so a stopped loop looks the same as a working one",
