@@ -1,8 +1,8 @@
 {
  "_doc": "Pins the kernel text the fleet runs. `python3 -m foundation kernel --check` fails when the file's sha256 differs from this pin. A new kernel version is a new file and a new pin, never an edit of a pinned file.",
- "version": "9.1.0",
- "file": "doctrine/kernel-9.1.0.md",
- "sha256": "e4daf9d8e3ce38fc8a8664e4b6e7989d8fb6236bfdaca3a34d3f3ee347210504",
+ "version": "9.2.0",
+ "file": "doctrine/kernel-9.2.0.md",
+ "sha256": "a94c8bae635246bfa0cebf5d4d96f6d4e9657c43a32e2c2f0bc88a1684320aab",
  "supersedes": {
   "version": "8.2.1",
   "file": "doctrine/kernel-8.2.1.md",
@@ -10,6 +10,11 @@
  },
  "max_bytes": 24576,
  "previous": [
+  {
+   "version": "9.1.0",
+   "file": "doctrine/kernel-9.1.0.md",
+   "status": "archived; replaced by 9.2.0 before it was pinned on main"
+  },
   {
    "version": "9.0.0",
    "file": "doctrine/kernel-9.0.0.md",

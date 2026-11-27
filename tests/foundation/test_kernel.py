@@ -18,7 +18,7 @@ class Kernel(unittest.TestCase):
 
     def test_kernel_lock_pins_the_text(self):
         self.assertEqual(kernel.check_lock(ROOT), [])
-        r = copy_repo(); p = r / "doctrine/kernel-9.1.0.md"; p.write_text(p.read_text() + "\nX1 extra\n")
+        r = copy_repo(); p = r / "doctrine/kernel-9.2.0.md"; p.write_text(p.read_text() + "\nX1 extra\n")
         self.assertTrue(any("drifted" in m for m in kernel.check(r)))
         r = copy_repo(); edit(r / "doctrine/kernel.lock", lambda d: d.update(max_bytes=100))
         self.assertTrue(any("context budget" in m for m in kernel.check_lock(r)))

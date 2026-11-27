@@ -4,7 +4,7 @@
   "kind": "decision",
   "date": "2026-11-27",
   "title": "Kernel 9.0.0 pinned by kernel.lock",
-  "body": "Kernel 9.1.0 text (self-contained successor of 9.0.0, 24 KiB budget) lives verbatim in doctrine/kernel-9.1.0.md and is pinned by sha256 in doctrine/kernel.lock; kernel --check fails on drift. 8.2.1 stays as the machine-checked form until 9.0.0 gets its kernel.json. Owner-owned EV registry and step repertoire are protected without a human gate: executor and loops cannot write them, changes come only through a separate slow-loop identity gated by replay and rollback (follow-up item).",
+  "body": "Kernel 9.2.0 text (supersedes 9.1.0 and 9.0.0, both archived; 24 KiB budget) lives verbatim in doctrine/kernel-9.2.0.md and is pinned by sha256 in doctrine/kernel.lock; kernel --check fails on drift. 8.2.1 stays as the machine-checked form until 9.0.0 gets its kernel.json. Owner-owned EV registry and step repertoire are protected without a human gate: executor and loops cannot write them, changes come only through a separate slow-loop identity gated by replay and rollback (follow-up item).",
   "probe": "grep:foundation/kernel.py::def check_lock"
  },
  "kind": "decision",
