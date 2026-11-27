@@ -37,6 +37,10 @@ def verdicts(root=REPO) -> list[tuple[str, str]]:
     return sorted(out)
 
 
+def open_items(root=REPO) -> int:
+    return sum(1 for f in (root / ISSUES).glob("Q-AUDIT-*.json") if json.loads(f.read_text()).get("verdict") not in ("clean", "defect"))
+
+
 def rate(root=REPO) -> tuple[float, str]:
     c = config(root)
     recent = [v for _, v in verdicts(root)][-c["window"]:]
@@ -86,6 +90,10 @@ def scan(root=REPO, apply=False, run=mergeaudit.gh, now=None) -> list[dict]:
     now = now or dt.datetime.now(dt.timezone.utc)
     r, _ = rate(root)
     picked = pick(mergeaudit.merged(run, now, window_h=24), r, now.date().isoformat(), lambda n: files(n, run))
+    picked = [p for p in picked if not (root / ISSUES / f"Q-AUDIT-{p['n']}.json").exists()]
+    c = config(root)
+    room = max(0, min(c["max_per_day"], c["max_open"] - open_items(root)))
+    picked = sorted(picked, key=lambda p: p["why"] != "protected path")[:room]  # a backlog the reviewer cannot clear gets no new work
     rows = []
     for p in picked:
         f = root / ISSUES / f"Q-AUDIT-{p['n']}.json"

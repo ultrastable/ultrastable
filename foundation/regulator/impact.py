@@ -20,7 +20,7 @@ def reverse_closure(edges, changed):
 
 def is_test(path):
     b = os.path.basename(path)
-    return b.startswith("test_") or b.endswith("_test.py") or "tests" in path.split(os.sep)
+    return b.startswith("test_") or b.endswith(("_test.py", ".test.js", ".test.mjs", ".test.ts", ".spec.js", ".spec.ts")) or "tests" in path.split(os.sep) or "test" in path.split(os.sep)
 
 
 def affected_tests(model, changed_files):
