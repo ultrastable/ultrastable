@@ -49,7 +49,7 @@ export default {
      "AI systems leave their loops open. Put in place: an output with no code consumer fails the build. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 172 (n = 22858; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.778 (n = 18; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 172 (n = 22744; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.778 (n = 18; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. Chapters 7 and 8 were not machine-read for this paper: the archive.org text the research loop could reach ends in chapter 2. Ashby's mechanism is stated here in our own words from the book's contents and preface; the only verbatim quotation is from the preface (page v).",
@@ -160,7 +160,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 172,
      "status": "met",
-     "n": 22858,
+     "n": 22744,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -1555,7 +1555,7 @@ export default {
      "Limits on everything that matters. Put in place: the check fails a variable with no limits. Check it with one number, share of declared essential variables that have limits (doctrine/ultrastability.json), and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 80 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.006 (n = 165; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.625 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 80 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.006 (n = 165; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.688 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Source. Own R&D question set, regenerated from this system's records, version 2026-11-25."
@@ -1677,7 +1677,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 72 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.625,
+     "measured": 0.688,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
@@ -1708,9 +1708,9 @@ export default {
      },
      "prediction": "research_findings_met_share >= 1.0 within 72 h",
      "metric_label": "share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1)",
-     "measured": 0.619,
+     "measured": 0.657,
      "status": "not-met",
-     "n": 42,
+     "n": 35,
      "source": "research/studies, each finding measured as above",
      "item": "Q-RES-second-loop-2026-S4"
     },
@@ -1810,7 +1810,7 @@ export default {
      "A response that is never checked against the world. Put in place: every item names a live closing probe. Check it with one number, share of uploaded deploys proven live against their commit, and set a limit for it (>= 0.95 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 3 of 3 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 120; source: instances/ultrastable/loop-registry.json (declared)). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 172 (n = 22858; source: ops/ultrastability.jsonl). Share of uploaded deploys proven live against their commit reads 0.999 (n = 720; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 3 of 3 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 120; source: instances/ultrastable/loop-registry.json (declared)). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 172 (n = 22744; source: ops/ultrastability.jsonl). Share of uploaded deploys proven live against their commit reads 0.999 (n = 720; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "We state the law in our own words from chapter 11. We do not count disturbance classes directly; we read proxies from the loop registry, the second loop's log and the deploy ledger.",
@@ -1924,7 +1924,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 172,
      "status": "met",
-     "n": 22858,
+     "n": 22744,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -2013,7 +2013,7 @@ export default {
      "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 3 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
     ],
     "problem": [
-     "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of a system requires a model of it, and the quality of control is bounded by the quality of the model. [1]",
+     "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: to control something well you must model it, and the quality of control is bounded by the quality of the model. [1]",
      "This matters now because the usual answer, the model is in the weights, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
      "The problems in detail:"
     ],
@@ -2040,7 +2040,7 @@ export default {
      "Work items too vague to map to a state. Put in place: fails items with no done check, prediction, out-of-scope line or live probe. Check it with one number, share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py), and set a limit for it (>= 0.9 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 2 of 3 of these checks pass today. Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending reads 1.0 (n = 5; source: doctrine/knowledge-graph.json (declared)). Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.625 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 2 of 3 of these checks pass today. Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending reads 1.0 (n = 5; source: doctrine/knowledge-graph.json (declared)). Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.688 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "The theorem is about optimal and simplest regulators. We use it as a design rule, not as proof that this system's model is good enough.",
@@ -2084,9 +2084,9 @@ export default {
     "kind": "article",
     "version": "1970",
     "data": "Theorem with proof, in information-theoretic terms.",
-    "summary": "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of a system requires a model of it, and the quality of control is bounded by the quality of the model."
+    "summary": "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: to control something well you must model it, and the quality of control is bounded by the quality of the model."
    },
-   "abstract": "Roger C. Conant, W. Ross Ashby (International Journal of Systems Science, vol. 1, no. 2, pp. 89-97): Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of a system requires a model of it, and the quality of control is bounded by the quality of the model. Conant and Ashby argued that the best possible regulator of a system must be, in effect, a model of that system. An AI system that runs a business without an explicit model of its own parts is regulating blind. We check whether this system keeps such a model: a knowledge graph of its own data, declared limits for what it must hold steady, and work items specific enough to be checked. 2 of 3 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "abstract": "Roger C. Conant, W. Ross Ashby (International Journal of Systems Science, vol. 1, no. 2, pp. 89-97): Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: to control something well you must model it, and the quality of control is bounded by the quality of the model. Conant and Ashby argued that the best possible regulator of a system must be, in effect, a model of that system. An AI system that runs a business without an explicit model of its own parts is regulating blind. We check whether this system keeps such a model: a knowledge graph of its own data, declared limits for what it must hold steady, and work items specific enough to be checked. 2 of 3 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
    "window": {
     "start": "2026-11-19T01:23:24Z",
     "end": "2026-11-26T21:42:44Z",
@@ -2175,7 +2175,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 336 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.625,
+     "measured": 0.688,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
@@ -2212,759 +2212,6 @@ export default {
     }
    ],
    "leads_route": "lexical-512-8u2zfb",
-   "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
-  },
-  {
-   "study_id": "beer-vsm-1972",
-   "slug": "beer-vsm-1972",
-   "order": 9,
-   "title": "Five functions, one organization: reading the viable system model against an AI-run firm",
-   "sections": {
-    "summary": [
-     "Many people believe that if the reports from an AI system's agents all say green, the organization is healthy. This paper argues otherwise: beer's model keeps a channel that checks operations directly instead of through their own reports. In software that means proving each deploy live against its commit, not reading the agent's account of it.",
-     "Stafford Beer applied Ashby's cybernetics to organizations in his viable system model: operations, coordination, control, intelligence and policy, each recursive. We ask whether an AI-run system has an owner for each function and an independent way to check that operations match the reports about them.",
-     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 3 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
-    ],
-    "problem": [
-     "A viable organization has operational units that do the work, coordination among them, control of their resources, an intelligence function that watches the outside and the future, and a policy function that settles identity. Each operational unit can itself be a viable system. A separate audit channel checks operations directly, rather than through the reports operations make about themselves. [1]",
-     "This matters now because the usual answer, green reports mean a healthy organization, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
-     "The problems in detail:"
-    ],
-    "problem_list": [
-     "A unit that is not itself viable. Each operational unit of the organization must be able to run and correct itself: its own code, clock, probe and settler. A unit that depends on a central manager for every correction is not an operational unit but an instruction. [1]",
-     "Operations judged by their own reports. An audit channel reads reality directly. A deploy is counted only when the live Worker's version matches the commit, read through a different path from the deploy itself. [1]",
-     "Intelligence with no memory of what it learned. The intelligence function must turn what it learns about the environment into something the rest of the organization can use. The system keeps a graph of its own data, and every system carries one. [1]"
-    ],
-    "approach": [
-     "The approach follows Ashby's ultrastable system [2]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
-     "Ultrastable is that design as working code [3]. For each problem above it uses a specific mechanism:"
-    ],
-    "approach_list": [
-     "A unit that is not itself viable: every manager owns loops and the code that settles what it files (MANAGERS-1, `doctrine/managers.json`); the managers check (MANAGERS-1, `foundation/managers.py`)",
-     "Operations judged by their own reports: each deploy row records whether the live version matched the commit (DEPLOY-VERIFIED-1, `ops/deploys.jsonl`); progress counts only merged behaviour change (PROGRESS-1, `seed/worker/src/progress.js`)",
-     "Intelligence with no memory of what it learned: every system declares a knowledge graph, built or pending (DATAGRAPH-1, `doctrine/knowledge-graph.json`); the graph is built and read each pass (DATAGRAPH-1, `seed/worker/src/datagraph.js`)"
-    ],
-    "practice": [
-     "To apply this to your own system, one step per problem:"
-    ],
-    "practice_list": [
-     "A unit that is not itself viable. Put in place: every manager owns loops and the code that settles what it files. Check it with one number, share of manager roles in doctrine/managers.json that name code, a clock, a closing probe and the code that settles what they file, and set a limit for it (>= 1.0 is the limit we use).",
-     "Operations judged by their own reports. Put in place: each deploy row records whether the live version matched the commit. Check it with one number, share of uploaded deploys proven live against their commit, and set a limit for it (>= 0.95 is the limit we use).",
-     "Intelligence with no memory of what it learned. Put in place: every system declares a knowledge graph, built or pending. Check it with one number, share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending, and set a limit for it (>= 1.0 is the limit we use)."
-    ],
-    "practice_note": [
-     "In our own system, 3 of 3 of these checks pass today. Share of manager roles in doctrine/managers.json that name code, a clock, a closing probe and the code that settles what they file reads 1.0 (n = 18; source: doctrine/managers.json). Share of uploaded deploys proven live against their commit reads 0.999 (n = 720; source: ops/deploys.jsonl (same window)). Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending reads 1.0 (n = 5; source: doctrine/knowledge-graph.json (declared)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
-    ],
-    "tradeoffs": [
-     "Reading. The source was not machine-read for this paper: its argument is stated in our own words from the publication's well-known content, with no quotation, and a reader should check the claim against the source linked above.",
-     "Mapping. Mapping an AI system's managers onto Beer's five systems is our interpretation; this paper measures that each manager is closed (owns code, clock, probe, settler) and that deploys are proven live by an independent read, not that the mapping is the only valid one.",
-     "Scope. Beer's model is also a claim about people in organizations; nothing here is a claim about people.",
-     "Scale. One organization: 500 closed pull requests (360 merged) over 7.85 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
-     "Who wrote the changes. 87% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the driven regime with 0 self-originated deploys, so most of the work measured here was started from outside.",
-     "Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.",
-     "Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.",
-     "Source. Book, version 1972; its findings may change in later versions."
-    ],
-    "action": [
-     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
-     "Start a system of your own on the same foundation: https://ultrastable.io/start",
-     "Follow new papers by feed: https://ultrastable.io/research.atom"
-    ]
-   },
-   "references": [
-    {
-     "key": "beer-vsm-1972",
-     "text": "Stafford Beer (1972). Brain of the Firm. Allen Lane, London; book.",
-     "url": "https://archive.org/details/brainoffirmmanag0000beer"
-    },
-    {
-     "key": "ashby1952",
-     "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
-     "url": "https://archive.org/details/designforbrain00ashb"
-    },
-    {
-     "key": "ultrastable",
-     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
-     "url": "https://github.com/ultrastable/ultrastable"
-    }
-   ],
-   "derived": [
-    87,
-    0
-   ],
-   "study": {
-    "title": "Brain of the Firm",
-    "authors": [
-     "Stafford Beer"
-    ],
-    "institution": "Allen Lane, London",
-    "kind": "book",
-    "version": "1972",
-    "data": "Theory and case material from management practice. Beer extended the model in The Heart of Enterprise (1979).",
-    "summary": "A viable organization has operational units that do the work, coordination among them, control of their resources, an intelligence function that watches the outside and the future, and a policy function that settles identity. Each operational unit can itself be a viable system. A separate audit channel checks operations directly, rather than through the reports operations make about themselves."
-   },
-   "abstract": "Stafford Beer (Allen Lane, London): A viable organization has operational units that do the work, coordination among them, control of their resources, an intelligence function that watches the outside and the future, and a policy function that settles identity. Each operational unit can itself be a viable system. A separate audit channel checks operations directly, rather than through the reports operations make about themselves. Stafford Beer applied Ashby's cybernetics to organizations in his viable system model: operations, coordination, control, intelligence and policy, each recursive. We ask whether an AI-run system has an owner for each function and an independent way to check that operations match the reports about them. 3 of 3 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
-   "window": {
-    "start": "2026-11-19T01:23:24Z",
-    "end": "2026-11-26T21:42:44Z",
-    "days": 7.85,
-    "prs": 500,
-    "merged": 360,
-    "regime": "driven",
-    "k_self": 0.0,
-    "as_of": "2026-11-27T10:15:26.873Z"
-   },
-   "findings": [
-    {
-     "id": "B1",
-     "concern": "A unit that is not itself viable",
-     "claim": "Each operational unit of the organization must be able to run and correct itself: its own code, clock, probe and settler. A unit that depends on a central manager for every correction is not an operational unit but an instruction.",
-     "where": "Chapters on operations and recursion (our statement)",
-     "perspective": "systems",
-     "mechanisms": [
-      {
-       "rule": "MANAGERS-1",
-       "path": "doctrine/managers.json",
-       "how": "every manager owns loops and the code that settles what it files"
-      },
-      {
-       "rule": "MANAGERS-1",
-       "path": "foundation/managers.py",
-       "how": "the managers check"
-      }
-     ],
-     "metric": "managers_closed_share",
-     "target": {
-      "op": ">=",
-      "value": 1.0
-     },
-     "prediction": "managers_closed_share >= 1 within 24 h",
-     "metric_label": "share of manager roles in doctrine/managers.json that name code, a clock, a closing probe and the code that settles what they file",
-     "measured": 1.0,
-     "status": "met",
-     "n": 18,
-     "source": "doctrine/managers.json",
-     "item": null
-    },
-    {
-     "id": "B2",
-     "concern": "Operations judged by their own reports",
-     "claim": "An audit channel reads reality directly. A deploy is counted only when the live Worker's version matches the commit, read through a different path from the deploy itself.",
-     "where": "Chapter on the audit channel (our statement)",
-     "perspective": "quality",
-     "mechanisms": [
-      {
-       "rule": "DEPLOY-VERIFIED-1",
-       "path": "ops/deploys.jsonl",
-       "how": "each deploy row records whether the live version matched the commit"
-      },
-      {
-       "rule": "PROGRESS-1",
-       "path": "seed/worker/src/progress.js",
-       "how": "progress counts only merged behaviour change"
-      }
-     ],
-     "metric": "deploy_verified_share",
-     "target": {
-      "op": ">=",
-      "value": 0.95
-     },
-     "prediction": "deploy_verified_share >= 0.95 within 168 h",
-     "metric_label": "share of uploaded deploys proven live against their commit",
-     "measured": 0.999,
-     "status": "met",
-     "n": 720,
-     "source": "ops/deploys.jsonl (same window)",
-     "item": null
-    },
-    {
-     "id": "B3",
-     "concern": "Intelligence with no memory of what it learned",
-     "claim": "The intelligence function must turn what it learns about the environment into something the rest of the organization can use. The system keeps a graph of its own data, and every system carries one.",
-     "where": "Chapters on intelligence and policy (our statement)",
-     "perspective": "systems",
-     "mechanisms": [
-      {
-       "rule": "DATAGRAPH-1",
-       "path": "doctrine/knowledge-graph.json",
-       "how": "every system declares a knowledge graph, built or pending"
-      },
-      {
-       "rule": "DATAGRAPH-1",
-       "path": "seed/worker/src/datagraph.js",
-       "how": "the graph is built and read each pass"
-      }
-     ],
-     "metric": "kg_systems_share",
-     "target": {
-      "op": ">=",
-      "value": 1.0
-     },
-     "prediction": "kg_systems_share >= 1 within 168 h",
-     "metric_label": "share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending",
-     "measured": 1.0,
-     "status": "met",
-     "n": 5,
-     "source": "doctrine/knowledge-graph.json (declared)",
-     "item": null
-    }
-   ],
-   "met": 3,
-   "total": 3,
-   "limits": [
-    "Reading. The source was not machine-read for this paper: its argument is stated in our own words from the publication's well-known content, with no quotation, and a reader should check the claim against the source linked above.",
-    "Mapping. Mapping an AI system's managers onto Beer's five systems is our interpretation; this paper measures that each manager is closed (owns code, clock, probe, settler) and that deploys are proven live by an independent read, not that the mapping is the only valid one.",
-    "Scope. Beer's model is also a claim about people in organizations; nothing here is a claim about people.",
-    "Scale. One organization: 500 closed pull requests (360 merged) over 7.85 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
-    "Who wrote the changes. 87% of merged pull requests in the window were opened by code agent sessions run under the owner's account, not by the system's own loops. The latest criticality tick puts the system in the driven regime with 0 self-originated deploys, so most of the work measured here was started from outside.",
-    "Review by construction. Ultrastable has no human review step, so a short open-to-merge time is partly a consequence of the design. The real test of the design is quality: the revert and deploy-verification findings, which can fail.",
-    "Revert share counts commits whose subject starts with Revert; a fix that undoes a change without that word is not counted, so the figure is a lower bound.",
-    "Source. Book, version 1972; its findings may change in later versions."
-   ],
-   "leads": [
-    {
-     "finding": "B1",
-     "rule": "INTENT-YIELD-1",
-     "score": 0.134
-    },
-    {
-     "finding": "B2",
-     "rule": "AUTO-SHIP-CLEAN-1",
-     "score": 0.114
-    },
-    {
-     "finding": "B3",
-     "rule": "THOUGHT-1",
-     "score": 0.129
-    },
-    {
-     "finding": "B3",
-     "rule": "AGENT-ENTRY-1",
-     "score": 0.119
-    }
-   ],
-   "leads_route": "lexical-512-kq8hg0",
-   "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
-  },
-  {
-   "study_id": "powers-1973",
-   "slug": "powers-1973",
-   "order": 10,
-   "title": "Control is of what is perceived: does every goal of an AI system have a reference and an actuator?",
-   "sections": {
-    "summary": [
-     "Many people believe that setting ambitious targets is enough to make an AI system improve. This paper argues otherwise: a target is only a reference. A control loop needs a way to act on what it senses. Counting the targets that have a bounded knob shows how many of a system's goals are loops and how many are wishes.",
-     "William Powers described behavior as the control of perception: a system compares what it senses with a reference and acts to reduce the difference. A goal with a target but no way to act on it is a wish, not a control loop. We count how many targets in this system have a knob the system may turn.",
-     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 2 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
-    ],
-    "problem": [
-     "A control system has a reference value, a sensed value and an output that acts on the world to reduce the difference. Higher control systems set the references of lower ones. The loop is closed only when the output can change what is sensed. [1]",
-     "This matters now because the usual answer, ambitious targets make a system improve, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
-     "The problems in detail:"
-    ],
-    "problem_list": [
-     "A target with no actuator. A goal whose target the system cannot act on is a reference with no output. We count the target goals that have at least one bounded knob. Targets with none must file work, and that is a separate, counted path. [1]",
-     "Control without reading the result. Output that is never compared with the result is not control. The second loop judges its own steps and keeps only those that brought the variable back in limits. [1]"
-    ],
-    "approach": [
-     "The approach follows Ashby's ultrastable system [2]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
-     "Ultrastable is that design as working code [3]. For each problem above it uses a specific mechanism:"
-    ],
-    "approach_list": [
-     "A target with no actuator: each target has a metric, a number and the knobs the system may turn (GOALS-1, `seed/autonomy/goals.json`); the goal loop reads each goal and moves at most one knob per goal toward its target (GOALS-1, `seed/worker/src/goals.js`)",
-     "Control without reading the result: every step gets a verdict (SECOND-LOOP-2, `foundation/ultrastability.py`); a knob move is reviewed and reverted when the goal did not move (GOALS-1, `seed/worker/src/goals.js`)"
-    ],
-    "practice": [
-     "To apply this to your own system, one step per problem:"
-    ],
-    "practice_list": [
-     "A target with no actuator. Put in place: each target has a metric, a number and the knobs the system may turn. Check it with one number, share of target goals in seed/autonomy/goals.json that have at least one bounded knob the system may turn, and set a limit for it (>= 0.5 is the limit we use).",
-     "Control without reading the result. Put in place: every step gets a verdict. Check it with one number, share of second-order steps that brought the variable back inside its limits and were kept, and set a limit for it (>= 0.25 is the limit we use)."
-    ],
-    "practice_note": [
-     "In our own system, 0 of 2 of these checks pass today. Share of target goals in seed/autonomy/goals.json that have at least one bounded knob the system may turn reads 0.429 (n = 7; source: seed/autonomy/goals.json). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.006 (n = 165; source: ops/ultrastability.jsonl verdicts). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
-    ],
-    "tradeoffs": [
-     "Reading. The source was not machine-read for this paper: its argument is stated in our own words from the publication's well-known content, with no quotation, and a reader should check the claim against the source linked above.",
-     "Interpretation. We read a target as a reference signal and a knob as an actuator; some targets here are deliberately measure-only and raise a work item instead of turning a value, because no knob could move them. The share is therefore not expected to reach one.",
-     "Counting. A knob existing is not a knob working; whether moves help is judged by the goal loop's own review, which this paper does not measure.",
-     "Source. Book, version 1973."
-    ],
-    "action": [
-     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
-     "Start a system of your own on the same foundation: https://ultrastable.io/start",
-     "Follow new papers by feed: https://ultrastable.io/research.atom"
-    ]
-   },
-   "references": [
-    {
-     "key": "powers-1973",
-     "text": "William T. Powers (1973). Behavior: The Control of Perception. Aldine, Chicago; book.",
-     "url": "https://archive.org/details/behaviorcontrolo0000powe"
-    },
-    {
-     "key": "ashby1952",
-     "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
-     "url": "https://archive.org/details/designforbrain00ashb"
-    },
-    {
-     "key": "ultrastable",
-     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
-     "url": "https://github.com/ultrastable/ultrastable"
-    }
-   ],
-   "derived": [
-    87,
-    0
-   ],
-   "study": {
-    "title": "Behavior: The Control of Perception",
-    "authors": [
-     "William T. Powers"
-    ],
-    "institution": "Aldine, Chicago",
-    "kind": "book",
-    "version": "1973",
-    "data": "Theory of hierarchical control, with models and experiments in tracking tasks.",
-    "summary": "A control system has a reference value, a sensed value and an output that acts on the world to reduce the difference. Higher control systems set the references of lower ones. The loop is closed only when the output can change what is sensed."
-   },
-   "abstract": "William T. Powers (Aldine, Chicago): A control system has a reference value, a sensed value and an output that acts on the world to reduce the difference. Higher control systems set the references of lower ones. The loop is closed only when the output can change what is sensed. William Powers described behavior as the control of perception: a system compares what it senses with a reference and acts to reduce the difference. A goal with a target but no way to act on it is a wish, not a control loop. We count how many targets in this system have a knob the system may turn. 0 of 2 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
-   "window": {
-    "start": "2026-11-19T01:23:24Z",
-    "end": "2026-11-26T21:42:44Z",
-    "days": 7.85,
-    "prs": 500,
-    "merged": 360,
-    "regime": "driven",
-    "k_self": 0.0,
-    "as_of": "2026-11-27T10:15:26.873Z"
-   },
-   "findings": [
-    {
-     "id": "P1",
-     "concern": "A target with no actuator",
-     "claim": "A goal whose target the system cannot act on is a reference with no output. We count the target goals that have at least one bounded knob. Targets with none must file work, and that is a separate, counted path.",
-     "where": "Chapters on the hierarchy of control (our statement)",
-     "perspective": "systems",
-     "mechanisms": [
-      {
-       "rule": "GOALS-1",
-       "path": "seed/autonomy/goals.json",
-       "how": "each target has a metric, a number and the knobs the system may turn"
-      },
-      {
-       "rule": "GOALS-1",
-       "path": "seed/worker/src/goals.js",
-       "how": "the goal loop reads each goal and moves at most one knob per goal toward its target"
-      }
-     ],
-     "metric": "targets_with_knobs_share",
-     "target": {
-      "op": ">=",
-      "value": 0.5
-     },
-     "prediction": "targets_with_knobs_share >= 0.5 within 72 h",
-     "metric_label": "share of target goals in seed/autonomy/goals.json that have at least one bounded knob the system may turn",
-     "measured": 0.429,
-     "status": "not-met",
-     "n": 7,
-     "source": "seed/autonomy/goals.json",
-     "item": "Q-RES-powers-1973-P1"
-    },
-    {
-     "id": "P2",
-     "concern": "Control without reading the result",
-     "claim": "Output that is never compared with the result is not control. The second loop judges its own steps and keeps only those that brought the variable back in limits.",
-     "where": "Chapters on the loop (our statement)",
-     "perspective": "reliability",
-     "mechanisms": [
-      {
-       "rule": "SECOND-LOOP-2",
-       "path": "foundation/ultrastability.py",
-       "how": "every step gets a verdict"
-      },
-      {
-       "rule": "GOALS-1",
-       "path": "seed/worker/src/goals.js",
-       "how": "a knob move is reviewed and reverted when the goal did not move"
-      }
-     ],
-     "metric": "second_loop_kept_share",
-     "target": {
-      "op": ">=",
-      "value": 0.25
-     },
-     "prediction": "second_loop_kept_share >= 0.25 within 72 h",
-     "metric_label": "share of second-order steps that brought the variable back inside its limits and were kept",
-     "measured": 0.006,
-     "status": "not-met",
-     "n": 165,
-     "source": "ops/ultrastability.jsonl verdicts",
-     "item": "Q-RES-powers-1973-P2"
-    }
-   ],
-   "met": 0,
-   "total": 2,
-   "limits": [
-    "Reading. The source was not machine-read for this paper: its argument is stated in our own words from the publication's well-known content, with no quotation, and a reader should check the claim against the source linked above.",
-    "Interpretation. We read a target as a reference signal and a knob as an actuator; some targets here are deliberately measure-only and raise a work item instead of turning a value, because no knob could move them. The share is therefore not expected to reach one.",
-    "Counting. A knob existing is not a knob working; whether moves help is judged by the goal loop's own review, which this paper does not measure.",
-    "Source. Book, version 1973."
-   ],
-   "leads": [
-    {
-     "finding": "P1",
-     "rule": "IGNORANCE-1",
-     "score": 0.124
-    },
-    {
-     "finding": "P1",
-     "rule": "DRAIN-ZERO-1",
-     "score": 0.121
-    },
-    {
-     "finding": "P2",
-     "rule": "DRAIN-ALL-1",
-     "score": 0.14
-    },
-    {
-     "finding": "P2",
-     "rule": "STICKY-1",
-     "score": 0.13
-    }
-   ],
-   "leads_route": "lexical-512-noyd00",
-   "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
-  },
-  {
-   "study_id": "ashby-journal-2026",
-   "slug": "ashby-journal-2026",
-   "order": 11,
-   "title": "Ashby's journal as a specification: how much of it does this system's code implement?",
-   "sections": {
-    "summary": [
-     "Many people believe that the classic cybernetics literature is history; it has nothing to say about modern AI systems. This paper argues otherwise: ashby's concepts are specific enough to be implemented as code and checked: essential variables, step-functions, requisite variety, reducibility. A register that binds each concept to a mechanism shows how much of the theory a running system actually carries.",
-     "Ashby kept a research journal for forty years and indexed it by concept. The index is a list of ideas he thought worth keeping; for a system built to be ultrastable it is a list of design questions. We bound each concept we use to code and count how many of them are bound.",
-     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 1 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
-    ],
-    "problem": [
-     "The archive of Ashby's journal and card indexes is public. We took the concepts we could turn into mechanisms, stated each in our own words, linked it, and bound it to the code that implements it. Some index categories are not applied because they concern people or society, and the register says so. [2]",
-     "This matters now because the usual answer, classic cybernetics is only history, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
-     "The problems in detail:"
-    ],
-    "problem_list": [
-     "A concept in the register that the code does not carry. A concept named in the register is a claim that the code implements it. We read every mechanism the register names and count the concepts whose mechanisms all resolve in the repository. [2]"
-    ],
-    "approach": [
-     "The approach follows Ashby's ultrastable system [1]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
-     "Ultrastable is that design as working code [2]. For each problem above it uses a specific mechanism:"
-    ],
-    "approach_list": [
-     "A concept in the register that the code does not carry: each concept lists the mechanisms that implement it (ASHBY-KERNEL-1, `doctrine/ashby-concepts.json`); the check fails when a mechanism or marker is gone (ASHBY-KERNEL-1, `foundation/ashbymap.py`)"
-    ],
-    "practice": [
-     "To apply this to your own system, one step per problem:"
-    ],
-    "practice_list": [
-     "A concept in the register that the code does not carry. Put in place: each concept lists the mechanisms that implement it. Check it with one number, share of concepts in doctrine/ashby-concepts.json whose every named mechanism resolves to a file and marker in this repository, and set a limit for it (>= 1.0 is the limit we use)."
-    ],
-    "practice_note": [
-     "In our own system, 0 of 1 of these checks pass today. Share of concepts in doctrine/ashby-concepts.json whose every named mechanism resolves to a file and marker in this repository reads 0.902 (n = 41; source: doctrine/ashby-concepts.json, each mechanism read in the repository). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
-    ],
-    "tradeoffs": [
-     "Source. The archive reserves all rights, so nothing in the journal is reproduced; each concept is paraphrased and linked. Which concepts are worth implementing is our judgment.",
-     "Binding. A concept is bound when each mechanism it names resolves to a file and marker here; it does not show the mechanism works, which is the job of the other papers.",
-     "Coverage. Index categories the register lists as not applied are excluded from the count and the reason is recorded.",
-     "Source. Own R&D question set, regenerated from this system's records, version 2026-11-27."
-    ],
-    "action": [
-     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
-     "Start a system of your own on the same foundation: https://ultrastable.io/start",
-     "Follow new papers by feed: https://ultrastable.io/research.atom"
-    ]
-   },
-   "references": [
-    {
-     "key": "ashby1952",
-     "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
-     "url": "https://archive.org/details/designforbrain00ashb"
-    },
-    {
-     "key": "ultrastable",
-     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
-     "url": "https://github.com/ultrastable/ultrastable"
-    }
-   ],
-   "derived": [
-    87,
-    0
-   ],
-   "study": {
-    "title": "The W. Ross Ashby journal and its indexes, read as a design source",
-    "authors": [
-     "Ultrastable R&D"
-    ],
-    "institution": "Ultrastable",
-    "kind": "own R&D question set, regenerated from this system's records",
-    "version": "2026-11-27",
-    "data": "doctrine/ashby-concepts.json: each concept restated in our own words, bound to code and linked to the archive's index page. The archive's text is not reproduced.",
-    "summary": "The archive of Ashby's journal and card indexes is public. We took the concepts we could turn into mechanisms, stated each in our own words, linked it, and bound it to the code that implements it. Some index categories are not applied because they concern people or society, and the register says so."
-   },
-   "abstract": "Ultrastable R&D (Ultrastable): The archive of Ashby's journal and card indexes is public. We took the concepts we could turn into mechanisms, stated each in our own words, linked it, and bound it to the code that implements it. Some index categories are not applied because they concern people or society, and the register says so. Ashby kept a research journal for forty years and indexed it by concept. The index is a list of ideas he thought worth keeping; for a system built to be ultrastable it is a list of design questions. We bound each concept we use to code and count how many of them are bound. 0 of 1 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
-   "window": {
-    "start": "2026-11-19T01:23:24Z",
-    "end": "2026-11-26T21:42:44Z",
-    "days": 7.85,
-    "prs": 500,
-    "merged": 360,
-    "regime": "driven",
-    "k_self": 0.0,
-    "as_of": "2026-11-27T10:15:26.873Z"
-   },
-   "findings": [
-    {
-     "id": "J1",
-     "concern": "A concept in the register that the code does not carry",
-     "claim": "A concept named in the register is a claim that the code implements it. We read every mechanism the register names and count the concepts whose mechanisms all resolve in the repository.",
-     "where": "This system's concept register (our statement)",
-     "perspective": "systems",
-     "mechanisms": [
-      {
-       "rule": "ASHBY-KERNEL-1",
-       "path": "doctrine/ashby-concepts.json",
-       "how": "each concept lists the mechanisms that implement it"
-      },
-      {
-       "rule": "ASHBY-KERNEL-1",
-       "path": "foundation/ashbymap.py",
-       "how": "the check fails when a mechanism or marker is gone"
-      }
-     ],
-     "metric": "ashby_concepts_bound_share",
-     "target": {
-      "op": ">=",
-      "value": 1.0
-     },
-     "prediction": "ashby_concepts_bound_share >= 1 within 72 h",
-     "metric_label": "share of concepts in doctrine/ashby-concepts.json whose every named mechanism resolves to a file and marker in this repository",
-     "measured": 0.902,
-     "status": "not-met",
-     "n": 41,
-     "source": "doctrine/ashby-concepts.json, each mechanism read in the repository",
-     "item": "Q-RES-ashby-journal-2026-J1"
-    }
-   ],
-   "met": 0,
-   "total": 1,
-   "limits": [
-    "Source. The archive reserves all rights, so nothing in the journal is reproduced; each concept is paraphrased and linked. Which concepts are worth implementing is our judgment.",
-    "Binding. A concept is bound when each mechanism it names resolves to a file and marker here; it does not show the mechanism works, which is the job of the other papers.",
-    "Coverage. Index categories the register lists as not applied are excluded from the count and the reason is recorded.",
-    "Source. Own R&D question set, regenerated from this system's records, version 2026-11-27."
-   ],
-   "leads": [
-    {
-     "finding": "J1",
-     "rule": "PR-NEVER-LOSE-1",
-     "score": 0.12
-    },
-    {
-     "finding": "J1",
-     "rule": "LIVE-LINKS-1",
-     "score": 0.106
-    }
-   ],
-   "leads_route": "lexical-512-1p0kaxc",
-   "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
-  },
-  {
-   "study_id": "foerster-1974",
-   "slug": "foerster-1974",
-   "order": 12,
-   "title": "Who observes the observer? A system that measures its own research",
-   "sections": {
-    "summary": [
-     "Many people believe that an AI system's own report on how well it is doing is as good as an outside audit. This paper argues otherwise: the observer is part of the system. A self-report is only worth what its measurement is: each finding here is read from a ledger, an unmeasured one is shown as unmeasured, and every unmet one files its own work item.",
-     "Heinz von Foerster called second-order cybernetics the cybernetics of observing systems: the observer is part of what is observed. A research program run by the system it studies must be held to its own measurements. We read how many of the program's findings are met, and how many work items are written so that they cannot be misread.",
-     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 2 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
-    ],
-    "problem": [
-     "First-order cybernetics treats the system as observed from outside. Second-order cybernetics includes the observer: the one who describes the system is part of it, and descriptions change what they describe. A system that writes papers about itself is its own observer, and its papers are inputs to its own loops. [1]",
-     "This matters now because the usual answer, a system's self-report is as good as an audit, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
-     "The problems in detail:"
-    ],
-    "problem_list": [
-     "A research program that grades itself generously. The program is measured by the share of all its findings whose own measurement meets its target, excluding this finding. An unmeasured finding counts as not met. [1]",
-     "Instructions the observer can misread. Work items are the system's descriptions of what to do. An item that passes intake has a machine-checkable done check, a prediction, an out-of-scope line and a live proof, so it cannot be read two ways by two agents. [1]"
-    ],
-    "approach": [
-     "The approach follows Ashby's ultrastable system [2]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
-     "Ultrastable is that design as working code [3]. For each problem above it uses a specific mechanism:"
-    ],
-    "approach_list": [
-     "A research program that grades itself generously: every metric is read from the system's own ledgers (RESEARCH-1, `foundation/research.py`); the register of studies and questions (RESEARCH-1, `doctrine/research.json`)",
-     "Instructions the observer can misread: the intake gate (SPEC-GATE-1, `foundation/specgate.py`); the shared engine (SPEC-GATE-1, `seed/scripts/specgate.py`)"
-    ],
-    "practice": [
-     "To apply this to your own system, one step per problem:"
-    ],
-    "practice_list": [
-     "A research program that grades itself generously. Put in place: every metric is read from the system's own ledgers. Check it with one number, share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1), and set a limit for it (>= 0.5 is the limit we use).",
-     "Instructions the observer can misread. Put in place: the intake gate. Check it with one number, share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py), and set a limit for it (>= 0.9 is the limit we use)."
-    ],
-    "practice_note": [
-     "In our own system, 1 of 2 of these checks pass today. Share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1) reads 0.619 (n = 42; source: research/studies, each finding measured as above). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.625 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
-    ],
-    "tradeoffs": [
-     "Reading. The source was not machine-read for this paper: its argument is stated in our own words from the publication's well-known content, with no quotation, and a reader should check the claim against the source linked above.",
-     "Secondary source. The linked page is an overview, not the 1974 volume; the claim about the observer is stated at a level the overview supports.",
-     "Circularity. The share of met findings includes findings measured by the same machinery that files work for the unmet ones; the paper reports unmeasured findings as unmeasured and never as met.",
-     "Source. Edited volume, version 1974."
-    ],
-    "action": [
-     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
-     "Start a system of your own on the same foundation: https://ultrastable.io/start",
-     "Follow new papers by feed: https://ultrastable.io/research.atom"
-    ]
-   },
-   "references": [
-    {
-     "key": "foerster-1974",
-     "text": "Heinz von Foerster (1974). Cybernetics of cybernetics. University of Illinois, Biological Computer Laboratory; edited volume.",
-     "url": "https://en.wikipedia.org/wiki/Second-order_cybernetics"
-    },
-    {
-     "key": "ashby1952",
-     "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
-     "url": "https://archive.org/details/designforbrain00ashb"
-    },
-    {
-     "key": "ultrastable",
-     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
-     "url": "https://github.com/ultrastable/ultrastable"
-    }
-   ],
-   "derived": [
-    87,
-    0
-   ],
-   "study": {
-    "title": "Cybernetics of cybernetics",
-    "authors": [
-     "Heinz von Foerster"
-    ],
-    "institution": "University of Illinois, Biological Computer Laboratory",
-    "kind": "edited volume",
-    "version": "1974",
-    "data": "Theory. The source URL is a secondary overview; the primary volume was not machine-read.",
-    "summary": "First-order cybernetics treats the system as observed from outside. Second-order cybernetics includes the observer: the one who describes the system is part of it, and descriptions change what they describe. A system that writes papers about itself is its own observer, and its papers are inputs to its own loops."
-   },
-   "abstract": "Heinz von Foerster (University of Illinois, Biological Computer Laboratory): First-order cybernetics treats the system as observed from outside. Second-order cybernetics includes the observer: the one who describes the system is part of it, and descriptions change what they describe. A system that writes papers about itself is its own observer, and its papers are inputs to its own loops. Heinz von Foerster called second-order cybernetics the cybernetics of observing systems: the observer is part of what is observed. A research program run by the system it studies must be held to its own measurements. We read how many of the program's findings are met, and how many work items are written so that they cannot be misread. 1 of 2 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
-   "window": {
-    "start": "2026-11-19T01:23:24Z",
-    "end": "2026-11-26T21:42:44Z",
-    "days": 7.85,
-    "prs": 500,
-    "merged": 360,
-    "regime": "driven",
-    "k_self": 0.0,
-    "as_of": "2026-11-27T10:15:26.873Z"
-   },
-   "findings": [
-    {
-     "id": "O1",
-     "concern": "A research program that grades itself generously",
-     "claim": "The program is measured by the share of all its findings whose own measurement meets its target, excluding this finding. An unmeasured finding counts as not met.",
-     "where": "Volume's theme (our statement)",
-     "perspective": "oversight",
-     "mechanisms": [
-      {
-       "rule": "RESEARCH-1",
-       "path": "foundation/research.py",
-       "how": "every metric is read from the system's own ledgers"
-      },
-      {
-       "rule": "RESEARCH-1",
-       "path": "doctrine/research.json",
-       "how": "the register of studies and questions"
-      }
-     ],
-     "metric": "research_findings_met_share",
-     "target": {
-      "op": ">=",
-      "value": 0.5
-     },
-     "prediction": "research_findings_met_share >= 0.5 within 72 h",
-     "metric_label": "share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1)",
-     "measured": 0.619,
-     "status": "met",
-     "n": 42,
-     "source": "research/studies, each finding measured as above",
-     "item": null
-    },
-    {
-     "id": "O2",
-     "concern": "Instructions the observer can misread",
-     "claim": "Work items are the system's descriptions of what to do. An item that passes intake has a machine-checkable done check, a prediction, an out-of-scope line and a live proof, so it cannot be read two ways by two agents.",
-     "where": "Volume's theme (our statement)",
-     "perspective": "quality",
-     "mechanisms": [
-      {
-       "rule": "SPEC-GATE-1",
-       "path": "foundation/specgate.py",
-       "how": "the intake gate"
-      },
-      {
-       "rule": "SPEC-GATE-1",
-       "path": "seed/scripts/specgate.py",
-       "how": "the shared engine"
-      }
-     ],
-     "metric": "spec_quality",
-     "target": {
-      "op": ">=",
-      "value": 0.9
-     },
-     "prediction": "spec_quality >= 0.9 within 72 h",
-     "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.625,
-     "status": "not-met",
-     "n": null,
-     "source": "foundation/specgate.py over docs/issues",
-     "item": "Q-RES-foerster-1974-O2"
-    }
-   ],
-   "met": 1,
-   "total": 2,
-   "limits": [
-    "Reading. The source was not machine-read for this paper: its argument is stated in our own words from the publication's well-known content, with no quotation, and a reader should check the claim against the source linked above.",
-    "Secondary source. The linked page is an overview, not the 1974 volume; the claim about the observer is stated at a level the overview supports.",
-    "Circularity. The share of met findings includes findings measured by the same machinery that files work for the unmet ones; the paper reports unmeasured findings as unmeasured and never as met.",
-    "Source. Edited volume, version 1974."
-   ],
-   "leads": [
-    {
-     "finding": "O1",
-     "rule": "RND-1",
-     "score": 0.124
-    },
-    {
-     "finding": "O1",
-     "rule": "HALT-1",
-     "score": 0.1
-    },
-    {
-     "finding": "O2",
-     "rule": "RULE-REFS-1",
-     "score": 0.132
-    },
-    {
-     "finding": "O2",
-     "rule": "SERVER-OWNS-LOOPS-1",
-     "score": 0.106
-    }
-   ],
-   "leads_route": "lexical-512-1ydmb27",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],
