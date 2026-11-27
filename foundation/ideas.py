@@ -80,7 +80,7 @@ def refresh_headroom(root=REPO, apply=False, now=None, fetch=None, token=None) -
     # CF_ANALYTICS_TOKEN first, then the deploy token the workflows already hold (never a new credential to mint).
     token = token if token is not None else (os.environ.get("CF_ANALYTICS_TOKEN") or os.environ.get("CLOUDFLARE_API_TOKEN") or "")
     acct = os.environ.get("CF_ACCOUNT_ID", "81e3a4efb4eb66e613529b87682911bb")  # the ultrastable account; an id is not a secret
-    if not token:
+    if not token and not _route_ok():
         return {"refreshed": False, "why": "no CF_ANALYTICS_TOKEN bound; snapshot kept", "headroom": headroom(root, t)}
     day = t.replace(hour=0, minute=0, second=0, microsecond=0)
     q = ('{viewer{accounts(filter:{accountTag:"%s"}){d1:d1AnalyticsAdaptiveGroups(limit:1000,filter:{datetime_geq:"%s",datetime_leq:"%s"}){sum{rowsRead rowsWritten}} '
@@ -91,6 +91,8 @@ def refresh_headroom(root=REPO, apply=False, now=None, fetch=None, token=None) -
         return json.loads(urllib.request.urlopen(r, timeout=30).read())
     basis = "cloudflare-graphql"
     try:
+        if not token:
+            raise ValueError("no direct token; reading the tick's samples through the OIDC route")
         j = (fetch or _post)(q)
         if j.get("errors"):
             raise ValueError(json.dumps(j["errors"])[:150])
@@ -99,7 +101,8 @@ def refresh_headroom(root=REPO, apply=False, now=None, fetch=None, token=None) -
         used = {"d1_rows_read": sum(int(g["sum"]["rowsRead"]) for g in d1), "d1_rows_written": sum(int(g["sum"]["rowsWritten"]) for g in d1),
                 "workers_requests": sum(int(g["sum"]["requests"]) for g in w)}
     except Exception as e:  # recorded, never swallowed; the old snapshot stands
-        err = f"{type(e).__name__}: {e}".replace(token, "***")[:200]
+        err = f"{type(e).__name__}: {e}"
+        err = (err.replace(token, "***") if token else err)[:200]
         _append(root / "ops/spinoff/ledger.jsonl", {"event": "headroom-failed", "at": _iso(t), "error": err})
         used = _tick_samples(acct, token, t) if fetch is None else None  # the tick's own hourly free_tier_samples
         basis = "tick-free-tier-samples"
@@ -115,13 +118,34 @@ def refresh_headroom(root=REPO, apply=False, now=None, fetch=None, token=None) -
     return {"refreshed": True, "headroom": headroom(root, t)}
 
 
-def _tick_samples(acct, token, t):
+def _route_ok() -> bool:
+    from . import workerroute
+    return workerroute.available()
+
+
+def _route_call():
+    """FREE-TIER-ROUTE-1: the repository's Cloudflare secrets name the retired account (authz errors from 2026-11-20 left ops/free-tier.json at
+    2026-11-17), so the same select-only D1 read goes through the site Worker's OIDC route (foundation/workerroute.py), which needs no stored secret."""
+    from . import workerroute
+    api = workerroute.make_api()
+    return lambda path, body=None: api("POST" if body else "GET", "d1/database" + path, body)
+
+
+def _tick_samples(acct, token, t, call=None):
     """Fallback when the token lacks analytics scope: latest of today's samples the tick wrote to D1 (ultrastable-org). {} on any failure."""
+    if call is None and _route_ok():
+        call = _route_call()
+    if call is not None:
+        return _read_samples(call, t, token)
     def call(path, body=None):
         r = urllib.request.Request("https://api.cloudflare.com/client/v4/accounts/%s/d1/database%s" % (acct, path),
                                    data=json.dumps(body).encode() if body else None, method="POST" if body else "GET",
                                    headers={"authorization": "Bearer " + token, "content-type": "application/json"})
         return json.loads(urllib.request.urlopen(r, timeout=30).read())
+    return _read_samples(call, t, token)
+
+
+def _read_samples(call, t, token=""):
     try:
         dbs = call("?name=ultrastable-org")["result"]
         sql = ("SELECT resource, used_today u FROM free_tier_samples WHERE at>=? AND used_today IS NOT NULL ORDER BY at, id")
@@ -129,7 +153,7 @@ def _tick_samples(acct, token, t):
         latest = {r["resource"]: int(r["u"]) for r in rows}
         return {k: v for k, v in latest.items() if k in ("d1_rows_read", "d1_rows_written", "workers_requests")}
     except Exception as e:  # recorded, never swallowed
-        _append(Path(REPO) / "ops/spinoff/ledger.jsonl", {"event": "tick-samples-failed", "at": _iso(t), "error": str(e).replace(token, "***")[:150]})
+        _append(Path(REPO) / "ops/spinoff/ledger.jsonl", {"event": "tick-samples-failed", "at": _iso(t), "error": (str(e).replace(token, "***") if token else str(e))[:150]})
         return {}
 
 
