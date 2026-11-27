@@ -42,7 +42,32 @@ class Ladder(unittest.TestCase):
         self.assertIn(agents.route_authors(CF)[0]["route"], L.DOWN)  # the whole provider route is down; with every route down the full list comes back rather than nothing
         L.DOWN.clear()
 
+    def _unretire(self):  # a scratch registry that still routes GitHub Models, to exercise route-level failure
+        p = Path(self.d) / "doctrine/code-agents.json"; d = agents.load(self.d)
+        for a in d["adapters"]:
+            a.pop("retired", None)
+        p.parent.mkdir(parents=True, exist_ok=True); p.write_text(json.dumps(d))
+
+    def test_a_model_level_failure_does_not_down_the_route(self):  # LADDER-ROUTE-1: a 502 from glm must not skip llama, gpt-oss and qwen
+        import urllib.error
+        seen = []
+        def send(a, p, e):
+            seen.append(a["id"])
+            if a["id"] == "workers-ai-glm":
+                raise urllib.error.HTTPError("u", 502, "Bad Gateway", {}, None)
+            return '{"files": []}', {}
+        out, meta = L.call("p", 0, root=self.d, env=CF, send=send)
+        self.assertEqual(seen, ["workers-ai-glm", meta["adapter"]]); self.assertNotEqual(meta["adapter"], "workers-ai-glm")
+        self.assertIn("workers-ai-glm", L.DOWN); self.assertNotIn("workers-ai", L.DOWN)
+        L.DOWN.clear()
+
+    def test_a_provider_wide_failure_downs_the_route(self):
+        self.assertTrue(L.route_down({"route": "workers-ai"}, RuntimeError("non-JSON response (HTTP 200, text/plain)")))
+        self.assertTrue(L.route_down({"route": "github-models"}, RuntimeError("x")))
+        self.assertFalse(L.route_down({"route": "workers-ai"}, RuntimeError("HTTP Error 502: Bad Gateway")))
+
     def test_a_dead_rung_does_not_spend_the_attempt(self):  # LADDER-FALLTHROUGH-1
+        self._unretire()
         GH = {**CF, "GITHUB_TOKEN": "g"}
         rs = L.rungs(self.d, GH)
         self.assertEqual(rs[0]["route"], "github-models")  # free rung first
@@ -62,6 +87,7 @@ class Ladder(unittest.TestCase):
         L.DOWN.clear()
 
     def test_reviewer_on_a_dead_route_passes_to_the_next_family(self):
+        self._unretire()
         GH = {**CF, "GITHUB_TOKEN": "g"}
         used = []
         def send(a, p, e):

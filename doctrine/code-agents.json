@@ -15,8 +15,9 @@
    ],
    "usd_per_m_in": 0,
    "usd_per_m_out": 0,
-   "note": "FREE-LLM-1: GitHub Models over the workflow's built-in GITHUB_TOKEN (permissions: models: read); no key to mint, rate-limited free tier, ranks first because it costs 0; free tier caps a request near 8k tokens in and 4k out, so the prompt is trimmed to max_prompt_chars",
-   "max_prompt_chars": 12000
+   "note": "LADDER-RETIRED-1: GitHub Models (catalog, inference API, BYOK) was retired 2026-07-30 and answers HTTP 200 text/plain \"OK\"; never routed. Kept so the route code and its tests stay; delete when no host pins it. Was: FREE-LLM-1: GitHub Models over the workflow's built-in GITHUB_TOKEN (permissions: models: read); no key to mint, rate-limited free tier, ranks first because it costs 0; free tier caps a request near 8k tokens in and 4k out, so the prompt is trimmed to max_prompt_chars",
+   "max_prompt_chars": 12000,
+   "retired": "2026-07-30"
   },
   {
    "id": "github-models-llama",
@@ -32,8 +33,9 @@
    ],
    "usd_per_m_in": 0,
    "usd_per_m_out": 0,
-   "note": "FREE-LLM-1: second free family on the same built-in token, so the reviewer is never the author's family; free tier caps a request near 8k tokens in and 4k out, so the prompt is trimmed to max_prompt_chars",
-   "max_prompt_chars": 12000
+   "note": "LADDER-RETIRED-1: GitHub Models (catalog, inference API, BYOK) was retired 2026-07-30 and answers HTTP 200 text/plain \"OK\"; never routed. Kept so the route code and its tests stay; delete when no host pins it. Was: FREE-LLM-1: second free family on the same built-in token, so the reviewer is never the author's family; free tier caps a request near 8k tokens in and 4k out, so the prompt is trimmed to max_prompt_chars",
+   "max_prompt_chars": 12000,
+   "retired": "2026-07-30"
   },
   {
    "id": "workers-ai-qwen-coder",
@@ -90,6 +92,46 @@
    "extra": {
     "max_tokens": 3000
    }
+  },
+  {
+   "id": "workers-ai-gpt-oss",
+   "route": "workers-ai",
+   "model": "@cf/openai/gpt-oss-20b",
+   "family": "openai",
+   "roles": [
+    "author",
+    "reviewer"
+   ],
+   "secrets": [
+    "CLOUDFLARE_API_TOKEN",
+    "CLOUDFLARE_ACCOUNT_ID"
+   ],
+   "usd_per_m_in": null,
+   "usd_per_m_out": null,
+   "extra": {
+    "max_tokens": 8000
+   },
+   "note": "LADDER-WIDE-1: probed live 2026-11-27 through the account AI endpoint: answers the requested JSON in content, finish_reason stop; in doctrine/models.json available; replaces the retired openai/gpt-4.1 family on the ladder"
+  },
+  {
+   "id": "workers-ai-qwen3",
+   "route": "workers-ai",
+   "model": "@cf/qwen/qwen3.8-27b",
+   "family": "qwen",
+   "roles": [
+    "author",
+    "reviewer"
+   ],
+   "secrets": [
+    "CLOUDFLARE_API_TOKEN",
+    "CLOUDFLARE_ACCOUNT_ID"
+   ],
+   "usd_per_m_in": null,
+   "usd_per_m_out": null,
+   "extra": {
+    "max_tokens": 8000
+   },
+   "note": "LADDER-WIDE-1: probed live 2026-11-27: answers the requested JSON in content (leading blank lines, which parse_json skips), finish_reason stop; in doctrine/models.json available"
   },
   {
    "id": "anthropic-api",

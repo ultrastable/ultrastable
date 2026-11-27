@@ -1,5 +1,5 @@
 """CODE-AGENTS-1: every adapter is invoked through a recorded transport; routing by cost; disjoint-family ensemble; fallback."""
-import unittest
+import json, unittest
 from pathlib import Path
 from foundation import agents
 
@@ -32,9 +32,24 @@ class Agents(unittest.TestCase):
         c = []; agents.invoke(A["github-models-gpt"], "H" * 30000 + "TAIL", {"GITHUB_TOKEN": "g"}, fake_gh(c))
         sent = c[0][2]["messages"][0]["content"]; self.assertLessEqual(len(sent), 12000); self.assertTrue(sent.endswith("TAIL"))
 
-    def test_free_route_is_first_and_needs_only_the_builtin_token(self):
-        self.assertEqual(agents.route_authors({"GITHUB_TOKEN": "g"}, REPO)[0]["id"], "github-models-gpt")
-        self.assertEqual(agents.ensemble("openai", {"GITHUB_TOKEN": "g"}, REPO)[0]["family"], "llama")
+    def test_retired_github_models_is_never_routed(self):  # LADDER-RETIRED-1: retired 2026-07-30, answers HTTP 200 "OK"
+        env = {"GITHUB_TOKEN": "g"}
+        self.assertTrue(A["github-models-gpt"]["retired"])
+        self.assertFalse(agents.available(A["github-models-gpt"], env)); self.assertFalse(agents.available(A["github-models-llama"], env))
+        self.assertEqual(agents.route_authors(env, REPO), []); self.assertEqual(agents.ensemble("claude", env, REPO), [])
+        self.assertEqual([a["id"] for a in agents.route_authors({**ENV, **env}, REPO) if a["route"] == "github-models"], [])
+
+    def test_invoke_workers_ai_gpt_oss_and_qwen3(self):  # LADDER-WIDE-1
+        for i, fam in (("workers-ai-gpt-oss", "openai"), ("workers-ai-qwen3", "qwen")):
+            c = []; out = agents.invoke(A[i], "p", ENV, fake(c)); self.assertEqual(A[i]["family"], fam); self.assertIn("summary", out); self.assertIn("/ai/run/@cf/", c[0][0])
+
+    def test_workers_ai_reply_shapes(self):  # LADDER-CONTENT-1: shapes measured live 2026-11-27
+        a = A["workers-ai-glm"]
+        self.assertEqual(agents.parse_text(a, {"result": {"choices": [{"message": {"content": "x"}}]}}), "x")
+        self.assertEqual(json.loads(agents.parse_text(a, {"result": {"response": {"summary": "s", "files": []}}})), {"summary": "s", "files": []})  # JSON prompt: the object itself
+        with self.assertRaises(ValueError) as cm:  # thinking used every token: content null, reasoning is not the answer
+            agents.parse_text(a, {"result": {"choices": [{"message": {"content": None, "reasoning": "1. analyze"}, "finish_reason": "length"}]}})
+        self.assertIn("length", str(cm.exception))
 
     def test_registry_is_clean(self):
         self.assertEqual(agents.check(REPO), [])

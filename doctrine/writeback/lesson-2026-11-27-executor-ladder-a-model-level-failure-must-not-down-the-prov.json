@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-executor-ladder-a-model-level-failure-must-not-down-the-prov",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "Executor ladder: a model-level failure must not down the provider route",
+  "body": "13 of 30 executor runs failed because one 502 from workers-ai-glm marked the whole workers-ai route DOWN, so llama, qwen and gpt-oss were never asked; GitHub Models (retired 2026-07-30) answered 200 OK and was routed first. Fixed with route_down (provider-wide failures only), retired adapters never routed, content-null handling and two added Workers AI rungs; tests pass (53 ladder tests) and the two new models were probed live through the account AI endpoint.",
+  "probe": "grep:foundation/agent_ladder.py::def route_down",
+  "session": "session_0156nqDsxJd4poRv2mkbug9e"
+ },
+ "kind": "lesson",
+ "title": "Executor ladder: a model-level failure must not down the provider route",
+ "session": "session_0156nqDsxJd4poRv2mkbug9e"
+}
