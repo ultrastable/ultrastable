@@ -1,5 +1,5 @@
 {
- "at": "2026-11-27T10:03:44Z",
+ "at": "2026-11-27T10:14:01Z",
  "ticks": 144,
  "passed": true,
  "results": [
@@ -7,7 +7,7 @@
    "id": "boot",
    "what": "the bootstrap runs every stage without a blocked one",
    "ok": true,
-   "evidence": "15 stages, none blocked"
+   "evidence": "16 stages, none blocked"
   },
   {
    "id": "no-human-steps",
