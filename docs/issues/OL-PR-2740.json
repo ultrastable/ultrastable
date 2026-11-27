@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2740",
+  "title": "OL-PR-2740: land or supersede pull request #2740 (ci-failed)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2740 is ci-failed\n**Done check:** cmd:python3 -m foundation loopowner --closed 2740\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2740 (`agent/r6-health-gate` at 80f9c27151, opened by rwnq8): feat(deploy): health gate after deploy (R6). The session that opened it is not its closer and is never asked to act. A check failed on the head commit. Read the failing run, then land the same change so that every check passes: push a fix to the branch, or open a new pull request from main that carries the change and close this one as superseded. Failed checks: checks. Files (2): deploy/deploy-oidc.mjs, doctrine/writeback/decision-2026-11-27-health-gate-1-deploy-fails-when-tick-health-is-unreachable.json.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2740 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2740` exits 0 (pull request #2740 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
