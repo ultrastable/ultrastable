@@ -6489,6 +6489,15 @@
    "body": "The modules earlier slices merged unwired (router caps, elicit outcomes, claims reap and prune, build-out ports, githubPullReader) now run in core/org, and the small module defects the round-two review found are closed. Evidence: workers core and packs 2,061 tests with 0 fail, seed suites and each foundation test file pass, conformance check 0 problems; the slice was carried onto the latest main by cherry-pick and is 58 files, 1,128 lines.",
    "probe": "file:workers/core/org/wiring.test.js",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-27-ashby-concepts-are-bound-to-code",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Ashby concepts are bound to code",
+   "body": "18 concepts from ashby.info's concept index map to mechanism files in doctrine/ashby-concepts.json. The multistable idea is measured as interference_share from ops/ultrastability.jsonl. Summaries in our own words; source pages linked, not copied.",
+   "probe": "grep:foundation/ashbymap.py::def interference",
+   "session": "session_0156nqDrWQrweUijDBYFDoPg"
   }
  ]
 }
