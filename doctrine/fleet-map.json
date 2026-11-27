@@ -50,6 +50,7 @@
    "catalog-info.yaml",
    ".ultrastable/",
    "SYSTEM.md",
+   "SYSTEM.json",
    "schemas/",
    ".devcontainer/",
    ".editorconfig"
