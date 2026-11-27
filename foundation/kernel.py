@@ -33,8 +33,28 @@ def _sig_strings(md: str) -> dict[str, str]:
     return out
 
 
+def check_lock(root=REPO) -> list[str]:
+    """kernel.lock pins the running kernel text by sha256 (Kernel 9.0.0 header: drift fails)."""
+    import hashlib
+    root = Path(root)
+    lp = root / "doctrine/kernel.lock"
+    if not lp.exists():
+        return ["doctrine/kernel.lock missing"]
+    lock = json.loads(lp.read_text(encoding="utf-8"))
+    f = root / lock["file"]
+    if not f.exists():
+        return [f"kernel.lock names {lock['file']}, which is missing"]
+    got = hashlib.sha256(f.read_bytes()).hexdigest()
+    if got != lock["sha256"]:
+        return [f"kernel text {lock['file']} drifted from kernel.lock (sha256 {got[:12]} != {lock['sha256'][:12]})"]
+    if f"KERNEL {lock['version']}" not in f.read_text(encoding="utf-8"):
+        return [f"kernel.lock version {lock['version']} is not the version in {lock['file']}"]
+    return []
+
+
 def check(root=REPO) -> list[str]:
     root, bad = Path(root), []
+    bad += check_lock(root)
     k = load(root)
     md = (root / k["text"]).read_text(encoding="utf-8")
     for c in k["commitments"]:
