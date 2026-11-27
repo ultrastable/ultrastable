@@ -6453,6 +6453,15 @@
    "body": "The seed's spec tests (SW) need the fixer code (FX) to pass, so the two ship as one change. A credential store with no database binding now rejects at once with a plain reason. The US-09 reply-gate test accepts the router naming the reply keys.",
    "probe": "file:seed/worker/test/spec-09-throttle-halt-gate.test.js",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-27-slice-ft-of-the-specification-run-shipped-on-its-own",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Slice FT of the specification run shipped on its own",
+   "body": "The foundation's specification-citing tests, one cohesive set inside the 60 file and 3,000 line bound, applied to the latest main after SW+FX merged; the conformance manifest is regenerated so it names the tests as they are titled now.",
+   "probe": "file:tests/foundation/test_spec_08_intake.py",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
