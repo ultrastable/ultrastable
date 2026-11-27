@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2622",
+  "title": "OL-PR-2622: land or supersede pull request #2622 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2622 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2622\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2622 (`ccr-a1112b95-as8jbr` at bbbeb323a1, opened by rwnq8): feat(kernel): Ashby's journal as working mechanisms in the goal loop (ASHBY-KERNEL-1). The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (26): .github/workflows/scout.yml, CREDITS.md, agents/AGENTS.md, agents/PROJECT-INSTRUCTIONS.md, docs/PROJECT-MEMORY.md, docs/issues/Q-ASHBY-anticipation.json, docs/issues/Q-ASHBY-gating.json, docs/issues/Q-ASHBY-habituation.json, docs/issues/Q-ASHBY-markov.json, doctrine/ashby-concepts.json, doctrine/schemas/ashby-concepts.schema.json, doctrine/writeback/decision-2026-11-27-ashby-s-journal-runs-in-the-kernel.json, doctrine/writeback/lesson-2026-11-27-a-second-loop-step-is-judged-by-every-essential-variable-not.json, foundation/ashbymap.py, research/papers/second-loop-2026.md, seed/SYSTEM.md, seed/agents/AGENTS.md, seed/autonomy/goals.json, seed/worker/src/ashby.js, seed/worker/src/goals.js, seed/worker/src/regulation.js, seed/worker/src/tick.js, seed/worker/test/ashby-loop.test.js, seed/worker/test/ashby.test.js, seed/worker/test/spec-26-goals.test.js, tests/foundation/test_ashbymap.py.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2622 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2622` exits 0 (pull request #2622 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
