@@ -1,4 +1,5 @@
-# SPDX-License-Identifier: LicenseRef-Ultrastable
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 # STATE-SINK-1 (ZHC-R1): the staged move of machine state out of git, as data plus two readings.
 #   python3 -m foundation statesink --inventory   per state area: files, and the workflows and modules that name it (the writers and readers a move must handle)
 #   python3 -m foundation statesink --probe       exit 1 while the state share is above budget; says which stage each area is in and which area moves next (canary first)
