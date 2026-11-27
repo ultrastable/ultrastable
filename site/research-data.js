@@ -49,7 +49,7 @@ export default {
      "AI systems leave their loops open. Put in place: an output with no code consumer fails the build. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 171 (n = 21450; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.778 (n = 18; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 171 (n = 21374; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.778 (n = 18; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. Chapters 7 and 8 were not machine-read for this paper: the archive.org text the research loop could reach ends in chapter 2. Ashby's mechanism is stated here in our own words from the book's contents and preface; the only verbatim quotation is from the preface (page v).",
@@ -160,7 +160,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 171,
      "status": "met",
-     "n": 21450,
+     "n": 21374,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -275,7 +275,7 @@ export default {
     {
      "finding": "A2",
      "rule": "SPEC-GATE-1",
-     "score": 0.13
+     "score": 0.133
     },
     {
      "finding": "A2",
@@ -285,12 +285,12 @@ export default {
     {
      "finding": "A3",
      "rule": "ORCHESTRATE-1",
-     "score": 0.109
+     "score": 0.108
     },
     {
      "finding": "A4",
      "rule": "BLINDSPOT-RED-1",
-     "score": 0.139
+     "score": 0.138
     },
     {
      "finding": "A4",
@@ -308,7 +308,7 @@ export default {
      "score": 0.103
     }
    ],
-   "leads_route": "lexical-512-xuqqzr",
+   "leads_route": "lexical-512-1fojuy2",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -668,7 +668,7 @@ export default {
     {
      "finding": "F1",
      "rule": "MANAGERS-1",
-     "score": 0.117
+     "score": 0.118
     },
     {
      "finding": "F3",
@@ -683,12 +683,12 @@ export default {
     {
      "finding": "F4",
      "rule": "CONNECT-1",
-     "score": 0.125
+     "score": 0.126
     },
     {
      "finding": "F4",
      "rule": "STANDARDS-1",
-     "score": 0.12
+     "score": 0.121
     },
     {
      "finding": "F5",
@@ -706,7 +706,7 @@ export default {
      "score": 0.139
     }
    ],
-   "leads_route": "lexical-512-1szl4xg",
+   "leads_route": "lexical-512-1mtxkrz",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -1009,14 +1009,9 @@ export default {
      "score": 0.113
     },
     {
-     "finding": "O4",
-     "rule": "PROMOTE-1",
-     "score": 0.109
-    },
-    {
      "finding": "O5",
      "rule": "UNKNOWNS-1",
-     "score": 0.166
+     "score": 0.168
     },
     {
      "finding": "O5",
@@ -1034,7 +1029,7 @@ export default {
      "score": 0.112
     }
    ],
-   "leads_route": "lexical-512-1m8isq0",
+   "leads_route": "lexical-512-1igm8kb",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -1339,7 +1334,7 @@ export default {
     {
      "finding": "S3",
      "rule": "RUNWAY-1",
-     "score": 0.113
+     "score": 0.114
     },
     {
      "finding": "S4",
@@ -1349,7 +1344,7 @@ export default {
     {
      "finding": "S5",
      "rule": "SYSTEM-SPEC-1",
-     "score": 0.114
+     "score": 0.115
     },
     {
      "finding": "S5",
@@ -1359,7 +1354,7 @@ export default {
     {
      "finding": "S6",
      "rule": "IGNORANCE-1",
-     "score": 0.122
+     "score": 0.123
     },
     {
      "finding": "S6",
@@ -1367,7 +1362,7 @@ export default {
      "score": 0.113
     }
    ],
-   "leads_route": "lexical-512-9oc9k5",
+   "leads_route": "lexical-512-1ort80k",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -1512,7 +1507,7 @@ export default {
      "score": 0.146
     }
    ],
-   "leads_route": "lexical-512-ad4ko8",
+   "leads_route": "lexical-512-mauyzf",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -1560,7 +1555,7 @@ export default {
      "Limits on everything that matters. Put in place: the check fails a variable with no limits. Check it with one number, share of declared essential variables that have limits (doctrine/ultrastability.json), and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 74 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.0 (n = 164; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.52 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 74 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.0 (n = 164; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.478 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Source. Own R&D question set, regenerated from this system's records, version 2026-11-25."
@@ -1682,7 +1677,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 72 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.52,
+     "measured": 0.478,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
@@ -1760,7 +1755,7 @@ export default {
     {
      "finding": "S1",
      "rule": "CONSOLE-AGENT-1",
-     "score": 0.111
+     "score": 0.112
     },
     {
      "finding": "S4",
@@ -1770,10 +1765,10 @@ export default {
     {
      "finding": "S4",
      "rule": "META-SIGNAL-1",
-     "score": 0.11
+     "score": 0.111
     }
    ],
-   "leads_route": "lexical-512-10frdr1",
+   "leads_route": "lexical-512-1wwvi7g",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],
