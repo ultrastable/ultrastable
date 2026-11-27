@@ -52,6 +52,10 @@ METRICS = {
     "action_classes_consistent_share": "share of judged action classes whose recent actions mostly left the other essential variables inside their limits (foundation/freeadapt.py)",
     "survival_levels_met": "how many of the three survival levels hold now: effective, attractive, consistent (foundation/freeadapt.py)",
     "lessons_enforced_share": "share of recorded lessons bound to a check, variable, detector or test (doctrine/lessons.json)",
+    "second_loop_collision_share_7d": "share of the second loop's parameter steps in the last 7 days that changed a step-function another variable's trial already held (MULTISTABLE-1)",
+    "step_versatility_share": "share of declared step-functions that can still move in a direction their steps declare (ops: doctrine files the ladders name)",
+    "archive_triaged_share": "share of Ashby's index keywords and Other Index categories with a disposition in doctrine/ashby-archive.json (ASHBY-ARCHIVE-1)",
+    "archive_principles_built_share": "share of principles taken from Ashby's journal that are code with a passing probe (doctrine/ashby-archive.json)",
     "research_findings_met_share": "share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1)",
 }
 NOW = lambda: dt.datetime.now(dt.timezone.utc)
@@ -181,6 +185,22 @@ def measures(root=REPO, pol=None) -> dict:
     except (OSError, ValueError, KeyError) as e:
         print(f"research: lessons reading failed: {e}", file=sys.stderr)
         m["lessons_enforced_share"] = {"value": None, "n": 0, "source": "unreadable"}
+    try:  # MULTISTABLE-1 and Ashby's journal (ASHBY-ARCHIVE-1)
+        from . import ultrastability as U4
+        col, ver = U4.collisions(root), U4.versatility(root)
+        m["second_loop_collision_share_7d"] = {**col, "source": "ops/ultrastability.jsonl steps against doctrine/ultrastability.json ladders"}
+        m["step_versatility_share"] = {**ver, "source": "doctrine/ultrastability.json ladders and the files they name"}
+    except (OSError, ValueError, KeyError, TypeError) as e:
+        print(f"research: multistable readings failed: {e}", file=sys.stderr)
+        m["second_loop_collision_share_7d"] = m["step_versatility_share"] = {"value": None, "n": 0, "source": "unreadable"}
+    try:
+        from . import ashbyarchive as AA
+        ar = AA.report(root)
+        m["archive_triaged_share"] = {"value": ar["archive_triaged_share"], "n": ar["n"], "source": "doctrine/ashby-archive.json (foundation/ashbyarchive.py)"}
+        m["archive_principles_built_share"] = {"value": ar["principles_built_share"], "n": len(ar["principles"]), "source": "doctrine/ashby-archive.json principles and their probes"}
+    except (OSError, ValueError, KeyError, TypeError) as e:
+        print(f"research: archive register unreadable: {e}", file=sys.stderr)
+        m["archive_triaged_share"] = m["archive_principles_built_share"] = {"value": None, "n": 0, "source": "doctrine/ashby-archive.json (unreadable)"}
     fs = [f for st in studies(root, pol) for f in st.get("findings", []) if f.get("metric") != "research_findings_met_share"]
     met = [f for f in fs if verdict(f, m)["status"] == "met"]
     m["research_findings_met_share"] = {"value": round(len(met) / len(fs), 3) if fs else None, "n": len(fs), "source": "research/studies, each finding measured as above"}

@@ -30,6 +30,10 @@ jobs:
       - name: Ashby's journal index read live (ASHBY-KERNEL-1, the share of its keywords bound to code; a cited anchor the index no longer has turns the run red)
         if: ${{ !cancelled() }}
         run: python3 -m foundation ashbymap --live
+      - name: Ashby archive pass (ASHBY-ARCHIVE-1; the archive answers, pending keywords and unbuilt principles become items)
+        run: |
+          python3 -m foundation ashbyarchive --live
+          python3 -m foundation ashbyarchive --run --apply
       - name: Idea bank (WORLDWIDE-1 probes every data source; GROW-1 adds one new idea through every gate)
         env: {GITHUB_TOKEN: "${{ github.token }}"}
         run: python3 scripts/build_idea_bank.py --live --grow
