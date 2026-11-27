@@ -48,7 +48,7 @@ test('a search has a finite budget of trials', () => {
 
 test('the step-function search tries the declared direction first, then the nearest untried value, and never a rejected one', () => {
   const k = { value: 4, min: 1, max: 8, step: 1 };
-  assert.deepEqual(nextTrial(k, { dir: -1 }), { value: 3, exploratory: false, tried: 0, grid: 8 });
+  assert.deepEqual(nextTrial(k, { dir: -1 }), { value: 3, exploratory: false, distance: 1, tried: 0, grid: 8 });
   assert.equal(nextTrial(k, { dir: -1, rejected: [3], heldDir: -1 }).value, 5);  // the declared direction failed and rests: the other side
   assert.equal(nextTrial(k, { dir: -1, rejected: [3], heldDir: -1 }).exploratory, true);
   const order = []; let rej = [];
@@ -58,6 +58,17 @@ test('the step-function search tries the declared direction first, then the near
   assert.equal(nextTrial({ value: 1, min: 1, max: 8, step: 1 }, { dir: -1 }).value, 2);  // at a bound the search still has the other side
   assert.equal(nextTrial({ value: 0.25, min: 0.1, max: 0.5, step: 0.05 }, { dir: 1 }).value, 0.3);  // a fractional grid stays on the grid
   assert.equal(nextTrial({ value: 1, min: 1, max: 1, step: 1 }), null);
+  // a range the step does not divide: the grid is 1, 3, 5, 7, 9 and never passes the bound
+  const odd = { value: 9, min: 1, max: 10, step: 2 };
+  assert.equal(nextTrial(odd, { dir: 1 }).value, 7); assert.equal(nextTrial(odd, { dir: 1 }).grid, 5);
+  let seen = [], r2 = [];
+  for (let t; (t = nextTrial(odd, { dir: 1, rejected: r2 })); r2 = [...r2, t.value]) seen.push(t.value);
+  assert.deepEqual(seen, [7, 5, 3, 1]); assert.ok(seen.every(v => v >= 1 && v <= 10));
+  // a current value off the grid is read as its nearest grid point, and a very fine grid still moves
+  assert.equal(nextTrial({ value: 4.4, min: 1, max: 8, step: 1 }, { dir: 1 }).value, 5);
+  assert.equal(nextTrial({ value: 500, min: 0, max: 1000, step: 1 }, { dir: 1 }).value, 501);
+  assert.equal(nextTrial({ value: 500, min: 0, max: 1000, step: 1 }, { dir: 1, heldDir: 1 }).value, 499);
+  assert.equal(nextTrial({ value: 4, min: 1, max: 8, step: 1 }, { dir: -1, heldDir: -1 }).value, 5, 'a resting direction is not searched');
 });
 
 test('veto: a variable that was holding inside its limits and left them after a step vetoes the step', () => {

@@ -512,6 +512,15 @@
     "file": "seed/worker/src/orchestrate.js",
     "contains": "One tick, one phase of the oldest unfinished run"
    }
+  },
+  {
+   "id": "ashby-search-never-retries-a-failed-value",
+   "source": "agents/AGENTS.md",
+   "quote": "never retries a value that failed in the same episode",
+   "probe": {
+    "file": "seed/worker/test/ashby.test.js",
+    "contains": "assert.deepEqual(order, [3, 5, 2, 6, 1, 7, 8]);"
+   }
   }
  ],
  "baseline": [

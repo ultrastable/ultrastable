@@ -88,18 +88,18 @@ export function searchBudget(grids, { horizon_h = 365 * 24, trial_h = 24 } = {})
 // constraint shortens the search (J.4548), so the declared direction is tried first; after it fails the nearest untried value is taken, on
 // either side, and a value that failed in this episode is never taken again (systematic or random, J.3745). null: every value is spent.
 // k: { value, min, max, step }; dir: the preferred direction (+1 or -1); rejected: values that failed in this episode; heldDir: a direction resting.
-export function nextTrial(k, { dir = 1, rejected = [], heldDir = 0, max_grid = 400 } = {}) {
-  const n = Math.round((k.max - k.min) / k.step);
-  if (!(n >= 1) || n > max_grid || !(k.step > 0)) return null;
+// The grid is min, min + step ... and never passes max, whatever the step. A current value off the grid is read as its nearest grid point.
+// The search looks at most `reach` grid points to either side, so a very fine grid still moves, one neighbourhood at a time.
+export function nextTrial(k, { dir = 1, rejected = [], heldDir = 0, reach = 400 } = {}) {
+  if (!(k.step > 0) || !(k.max > k.min)) return null;
+  const n = Math.floor((k.max - k.min) / k.step + 1e-9); if (n < 1) return null;
   const idx = v => Math.min(n, Math.max(0, Math.round((v - k.min) / k.step))), cur = idx(k.value), bad = new Set(rejected.map(idx));
-  let best = null;
-  for (let i = 0; i <= n; i++) {
-    const s = Math.sign(i - cur); if (!s || bad.has(i) || (heldDir && s === heldDir)) continue;
-    const c = { i, d: Math.abs(i - cur), pref: s === dir ? 0 : 1 };
-    if (!best || c.d < best.d || (c.d === best.d && c.pref < best.pref)) best = c;
+  const at = i => Math.round(1e9 * (k.min + i * k.step)) / 1e9, d0 = dir < 0 ? -1 : 1;
+  for (let d = 1; d <= Math.min(n, reach); d++) for (const s of [d0, -d0]) {
+    const i = cur + s * d; if (i < 0 || i > n || bad.has(i) || (heldDir && s === heldDir) || at(i) === k.value) continue;
+    return { value: at(i), exploratory: s !== d0 || d > 1, distance: d, tried: bad.size, grid: n + 1 };
   }
-  if (!best) return null;
-  return { value: Math.round(1e9 * (k.min + best.i * k.step)) / 1e9, exploratory: best.pref === 1 || best.d > 1, tried: bad.size, grid: n + 1 };
+  return null;
 }
 
 // ---- 5. the veto of every essential variable --------------------------------------------------------------------------------------------------

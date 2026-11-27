@@ -246,6 +246,13 @@
       "reason": "GOALS-1: every knob change with its prediction and verdict; each is also a hash-chained audit row",
       "archive": true
     },
+    "goal_interference": {
+      "column": "at",
+      "unit": "ms",
+      "keep_days": 90,
+      "reason": "ASHBY-KERNEL-1: one row per variable a knob change upset, with its verdict; the goal loop reads 90 days of them and each veto and settlement is also a hash-chained audit row",
+      "archive": true
+    },
     "goals": {
       "keep": "state",
       "reason": "GOALS-1: one row per goal; retired goals stay so a goal's history is never lost"
