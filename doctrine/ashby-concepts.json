@@ -1,8 +1,10 @@
 {
   "$schema": "./schemas/ashby-concepts.schema.json",
   "id": "ASHBY-CONCEPTS-1",
-  "_doc": "Concepts from W. Ross Ashby's journal concept index (https://ashby.info/journal/index/index.html) that apply to a self-running software system, each bound to the code that carries it. Summaries are in our own words; the source pages are linked, not copied. Checked by python3 -m foundation ashbymap --check: every mechanism path must exist and hold its marker, and every reading must compute. A concept with status gap must name an open queue item.",
+  "_doc": "Concepts from W. Ross Ashby's journal (https://ashby.info/journal/index.html): its keyword index and its subject index, each bound to the code that carries it. Summaries are in our own words; the archive's text is not copied (its copyright page reserves all rights), the source pages are linked. pages are journal page numbers as the index gives them (https://ashby.info/journal/page/<page>.html); keywords are further index anchors the same mechanism answers. Checked by python3 -m foundation ashbymap --check: every mechanism path must exist and hold its marker, every reading must compute, every exported function of the kernel module must be bound by a concept, and a gap must name an open queue item. ashbymap --live reads the index and reports how many of its keywords are bound; an index that cannot be read is unmeasured.",
   "source": "https://ashby.info/journal/index/index.html",
+  "sources": ["https://ashby.info/journal/index/index.html", "https://ashby.info/journal/index/other/index.html", "https://ashby.info/journal/summaries.html"],
+  "kernel": "seed/worker/src/ashby.js",
   "concepts": [
     {
       "id": "essential-variables",
@@ -10,10 +12,13 @@
       "summary": "A few variables must stay inside limits for the system to survive; everything else serves that.",
       "mechanisms": [
         "doctrine/ultrastability.json::\"variables\"",
-        "foundation/ultrastability.py::def in_bounds"
+        "foundation/ultrastability.py::def in_bounds",
+        "seed/worker/src/goals.js::export async function goalsStep"
       ],
       "reading": "bounded_share",
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [2831, 3281, 3582, 5642],
+      "keywords": ["survival", "vital"]
     },
     {
       "id": "ultrastability",
@@ -21,10 +26,12 @@
       "summary": "Two loops: the first acts every tick, the second changes the first loop's parameters only when an essential variable leaves its limits.",
       "mechanisms": [
         "foundation/ultrastability.py::def tick",
-        "seed/worker/src/goals.js::revert"
+        "seed/worker/src/goals.js::revert",
+        "seed/worker/src/goals.js::the step-function search"
       ],
       "reading": "search_after_ladder",
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [3966, 4505, 4581, 4884]
     },
     {
       "id": "step-function",
@@ -32,21 +39,28 @@
       "summary": "A parameter that holds still, then jumps to a new value when a limit is crossed, rather than drifting continuously.",
       "mechanisms": [
         "foundation/ultrastability.py::def _param",
-        "foundation/ultrastability.py::def _search"
+        "foundation/ultrastability.py::def _search",
+        "seed/worker/src/ashby.js::export function nextTrial"
       ],
       "reading": "step_function_share",
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [995, 1029, 1281, 4000],
+      "keywords": ["step_mechanism"]
     },
     {
       "id": "multistable-system",
       "url": "https://ashby.info/journal/index/other/multistable_system.html",
-      "summary": "Many loosely coupled parts, each adapting on its own, so a fix in one part does not undo the adaptation of another. Measured as the share of second-loop steps after which a different variable that was in bounds fell out of bounds.",
+      "summary": "Many loosely coupled parts, each adapting on its own, so a fix in one part does not undo the adaptation of another. On the platform it is measured as the share of second-loop steps after which a different variable that was in bounds fell out. In the kernel it is enforced: such a step is undone.",
       "mechanisms": [
         "foundation/ashbymap.py::def interference",
-        "doctrine/ultrastability.json::\"tenant\""
+        "doctrine/ultrastability.json::\"tenant\"",
+        "seed/worker/src/goals.js::async function vetoers",
+        "seed/worker/test/ashby-loop.test.js::veto: a step that moved its own goal"
       ],
       "reading": "interference_share",
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [2955, 5345, 5436, 5775],
+      "keywords": ["polystable", "multistable_system", "multistable_reserve"]
     },
     {
       "id": "accumulation-of-adaptations",
@@ -54,9 +68,12 @@
       "summary": "Adaptations should add up. A change is kept only when its goal moved, and reverted otherwise, so good steps are not melted down by later ones.",
       "mechanisms": [
         "foundation/ultrastability.py::def settle_verdict",
-        "foundation/ultrastability.py::def keep_rate"
+        "foundation/ultrastability.py::def keep_rate",
+        "seed/worker/src/goals.js::CREATE TABLE IF NOT EXISTS goal_interference"
       ],
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [5430, 5436, 5491, 5757],
+      "keywords": ["additive", "serial"]
     },
     {
       "id": "dispersion",
@@ -66,27 +83,35 @@
         "seed/worker/src/tenant.js::tenant",
         "foundation/ultrastability.py::def common_mode"
       ],
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [3851, 5356, 5606]
     },
     {
       "id": "homeostat",
       "url": "https://ashby.info/journal/index/index.html#homeostat",
       "summary": "Ashby's machine that found a stable setting by random step changes until its needles settled. The second loop's search draws untried values the same way.",
       "mechanisms": [
-        "foundation/ultrastability.py::def _search"
+        "foundation/ultrastability.py::def _search",
+        "seed/worker/src/ashby.js::export function nextTrial",
+        "seed/worker/test/ashby.test.js::nearest first"
       ],
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [2427, 2435, 4722]
     },
     {
       "id": "requisite-variety",
       "url": "https://ashby.info/journal/index/index.html#requisite",
-      "summary": "A regulator can only hold out disturbances it has as many responses for. Every failure mode needs its own detector and remedy, and the unknown ones are hunted for.",
+      "summary": "Only variety in the regulator can force down the variety disturbances pass to the outcomes. The kernel reads it from its own work queue: every fix item a detector files is a disturbance class, one that closed on evidence was regulated, and one that stood open past 72 hours is variety let through. The goal core.adapt.variety keeps that count at 0.",
       "mechanisms": [
         "seed/worker/src/selfaudit.js::FM-",
         "seed/worker/src/unknowns.js::export",
-        "foundation/blindspots.py::def "
+        "foundation/blindspots.py::def ",
+        "seed/worker/src/ashby.js::export function requisiteVariety",
+        "seed/worker/src/regulation.js::export async function varietyReading",
+        "seed/autonomy/goals.json::core.adapt.variety"
       ],
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [4658, 4846, 4850, 5242]
     },
     {
       "id": "regulation-and-feedback",
@@ -96,7 +121,9 @@
         "seed/worker/src/tick.js::export const STEPS",
         "seed/worker/src/tick.js::silent_drop"
       ],
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [4385, 4674, 4688, 4843],
+      "keywords": ["feedback", "homeostasis", "control"]
     },
     {
       "id": "redundancy",
@@ -106,16 +133,21 @@
         "seed/worker/src/pulse.js::export async function watch",
         "foundation/failover.py::def "
       ],
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [2993, 5357]
     },
     {
       "id": "black-box",
       "url": "https://ashby.info/journal/index/index.html#black",
-      "summary": "Judge a system by what goes in and what comes out over time. Every input and change is logged with its effect, then settled.",
+      "summary": "A machine is known only by its protocol: state, input, next state. Every input and change is logged with its effect, and the kernel reads its own knob moves the same way: the same move with different results proves a variable that matters is not being recorded.",
       "mechanisms": [
-        "foundation/provenance.py::def "
+        "foundation/provenance.py::def ",
+        "seed/worker/src/ashby.js::export function protocol",
+        "seed/worker/src/goals.js::black_box"
       ],
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [3076, 4455, 4478, 4829],
+      "keywords": ["protocol"]
     },
     {
       "id": "amplifier",
@@ -124,7 +156,9 @@
       "mechanisms": [
         "seed/worker/src/criticality.js::k_eff"
       ],
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [3644, 4159, 4722, 4794],
+      "keywords": ["amplification"]
     },
     {
       "id": "self-locking",
@@ -134,7 +168,8 @@
         "seed/worker/src/budget.js::export function halted",
         "foundation/redmain.py::def "
       ],
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [4055, 4165, 4180, 4229]
     },
     {
       "id": "organisation",
@@ -143,7 +178,9 @@
       "mechanisms": [
         "seed/worker/src/vendor/core/datagraph.js::export"
       ],
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [424, 928, 5131],
+      "keywords": ["whole"]
     },
     {
       "id": "critical-surface",
@@ -153,17 +190,22 @@
         "foundation/ultrastability.py::def in_bounds"
       ],
       "reading": "bounded_share",
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [898, 1003, 2832],
+      "keywords": ["break_surface"]
     },
     {
       "id": "speed-of-adaptation",
       "url": "https://ashby.info/journal/index/index.html#speed_%28of",
-      "summary": "How fast a system finds a stable field. Patience and settle ticks set how long the second loop waits before stepping again.",
+      "summary": "How long a system takes to find a field that holds. Patience and settle ticks set how long the second loop waits before stepping again, and the kernel reads the trials each irreducible part would take at once and part by part.",
       "mechanisms": [
-        "foundation/ultrastability.py::patience_ticks"
+        "foundation/ultrastability.py::patience_ticks",
+        "seed/worker/src/ashby.js::export function expectedTrials",
+        "seed/worker/src/goals.js::export async function structureOf"
       ],
       "reading": "patience_ticks",
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [4246, 4560, 5284, 5614]
     },
     {
       "id": "levels",
@@ -172,7 +214,8 @@
       "mechanisms": [
         "doctrine/pilot-model.json::\"layers\""
       ],
-      "status": "implemented"
+      "status": "implemented",
+      "pages": [936, 4270, 4284]
     },
     {
       "id": "memory",
@@ -180,9 +223,326 @@
       "summary": "Adaptation needs memory that later events do not wipe. The ledgers are append-only and each settled step stays on record.",
       "mechanisms": [
         "foundation/provenance.py::def ",
-        "foundation/ultrastability.py::def _append"
+        "foundation/ultrastability.py::def _append",
+        "seed/worker/src/goals.js::forget_days"
+      ],
+      "status": "implemented",
+      "pages": [1157, 3842, 5559]
+    },
+    {
+      "id": "veto",
+      "url": "https://ashby.info/journal/index/index.html#veto",
+      "pages": [4508, 5307],
+      "summary": "Every part can refuse a resting state. A step that moved its own goal and knocked a variable that was holding out of its limits is undone, and the undo is read as a trial that confirms the step as the cause or clears it.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::export function upsets",
+        "seed/worker/src/goals.js::kind: 'goal.veto'",
+        "seed/worker/src/goals.js::kind: 'goal.veto.settled'",
+        "seed/worker/test/ashby-loop.test.js::exonerated"
       ],
       "status": "implemented"
+    },
+    {
+      "id": "trial-and-error",
+      "url": "https://ashby.info/journal/index/index.html#trial",
+      "pages": [896, 4650, 4797, 5635],
+      "summary": "Adaptation goes by trials whose results select, so which value is tried matters less than the test afterwards. After a knob's declared direction fails, the nearest untried value is taken on either side, a value that failed is not retried in the same episode, and the lever itself is filed as work while the search goes on.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::export function nextTrial",
+        "seed/worker/src/goals.js::searching the remaining values",
+        "seed/worker/test/spec-26-goals.test.js::the direction rests, the search does not"
+      ],
+      "status": "implemented",
+      "keywords": ["searching", "hunt"]
+    },
+    {
+      "id": "reducibility",
+      "url": "https://ashby.info/journal/index/index.html#reducibility",
+      "pages": [1381, 4564, 5430, 5606],
+      "summary": "A whole that splits into parts which can each come right and stay right adapts in a time that grows with the number of parts, not exponentially with it. The kernel reads its goals and knobs as connected components and the goal core.adapt.joint keeps the largest at eight step-functions or fewer.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::export function reducibility",
+        "seed/worker/src/ashby.js::export function components",
+        "seed/worker/src/ashby.js::export const MAX_JOINT",
+        "seed/worker/src/goals.js::export const largestJoint",
+        "seed/autonomy/goals.json::core.adapt.joint"
+      ],
+      "status": "implemented",
+      "keywords": ["decomposable", "iterated"]
+    },
+    {
+      "id": "joining",
+      "url": "https://ashby.info/journal/index/index.html#joining",
+      "pages": [4332, 5404, 5447],
+      "summary": "How parts are joined decides whether the whole can rest: stable parts can make an unstable whole. The reading compares how often every goal is inside its limits at once with the product of the parts.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::export function jointRest",
+        "seed/worker/src/goals.js::rest: jointRest(full)"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "equilibrium",
+      "url": "https://ashby.info/journal/index/index.html#equilibrium",
+      "pages": [568, 604],
+      "summary": "A system resting inside its limits is what adaptation seeks. A goal is met when its reading is inside its limit, and the whole rests only when every goal does.",
+      "mechanisms": [
+        "seed/worker/src/goals.js::UPDATE goals SET last_value=?, last_at=?, met=?",
+        "seed/worker/src/ashby.js::export function jointRest"
+      ],
+      "status": "implemented",
+      "keywords": ["resting_state", "neutral", "stability"]
+    },
+    {
+      "id": "variety",
+      "url": "https://ashby.info/journal/index/index.html#variety",
+      "pages": [4312, 4336, 4659, 4922],
+      "summary": "Variety is the number of distinguishable states. The kernel counts the joint states its goals pass through: a system that never leaves one state says nothing about its regulators.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::export function variety",
+        "seed/worker/src/goals.js::states_seen"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "information-and-entropy",
+      "url": "https://ashby.info/journal/index/index.html#information",
+      "pages": [3164, 3177, 4431, 5741],
+      "summary": "Information is measured as variety removed, in bits. Entropy and transmission are computed from the system's own readings, never assumed.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::export function entropy",
+        "seed/worker/src/ashby.js::export function transmission"
+      ],
+      "status": "implemented",
+      "keywords": ["entropy", "transmission", "uncertainty"]
+    },
+    {
+      "id": "independence",
+      "url": "https://ashby.info/journal/index/index.html#independence",
+      "pages": [960, 3824, 4883],
+      "summary": "Two parts are independent exactly when no variety passes between them. The kernel reads the transmission between each pair of goals from their joint readings and lists the pairs that are not independent.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::export function transmission",
+        "seed/worker/src/goals.js::dependence: full.length >= 24"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "interaction",
+      "url": "https://ashby.info/journal/index/index.html#interaction",
+      "pages": [928, 5303, 7124],
+      "summary": "Adaptations accumulate only where interaction between parts is small, and a step-function whose effects ramify widely should be reached for last. A knob with confirmed upsets is offered less readily.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::export const accessibility",
+        "seed/worker/src/goals.js::accessibility(inter.filter"
+      ],
+      "status": "implemented",
+      "keywords": ["traffic"]
+    },
+    {
+      "id": "cylindrance",
+      "url": "https://ashby.info/journal/index/index.html#cylindrance",
+      "pages": [6465, 6473, 6499, 6528],
+      "summary": "The smallest number of variables that must be looked at together to account for a relation. Low cylindrance means a few variables at a time are enough to adapt to it. The kernel computes it over the joint states of its goals.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::export function cylindrance",
+        "seed/worker/src/goals.js::joint_order"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "bremermanns-limit",
+      "url": "https://ashby.info/journal/index/index.html#bremermann_s",
+      "pages": [6546, 6584],
+      "summary": "Any search has a finite budget of trials. The kernel multiplies the settings inside each irreducible part and says whether they can be searched within a year at one trial per review period.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::export function searchBudget",
+        "seed/worker/src/goals.js::search: searchBudget"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "constraint",
+      "url": "https://ashby.info/journal/index/index.html#constraint",
+      "pages": [4442, 4548, 5435, 5728],
+      "summary": "Constraint is what makes a search short. A knob's declared direction is a constraint and is used first; the joint-order reading says how much constraint the observed states carry.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::the declared direction is tried first",
+        "seed/worker/src/ashby.js::export function cylindrance"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "absolute-system",
+      "url": "https://ashby.info/journal/index/index.html#absolute",
+      "pages": [2918, 4116, 5058],
+      "summary": "A system is state-determined when the same state and input always give the same next state. Where the record of knob moves is not single-valued, the determinate share falls below 1 and the moves are listed.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::determinate_share",
+        "seed/worker/src/goals.js::black_box"
+      ],
+      "status": "implemented",
+      "keywords": ["state_determined"]
+    },
+    {
+      "id": "parameter",
+      "url": "https://ashby.info/journal/index/index.html#parameter",
+      "pages": [1002, 3799, 4302],
+      "summary": "A parameter stands outside the system and sets its field; changing it changes what the system does. Knobs are bounded parameters, and one that names a config path overrides a real value the Worker reads.",
+      "mechanisms": [
+        "seed/worker/src/goals.js::export async function withKnobs",
+        "seed/worker/src/goals.js::CREATE TABLE IF NOT EXISTS goal_knobs"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "noise",
+      "url": "https://ashby.info/journal/index/index.html#noise",
+      "pages": [3019, 4067],
+      "summary": "A system that is never disturbed never shows whether its settings hold, and disturbance weeds out the fragile ones. Faults are injected on a schedule against the real recovery code.",
+      "mechanisms": [
+        "seed/scripts/yearsim.py::def ",
+        "seed/worker/src/index.js::kill-drill"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "model",
+      "url": "https://ashby.info/journal/index/index.html#model",
+      "pages": [4196, 4251, 7103],
+      "summary": "A regulator is as good as its model of what it regulates, and a trial on a model is cheaper than one on the world. Every change logs a prediction that is scored against the measured outcome, and the year is simulated before it is lived.",
+      "mechanisms": [
+        "seed/worker/src/tick.js::score_predictions",
+        "seed/scripts/yearsim.py::def "
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "natural-selection",
+      "url": "https://ashby.info/journal/index/other/natural_selection.html",
+      "pages": [2839, 3662, 3968, 4137],
+      "summary": "Improvement comes by removing what fails, not by designing what succeeds, and selection in stages cuts the time from exponential to linear. A change is kept only when its goal moved and no holding variable vetoed it.",
+      "mechanisms": [
+        "seed/worker/src/goals.js::'kept' : 'reverted'",
+        "seed/worker/src/ashby.js::export function expectedTrials"
+      ],
+      "status": "implemented",
+      "keywords": ["selection", "natural_selection"]
+    },
+    {
+      "id": "dams",
+      "url": "https://ashby.info/journal/index/other/dams.html",
+      "pages": [2950, 3382, 3423, 6017],
+      "summary": "Ashby's second machine, the Dispersive and Multistable System. Its notes record that many resting states need independence inside the machine and that essential variables need a wide channel into the rest, and his later judgement that it was built ahead of its theory. The kernel reads independence and joint structure from its own records instead of assuming them.",
+      "mechanisms": [
+        "seed/worker/src/goals.js::export async function structureOf",
+        "seed/worker/src/goals.js::async function vetoers"
+      ],
+      "status": "implemented",
+      "keywords": ["dams"]
+    },
+    {
+      "id": "epistemology",
+      "url": "https://ashby.info/journal/index/other/epistemology.html",
+      "pages": [4303, 4438, 4829],
+      "summary": "To know a system is to be able to control it; prediction and control are both regulation; a hidden variable can be proved from behaviour alone. A claim here counts only with a probe that reads the real behaviour.",
+      "mechanisms": [
+        "seed/worker/src/ashby.js::export function protocol",
+        "seed/worker/src/tick.js::score_predictions",
+        "seed/scripts/claims.py::def "
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "habituation",
+      "url": "https://ashby.info/journal/index/index.html#habituation",
+      "pages": [4524, 5512, 5674],
+      "summary": "A disturbance repeated without consequence should come to produce less and less response, and that response decay depends on the operator applied more than on the machine. Not built: a detector that fires again and again with no change of state is not yet recognised as habituated.",
+      "mechanisms": [],
+      "status": "gap",
+      "item": "Q-ASHBY-habituation"
+    },
+    {
+      "id": "markov-chain",
+      "url": "https://ashby.info/journal/index/index.html#markov",
+      "pages": [4539, 4700, 4904],
+      "summary": "A process with transition probabilities runs to its absorbing states, and ultrastability holds for such machines too. Not built: the kernel keeps no record of item status transitions, so absorbing states that are not on the allowed list and the expected ticks to closure cannot be read.",
+      "mechanisms": [],
+      "status": "gap",
+      "item": "Q-ASHBY-markov",
+      "keywords": ["absorbing", "stochastic"]
+    },
+    {
+      "id": "anticipation",
+      "url": "https://ashby.info/journal/index/index.html#anticipation",
+      "pages": [5845, 6328, 6347],
+      "summary": "A regulator that acts only on the error is always one disturbance behind; one that reads the cause can act before the limit is crossed. Not built: the goal loop computes each goal's trend and does not act on it.",
+      "mechanisms": [],
+      "status": "gap",
+      "item": "Q-ASHBY-anticipation",
+      "keywords": ["prediction", "error"]
+    },
+    {
+      "id": "gating",
+      "url": "https://ashby.info/journal/index/index.html#gating",
+      "pages": [6165],
+      "summary": "Adaptations to situations that recur need separate channels, so that adapting to one does not overwrite the adaptation to another. Not built: a knob holds one value whatever the situation.",
+      "mechanisms": [],
+      "status": "gap",
+      "item": "Q-ASHBY-gating",
+      "keywords": ["ancillary"]
+    }
+  ],
+  "not_applied": [
+    {
+      "category": "society",
+      "url": "https://ashby.info/journal/index/other/society.html",
+      "reason": "notes on social and political systems; Ultrastable regulates software systems, and nothing here is turned into a claim about people"
+    },
+    {
+      "category": "psychiatric-applications",
+      "url": "https://ashby.info/journal/index/other/psychiatric_applications.html",
+      "reason": "clinical psychiatry"
+    },
+    {
+      "category": "conditioned-reflex",
+      "url": "https://ashby.info/journal/index/other/conditioned_reflex.html",
+      "reason": "animal learning experiments; the part that carries over is habituation, tracked as a gap"
+    },
+    {
+      "category": "higher-geometry",
+      "url": "https://ashby.info/journal/index/other/higher_geometry.html",
+      "reason": "matrix and field mathematics behind results already bound through other concepts"
+    },
+    {
+      "category": "oddments",
+      "url": "https://ashby.info/journal/index/other/oddments.html",
+      "reason": "miscellaneous notes with no mechanism"
+    },
+    {
+      "category": "unsolved-problems",
+      "url": "https://ashby.info/journal/index/other/unsolved_problems.html",
+      "reason": "open questions about his own machines; none is answered here"
+    },
+    {
+      "category": "quotations",
+      "url": "https://ashby.info/journal/index/other/quotations.html",
+      "reason": "quotations from other authors"
+    },
+    {
+      "category": "subjective",
+      "url": "https://ashby.info/journal/index/other/subjective.html",
+      "reason": "notes on subjective experience"
+    },
+    {
+      "category": "personal-notes",
+      "url": "https://ashby.info/journal/index/other/personal_notes.html",
+      "reason": "private notes"
+    },
+    {
+      "category": "slogans",
+      "url": "https://ashby.info/journal/index/other/slogans.html",
+      "reason": "three index cards with no content to implement"
     }
   ]
 }

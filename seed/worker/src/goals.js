@@ -14,7 +14,7 @@
 import { record } from './auditchain.js';
 import { beatStats24h } from './beatstats.js';  // READ-BUDGET-9
 import { dampedCooldown, errorBudget } from './control.js';  // CONTROL-1: knob damping, goal error budgets
-import { nextTrial, upsets, accessibility, reducibility, searchBudget, jointRest, cylindrance, protocol } from './ashby.js';  // ASHBY-KERNEL-1
+import { nextTrial, upsets, accessibility, reducibility, searchBudget, jointRest, cylindrance, protocol, variety, transmission } from './ashby.js';  // ASHBY-KERNEL-1
 import { varietyReading } from './regulation.js';  // ASHBY-KERNEL-1: requisite variety read from the work queue
 export const DDL = [
   `CREATE TABLE IF NOT EXISTS goals (id TEXT PRIMARY KEY, tenant TEXT NOT NULL DEFAULT 'core', parent_id TEXT, level TEXT NOT NULL, statement TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'none', spec TEXT, unit TEXT, op TEXT, target REAL, deadline TEXT, status TEXT NOT NULL DEFAULT 'active', origin TEXT NOT NULL DEFAULT 'seed', last_value REAL, last_at INTEGER, met INTEGER NOT NULL DEFAULT 0, streak INTEGER NOT NULL DEFAULT 0, achieved_at INTEGER, stretch_id TEXT, missed_at INTEGER, retired_reason TEXT, created_at INTEGER NOT NULL)`,
@@ -287,7 +287,8 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
 // parts: the irreducible wholes the goals and step-functions fall into (declared links plus confirmed upsets), with the trials each would take at
 // once and part by part, and whether its settings can be searched inside a year. rest: how often every goal is inside its limits at once against
 // the product of the parts. joint_order: how many goals must be looked at together to account for the states seen. black_box: knob moves whose
-// result is not fixed by what is recorded. variety: the disturbance classes the work queue let through. Every reading is null when unmeasured.
+// result is not fixed by what is recorded. variety: the disturbance classes the work queue let through. states_seen: the variety of joint states
+// the goals passed through. dependence: the pairs of goals between which most variety passes. Every reading is null when unmeasured.
 export async function jointLinks(db) {
   await ensure(db);
   const knobs = await all(db, `SELECT id, goal_id, min, max, step, review_h, cooldown_h FROM goal_knobs`);
@@ -303,12 +304,16 @@ export async function structureOf(db, { now = Date.now(), samples = null, max_jo
   const rowsAt = new Map();
   for (const x of samples || await all(db, `SELECT goal_id, at, value FROM goal_samples WHERE at >= ? ORDER BY at`, now - 14 * 86400e3)) { const g = spec[x.goal_id]; if (!g) continue; const r = rowsAt.get(x.at) || {}; r[x.goal_id] = OPS[g.op](x.value, g.target); rowsAt.set(x.at, r); }
   const ids = Object.keys(spec).sort(), full = [...rowsAt.values()].filter(r => ids.every(i => i in r)), over = ids.slice(0, 10);
+  const dep = [];
+  if (full.length >= 24) for (let i = 0; i < over.length; i++) for (let j = i + 1; j < over.length; j++) { const t = transmission(full.map(r => [r[over[i]], r[over[j]]])); if (t.bits >= 0.1) dep.push({ a: over[i], b: over[j], bits: t.bits }); }
   const moves = await all(db, `SELECT knob_id, old, new, kept FROM goal_adjustments WHERE reviewed_at IS NOT NULL ORDER BY id DESC LIMIT 200`);
   const box = protocol(moves.map(m => ({ state: 'off target', input: `${m.knob_id} ${m.old} -> ${m.new}`, next: m.kept ? 'kept' : 'reverted' })));
   const inter = await all(db, `SELECT at, knob_id, goal_id, upset_goal, exonerated FROM goal_interference ORDER BY id DESC LIMIT 20`);
   return { source: "W. Ross Ashby's journal, https://ashby.info/journal/index/index.html (ASHBY-KERNEL-1); each reading is computed from this system's own tables",
     parts, largest_joint: red.largest_joint, max_joint: red.max_joint, irreducible: red.irreducible,
     rest: jointRest(full), joint_order: full.length >= 12 && over.length ? { goals: over, k: cylindrance(full.map(r => over.map(i => r[i]))), readings: full.length } : null,
+    states_seen: full.length ? { ...variety(full.map(r => JSON.stringify(ids.map(i => r[i])))), readings: full.length } : null,
+    dependence: full.length >= 24 ? dep.sort((x, y) => y.bits - x.bits).slice(0, 5) : null,
     black_box: { repeated: box.repeated, determinate_share: box.determinate_share, hidden: box.hidden.slice(0, 10) },
     variety: await varietyReading(db, now).then(v => ({ disturbances: v.disturbances, covered: v.covered, uncovered: v.uncovered, uncovered_n: v.uncovered_n, pending: v.pending, regulated_share: v.regulated_share, deficit_bits: v.deficit_bits, window_d: v.window_d, grace_h: v.grace_h }), () => null),
     interference: inter.map(i => ({ at: new Date(i.at).toISOString(), knob: i.knob_id, goal: i.goal_id, upset: i.upset_goal, verdict: i.exonerated == null ? 'pending' : i.exonerated ? 'exonerated' : 'confirmed' })) };

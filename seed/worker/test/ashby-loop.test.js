@@ -83,11 +83,14 @@ test('structure: joint rest against the product of the parts, the order of the c
   const st = await structureOf(db, { now: t0 + 17 * H });
   assert.equal(st.rest.n, 16); assert.equal(st.rest.product, 0.25); assert.equal(st.rest.observed, 0); assert.equal(st.rest.gap, -0.25);  // each rests half the time, never both
   assert.deepEqual(st.joint_order, { goals: ['core.a', 'core.b'], k: 2, readings: 16 });  // the two must be looked at together
+  assert.deepEqual(st.states_seen, { n: 2, bits: 1, readings: 16 }); assert.equal(st.dependence, null, 'fewer than 24 joint readings: dependence is not judged');
+  for (let i = 16; i < 26; i++) { vals.a = i % 2 ? 0.6 : 0.2; vals.b = i % 2 ? 0.2 : 0.9; await goalsStep(db, { now: t0 + i * H }, { goals: cfg.goals, knobs: [] }, { builtins }); }
+  assert.deepEqual((await structureOf(db, { now: t0 + 27 * H })).dependence, [{ a: 'core.a', b: 'core.b', bits: 1 }], 'one goal fixes the other: a whole bit passes between them');
   assert.equal(await largestJoint(db), 0);
   const many = { goals: cfg.goals, knobs: Array.from({ length: 9 }, (_, i) => ({ id: 'core.k' + i, goal_id: 'core.a', value: 2, min: 1, max: 3, step: 1, effect: 1 })) };
-  vals.a = 0.9; vals.b = 0.9; await goalsStep(db, { now: t0 + 20 * H }, many, { builtins });
+  vals.a = 0.9; vals.b = 0.9; await goalsStep(db, { now: t0 + 30 * H }, many, { builtins });
   assert.equal(await METRICS.largest_joint_component(db), 9);
-  const big = await structureOf(db, { now: t0 + 21 * H });
+  const big = await structureOf(db, { now: t0 + 31 * H });
   assert.equal(big.irreducible.length, 1); assert.equal(big.parts[0].search.feasible, false, '3^9 settings cannot be searched in a year of two-day trials');
 });
 
