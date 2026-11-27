@@ -5,7 +5,7 @@ export default {
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 126104,
+   "recent7": 126856,
    "series": [
     0,
     0,
@@ -36,16 +36,16 @@ export default {
     1383,
     30834,
     55832,
-    18319
+    19071
    ],
-   "share_recent": 0.336,
-   "share_trend": 0.209,
-   "total": 147115
+   "share_recent": 0.338,
+   "share_trend": 0.21,
+   "total": 147867
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 58375,
+   "recent7": 58383,
    "series": [
     0,
     0,
@@ -76,11 +76,11 @@ export default {
     2,
     17148,
     4563,
-    912
+    920
    ],
-   "share_recent": 0.156,
+   "share_recent": 0.155,
    "share_trend": 0.072,
-   "total": 132688
+   "total": 132696
   },
   {
    "area": "workers",
@@ -323,17 +323,17 @@ export default {
    "total": 26827
   }
  ],
- "at": "2026-11-27T08:12:44Z",
+ "at": "2026-11-27T08:23:14Z",
  "days": 30,
  "findings": [
   {
-   "evidence": "recent7 126104 lines, prior weekly mean 6394.7",
+   "evidence": "recent7 126856 lines, prior weekly mean 6394.7",
    "id": "site",
    "kind": "hotspot",
-   "why": "site drew 34% of the last week's change, 19.7x its earlier weekly pace"
+   "why": "site drew 34% of the last week's change, 19.8x its earlier weekly pace"
   },
   {
-   "evidence": "share 3% then 23%",
+   "evidence": "share 3% then 24%",
    "id": "site",
    "kind": "drift",
    "why": "site's share of attention moved 21 points between the first and second half of the window"
@@ -345,49 +345,49 @@ export default {
    "why": "workers's share of attention moved 19 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 374945",
+   "evidence": "quiet_days 7; system change in the last 7 days 375719",
    "id": "demos",
    "kind": "neglected",
    "why": "demos had 1346 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 374945",
+   "evidence": "quiet_days 8; system change in the last 7 days 375719",
    "id": "GLOSSARY.md",
    "kind": "neglected",
    "why": "GLOSSARY.md had 961 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 374945",
+   "evidence": "quiet_days 7; system change in the last 7 days 375719",
    "id": "deploy/transfer",
    "kind": "neglected",
    "why": "deploy/transfer had 510 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 374945",
+   "evidence": "quiet_days 7; system change in the last 7 days 375719",
    "id": "products",
    "kind": "neglected",
    "why": "products had 507 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 9; system change in the last 7 days 374945",
+   "evidence": "quiet_days 9; system change in the last 7 days 375719",
    "id": "docs/ops",
    "kind": "neglected",
    "why": "docs/ops had 396 lines of change, then nothing for 9 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 374945",
+   "evidence": "quiet_days 7; system change in the last 7 days 375719",
    "id": "src",
    "kind": "neglected",
    "why": "src had 230 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 11; system change in the last 7 days 374945",
+   "evidence": "quiet_days 11; system change in the last 7 days 375719",
    "id": "docs/architecture",
    "kind": "neglected",
    "why": "docs/architecture had 192 lines of change, then nothing for 11 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 10; system change in the last 7 days 374945",
+   "evidence": "quiet_days 10; system change in the last 7 days 375719",
    "id": "seed/self",
    "kind": "neglected",
    "why": "seed/self had 151 lines of change, then nothing for 10 days while the rest of the system moved"
@@ -431,16 +431,16 @@ export default {
    -1222,
    -1649,
    -2643,
-   -2894
+   -2902
   ],
-  "closed": 4310,
+  "closed": 4318,
   "opened": 1416
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 22250,
+   "rows": 22288,
    "series": [
     0,
     0,
@@ -471,13 +471,13 @@ export default {
     2312,
     2535,
     5558,
-    1719
+    1757
    ]
   },
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 1478,
+   "rows": 1490,
    "series": [
     0,
     0,
@@ -508,7 +508,7 @@ export default {
     0,
     212,
     268,
-    84
+    96
    ]
   },
   {
@@ -586,46 +586,9 @@ export default {
    ]
   },
   {
-   "loop": "trajectory",
-   "quiet_days": 0,
-   "rows": 588,
-   "series": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    5,
-    112,
-    80,
-    55,
-    88,
-    189,
-    59
-   ]
-  },
-  {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 587,
+   "rows": 591,
    "series": [
     0,
     0,
@@ -656,13 +619,50 @@ export default {
     55,
     62,
     154,
-    50
+    54
+   ]
+  },
+  {
+   "loop": "trajectory",
+   "quiet_days": 0,
+   "rows": 590,
+   "series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    5,
+    112,
+    80,
+    55,
+    88,
+    189,
+    61
    ]
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 505,
+   "rows": 506,
    "series": [
     0,
     0,
@@ -693,13 +693,13 @@ export default {
     55,
     62,
     143,
-    44
+    45
    ]
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 504,
+   "rows": 505,
    "series": [
     0,
     0,
@@ -730,7 +730,7 @@ export default {
     55,
     62,
     143,
-    44
+    45
    ]
   }
  ],
