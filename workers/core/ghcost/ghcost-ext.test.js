@@ -65,7 +65,7 @@ test('US-24-R22 a sample keeps keys and types and hashes organization and reposi
   assert.deepEqual(DOCUMENTED_FIELDS.filter(f => !(f in s.sample[0])), []);
 });
 
-test('US-24-T11 US-24-R22 a renamed usage field is shape drift, files an item and keeps the last decision', async () => {
+test('US-24-T15 US-24-R22 a renamed usage field is shape drift, files an item and keeps the last decision', async () => {
   const host = { name: 'github', items: [row('code', 250)], async usage() { return { usageItems: host.items }; }, async workflowState() { return 'enabled'; }, async setWorkflow() {}, async budgets() { throw new Error('http 403'); } };
   const ctx = mk(host);
   const good = await watchdog(ctx);
@@ -143,7 +143,7 @@ test('US-24-R32 the probe fails on a repository that allows merge commits and na
   assert.match(one(ctx.db, `SELECT evidence FROM ghcost_probes WHERE probe='settings:merge:code' ORDER BY id DESC LIMIT 1`).evidence, /allow_merge_commit.*allow_rebase_merge.*delete_branch_on_merge/);
 });
 
-test('US-24-R33 discussions are judged only when the configuration states a wish (a MAY)', async () => {
+test('US-24-R33 discussions are judged only when the configuration states a wish, and a stated wish is read back', async () => {
   const host = settingsHost();
   assert.ok(!(await settingsProbe(mk(host))).rows.some(r => r.key.startsWith('discussions:')));
   const withWish = await settingsProbe(mk(host, { settings: { discussions: false } }));

@@ -25,7 +25,7 @@ function boot(config = cfg()) {
   return { db, org, clock };
 }
 
-test('US-05-R02, US-05-R15, US-06-R20: one organization tick scores a due decision, writes the outcome the trust step reads, and proposes the ladder item', async () => {
+test('US-05-R02, US-05-R20, US-06-R24: one organization tick scores a due decision, writes the outcome the trust step reads, and proposes the ladder item', async () => {
   const { db, org, clock } = boot();
   await P.registerMetric(db, { name: 'q', read_sql: 'SELECT 3' });
   for (let i = 0; i < 12; i++) {
@@ -42,11 +42,11 @@ test('US-05-R02, US-05-R15, US-06-R20: one organization tick scores a due decisi
   assert.equal(one(db, `SELECT rung FROM trust_ledger WHERE surface = 'outreach' AND action_class = 'draft'`)?.rung ?? 'observed', 'observed', 'the tick never changes a rung (US-06-R05)');
 });
 
-test('US-07-R22: the same tick runs the governance step with no model port: the register is seeded and the rates are reported as unmeasured, not filed', async () => {
+test('US-07-R30: the same tick runs the governance step with no model port: the register is seeded and the rates are reported as unmeasured, not filed', async () => {
   const { db, org } = boot();
   const r = await org.tick();
   assert.deepEqual(r.errors || [], []);
-  assert.ok(one(db, `SELECT COUNT(*) AS n FROM governance_false_stop_register`).n > 0, 'the governance step seeded its register (US-07-R22 reads it)');
+  assert.ok(one(db, `SELECT COUNT(*) AS n FROM governance_false_stop_register`).n > 0, 'the governance step seeded its register (US-07-R30 reads it)');
   const g = r.steps.find(x => x.name === 'governance');
   assert.ok(g && g.ok, 'the governance step ran');
   assert.match(g.evidence, /"false_stop_rate":null/, 'a rate measured over fewer than min_scans scans is unmeasured, never 0');

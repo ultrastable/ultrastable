@@ -24,13 +24,13 @@ The second-worker host of the liveness detector is `liveness-host.js` (`createLi
 | US-17-R02 clock in the same statement as the data | BUILT | `frozenSql`, `coverageSql` |
 | US-17-R03 detector and severity; found twice without a detector is registered | BUILT | `installStandard`, `reportFailure` |
 | US-17-R04 to R09 contract, consumer, closing probe, escalation, breaker, probation | BUILT in the kernel | `../kernel/failure.js`, `../kernel/failure.test.js` |
-| US-17-R08, R18 breaker for a ledger whose writer has none, re-armed by a changed source hash | BUILT | `breakerFromLedger`, `retryAllowed` |
+| US-17-R08, R29 breaker for a ledger whose writer has none, re-armed by a changed source hash | BUILT | `breakerFromLedger`, `retryAllowed` |
 | US-17-R10 one detector hosted outside the writer of its probe table | BUILT: `externalLiveness` refuses to run in the writer, `httpLiveness` needs no credential, `liveness-host.js` is the deployable host. Deploying the second Worker is PLANNED (a live account) | `externalLiveness`, `httpLiveness`, `liveness-host.js` |
 | US-17-R11 visibility ratio across issue stores | BUILT in core/claims, exported here | `../claims/gate.js` |
 | US-17-R12 roster reconciliation with the emitter set | BUILT | `rosterReconcile`, `observedEmitters` |
 | US-17-R13 a repository fix is not closed on repository evidence alone | BUILT | `closeFix` |
-| US-17-R19 FM-MASKED equals the structured classifier | BUILT | `maskedSql` |
-| US-17-R20 FM-COVERAGE, FM-SHADOW, FM-STALE-PREDICATE | BUILT: coverage as a registrable detector, shadow and stale predicate as port checks (`candidates`, `alarms`) that fire when unreadable. No module in this repository produces a candidate list or alarm definitions | `coverageSql`, `shadowReconcile`, `stalePredicates` |
+| US-17-R30 FM-MASKED equals the structured classifier | BUILT | `maskedSql` |
+| US-17-R31 FM-COVERAGE, FM-SHADOW, FM-STALE-PREDICATE | BUILT: coverage as a registrable detector, shadow and stale predicate as port checks (`candidates`, `alarms`) that fire when unreadable. No module in this repository produces a candidate list or alarm definitions | `coverageSql`, `shadowReconcile`, `stalePredicates` |
 | US-17-R24 retention | BUILT | `prune`, `../kernel/failure.js` `pruneHits` |
 | Status view over the register | BUILT | `statusView` (counts `exhausted`), route GET /failure-modes/status |
 | Silent-drop reconciliation across loops | BUILT for the run ledgers of core/kernel, core/claims and core/fleet | `reconcileLoops` |

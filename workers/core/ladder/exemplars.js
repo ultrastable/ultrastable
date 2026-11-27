@@ -5,8 +5,9 @@
 // involved. A small model trained offline on an organization's history stays PLANNED (it needs that history and a host).
 // Ports: db, now, embed(texts) -> number[][] (optional; without it the lookup is lexical, by token overlap, and serves only with a validate).
 import { iso, msOf, all, run, first } from './util.js';
-import { unit, dot, fnv } from '../connect/index.js';
+import { unit, dot } from '../connect/index.js';
 import { recordAttempt } from './index.js';
+import { cacheKey } from './cache.js';
 
 export const DEFAULTS = { per_class: 200, threshold: 0.9, max_chars: 4000 };
 const norm = t => String(t).replace(/\s+/g, ' ').trim();
@@ -24,9 +25,12 @@ export async function recordExemplar(ctx, { task_class, input, output, verified,
   const t = msOf(ctx.now ?? Date.now), max = ctx.max_chars ?? DEFAULTS.max_chars;
   let emb = null;
   if (typeof ctx.embed === 'function') emb = JSON.stringify(Array.from(unit((await ctx.embed([text]))[0])).map(x => Math.round(x * 1e5) / 1e5));
+  // The row key is the SHA-256 of the normalized input, as for the L1 cache: a 32-bit hash plus a length let two different inputs
+  // share a row, so the second answer was stored under the first input and served for it at no model cost. The input is written
+  // on conflict too, so a row never pairs one input with another input's answer.
   await run(ctx.db, `INSERT INTO ladder_exemplars (task_class, input_hash, input, output, embedding, cost, at) VALUES (?,?,?,?,?,?,?)
-    ON CONFLICT(task_class, input_hash) DO UPDATE SET output=excluded.output, embedding=excluded.embedding, cost=excluded.cost, at=excluded.at`,
-    task_class, fnv(text).toString(16) + '-' + text.length, text.slice(0, max), out.slice(0, max), emb, cost, iso(t));
+    ON CONFLICT(task_class, input_hash) DO UPDATE SET input=excluded.input, output=excluded.output, embedding=excluded.embedding, cost=excluded.cost, at=excluded.at`,
+    task_class, await cacheKey(text), text.slice(0, max), out.slice(0, max), emb, cost, iso(t));
   await run(ctx.db, `DELETE FROM ladder_exemplars WHERE task_class = ? AND id NOT IN (SELECT id FROM ladder_exemplars WHERE task_class = ? ORDER BY at DESC, id DESC LIMIT ?)`, task_class, task_class, ctx.per_class ?? DEFAULTS.per_class);
   return { stored: true };
 }

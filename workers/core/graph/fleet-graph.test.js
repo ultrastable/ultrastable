@@ -21,13 +21,13 @@ const FILES = {
   'svc/main.py': 'from .util import f\nimport core.x', 'svc/util.py': '', 'node_modules/skip/x.js': "import '../../core/b.js';", 'notes.md': "import './core/b.js'",
 };
 
-test('US-12-R15: the scan reads JS, TS and Python files and skips vendored directories and other file types', () => {
+test('US-12-R22: the scan reads JS, TS and Python files and skips vendored directories and other file types', () => {
   const root = tree(FILES);
   try { assert.deepEqual(scanFiles(root).map(f => f.path).sort(), ['core/a.js', 'core/b.js', 'svc/main.py', 'svc/util.py', 'web/page.ts', 'web/types.ts']); }
   finally { rmSync(root, { recursive: true }); }
 });
 
-test('US-12-R16: the command line prints what depends on a change, across languages, and a declared edge joins the graph', async () => {
+test('US-12-R23: the command line prints what depends on a change, across languages, and a declared edge joins the graph', async () => {
   const root = tree(FILES);
   try {
     const r = await analyse({ root, changed: ['core/b.js', 'web/types.ts', 'svc/util.py'], declared: [['svc/main.py', 'core/a.js']] });

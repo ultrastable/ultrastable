@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-reposhape-split-groups-by-path-order-not-by-module",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "reposhape --split groups by path order, not by module",
+  "body": "python3 -m foundation reposhape --split cut the 353-file round-3 landing into nine in-budget batches, but it orders by class, area and path and closes a batch at the file or line budget, so a module's code, its tests, its README and the generated files its tests change landed in different batches and an early prefix would be red. The stack was grouped by module instead (code with its tests, vendored copies with their source, a write-back shard only in a slice where its probe passes) and each prefix was run on its own; the tool's plan stays a size check, not a coupling check.",
+  "probe": "grep:foundation/reposhape.py::by class \\(kernel first\\), then by area, then by path",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "lesson",
+ "title": "reposhape --split groups by path order, not by module",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}

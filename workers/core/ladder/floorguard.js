@@ -57,9 +57,14 @@ export function scan({ workers, banned, markers = ['floor-ok:'], exemptions = []
   return { findings, unmeasured, exempt };
 }
 
+/** Exit status of a run: 0 clean (every worker meets the floor), 1 a finding or an unreadable worker, 3 below the floor only under exemptions. */
+export const EXIT = { clean: 0, findings: 1, exempt_only: 3 };
+
 /**
  * One run for a tick or a CLI: ports { db, now, listWorkers: async () => workers }. Files FLOOR-<worker> (priority 5) per worker
- * with a finding or that could not be read, closes the item of a worker that scans clean. exit_code 0 clean, 1 otherwise.
+ * with a finding or that could not be read, closes the item of a worker that scans clean. An exempt finding (US-09-R24) is listed
+ * and not filed, but the model is still below the floor: the worker's item is left as it is (not closed, not filed again),
+ * `meets_floor` is false and the run exits 3, so a closing probe that waits for exit 0 cannot pass through an exemption.
  */
 export async function floorGuardRun(ctx) {
   const ts = iso(msOf(ctx.now ?? Date.now)), db = ctx.db;
@@ -83,6 +88,8 @@ export async function floorGuardRun(ctx) {
     await fileItem(db, { id: `FLOOR-${name}`, title: `Worker ${name} could not be read: unmeasured, not clean`, done_check: 'the worker source is readable and scans clean', closing_probe: 'floor guard: worker clean', priority: 5 }, ts);
     filed.push(`FLOOR-${name}`);
   }
-  for (const w of workers) if (!bad.has(w.name) && !r.unmeasured.includes(w.name)) await closeItem(db, `FLOOR-${w.name}`, 'scan finds no banned model pattern', ts);
-  return { exit_code: r.findings.length || r.unmeasured.length ? 1 : 0, ...r, filed };
+  const exemptWorkers = [...new Set(r.exempt.map(f => f.worker))].filter(name => !bad.has(name));
+  for (const w of workers) if (!bad.has(w.name) && !exemptWorkers.includes(w.name) && !r.unmeasured.includes(w.name)) await closeItem(db, `FLOOR-${w.name}`, 'scan finds no banned model pattern', ts);
+  const exit_code = r.findings.length || r.unmeasured.length ? EXIT.findings : r.exempt.length ? EXIT.exempt_only : EXIT.clean;
+  return { exit_code, meets_floor: exit_code === EXIT.clean, ...r, exempt_workers: exemptWorkers, filed };
 }

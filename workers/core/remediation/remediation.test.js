@@ -249,7 +249,7 @@ test('step: one tick reconciles loops and items, runs configured liveness checks
   assert.deepEqual(await rem.step({ ...ctx, config: { enabled: false } }), { enabled: false });
 });
 
-// ---- US-17 R19, R20, R10 (host), R24, T05 -------------------------------------------------------------------------------------------
+// ---- US-17 R10 (host), R24, R30, R31, T05 -------------------------------------------------------------------------------------------
 
 const PAYLOADS = ['{"ok":false}', '{"success":false}', '{"error":"TypeError: x"}', '{"error":{"code":"E1"}}', '{"exception":"boom"}', '{"queued":0,"failed":2,"published":19}',
   '{"ok":true,"error":""}', '{"exception":""}', '{"success":0}', '{"ok":0}', '{"error":null}', '{"ok":true,"errors":[]}', '[1,2]', '5', 'not json'];
@@ -267,7 +267,7 @@ test('US-17-T06: FM-MASKED SQL and payloadIsFailure agree on a shared corpus of 
   assert.equal(sqlFires.size, 5);
 });
 
-test('US-17-R19: an ok row whose error is an empty string is not counted by FM-MASKED; a numeric 0 success is not a failure either', async () => {
+test('US-17-R30: an ok row whose error is an empty string is not counted by FM-MASKED; a numeric 0 success is not a failure either', async () => {
   const { ctx } = mk();
   await rem.installStandard(ctx, { masked: [{ table: 'drain_log' }] });
   await ctx.db.prepare(`INSERT INTO drain_log VALUES ('ok', '{"ok":true,"error":""}'), ('ok', '{"exception":""}'), ('ok', '{"success":0}'), ('ok', '{"queued":0,"failed":2,"published":19}')`).run();
@@ -276,7 +276,7 @@ test('US-17-R19: an ok row whose error is an empty string is not counted by FM-M
   assert.equal((await one(ctx, rem.maskedSql({ table: 'drain_log' }))).value, 1);
 });
 
-test('US-17-R20: FM-COVERAGE fires when the probe log names 10 of 82 registered names in the last hour (0.12 < 0.8) and not at 70 of 82', async () => {
+test('US-17-R31: FM-COVERAGE fires when the probe log names 10 of 82 registered names in the last hour (0.12 < 0.8) and not at 70 of 82', async () => {
   const { ctx, clock } = mk();
   ctx.db.raw.exec(`CREATE TABLE cov_log (name TEXT, ts TEXT); CREATE TABLE cov_registry (name TEXT)`);
   for (let i = 0; i < 82; i++) ctx.db.raw.prepare(`INSERT INTO cov_registry VALUES (?)`).run(`w${i}`);
@@ -296,7 +296,7 @@ test('US-17-R20: FM-COVERAGE fires when the probe log names 10 of 82 registered 
   assert.throws(() => rem.coverageSql({ table: 'cov_log' }), /registry table or the expected count/);
 });
 
-test('US-17-R20: FM-COVERAGE counts only registered names, so 80 ghost names in the probe log do not hide 95 of 100 registered names that stopped reporting', async () => {
+test('US-17-R31: FM-COVERAGE counts only registered names, so 80 ghost names in the probe log do not hide 95 of 100 registered names that stopped reporting', async () => {
   const { ctx, clock } = mk();
   ctx.db.raw.exec(`CREATE TABLE ghost_log (name TEXT, ts TEXT); CREATE TABLE ghost_registry (name TEXT)`);
   for (let i = 0; i < 100; i++) ctx.db.raw.prepare(`INSERT INTO ghost_registry VALUES (?)`).run(`w${i}`);
@@ -325,7 +325,7 @@ test('US-17-R02: coverageSql reads the clock inside the statement (a row far in 
   assert.equal((await one(ctx, sql)).value, 1);
 });
 
-test('US-17-R20: FM-SHADOW fires for two candidates of one worker with different hashes and a stale earlier candidate, and not when the hashes are equal', async () => {
+test('US-17-R31: FM-SHADOW fires for two candidates of one worker with different hashes and a stale earlier candidate, and not when the hashes are equal', async () => {
   const { ctx } = mk();
   const shadowed = [{ worker: 'api', source: 'mirror/api.js', hash: 'old', at: '2026-03-01 08:00:00', rank: 1 }, { worker: 'api', source: 'src/api.js', hash: 'new', at: '2026-03-02 09:00:00', rank: 2 },
     { worker: 'web', source: 'src/web.js', hash: 'w1', at: '2026-03-02 09:00:00', rank: 1 }];
@@ -340,7 +340,7 @@ test('US-17-R20: FM-SHADOW fires for two candidates of one worker with different
   assert.deepEqual((await all(ctx, `SELECT fired FROM remediation_hits WHERE detector = 'FM-SHADOW' ORDER BY id`)).map(h => h.fired), [1, 0, 0]);
 });
 
-test('US-17-R20: FM-STALE-PREDICATE fires for an alarm naming 496 stuck rows while the recount is 0, and not when the recount matches', async () => {
+test('US-17-R31: FM-STALE-PREDICATE fires for an alarm naming 496 stuck rows while the recount is 0, and not when the recount matches', async () => {
   const { ctx } = mk();
   ctx.db.raw.exec(`CREATE TABLE jobs (id INTEGER PRIMARY KEY, state TEXT)`);
   for (let i = 0; i < 40; i++) ctx.db.raw.prepare(`INSERT INTO jobs (state) VALUES ('done')`).run();
@@ -355,7 +355,7 @@ test('US-17-R20: FM-STALE-PREDICATE fires for an alarm naming 496 stuck rows whi
   assert.deepEqual([bad.fired, bad.stale[0].error.startsWith('recount failed')], [true, true]);
 });
 
-test('US-17-R20: an unreadable candidates or alarms port fires instead of passing', async () => {
+test('US-17-R31: an unreadable candidates or alarms port fires instead of passing', async () => {
   const { ctx } = mk();
   const noPort = await rem.shadowReconcile(ctx);
   assert.deepEqual([noPort.fired, noPort.unreadable], [true, true]);
@@ -490,7 +490,7 @@ test('step: a host that supplies candidates and alarms ports gets both detectors
   assert.deepEqual([s.shadowed, s.stale_predicates], [1, 1]);
 });
 
-test('US-17-R18: breakerFromLedger passes a row source_hash so a changed source re-arms the writer retry', async () => {
+test('US-17-R29: breakerFromLedger passes a row source_hash so a changed source re-arms the writer retry', async () => {
   const { ctx, clock } = mk();
   const ledger = [];
   const port = { name: 'deploy2', read: async cur => ledger.filter(r => r.id > Number(cur || 0)) };

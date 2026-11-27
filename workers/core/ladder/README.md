@@ -28,6 +28,7 @@ BUILT means implemented here and covered by a passing test in this directory. No
 | US-09-R09 escalation on a measured signal, one rung per failure, bounded, failed task filed | BUILT | `cascade`, `ladder_attempts`; a dead transport (provider error) does not spend an attempt and the next row serves (`layers.test.js`) |
 | US-09-R10 cost per verified outcome, escalation rate, cache hit rate, tool-call validity rate | BUILT | view `ladder_v_cost_per_task`, `cache.js` (`cacheHitRate`), view `ladder_v_tool_call_validity` |
 | US-09-R11 floor at admission, on a floor change, and in source and deployed bundles | BUILT | `setFloor`, `floorViolation`, `monitor`; `floorguard.js` (`scan`, `floorGuardRun`, `cli-floor-guard.js`), `floorguard.test.js` |
+| US-09-R24 floor exemptions (model, role other than reader-facing, evidence, expiry): an exempt model still counts as below the floor: a run with only exempt findings files nothing, exits 3 with `meets_floor` false and leaves the floor item as it was | BUILT | `floorguard.js` (`EXIT`), `util.js` (`exempts`), `fixes.test.js` |
 | Standards gate (32,768 output, 128,000 context), exemption registry, all-layers verifier | BUILT | `standards.js`, table `ladder_exemptions`; `step({ config: { standards_models } })` runs it |
 | US-09-R12 decision model gated by agreement lower bound | BUILT | `admit({ decision: true })` |
 | Shadow sample of about 5% of decisions | BUILT | `shouldShadow`, `recordShadow`, `rollingAgreement`; scheduled answers `schedule.js` (`shadowRun`) |
@@ -36,9 +37,9 @@ BUILT means implemented here and covered by a passing test in this directory. No
 | L0 deterministic handlers | BUILT | `layers.js` (`createL0`); the seed's doer module is the reference |
 | L1 cache: exact, TTL, source-change invalidation, semantic, stable prefix | BUILT | `cache.js` (the exact key is the SHA-256 of the normalized input), tables `ladder_cache`, `ladder_cache_events` |
 | L4 ensemble that samples only free or cached components | BUILT | `layers.js` (`ensembleSample`) |
-| L5 exemplar bank | BUILT | `exemplars.js` (`serve` refuses a stored answer whose numbers differ from the input's and, without an embedder, serves only with a `validate`), table `ladder_exemplars`. A model trained offline stays PLANNED: it needs an organization's task history and a host |
+| L5 exemplar bank | BUILT | `exemplars.js` (rows keyed by the SHA-256 of the normalized input, so two inputs never share a row; `serve` refuses a stored answer whose numbers differ from the input's and, without an embedder, serves only with a `validate`), table `ladder_exemplars`. A model trained offline stays PLANNED: it needs an organization's task history and a host |
 | L6 draft then verify | BUILT | `draftThenVerify` |
 | L7 per-class and organization daily caps, degradation order, queue for the next window | BUILT | `layers.js` (`budgetScheduler`, `queueNextWindow`, `reofferQueued`), table `ladder_queue` |
 
-Tests: `ladder.test.js`, `floorguard.test.js` (floor guard and standards gate), `layers.test.js` (L0, L1, L4, L5, L7, fall-through, canaries, shadow).
+Tests: `ladder.test.js`, `floorguard.test.js` (floor guard and standards gate), `layers.test.js` (L0, L1, L4, L5, L7, fall-through, canaries, shadow), `fixes.test.js` (the exact keys of L1 and L5, floor exemptions) and `router-ports.test.js` (the router-backed canary and answer ports).
 Composition: `step({ db, now, config, ports })` runs the demotion step, the standards gate and, when `ports.canary` or `ports.answer` is supplied, the scheduled probes. The composition root passes no ports yet, so with `canary_every_h` or `shadow_rate` configured a tick reports "no canary port" in its notes; `router-ports.js` builds the canary and shadow-answer ports over `core/router`.

@@ -33,8 +33,8 @@ BUILT means implemented here and covered by a passing test in `predict.test.js`.
 | US-05-R12 independent verification path | BUILT | `observe({ verified_by, require_independent })`; recorded per assertion |
 | US-05-R13 binned calibration per decision type, confidence corrected | BUILT | `binnedCalibration`, `calibrate`, `gateConfidence`, view `predict_v_calibration_bins` |
 | US-05-R14 clock read in the same statement as the data | BUILT in `core/kernel` | view `kernel_v_metric_trigger_state`, test `core/kernel/metrics-decisions.test.js`; this module takes `now` as a port so tests are deterministic |
-| US-05-R17 the realization gate evaluates the fail condition and the null expectation | BUILT | `observe`, `recordAssertion` (refuses a null expectation equal to the pass condition), test "US-05-R17, US-05-T05" |
-| US-05-R18 outside audit of the scorer: export, outside verdicts, agreement per auditor | BUILT as a port with a fake auditor | `audit.js` (`exportForAudit`, `recordAudit`, `auditAgreement`), migration `migrations/0002_audit.sql`, `audit.test.js` |
+| US-05-R22 the realization gate evaluates the fail condition and the null expectation | BUILT | `observe`, `recordAssertion` (refuses a null expectation equal to the pass condition), test "US-05-R17, US-05-T05" |
+| US-05-R23 outside audit of the scorer: export, outside verdicts, agreement per auditor | BUILT as a port with a fake auditor | `audit.js` (`exportForAudit`, `recordAudit`, `auditAgreement`), migration `migrations/0002_audit.sql`, `audit.test.js` |
 | Section 3.2 calibration views by persona, action class, surface | BUILT | `predict_v_calibration_*`, `calibrationViews` |
 | An outside party actually audits | PLANNED | closing probe: `auditAgreement(db).n > 0` on a deployed account; no second party is reachable from the repository |
-| Gating a real autonomous action on `gateConfidence` | BUILT in `core/deploy` (`confidence` port, `US-06-R21`); no live caller | see `core/deploy` README |
+| Gating a real autonomous action on `gateConfidence` | BUILT in `core/deploy` (`confidence` port, `US-06-R25`); no live caller | see `core/deploy` README |

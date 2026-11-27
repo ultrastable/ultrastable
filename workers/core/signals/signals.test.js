@@ -298,11 +298,22 @@ test('US-12-R20: a number matches exactly with its sign, its percent sign and a 
   assert.equal(p('x ≤ 3 holds', 'x >= 3'), false);
   assert.equal(p('rates 5-10 ok', 'rates 5-10'), true);                             // a hyphen between digits is a range, not a sign
   assert.equal(p('growth was −5 now', 'growth was -5'), true);                 // the typographic minus is the minus sign
+  assert.equal(p('growth was \u20135%', 'growth was 5%'), false);                 // an en dash before a number is a minus, as typeset text writes it
+  assert.equal(p('growth was \u20135%', 'growth was -5%'), true);
+  assert.equal(p('growth was \u20125%', 'growth was 5%'), false);                 // so is a figure dash
+  assert.equal(p('pages 5\u201310 read', 'pages 5-10'), true);                    // between two digits it is a range, not a sign
+  assert.equal(p('word\u20135 joins', 'word -5 joins'), false);                   // after a letter it is punctuation
 });
 
 test('US-12-R20: the stem rule covers -ation forms, not a bare -ion form', () => {
   assert.equal(sig.assertionPresent('the registrations were made', 'registration were made'), true);
   assert.equal(sig.stem('selection'), 'selection');
+  // -ation is stripped to the bare stem: the noun meets its stem verb, and singular and plural meet there
+  assert.equal(sig.stem('information'), sig.stem('inform'));
+  assert.deepEqual([sig.stem('registrations'), sig.stem('registration')], ['registr', 'registr']);
+  assert.equal(sig.assertionPresent('we inform every member', 'information every member'), true);
+  // the stem is bare, so an -ate verb keeps its t and does not meet its -ation noun
+  assert.notEqual(sig.stem('creation'), sig.stem('create'));
 });
 
 test('US-12-R07: a revision listing an assertion that is not in its content is rejected as an incident and stores nothing', async () => {

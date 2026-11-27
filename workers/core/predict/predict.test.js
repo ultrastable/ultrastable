@@ -66,7 +66,7 @@ test('US-05-R01 a prediction without a metric, operator, target or due time is n
   assert.deepEqual({ ...one(db, `SELECT origin, due_at FROM predict_predictions WHERE id='ok'`) }, { origin: 'seeded', due_at: '2026-11-11 12:00:00' });
 });
 
-test('US-05-T01, US-05-R02, US-05-R15 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row and a seed outcomes row that feeds the trust ledger; one not yet due is left alone', async () => {
+test('US-05-T01, US-05-R02, US-05-R20 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row and a seed outcomes row that feeds the trust ledger; one not yet due is left alone', async () => {
   const db = mk();
   item(db, 'I1', 'done', 'done: observed');
   await P.registerMetric(db, { name: 'items_done', read_sql: `SELECT COUNT(*) FROM items WHERE status='done'` });
@@ -208,7 +208,7 @@ test('US-05-R12 the verifying path is recorded as independent or not, and can be
   assert.deepEqual([other.observed, other.value, other.independent], [true, 3, 1]);
 });
 
-test('US-05-R17, US-05-T05: the fail condition and the null expectation are evaluated: a reading of 3 reaches observed, -1 records a failure, 0 matches the null expectation', async () => {
+test('US-05-R22, US-05-T09: the fail condition and the null expectation are evaluated: a reading of 3 reaches observed, -1 records a failure, 0 matches the null expectation', async () => {
   const db = mk();
   item(db, 'F6');
   const A = { deciding_query: 'SELECT 1', pass_condition: '> 0', fail_condition: '< 0', null_expectation: '<= 0' };
@@ -244,7 +244,7 @@ test('US-05-R17, US-05-T05: the fail condition and the null expectation are eval
   assert.equal((await P.observe(db, 'F8', { now: NOW, verified_by: 'probe', read: async () => 2 })).observed, true);
 });
 
-test('US-05-R17: a null expectation that is the pass condition, in the same words or with the same operator and number, is refused at record time', async () => {
+test('US-05-R22: a null expectation that is the pass condition, in the same words or with the same operator and number, is refused at record time', async () => {
   const db = mk();
   item(db, 'F9');
   const A = { finding_id: 'F9', state: 'staged', deciding_query: 'SELECT 1', pass_condition: '> 0', fail_condition: '< 0' };

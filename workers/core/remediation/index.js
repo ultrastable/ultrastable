@@ -74,7 +74,7 @@ export function frozenSql({ table, ts_column = 'ts', interval_min }) {
  * FM-MASKED: rows whose status says ok while the payload says it failed. The statement is the structured classifier of
  * core/kernel/failure.js (`payloadIsFailure`, US-17-T06) written in SQL, so the two cannot disagree: a JSON object whose `ok` or
  * `success` is the literal false, whose `error` is a non-empty string, an object or an array, or whose `exception` is a
- * non-empty string. A number named failed, an empty error string and a numeric 0 are not failures (US-17-R19).
+ * non-empty string. A number named failed, an empty error string and a numeric 0 are not failures (US-17-R30).
  */
 export function maskedSql({ table, status_column = 'status', payload_column = 'payload', ok_value = 'ok' }) {
   const p = ident(payload_column);
@@ -84,7 +84,7 @@ export function maskedSql({ table, status_column = 'status', payload_column = 'p
     OR (json_type(${p}, '$.exception') = 'text' AND json_extract(${p}, '$.exception') <> ''))`;
 }
 /**
- * FM-COVERAGE, probe-log form (US-17-R20): how many of the registered names the probe log named inside the window, over how many are
+ * FM-COVERAGE, probe-log form (US-17-R31): how many of the registered names the probe log named inside the window, over how many are
  * registered. The clock is read in the same statement as the data (US-17-R02). Fires when value < 0.8 * expected. `expected` is a
  * number, or the registry is a table (`registry_table`, `registry_column`) counted in the same statement.
  * With a registry table the numerator counts only log names that are in the registry: a name the log carries that nothing registered
@@ -107,7 +107,7 @@ export function coverageRatioSql(opts) {
   return `SELECT CASE WHEN expected > 0 THEN value * 1.0 / expected ELSE 1.0 END AS value FROM (${coverageSql(opts)})`;
 }
 const UNACCOUNTED_SQL = `SELECT COALESCE(SUM(scanned - executed - failed - needs_human - no_action), 0) AS value FROM kernel_loop_runs WHERE id IN (SELECT MAX(id) FROM kernel_loop_runs GROUP BY loop)`;
-// FM-UNBOUNDED-RETRY (US-17-R20): one (target, error signature) failed more than k times in the window since its last success or
+// FM-UNBOUNDED-RETRY (US-17-R31): one (target, error signature) failed more than k times in the window since its last success or
 // source change (ok 1 and ok 2 in kernel_attempts), that is, retried past the breaker bound with no state change in between.
 const retrySql = (k, hours) => `SELECT COUNT(*) AS value FROM (SELECT a.target, a.signature FROM kernel_attempts a WHERE a.ok = 0 AND a.at >= datetime('now', '-${Number(hours)} hours')
   AND a.id > COALESCE((SELECT MAX(b.id) FROM kernel_attempts b WHERE b.target = a.target AND b.signature = a.signature AND b.ok <> 0), 0) GROUP BY a.target, a.signature HAVING COUNT(*) > ${Number(k)})`;
@@ -347,7 +347,7 @@ export async function rosterReconcile(ctx, sets = null) {
   return { fired: total > 0, differences: total, ...diff };
 }
 
-// ---- FM-SHADOW and FM-STALE-PREDICATE, from ports (US-17-R20) ----------------------------------
+// ---- FM-SHADOW and FM-STALE-PREDICATE, from ports (US-17-R31) ----------------------------------
 
 const readPort = async (ctx, name, given) => {
   if (given) return { ok: true, rows: given };

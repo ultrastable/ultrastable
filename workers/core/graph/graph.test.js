@@ -18,13 +18,13 @@ test('edges: relative imports only, resolved against the importing file', () => 
   assert.deepEqual(extractEdges('core/a.js', files[0].text).sort(), ['core/b.js', 'lib/c.js']);
   assert.equal(normalize('a/b/c.js', '../../x.js'), 'x.js');
 });
-test('US-12-R16: blast radius is transitive and cycle safe', async () => {
+test('US-12-R23: blast radius is transitive and cycle safe', async () => {
   const ctx = mk([{ name: 's1', list: async () => files }]);
   await ingest(ctx); await declare(ctx, 'core/d.js', 'core/a.js');   // cycle a -> b -> d -> a
   const r = await blastRadius(ctx, ['core/d.js']);
   assert.deepEqual(r.affected, ['core/a.js', 'core/b.js']);
 });
-test('US-12-R15: no single route: a failing source is reported, the other still builds the graph', async () => {
+test('US-12-R22: no single route: a failing source is reported, the other still builds the graph', async () => {
   const ctx = mk([{ name: 'broken', list: async () => { throw new Error('tree api down'); } }, { name: 'local', list: async () => files }]);
   const rep = await ingest(ctx);
   assert.deepEqual(rep.map(r => r.ok), [false, true]);
@@ -33,7 +33,7 @@ test('US-12-R15: no single route: a failing source is reported, the other still 
 
 // ---- round 1 additions ---------------------------------------------------------------------------
 
-test('US-12-R16: the bound stops the walk, the result says it truncated, and a node already visited is not counted twice', async () => {
+test('US-12-R23: the bound stops the walk, the result says it truncated, and a node already visited is not counted twice', async () => {
   const chain = Array.from({ length: 6 }, (_, i) => ({ path: `m/f${i}.js`, text: i ? `import './f${i - 1}.js';` : '' })); // f5 -> f4 -> ... -> f0
   const ctx = mk([{ name: 's', list: async () => chain }]);
   await ingest(ctx);
@@ -44,7 +44,7 @@ test('US-12-R16: the bound stops the walk, the result says it truncated, and a n
   assert.deepEqual((await blastRadius(ctx, ['m/f0.js', 'm/f1.js'])).affected, ['m/f2.js', 'm/f3.js', 'm/f4.js', 'm/f5.js']); // several changed paths: the changed ones are not their own radius
 });
 
-test('US-12-R15: re-ingesting a file replaces only its own source\'s edges and keeps declared edges', async () => {
+test('US-12-R22: re-ingesting a file replaces only its own source\'s edges and keeps declared edges', async () => {
   let text = "import './b.js';";
   const ctx = mk([{ name: 'local', list: async () => [{ path: 'a.js', text }, { path: 'b.js', text: '' }, { path: 'c.js', text: '' }] }]);
   await ingest(ctx); await declare(ctx, 'a.js', 'c.js');
@@ -57,7 +57,7 @@ test('US-12-R15: re-ingesting a file replaces only its own source\'s edges and k
   assert.equal((await ctx.db.prepare(`SELECT COUNT(*) AS n FROM graph_edges WHERE source = 'declared'`).first()).n, 1);
 });
 
-test('US-12-R15: Python relative imports, TypeScript type imports and dynamic import() are topology edges', () => {
+test('US-12-R22: Python relative imports, TypeScript type imports and dynamic import() are topology edges', () => {
   assert.deepEqual(extractEdges('a/b.py', 'from .util import x\nimport os\nfrom ..core import y\nfrom . import peer, other as o'), ['a/util', 'core', 'a/peer', 'a/other']);
   assert.equal(normalizePy('a/b/c.py', '...x'), 'x');                       // three dots from a/b/c.py: up to the repository root
   assert.equal(normalizePy('a/b.py', '...x'), null);                       // climbs above the root: not an edge
@@ -69,7 +69,7 @@ test('US-12-R15: Python relative imports, TypeScript type imports and dynamic im
   assert.deepEqual(extractEdges('a.js', 'from .x import y'), []);
 });
 
-test('US-12-R16: blast radius follows Python, TypeScript and extensionless importers back to the changed file', async () => {
+test('US-12-R23: blast radius follows Python, TypeScript and extensionless importers back to the changed file', async () => {
   const files = [
     { path: 'pkg/__init__.py', text: '' }, { path: 'pkg/util.py', text: '' }, { path: 'pkg/main.py', text: 'from .util import f' },
     { path: 'app/run.py', text: 'from pkg import util\nimport pkg.main' }, { path: 'web/types.ts', text: '' }, { path: 'web/use.ts', text: "import type { T } from './types.js';" },
@@ -85,7 +85,7 @@ test('US-12-R16: blast radius follows Python, TypeScript and extensionless impor
 
 // ---- round 2 additions: findings of the verification of US-SPEC-12 --------------------------------
 
-test('US-12-R16: one hub with many dependents never returns more than maxNodes, and says it truncated', async () => {
+test('US-12-R23: one hub with many dependents never returns more than maxNodes, and says it truncated', async () => {
   const hub = [{ path: 'm/hub.js', text: '' }, ...Array.from({ length: 10 }, (_, i) => ({ path: `m/u${String(i).padStart(2, '0')}.js`, text: "import './hub.js';" }))];
   const ctx = mk([{ name: 's', list: async () => hub }]);
   await ingest(ctx);
@@ -98,7 +98,7 @@ test('US-12-R16: one hub with many dependents never returns more than maxNodes, 
   assert.deepEqual([(await blastRadius(ctx, ['m/hub.js'])).affected.length, (await blastRadius(ctx, ['m/hub.js'])).truncated], [10, false]);
 });
 
-test('US-12-R15: a file the source no longer lists loses its edges and node; other sources, declared edges and a failed listing keep theirs', async () => {
+test('US-12-R22: a file the source no longer lists loses its edges and node; other sources, declared edges and a failed listing keep theirs', async () => {
   let listing = [{ path: 'lib.js', text: '' }, { path: 'a.js', text: "import './lib.js';" }, { path: 'old.js', text: "import './lib.js';" }];
   let other = [{ path: 'z.js', text: "import './lib.js';" }];
   let fail = false;

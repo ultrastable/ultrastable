@@ -64,7 +64,7 @@ test('US-12-T05: a graph of 80 nodes and 49 edges has density 0.00775', () => {
   assert.deepEqual([g.sinks, g.sources.length, g.islands.length], [['w0'], 49, 30]);
 });
 
-test('US-12-T06, US-12-R12 and US-12-R17: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers and blast radius follows them', async () => {
+test('US-12-T06, US-12-R12 and US-12-R24: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers and blast radius follows them', async () => {
   const { ctx } = mk();
   await wiring.sweep(ctx);
   const a = await wiring.analyze(ctx);

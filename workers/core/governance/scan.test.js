@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// US-07-R23 (the recognition scan over declared sources) and US-07-R24 (the daily goal cycle that gathers signals).
+// US-07-R31 (the recognition scan over declared sources) and US-07-R24 (the daily goal cycle that gathers signals).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
@@ -17,7 +17,7 @@ const one = (db, sql, ...a) => db.raw.prepare(sql).get(...a);
 const T01 = "The timeout is fixed. Let me know if you'd like me to open the pull request?";
 const CLEAN = 'The timeout is fixed and the pull request PR-42 is open.';
 
-test('US-07-R23: a draft from a declared source is scanned once across two passes, and a clean draft is scanned too', async () => {
+test('US-07-R31: a draft from a declared source is scanned once across two passes, and a clean draft is scanned too', async () => {
   const db = await mk();
   let reads = 0;
   const comments = { name: 'item-comments', read: async () => { reads++; return [{ ref: 'c1', draft: T01 }, { ref: 'c2', draft: CLEAN }]; } };
@@ -32,7 +32,7 @@ test('US-07-R23: a draft from a declared source is scanned once across two passe
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM governance_scan_cursor`).n, 2);
 });
 
-test('US-07-R23: a source that throws is reported and the other sources still run; the same ref in two sources is scanned once each', async () => {
+test('US-07-R31: a source that throws is reported and the other sources still run; the same ref in two sources is scanned once each', async () => {
   const db = await mk();
   const bad = { name: 'console', read: async () => { throw new Error('console down'); } };
   const a = { name: 'pr-bodies', read: async () => [{ ref: 'pr-1', draft: T01 }] };
@@ -44,7 +44,7 @@ test('US-07-R23: a source that throws is reported and the other sources still ru
   assert.match(r.errors[1].error, /ref and a draft text/);
 });
 
-test('US-07-R23: the limit truncates openly: a draft past the limit is listed, not marked scanned, and the next pass takes it', async () => {
+test('US-07-R31: the limit truncates openly: a draft past the limit is listed, not marked scanned, and the next pass takes it', async () => {
   const db = await mk();
   const src = { name: 's', read: async () => [{ ref: 'a', draft: CLEAN }, { ref: 'b', draft: CLEAN }, { ref: 'c', draft: CLEAN }] };
   const r1 = await G.scanSources(db, { sources: [src], now: NOW, limit: 2 });
@@ -55,7 +55,7 @@ test('US-07-R23: the limit truncates openly: a draft past the limit is listed, n
   assert.equal(r2.skipped, 2);
 });
 
-test('US-07-R23: a source that honours `since` still returns a draft the limit left unscanned (the cursor is the draft time, not the pass time)', async () => {
+test('US-07-R31: a source that honours `since` still returns a draft the limit left unscanned (the cursor is the draft time, not the pass time)', async () => {
   const db = await mk();
   const t = (n) => new Date(NOW - n * 3600e3).toISOString();
   const all3 = [{ ref: 'c', draft: CLEAN, at: t(1) }, { ref: 'a', draft: CLEAN, at: t(3) }, { ref: 'b', draft: CLEAN, at: t(2) }]; // not in time order
@@ -71,7 +71,7 @@ test('US-07-R23: a source that honours `since` still returns a draft the limit l
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM governance_scan_cursor`).n, 3);
 });
 
-test('US-07-R23: a cut source whose drafts carry no time keeps its old cursor, so a draft the limit left is read again', async () => {
+test('US-07-R31: a cut source whose drafts carry no time keeps its old cursor, so a draft the limit left is read again', async () => {
   const db = await mk();
   const seenSince = [];
   const ts = { a: NOW - 3 * 3600e3, b: NOW - 2 * 3600e3, c: NOW - 3600e3 };
@@ -86,7 +86,7 @@ test('US-07-R23: a cut source whose drafts carry no time keeps its old cursor, s
   assert.equal(seenSince[1], seenSince[0], 'the second read starts where the first did');
 });
 
-test('US-07-R23: step() runs the scan when sources are declared and reports it', async () => {
+test('US-07-R31: step() runs the scan when sources are declared and reports it', async () => {
   const db = await mk();
   const out = await G.step({ db, now: NOW, sources: [{ name: 'item-comments', read: async () => [{ ref: 'c1', draft: T01 }] }] });
   assert.equal(out.scan.scanned, 1);

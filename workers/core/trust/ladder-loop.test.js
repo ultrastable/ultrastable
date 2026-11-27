@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// US-06-R20, US-06-T07: the ladder loop closes in one database, from a scored decision to a rung in the ledger.
+// US-06-R24, US-06-T10: the ladder loop closes in one database, from a scored decision to a rung in the ledger.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -17,7 +17,7 @@ const mk = () => makeDb([fileURLToPath(P.MIGRATIONS_DIR), fileURLToPath(T.MIGRAT
 const one = (db, sql, ...a) => db.raw.prepare(sql).get(...a);
 const rows = (db, sql, ...a) => db.raw.prepare(sql).all(...a);
 
-test('US-06-R20, US-06-T07: 12 scored predictions become outcomes, the tick proposes the ladder item, the merge by a different agent applies it (decision to rung, one database); the same agent is refused', async () => {
+test('US-06-R24, US-06-T10: 12 scored predictions become outcomes, the tick proposes the ladder item, the merge by a different agent applies it (decision to rung, one database); the same agent is refused', async () => {
   const db = mk();
   db.raw.prepare(`INSERT INTO items (id, title, owner_role, done_check, status, disposition) VALUES ('W1','w','operations','observed','done','done: observed')`).run();
   await P.registerMetric(db, { name: 'items_done', read_sql: `SELECT COUNT(*) FROM items WHERE status='done'` });
@@ -67,7 +67,7 @@ test('US-06-R20, US-06-T07: 12 scored predictions become outcomes, the tick prop
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM outcomes WHERE item_id=? AND action_class='ladder'`, ITEM).n, 1);
 });
 
-test('US-06-R20: settleLadder with no port changes nothing; an item with no proposed transition is reported, not invented; a rung above the ceiling is refused with the reason as the blocker; a crash between the two writes is repaired', async () => {
+test('US-06-R24: settleLadder with no port changes nothing; an item with no proposed transition is reported, not invented; a rung above the ceiling is refused with the reason as the blocker; a crash between the two writes is repaired', async () => {
   const db = mk();
   assert.deepEqual(await T.settleLadder(db, { policy: POLICY, now: NOW }), { applied: [], refused: [], unknown: [] });
   assert.deepEqual((await T.settleLadder(db, { policy: POLICY, merged: async () => [{ item_id: 'NOPE', merged_by: 'reviewer-2' }, null, {}], now: NOW })).unknown, ['NOPE']);

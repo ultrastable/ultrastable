@@ -63,7 +63,7 @@ test('US-09-R09 an unreachable provider, a refused call and a successor answerin
   await assert.rejects(() => createRouterCanary({ router, config: CONFIG, canaries: { '*': { messages: [] } } })('not-configured', 'x'), /not in the router configuration/);
 });
 
-test('US-09-R20 when the model asked for is retired the successor serves and that is no canary of the original', async () => {
+test('US-09-R21 when the model asked for is retired the successor serves and that is no canary of the original', async () => {
   const { db, router } = mk({ reply: (b) => (b.model === 'a-medium' ? new Response('model a-medium is deprecated', { status: 410 }) : { text: '{"ok":1}', tool_calls: [] }) });
   const canary = createRouterCanary({ router, config: CONFIG, canaries: { '*': { messages: [{ role: 'user', content: 'x' }], json: true } } });
   await assert.rejects(() => canary('a-medium', 'triage'), /refused the call \(all_providers_failed: http 410/, 'the first call meets the 410 and retires the model');

@@ -191,14 +191,14 @@ test('a remedy window that has not ended is not judged; an unmeasured metric is 
   assert.equal(one(db, `SELECT outcome FROM kernel_remedies`).outcome, 'unmeasured');
 });
 
-// ---- US-17 R14 to R18, R21, R24: the register, remediation lifecycle and breaker ---------------------------------------------------------
+// ---- US-17 R21, R24, R25 to R29: the register, remediation lifecycle and breaker ---------------------------------------------------------
 // The module-local state of core/remediation (relapse counts, firing links, breaker sources) is optional; these tests run both with it and without.
 const STATE_SQL = readFileSync(fileURLToPath(new URL('../remediation/migrations/0002_state.sql', import.meta.url)), 'utf8');
 const sdb = () => { const db = kdb(); db.raw.exec(STATE_SQL); return db; };
 const T = Date.parse('2026-03-02T12:00:00Z');
 const MINUTE = 60e3;
 
-test('US-17-R14: two consecutive runs of a detector over a missing table open DETECTOR-BROKEN-<id> once', async () => {
+test('US-17-R25: two consecutive runs of a detector over a missing table open DETECTOR-BROKEN-<id> once', async () => {
   const db = kdb();
   await registerFailureMode(db, fm({ detector_sql: 'SELECT * FROM no_such_table' }));
   const r1 = await runDetectors(db, { now: T });
@@ -212,7 +212,7 @@ test('US-17-R14: two consecutive runs of a detector over a missing table open DE
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM items WHERE id LIKE 'DETECTOR-BROKEN-%'`).n, 1);
 });
 
-test('US-17-R14: one erroring run followed by a good run opens nothing', async () => {
+test('US-17-R25: one erroring run followed by a good run opens nothing', async () => {
   const db = kdb();
   await registerFailureMode(db, fm());                       // reads t_vals 'seen', which is not set yet: no row, no value
   assert.equal((await runDetectors(db, { now: T })).length, 0);
@@ -221,7 +221,7 @@ test('US-17-R14: one erroring run followed by a good run opens nothing', async (
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM items`).n, 0);
 });
 
-test('US-17-R14: the item closes with a disposition when the detector returns a value again, and reopens if it breaks again', async () => {
+test('US-17-R25: the item closes with a disposition when the detector returns a value again, and reopens if it breaks again', async () => {
   const db = kdb();
   await registerFailureMode(db, fm());
   await runDetectors(db, { now: T }); await runDetectors(db, { now: T + HOUR });
@@ -268,7 +268,7 @@ test('US-17-R04: without the state tables a relapse inside the same clock hour o
   assert.equal(sameHour.length, 1); assert.equal(sameHour[0].item, null, 'while one is open no second is opened');
 });
 
-test('US-17-R16: a closed remediation whose detector fires again is reopened and counts one relapse', async () => {
+test('US-17-R27: a closed remediation whose detector fires again is reopened and counts one relapse', async () => {
   const db = sdb(); const t = T;
   const id = await closedOnce(db, t);
   setv(db, 'queue_err', 3);
@@ -280,7 +280,7 @@ test('US-17-R16: a closed remediation whose detector fires again is reopened and
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM kernel_remediations`).n, 1);
 });
 
-test('US-17-R16: a closure outside the relapse window is a new remediation, not a reopen', async () => {
+test('US-17-R27: a closure outside the relapse window is a new remediation, not a reopen', async () => {
   const db = sdb(); const t = T;
   const id = await closedOnce(db, t);
   setv(db, 'queue_err', 3);
@@ -289,7 +289,7 @@ test('US-17-R16: a closure outside the relapse window is a new remediation, not 
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM remediation_relapses`).n, 0);
 });
 
-test('US-17-R17: after three relapses closure needs two consecutive passes of the closing probe', async () => {
+test('US-17-R28: after three relapses closure needs two consecutive passes of the closing probe', async () => {
   const db = sdb(); let t = T;
   await closedOnce(db, t);
   for (let i = 1; i <= 3; i++) {
@@ -346,7 +346,7 @@ test('US-17-R06: a doer that throws leaves its message in the remediation eviden
   assert.equal(one(db, `SELECT status FROM items WHERE id=?`, id).status, 'ready');
 });
 
-test('US-17-R18: after 3 failures, a success and one new failure inside the window the breaker stays closed', async () => {
+test('US-17-R29: after 3 failures, a success and one new failure inside the window the breaker stays closed', async () => {
   const db = sdb(); const t = T;
   for (let i = 0; i < 3; i++) await recordAttempt(db, { target: 'deploy:a', signature: 'E1', ok: false, now: t + i * HOUR });
   assert.equal(one(db, `SELECT state FROM kernel_breakers`).state, 'open');
@@ -357,7 +357,7 @@ test('US-17-R18: after 3 failures, a success and one new failure inside the wind
   assert.equal((await canAttempt(db, 'deploy:a', 'E1', t + 5 * HOUR)).allowed, true);
 });
 
-test('US-17-R18: a changed source_hash re-arms an open breaker and the next attempt is allowed', async () => {
+test('US-17-R29: a changed source_hash re-arms an open breaker and the next attempt is allowed', async () => {
   const db = sdb(); const t = T;
   for (let i = 0; i < 3; i++) await recordAttempt(db, { target: 'w', signature: 'E9', ok: false, now: t + i * HOUR, source_hash: 'h1' });
   assert.equal((await canAttempt(db, 'w', 'E9', t + 3 * HOUR, { source_hash: 'h1' })).allowed, false, 'same source: still suspended');
@@ -377,7 +377,7 @@ test('US-17-R08: a failed half-open probe doubles the interval, a failure record
   assert.equal(probeFailed.extended, true); assert.equal(one(db, `SELECT interval_h FROM kernel_breakers`).interval_h, 48);
 });
 
-test('US-17-R15: with due_only a detector with interval_h 1 run twice 10 minutes apart writes one hit row; 61 minutes later it writes a second', async () => {
+test('US-17-R26: with due_only a detector with interval_h 1 run twice 10 minutes apart writes one hit row; 61 minutes later it writes a second', async () => {
   const db = kdb(); setv(db, 'seen', 10);
   await registerFailureMode(db, fm({ interval_h: 1 }));
   await runDetectors(db, { now: T, due_only: true });
@@ -387,14 +387,14 @@ test('US-17-R15: with due_only a detector with interval_h 1 run twice 10 minutes
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM kernel_failure_mode_hits`).n, 2);
 });
 
-test('US-17-R15: without due_only every call writes a row as before', async () => {
+test('US-17-R26: without due_only every call writes a row as before', async () => {
   const db = kdb(); setv(db, 'seen', 10);
   await registerFailureMode(db, fm({ interval_h: 1 }));
   await runDetectors(db, { now: T }); await runDetectors(db, { now: T + 10 * MINUTE });
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM kernel_failure_mode_hits`).n, 2);
 });
 
-test('US-17-R15: a due_only run that skipped everything still lets detectStaleDetectors fire after 2 intervals of silence', async () => {
+test('US-17-R26: a due_only run that skipped everything still lets detectStaleDetectors fire after 2 intervals of silence', async () => {
   const db = kdb(); setv(db, 'seen', 10);
   await registerFailureMode(db, fm({ interval_h: 1 }), T);
   await runDetectors(db, { now: T, due_only: true });
