@@ -128,7 +128,7 @@ class Registry(unittest.TestCase):
         ids = [a["id"] for a in agents.route_authors(ALL, ROOT)]
         self.assertFalse([i for i in ids if i.startswith("github-models")], "the retired GitHub Models rungs are never routed"); self.assertLess(ids.index("workers-ai-glm"), ids.index("workers-ai-llama"))
         self.assertNotIn("claude-session", ids, "the session route is not an HTTP route"); self.assertNotIn("anthropic-api-fable", ids, "a reviewer-only adapter does not author")
-        self.assertTrue(all(i in ("anthropic-api", "workers-ai-qwen-coder") for i in ids[-2:]), "unknown prices rank after known ones")
+        self.assertTrue(all(i in ("anthropic-api", "workers-ai-qwen-coder", "workers-ai-gpt-oss", "workers-ai-qwen3") for i in ids[-4:]), "unknown prices rank after known ones")
         self.assertEqual(agents.route_authors({}, ROOT), []); self.assertEqual([a["id"] for a in agents.route_authors({"ANTHROPIC_API_KEY": "k"}, ROOT)], ["anthropic-api"], "an adapter whose secrets are unbound on this host is not routed")
         for fam in ("llama", "glm", "openai"):
             rv = agents.ensemble(fam, ALL, ROOT); fams = [a["family"] for a in rv]

@@ -475,6 +475,14 @@
       "url": "insight.schema.json"
     },
     {
+      "name": "instructions-budget.json",
+      "description": "Contract for doctrine/instructions-budget.json",
+      "fileMatch": [
+        "doctrine/instructions-budget.json"
+      ],
+      "url": "instructions-budget.schema.json"
+    },
+    {
       "name": "intent-yield.json",
       "description": "Contract for doctrine/intent-yield.json",
       "fileMatch": [

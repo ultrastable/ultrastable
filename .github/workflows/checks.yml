@@ -69,6 +69,8 @@ jobs:
         run: python3 -m foundation disclosure --check
       - name: Workflow minute-budget lint (cheap, runs first)
         run: python3 scripts/lint_workflows.py
+      - name: Instruction budget (INSTRUCTIONS-BUDGET-1)
+        run: python3 scripts/instructions_budget.py --check
       - name: Public docs complete and in sync with the code (DOCS-SYNC-1)
         run: python3 scripts/check_readmes.py && python3 scripts/check_readmes.py --root seed
       - name: Workflow YAML parses

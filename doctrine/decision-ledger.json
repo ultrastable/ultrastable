@@ -6577,6 +6577,24 @@
    "body": "goal_samples was scanned for 14 days (18,590 rows) on every goals read and live_changes was re-read each tick because its refresh time moved; both are now served from keyed caches (closed-hour buckets, a content signature). Tests pass: 1091 seed worker tests; the cap is not raised.",
    "probe": "grep:seed/worker/src/goalsamples.js::export async function goalSamples14d",
    "session": "session_0156nqDsxJd4poRv2mkbug9e"
+  },
+  {
+   "id": "decision-2026-11-27-coder-routes-are-canaried-and-a-failed-one-sits-out-six-hour",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Coder routes are canaried and a failed one sits out six hours",
+   "body": "GitHub Models answered 200 OK with no JSON for eight days; a known-schema canary demotes such a route before the executor spends attempts on it (ZHC-R14 #2679).",
+   "probe": "grep:foundation/agent_ladder.py::routehealth.demoted",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "lesson-2026-11-27-executor-ladder-a-model-level-failure-must-not-down-the-prov",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Executor ladder: a model-level failure must not down the provider route",
+   "body": "13 of 30 executor runs failed because one 502 from workers-ai-glm marked the whole workers-ai route DOWN, so llama, qwen and gpt-oss were never asked; GitHub Models (retired 2026-07-30) answered 200 OK and was routed first. Fixed with route_down (provider-wide failures only), retired adapters never routed, content-null handling and two added Workers AI rungs; tests pass (53 ladder tests) and the two new models were probed live through the account AI endpoint.",
+   "probe": "grep:foundation/agent_ladder.py::def down_keys",
+   "session": "session_0156nqDsxJd4poRv2mkbug9e"
   }
  ]
 }
