@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/sample-audit.schema.json",
+  "title": "sample-audit (doctrine/sample-audit.json)",
+  "description": "Contract for doctrine/sample-audit.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "base": {
+      "type": "number"
+    },
+    "floor": {
+      "type": "number"
+    },
+    "ceiling": {
+      "type": "number"
+    },
+    "step_up": {
+      "type": "number"
+    },
+    "window": {
+      "type": "number"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "base",
+    "ceiling",
+    "floor",
+    "step_up",
+    "window"
+  ]
+}
