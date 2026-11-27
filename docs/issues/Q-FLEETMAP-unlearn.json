@@ -1,7 +1,7 @@
 {
   "id": "Q-FLEETMAP-unlearn",
-  "title": "Q-FLEETMAP-unlearn: ultrastable/unlearn is not equal to its source (1 file(s) differ, 0 missing, 0 only in the copy)",
-  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe unlearn\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** closed\n\nultrastable/unlearn is a copy and is not equal to its source (FLEET-MAP-1): 1 file(s) differ, 0 missing, 0 only in the copy.\n\n- differ: lifecycle.json\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe unlearn\n\n**Disposition:** shelved (ttl, 2026-11-26T17:09:09Z, DISPOSE-1)\n\n**Evidence:** open 17.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "title": "Q-FLEETMAP-unlearn: ultrastable/unlearn is not equal to its source (2 file(s) differ, 0 missing, 0 only in the copy)",
+  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe unlearn\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** open\n\nultrastable/unlearn is a copy and is not equal to its source (FLEET-MAP-1): 2 file(s) differ, 0 missing, 0 only in the copy.\n\n- differ: lifecycle.json, vendor/ultrastable/tools/vendor_sync.mjs\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe unlearn\n",
   "labels": [
     "p1",
     "agent-ready",
