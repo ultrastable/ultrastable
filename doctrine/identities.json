@@ -1,0 +1,99 @@
+{
+  "_doc": "IDENTITIES-1 (ZHC-R4, #2669): which identity may do what. A workflow's GITHUB_TOKEN is read-only at the top of the file and takes write scopes only on the job that needs them; `top_level_write` lists the workflows that still grant write at the top (counted 2026-11-27) and only shrinks, so no new workflow adds to it. The identities themselves and their scopes are in `identities`; foundation/identities.py reads both (`identities --check` in checks).",
+  "identities": {
+    "merge": {
+      "holder": "the tick Worker's GitHub App (lane and sweeper)",
+      "scopes": [
+        "contents:write",
+        "pull_requests:write",
+        "issues:write"
+      ],
+      "never": [
+        "workflows:write",
+        "administration"
+      ],
+      "branches": [
+        "main"
+      ]
+    },
+    "agent": {
+      "holder": "the executor job (GITHUB_TOKEN on its own job)",
+      "scopes": [
+        "contents:write",
+        "pull_requests:write",
+        "issues:write"
+      ],
+      "never": [
+        "workflows:write",
+        "secrets"
+      ],
+      "branches": [
+        "agent/*"
+      ]
+    },
+    "administration": {
+      "holder": "the tick Worker's administration App",
+      "scopes": [
+        "repository settings"
+      ],
+      "never": [
+        "contents:write"
+      ],
+      "branches": []
+    }
+  },
+  "top_level_write": [
+    "actions-budget.yml",
+    "backup-drill.yml",
+    "branchsweep.yml",
+    "cf-account.yml",
+    "ciwatch.yml",
+    "cleanroom.yml",
+    "cost-guard.yml",
+    "demo-video.yml",
+    "deploy-gateway.yml",
+    "deploy-system.yml",
+    "deploy-ultrastable.yml",
+    "deploy-workers.yml",
+    "executor.yml",
+    "failure-audit.yml",
+    "findable.yml",
+    "first-run.yml",
+    "fleet.yml",
+    "funding-maintenance.yml",
+    "host-sync.yml",
+    "index.yml",
+    "intent-yield.yml",
+    "issueloop.yml",
+    "issues.yml",
+    "lane.yml",
+    "ledger-openalex.yml",
+    "loop.yml",
+    "mcp-registry.yml",
+    "openstd.yml",
+    "org-manage.yml",
+    "org-profile-probe.yml",
+    "org-settings.yml",
+    "outreach.yml",
+    "pages-enable.yml",
+    "product-manager.yml",
+    "regen-generated.yml",
+    "retriage.yml",
+    "scout.yml",
+    "seed-launch.yml",
+    "sessions.yml",
+    "smoke-live.yml",
+    "social-post.yml",
+    "spinoff.yml",
+    "supply-chain.yml",
+    "template-publish.yml",
+    "temporal.yml",
+    "tenant-repos.yml",
+    "tenant-sync.yml",
+    "transparency.yml",
+    "uiux.yml",
+    "upstream.yml",
+    "watchdog.yml",
+    "worklog.yml"
+  ]
+}

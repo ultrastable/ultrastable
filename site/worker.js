@@ -1313,18 +1313,25 @@ const entry = { async scheduled(event, env, ctx) { if (env && env.UPSTREAM_ORIGI
 
 // GROWTH-HITS-1 (2026-11-25): the product manager runs in Actions, which had no Cloudflare token, so every growth metric read empty and it filed nothing.
 // The Worker already holds the analytics database; it serves the four 7-day aggregates (no paths, no visitor ids), cached for 10 minutes.
-export async function growthHits(env, now = Date.now()) {
+// READ-BUDGET-12 (2026-11-27): hits.at is in milliseconds and this window was in seconds, so `at>=?` matched every row: the counts were all-time and each call
+// read the whole table (three queries, about 24,000 rows each, every 90 seconds: 3.4M rows an hour against a 50,000 budget). The window is milliseconds now
+// and the answer is held 10 minutes in the Cache API, because the cache-control header alone caches nothing inside a Worker.
+export async function growthHits(env, now = Date.now(), cache = globalThis.caches && globalThis.caches.default) {
   const h = { "content-type": "application/json", "cache-control": "public, max-age=600", "access-control-allow-origin": "*" };
   if (!env || !env.DB) return new Response(JSON.stringify({ error: "no analytics database" }), { status: 503, headers: h });
-  const w = Math.floor(now / 1000) - 7 * 86400;
+  const w = now - 7 * 86400e3, key = new Request("https://ultrastable.internal/api/growth/hits");
   try {
+    const hit = cache && await cache.match(key).catch(() => null);
+    if (hit) return hit;
     const one = (sql) => env.DB.prepare(sql).bind(w).first();
     const [a, b, c] = await Promise.all([
       one("SELECT COUNT(*) AS pv, COUNT(DISTINCT vid) AS v FROM hits WHERE bot=0 AND name='pageview' AND at>=?"),
       one("SELECT COUNT(*) AS n FROM hits WHERE bot=1 AND at>=?"),
       one("SELECT COUNT(*) AS n FROM hits WHERE bot=0 AND name='pageview' AND path LIKE '/pilot%' AND at>=?"),
     ]);
-    return new Response(JSON.stringify({ pageviews_7d: a.pv, visitors_7d: a.v, agent_hits_7d: b.n, pilot_page_views_7d: c.n, window_days: 7 }), { headers: h });
+    const res = new Response(JSON.stringify({ pageviews_7d: a.pv, visitors_7d: a.v, agent_hits_7d: b.n, pilot_page_views_7d: c.n, window_days: 7 }), { headers: h });
+    if (cache) await cache.put(key, res.clone()).catch(e => console.error("api/growth/hits cache", String(e && e.message)));
+    return res;
   } catch (e) {
     console.error("api/growth/hits", String(e && e.message));
     return new Response(JSON.stringify({ error: "analytics read failed" }), { status: 503, headers: h });
