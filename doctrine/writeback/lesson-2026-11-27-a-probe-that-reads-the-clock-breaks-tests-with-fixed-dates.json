@@ -5,7 +5,7 @@
   "date": "2026-11-27",
   "title": "A probe that reads the clock breaks tests with fixed dates",
   "body": "test_spec_31_tenants built its ledger around a fixed date but tenantsync.probe read the wall clock, so the test failed once a day passed and turned every pull request red. The probe now takes the time as an argument and the test passes its own.",
-  "probe": "grep:foundation/tenantsync.py::def probe(root, spec, now=None)"
+  "probe": "grep:foundation/tenantsync.py::spec, now=None"
  },
  "kind": "lesson",
  "title": "A probe that reads the clock breaks tests with fixed dates",
