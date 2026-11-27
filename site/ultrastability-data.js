@@ -4,81 +4,81 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-27T07:55:54Z",
-   "ok": true,
-   "value": 0
+   "at": "2026-11-27T08:11:18Z",
+   "ok": false,
+   "value": 2
   },
   "deploy_health": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": false,
    "value": 0.907
   },
   "happy_paths": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": false,
-   "value": 75
+   "value": 76
   },
   "research_in_code": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": false,
    "value": 0.621
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": false,
    "value": 0.033
   },
   "self_shipping": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": false,
    "value": 0.786
   },
   "spec_quality": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": false,
-   "value": 0.571
+   "value": 0.75
   },
   "spend": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": false,
    "value": 8.491
   },
   "stalled_clocks": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": false,
    "value": 3
   },
   "ui_findings": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-27T07:55:54Z",
+   "at": "2026-11-27T08:11:18Z",
    "ok": true,
-   "value": 33.329
+   "value": 32.269
   }
  },
  "readiness": {
-  "bounds": 0.357,
+  "bounds": 0.286,
   "horizon": 1.0,
   "learning": 0.516,
-  "score": 18
+  "score": 15
  },
  "scopes": {
   "platform": {
