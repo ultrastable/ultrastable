@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2631",
+  "title": "OL-PR-2631: land or supersede pull request #2631 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2631 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2631\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2631 (`claude/project-thread-glht81` at f09e29b08c, opened by rwnq8): feat(goals): essential variables hold objective knobs (PEREZ-LOPEZ-1). The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (4): docs/issues/OL-20261127-2.json, seed/autonomy/goals.json, seed/worker/src/goals.js, seed/worker/test/goals.test.js.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2631 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2631` exits 0 (pull request #2631 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

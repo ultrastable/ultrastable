@@ -38,14 +38,14 @@ export default {
     0,
     109467
    ],
-   "share_recent": 0.275,
-   "share_trend": 0.275,
+   "share_recent": 0.274,
+   "share_trend": 0.274,
    "total": 109467
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 43059,
+   "recent7": 43486,
    "series": [
     0,
     0,
@@ -76,16 +76,16 @@ export default {
     0,
     0,
     0,
-    43059
+    43486
    ],
-   "share_recent": 0.108,
-   "share_trend": 0.108,
-   "total": 43059
+   "share_recent": 0.109,
+   "share_trend": 0.109,
+   "total": 43486
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 42387,
+   "recent7": 42623,
    "series": [
     0,
     0,
@@ -116,16 +116,16 @@ export default {
     0,
     0,
     0,
-    42387
+    42623
    ],
    "share_recent": 0.107,
    "share_trend": 0.107,
-   "total": 42387
+   "total": 42623
   },
   {
    "area": "seed/worker",
    "quiet_days": 0,
-   "recent7": 28992,
+   "recent7": 29709,
    "series": [
     0,
     0,
@@ -156,16 +156,16 @@ export default {
     0,
     0,
     0,
-    28992
+    29709
    ],
-   "share_recent": 0.073,
-   "share_trend": 0.073,
-   "total": 28992
+   "share_recent": 0.074,
+   "share_trend": 0.074,
+   "total": 29709
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 28144,
+   "recent7": 28130,
    "series": [
     0,
     0,
@@ -196,16 +196,16 @@ export default {
     0,
     0,
     0,
-    28144
+    28130
    ],
-   "share_recent": 0.071,
-   "share_trend": 0.071,
-   "total": 28144
+   "share_recent": 0.07,
+   "share_trend": 0.07,
+   "total": 28130
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 25879,
+   "recent7": 25997,
    "series": [
     0,
     0,
@@ -236,11 +236,11 @@ export default {
     0,
     0,
     0,
-    25879
+    25997
    ],
    "share_recent": 0.065,
    "share_trend": 0.065,
-   "total": 25879
+   "total": 25997
   },
   {
    "area": "instances",
@@ -285,7 +285,7 @@ export default {
   {
    "area": "doctrine/schemas",
    "quiet_days": 0,
-   "recent7": 17306,
+   "recent7": 17310,
    "series": [
     0,
     0,
@@ -316,21 +316,21 @@ export default {
     0,
     0,
     0,
-    17306
+    17310
    ],
-   "share_recent": 0.044,
-   "share_trend": 0.044,
-   "total": 17306
+   "share_recent": 0.043,
+   "share_trend": 0.043,
+   "total": 17310
   }
  ],
- "at": "2026-11-27T03:47:29Z",
+ "at": "2026-11-27T03:58:28Z",
  "days": 30,
  "findings": [
   {
-   "evidence": "share 0% then 28%",
+   "evidence": "share 0% then 27%",
    "id": "workers",
    "kind": "drift",
-   "why": "workers's share of attention moved 28 points between the first and second half of the window"
+   "why": "workers's share of attention moved 27 points between the first and second half of the window"
   },
   {
    "evidence": "quiet_days 12",
@@ -395,10 +395,10 @@ export default {
    0,
    0,
    0,
-   33
+   38
   ],
   "closed": 1347,
-  "opened": 1380
+  "opened": 1385
  },
  "loops": [
   {
@@ -550,6 +550,43 @@ export default {
    ]
   },
   {
+   "loop": "trajectory",
+   "quiet_days": 0,
+   "rows": 559,
+   "series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    5,
+    112,
+    80,
+    55,
+    88,
+    189,
+    30
+   ]
+  },
+  {
    "loop": "resilience",
    "quiet_days": 0,
    "rows": 558,
@@ -584,43 +621,6 @@ export default {
     62,
     154,
     21
-   ]
-  },
-  {
-   "loop": "trajectory",
-   "quiet_days": 0,
-   "rows": 558,
-   "series": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    5,
-    112,
-    80,
-    55,
-    88,
-    189,
-    29
    ]
   },
   {
