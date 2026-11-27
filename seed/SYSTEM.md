@@ -133,6 +133,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **COMPLETE-1**: Complete everything; close everything. In this kit: `worker/src/sweeper.js`.
 - **AUTO-SHIP-CLEAN-1**: Merge and deploy everything automatically; clean up everywhere. In this kit: `worker/src/handoff.js`, `worker/src/sweeper.js`.
 - **DRAIN-ALL-1**: Complete all work; drain every issue; merge every PR; zero manual intervention. In this kit: `worker/src/lane.js`, `worker/src/sweeper.js`.
+- **PR-NEVER-LOSE-1**: Automation never discards unmerged work. In this kit: `scripts/branch_cleanup.py`, `worker/src/prsafe.js`, `worker/src/sla.js`, `worker/src/sweeper.js`.
 - **STRANGE-LOOP-1**: Strange loops: every loop closes itself and improves itself; no zombie sessions. In this kit: checked by the platform.
 - **CLOCKWORK-1**: Clockwork: every loop is a clock, and a stopped or inaccurate clock is not a working clock. In this kit: `worker/src/pulse.js`.
 - **FLOW-DIRECTIVE-1**: Every loop declares its flows and closes its feedback. In this kit: checked by the platform.
