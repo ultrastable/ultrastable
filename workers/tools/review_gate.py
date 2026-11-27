@@ -11,7 +11,8 @@ import argparse, json, re, sys
 from pathlib import Path
 
 def field(body, name):
-    m = re.search(rf"^{name}:\s*(.+)$", body or "", re.I | re.M)
+    # Spaces and tabs only after the colon: a blank field is empty, never the next line (the record check's rule, tools/selfhost_check.py).
+    m = re.search(rf"^{re.escape(name)}:[ \t]*(.+?)[ \t\r]*$", body or "", re.I | re.M)
     return m.group(1).strip() if m else ""
 
 def gate(pr):

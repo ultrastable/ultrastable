@@ -91,12 +91,22 @@
   {
    "id": "US-00-T05",
    "spec": "US-SPEC-00",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_00_ids.py",
+     "name": "test US-00-R11 and US-00-T05 a requirement is never renumbered reused or dropped"
+    }
+   ]
   },
   {
    "id": "US-00-T06",
    "spec": "US-SPEC-00",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_00_ids.py",
+     "name": "test US-00-R12 and US-00-T06 a built line that names a file that is not there is found"
+    }
+   ]
   },
   {
    "id": "US-01-T01",
@@ -2046,6 +2056,14 @@
     {
      "file": "tests/test_workflow_lint.py",
      "name": "test US-24-T09 US-24-R57 a six job matrix pr concurrency without cancel a self hosted runner and two write jobs are w10 w12 w13 w14"
+    },
+    {
+     "file": "../tests/foundation/test_lint_workflows.py",
+     "name": "test a daily schedule with headers timeout and concurrency passes - US-24-T09: a daily cron that carries all three header comments passes."
+    },
+    {
+     "file": "../tests/foundation/test_lint_workflows.py",
+     "name": "test each rule fires - US-24-R56 US-24-T09: an hourly cron, a missing header comment and a matrix each fail and name their rule."
     }
    ]
   },
@@ -2292,11 +2310,23 @@
    "tests": [
     {
      "file": "../tests/foundation/test_spec_00_ids.py",
-     "name": "test US-00-R11 a requirement is never renumbered reused or dropped"
+     "name": "test US-00-R11 and US-00-T05 a requirement is never renumbered reused or dropped"
     },
     {
      "file": "../tests/foundation/test_spec_00_ids.py",
      "name": "test US-00-R11 the requirements of this repository are all stable or awaiting their record - a requirement added since the ledger was last written is \"defined b"
+    },
+    {
+     "file": "../tests/foundation/test_spec_ids.py",
+     "name": "test US-00-R11 a requirement is defined by a list item a table row or a bold paragraph"
+    },
+    {
+     "file": "../tests/foundation/test_spec_ids.py",
+     "name": "test US-00-R11 a restatement in one file is one definition and a second meaning is a reuse"
+    },
+    {
+     "file": "../tests/foundation/test_spec_ids.py",
+     "name": "test US-00-R11 the overlap coefficient keeps an id extended in place and jaccard would not"
     }
    ]
   },
@@ -2311,7 +2341,7 @@
    "tests": [
     {
      "file": "../tests/foundation/test_spec_00_ids.py",
-     "name": "test US-00-R12 a built line that names a file that is not there is found"
+     "name": "test US-00-R12 and US-00-T06 a built line that names a file that is not there is found"
     }
    ]
   },
@@ -9729,24 +9759,24 @@
    "proof": "named test",
    "tests": [
     {
-     "file": "../tests/foundation/test_spec_20_protected_paths.py",
-     "name": "test US-20-R07 a protected change without a protected change line fails"
+     "file": "../tests/foundation/test_protected_paths.py",
+     "name": "test US-20-R07 a blank reason does not take the next line lf"
     },
     {
-     "file": "../tests/foundation/test_spec_20_protected_paths.py",
-     "name": "test US-20-R07 a protected change with the line passes and reports how many files"
+     "file": "../tests/foundation/test_protected_paths.py",
+     "name": "test US-20-R07 a blank reason does not take the next line crlf"
     },
     {
-     "file": "../tests/foundation/test_spec_20_protected_paths.py",
-     "name": "test US-20-R07 deleting a guard file fails even with the reason line"
+     "file": "../tests/foundation/test_protected_paths.py",
+     "name": "test US-20-R07 a reason of spaces and tabs is blank"
     },
     {
-     "file": "../tests/foundation/test_spec_20_protected_paths.py",
-     "name": "test US-20-R07 adding a human approver to codeowners fails"
+     "file": "../tests/foundation/test_protected_paths.py",
+     "name": "test US-20-R07 a short reason fails"
     },
     {
-     "file": "core/steward/measures.test.js",
-     "name": "US-20-R07: a merged PR touching AGENTS.md without Protected-change is counted"
+     "file": "../tests/foundation/test_protected_paths.py",
+     "name": "test US-20-R07 a placeholder reason fails whatever its length"
     }
    ]
   },
@@ -11636,6 +11666,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../tests/foundation/test_lint_workflows.py",
+     "name": "test each rule fires - US-24-R56 US-24-T09: an hourly cron, a missing header comment and a matrix each fail and name their rule."
+    },
+    {
      "file": "tests/test_workflow_lint.py",
      "name": "test US-24-R56 require headers flag"
     }
@@ -11684,6 +11718,14 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "../tests/foundation/test_lint_workflows.py",
+     "name": "test essential and unpaused workflows run with no call to the code host - US-24-R59: an essential workflow always runs, even with the budget paused."
+    },
+    {
+     "file": "../tests/foundation/test_lint_workflows.py",
+     "name": "test US-24-R59 a public repository is exempt from the pause and a run the pause cannot cancel fails"
+    },
     {
      "file": "../tests/foundation/test_spec_24_substrate.py",
      "name": "test US-24-R59 the count of unpinned action references does not rise and a tag reference is found"
