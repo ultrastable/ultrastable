@@ -973,8 +973,3 @@
 {"ev":"snapshot","loop":"probes","at":"2026-11-27T07:44:22Z","runs":1,"pass_rate":1.0,"fail_streak":0}
 {"ev":"snapshot","loop":"tick","at":"2026-11-27T07:44:22Z","runs":1,"pass_rate":1.0,"fail_streak":0}
 {"ev":"self","at":"2026-11-27T07:44:22Z","mutation_items":0,"stale_mutations":[],"efficacy":1.0}
-{"ev":"snapshot","loop":"funding-outreach","at":"2026-11-27T12:33:30Z","runs":1,"pass_rate":1.0,"fail_streak":0}
-{"ev":"snapshot","loop":"plussing","at":"2026-11-27T12:33:30Z","runs":1,"pass_rate":1.0,"fail_streak":0}
-{"ev":"snapshot","loop":"probes","at":"2026-11-27T12:33:30Z","runs":1,"pass_rate":1.0,"fail_streak":0}
-{"ev":"snapshot","loop":"tick","at":"2026-11-27T12:33:30Z","runs":1,"pass_rate":1.0,"fail_streak":0}
-{"ev":"self","at":"2026-11-27T12:33:30Z","mutation_items":0,"stale_mutations":[],"efficacy":1.0}
