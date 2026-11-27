@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-26-slice-sw-fx-of-the-specification-run-shipped-together",
+  "kind": "lesson",
+  "date": "2026-11-26",
+  "title": "Slice SW+FX of the specification run shipped together",
+  "body": "The seed's spec tests (SW) need the fixer code (FX) to pass, so the two ship as one change. A credential store with no database binding now rejects at once with a plain reason. The US-09 reply-gate test accepts the router naming the reply keys.",
+  "probe": "file:seed/worker/test/spec-09-throttle-halt-gate.test.js",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "lesson",
+ "title": "Slice SW+FX of the specification run shipped together",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}

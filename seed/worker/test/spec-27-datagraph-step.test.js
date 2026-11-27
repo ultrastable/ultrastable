@@ -122,6 +122,20 @@ test('US-27-R17: link leads are stored as proposed edges, at most proposals_per_
   assert.ok(open.length >= 1);
 });
 
+test('US-27-R17: the confidence of a stored lead is its Adamic-Adar score over three, at most one', async () => {
+  // two shared neighbours of degree two: score 2 / ln 2 = 2.8854, confidence 0.9618
+  let db = bareDb(); db.raw.exec(`CREATE TABLE things (id TEXT PRIMARY KEY, a TEXT, b TEXT); INSERT INTO things VALUES ('hub-a',NULL,NULL),('hub-b',NULL,NULL),('x-one','hub-a','hub-b'),('y-two','hub-a','hub-b')`);
+  await datagraphStep({ db, now: NOW });
+  const two = ids(db, `SELECT confidence FROM kg_edges WHERE status='proposed' AND src LIKE '%x-one' AND dst LIKE '%y-two'`)[0];
+  assert.ok(two && Math.abs(two.confidence - (2 / Math.log(2)) / 3) < 1e-3, `score over three, got ${two && two.confidence}`);
+  // five shared neighbours: score 7.2, so the confidence is capped at one
+  db = bareDb(); db.raw.exec(`CREATE TABLE things (id TEXT PRIMARY KEY, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT); INSERT INTO things VALUES ('hub-a',NULL,NULL,NULL,NULL,NULL),('hub-b',NULL,NULL,NULL,NULL,NULL),('hub-c',NULL,NULL,NULL,NULL,NULL),('hub-d',NULL,NULL,NULL,NULL,NULL),('hub-e',NULL,NULL,NULL,NULL,NULL),
+    ('x-one','hub-a','hub-b','hub-c','hub-d','hub-e'),('y-two','hub-a','hub-b','hub-c','hub-d','hub-e')`);
+  await datagraphStep({ db, now: NOW });
+  const five = ids(db, `SELECT confidence FROM kg_edges WHERE status='proposed' AND src LIKE '%x-one' AND dst LIKE '%y-two'`)[0];
+  assert.equal(five.confidence, 1, 'at most one');
+});
+
 test('US-27-R18: insights are stored while they hold and cleared when they stop, and the strongest orphan finding files one item that closes by the same reading', async () => {
   const db = withItems(bareDb()); fill(db, 'gadgets', 12, 'gad'); fill(db, 'widgets', 12, 'wid'); world(db);
   const r = await datagraphStep({ db, ensureItem, now: NOW });
@@ -212,4 +226,84 @@ test('US-27-R23: every read is bounded: a short search term answers nothing, res
   const n = await readNode(db, 'hubs:hub-x', O); assert.ok(n.edges.length <= 60 && n.edges.length > 0); assert.ok(n.neighbors.length <= 60);
   assert.equal(await readNode(db, 'nope:nothing', O), null);
   assert.ok((await readInsights(db, { ...O, limit: 500 })).insights.length <= 200);
+});
+
+test('US-27-R23: insights are read at most 200 at a time, strongest first, however many are open', async () => {
+  const db = bareDb(); for (const q of DATAGRAPH_DDL) db.raw.exec(q);
+  const ins = db.raw.prepare(`INSERT INTO kg_insights (id, kind, subject, text, score, prediction, probe, state, first_seen, last_seen) VALUES (?,?,?,?,?,?,?,'open',?,?)`);
+  for (let i = 0; i < 250; i++) ins.run(`orphans:k${String(i).padStart(3, '0')}`, 'orphans', `k${i}`, 'text', i / 1000, 'p', 'datagraph:x', '2026-11-25T00:00:00Z', '2026-11-25T00:00:00Z');
+  const r = await readInsights(db, { open: true, limit: 500 });
+  assert.equal(r.insights.length, 200, 'capped at 200 although 250 are open');
+  assert.equal(r.insights[0].id, 'orphans:k249', 'strongest first');
+  assert.equal((await readInsights(db, { open: true })).insights.length, 50, 'the default is 50');
+});
+
+// Defect 7 of US-SPEC-27 section 7, fixed in 0.3.0 (seed/worker/src/datagraph.js readInsights). Before the fix a link insight was kept when its source kind
+// alone was public, and the text of a link insight and the `why` of a lead named the labels of the neighbours the pair shares, of any kind.
+test('US-27-R22: a stranger\'s link insights and link leads name no id, label or probe of a record whose kind is not public', async () => {
+  const db = bareDb();
+  db.raw.exec(`CREATE TABLE hubs (id TEXT PRIMARY KEY, name TEXT); INSERT INTO hubs VALUES ('hub-a','Hub A'),('hub-b','Hub B');
+    CREATE TABLE apub (id TEXT PRIMARY KEY, title TEXT, h1 TEXT, h2 TEXT); INSERT INTO apub VALUES ('pub-1','Public one','hub-a','hub-b');
+    CREATE TABLE zpriv (id TEXT PRIMARY KEY, title TEXT, h1 TEXT, h2 TEXT); INSERT INTO zpriv VALUES ('priv-1','Secret thing','hub-a','hub-b');`);
+  await datagraphStep({ db, now: NOW });
+  const owner = JSON.stringify(await readInsights(db, { open: true }));
+  for (const s of ['link:apub:pub-1|zpriv:priv-1', 'Secret thing', 'Hub A']) assert.ok(owner.includes(s), `the owner sees ${s}: the pair is planted`);
+  for (const publicKinds of [['apub'], ['apub', 'hubs']]) {
+    const seen = JSON.stringify(await readInsights(db, { publicKinds }));
+    for (const secret of ['zpriv', 'priv-1', 'Secret thing']) assert.ok(!seen.includes(secret), `publicKinds ${publicKinds}: "${secret}" reached a stranger`);
+  }
+  // both ends public: the insight and the lead are shown, worded with the number of shared neighbours and none of their labels, public or not
+  const both = await readInsights(db, { publicKinds: ['apub', 'hubs'] });
+  const li = both.insights.find(i => i.id === 'link:hubs:hub-a|hubs:hub-b');
+  assert.equal(li.text, 'hubs:hub-a and hubs:hub-b share 2 shared neighbours but are not linked. A lead, not a fact: it is kept only if the data later links them.');
+  assert.equal(li.probe, 'datagraph:link:hubs:hub-a|hubs:hub-b');
+  assert.deepEqual(both.proposals.map(p => [p.src, p.dst, p.why]), [['hubs:hub-a', 'hubs:hub-b', '2 shared neighbours']]);
+  assert.ok(!JSON.stringify(both).includes('Public one'), 'the label of a shared neighbour is left out even when its kind is public');
+  // one end public and the other not: neither the insight nor the lead is shown
+  assert.deepEqual(await readInsights(db, { publicKinds: ['apub'] }), { view: 'public', insights: [], proposals: [] });
+});
+
+test('US-27-R22: a stranger gets the number of dropped tables and of read errors, never their names or the database\'s message; the owner gets both', async () => {
+  const db = bareDb(); world(db); db.raw.exec(`CREATE TABLE oauth_tokens (id TEXT PRIMARY KEY, token TEXT); INSERT INTO oauth_tokens VALUES ('gh','ghs_never')`);
+  let failing = false;
+  const flaky = { raw: db.raw, batch: s => db.batch(s), prepare: q => { if (failing && q.includes('"studies"')) { const o = { bind: () => o, all: async () => { throw new Error('disk i/o near studies.secret_col'); } }; return o; } return db.prepare(q); } };
+  await datagraphStep({ db: flaky, now: NOW }); failing = true;
+  const r = await datagraphStep({ db: flaky, now: NOW + 7 * H });
+  assert.deepEqual(r.read_errors, ['studies: disk i/o near studies.secret_col']); assert.ok(r.dropped.tables.includes('oauth_tokens'));
+  const own = await readGraph(db, { open: true }), pub = await readGraph(db), shown = await readGraph(db, { publicKinds: ['studies', 'findings'] });
+  assert.deepEqual(own.last.read_errors, r.read_errors, 'the owner reads the run row as stored'); assert.deepEqual(own.last.dropped.tables, r.dropped.tables);
+  for (const v of [pub, shown]) {
+    assert.equal(v.last.read_errors, 1); assert.equal(v.last.dropped.tables, r.dropped.tables.length);
+    assert.equal(v.last.dropped.columns, r.dropped.columns); assert.equal(v.last.dropped.nodes, r.dropped.nodes);
+    const text = JSON.stringify(v);
+    for (const s of ['oauth_tokens', 'disk i/o', 'secret_col']) assert.ok(!text.includes(s), `"${s}" reached a stranger`);
+  }
+});
+
+test('US-27-R23: a search term is cut to 80 characters', async () => {
+  const db = bareDb(); const head = 'q'.repeat(80);
+  db.raw.exec(`CREATE TABLE notes (id TEXT PRIMARY KEY, title TEXT); INSERT INTO notes VALUES ('n-1','${head} tail')`);
+  await datagraphStep({ db, now: NOW });
+  const O = { open: true };
+  assert.deepEqual((await searchGraph(db, head + 'z'.repeat(20), O)).results.map(r => r.id), ['notes:n-1'], 'the first 80 characters are searched, the rest is dropped');
+});
+
+test('US-27-R23: a node\'s neighbourhood is read from at most 40 nodes and holds at most 120 nodes', async () => {
+  const spy = db => { const sql = []; return { sql, db: { raw: db.raw, batch: s => db.batch(s), prepare: q => { sql.push(q); return db.prepare(q); } } }; };
+  const O = { open: true, depth: 2 }, ring = q => /FROM kg_edges WHERE valid_to IS NULL AND \(src = \? OR dst = \?\)/.test(q), node = q => /^SELECT id, kind, label FROM kg_nodes WHERE id = \?$/.test(q);
+  // a hub with 50 spokes, each spoke with one leaf of its own: the second ring is read from 40 of the 50 spokes, so 40 leaves are reached
+  let db = bareDb();
+  db.raw.exec(`CREATE TABLE hubs (id TEXT PRIMARY KEY, name TEXT); INSERT INTO hubs VALUES ('hub-x','Hub X'); CREATE TABLE spokes (id TEXT PRIMARY KEY, name TEXT, hub_id TEXT); CREATE TABLE leaves (id TEXT PRIMARY KEY, name TEXT, spoke_id TEXT)`);
+  for (let i = 0; i < 50; i++) { const s = 'spoke-' + String(i).padStart(3, '0'); db.raw.prepare(`INSERT INTO spokes VALUES (?,?,?)`).run(s, 'spoke', 'hub-x'); db.raw.prepare(`INSERT INTO leaves VALUES (?,?,?)`).run('leaf-' + String(i).padStart(3, '0'), 'leaf', s); }
+  await datagraphStep({ db, now: NOW });
+  let s = spy(db), n = await readNode(s.db, 'hubs:hub-x', O);
+  assert.equal(s.sql.filter(ring).length, 1 + 40, 'one ring for the node, then one for each of at most 40 neighbours');
+  assert.equal(n.neighbors.filter(x => x.kind === 'leaves').length, 40); assert.equal(n.neighbors.filter(x => x.kind === 'spokes').length, 50);
+  // a hub with 60 spokes, each with two leaves: 181 nodes in reach, at most 120 are read
+  db = bareDb();
+  db.raw.exec(`CREATE TABLE hubs (id TEXT PRIMARY KEY, name TEXT); INSERT INTO hubs VALUES ('hub-x','Hub X'); CREATE TABLE spokes (id TEXT PRIMARY KEY, name TEXT, hub_id TEXT); CREATE TABLE leaves (id TEXT PRIMARY KEY, name TEXT, spoke_id TEXT)`);
+  for (let i = 0; i < 60; i++) { const sp = 'spoke-' + String(i).padStart(3, '0'); db.raw.prepare(`INSERT INTO spokes VALUES (?,?,?)`).run(sp, 'spoke', 'hub-x'); for (const t of ['a', 'b']) db.raw.prepare(`INSERT INTO leaves VALUES (?,?,?)`).run(`leaf-${t}-${String(i).padStart(3, '0')}`, 'leaf', sp); }
+  await datagraphStep({ db, now: NOW });
+  s = spy(db); n = await readNode(s.db, 'hubs:hub-x', O);
+  assert.equal(s.sql.filter(node).length, 120, 'at most 120 nodes are looked up'); assert.ok(n.neighbors.length <= 119);
 });

@@ -47,7 +47,7 @@ test('US-33-R63: the executor chain tries worker-native, then the Actions dispat
   assert.equal((await noteExecutor(makeDb(), [{ provider: 'worker-native', ok: true, detail: 'x' }])).filed, false, 'a working dispatcher files nothing');
 });
 
-test('the shipped provider list stops after the first dispatcher that answers ok (the closing probe of the executor-chain deviation in US-SPEC-33 section 7)', { todo: 'runExecutor keeps dispatching later non-observer providers while an observer follows in the list, so a worker-native success also dispatches the Actions executor' }, async () => {
+test('US-33-R75: the shipped provider list stops after the first dispatcher that answers ok (the closing probe of the executor-chain deviation in US-SPEC-33 section 7)', { todo: 'runExecutor keeps dispatching later non-observer providers while an observer follows in the list, so a worker-native success also dispatches the Actions executor' }, async () => {
   const dispatched = [];
   const stub = (p, ok) => ({ ...p, available: () => true, async dispatch() { dispatched.push(p.id); return { ok, detail: p.id }; } });
   await runExecutor({}, { providers: [stub(PROVIDERS[0], true), stub(PROVIDERS[1], true), stub(PROVIDERS[2], true)] });

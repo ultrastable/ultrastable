@@ -156,3 +156,21 @@ test('US-27-R37: zero-config extraction reads every table with a key, skips engi
   const g = await (async () => { await kg.sync(db, kg.extract(rs, kg.TABLE_MAPPERS), { tenant: 'z', now: 1 }); return kg.load(db, 'z'); })();
   assert.ok(g.edges.some(e => e.src === 'trials:1' && e.rel === 'programme' && e.dst === 'programmes:prog-a'));
 });
+
+test('US-27-R35: a link is kept by three follows and not by two, and the default is three', () => {
+  assert.equal(kg.KG_DEFAULTS.min_follows, 3);
+  const g = { nodes: new Map([['a', { id: 'a' }], ['b', { id: 'b' }]]), edges: [] }, an = { gaps: [], bridges: [] }, now = 1000;
+  const j = follows => kg.judge({ kind: 'link', subject: 'a', object: 'b', follows, due_at: now + 1 }, g, an, { now });
+  assert.deepEqual([0, 1, 2, 3, 4].map(j), ['open', 'open', 'open', 'kept', 'kept']);
+  assert.equal(kg.judge({ kind: 'link', subject: 'a', object: 'b', follows: 2, due_at: now + 1 }, g, an, { now, minFollows: 2 }), 'kept', 'the threshold is a setting');
+});
+
+test('US-27-R37: a value of fewer than four characters names no row, one of four characters does', async () => {
+  // the rule is held on both sides (the key and the value must each be four characters), so it takes breaking both to make a short value link
+  const db = tenantDb();
+  db.raw.exec(`CREATE TABLE codes (id TEXT PRIMARY KEY, name TEXT); CREATE TABLE holders (id TEXT PRIMARY KEY, name TEXT, code TEXT);
+    INSERT INTO codes VALUES ('abc','Short'),('abcd','Long'); INSERT INTO holders VALUES ('h-short','Holds short','abc'),('h-long','Holds long','abcd');`);
+  const rs = await kg.tableRecords(db), by = Object.fromEntries(rs.filter(r => r.data.table === 'holders').map(r => [r.data.key, r.data.refs]));
+  assert.deepEqual(by['h-short'], [], 'three characters: no edge');
+  assert.deepEqual(by['h-long'].map(x => [x.col, x.table, x.key]), [['code', 'codes', 'abcd']], 'four characters: an edge');
+});

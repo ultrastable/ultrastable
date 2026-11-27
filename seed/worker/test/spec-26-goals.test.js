@@ -43,6 +43,16 @@ test('US-26-R37: goals form a mission, objective, target hierarchy seeded from c
   assert.equal((await knobValues(db, 'core'))['core.k'].value, 3);
   await seedGoals(db, { goals: cfg.goals, knobs: [knob('core.k', 'core.t', { min: 4, max: 6 })] }, { now: t0 + 2 * H });
   assert.equal((await knobValues(db, 'core'))['core.k'].value, 4, 'a value outside the new bounds is clamped into them');
+  // the shipped goals have parents (checked above); a registered tenant goal MAY omit one
+  const t = await registerTenant(makeDb(), 'acme', { goals: [{ id: 'acme.t', level: 'target', statement: 's', op: '>=', target: 1, source: 'tenant' }] });
+  assert.equal(t.ok, true); assert.equal(t.created, 1);
+  // a named parent needs only the right prefix (or to be named in the same registration); validate() does not check that it exists
+  const parent = p => registerTenant(makeDb(), 'acme', { goals: [{ id: 'acme.t', parent_id: p, level: 'target', statement: 's', op: '>=', target: 1, source: 'tenant' }] });
+  for (const p of ['core.nonexistent', 'acme.nowhere']) assert.equal((await parent(p)).ok, true, `${p}: the prefix is enough`);
+  const sib = await registerTenant(makeDb(), 'acme', { goals: [{ id: 'acme.o', level: 'objective', statement: 'o' }, { id: 'acme.t', parent_id: 'acme.o', level: 'target', statement: 's', op: '>=', target: 1, source: 'tenant' }] });
+  assert.equal(sib.ok, true, 'a parent named in the same registration');
+  const other = await parent('other.x');
+  assert.equal(other.ok, false); assert.match(JSON.stringify(other), /parent must be a acme\. or core\. goal/);
 });
 
 test('US-26-R38: each tick reads every active target from its source, samples it, tracks met and streak, and retires or files an item for a goal nobody can read for 14 days', async () => {
@@ -136,6 +146,10 @@ test('US-26-R41: a knob that names a config_path overrides that value in the tic
   await db.prepare("INSERT INTO goal_knobs (id, goal_id, tenant, config_path, value, default_value, min, max, step) VALUES ('ps.k','ps.g','ps','pace.idle_runs',7,7,1,9,1)").run();
   await db.prepare("INSERT INTO goal_knobs (id, goal_id, tenant, config_path, value, default_value, min, max, step) VALUES ('core.bad','core.x','core','nodot',9,9,1,9,1)").run();
   const c2 = await withKnobs(db, base); assert.equal(c2.pace.idle_runs, 2, "a tenant's knob never overrides core's config"); assert.equal(c2.nodot, undefined);
+  await db.prepare("INSERT INTO goal_knobs (id, goal_id, tenant, config_path, value, default_value, min, max, step) VALUES ('core.deep','core.x','core','pace.idle_runs.extra',9,9,1,9,1)").run();
+  await db.prepare("UPDATE goal_knobs SET value = 5 WHERE id = 'core.pace.idle_runs'").run();
+  const c3 = await withKnobs(db, base); assert.equal(c3.pace.idle_runs, 9, 'a path of three segments applies its first two and drops the rest, as the section states');
+  assert.equal(c3.pace.extra, undefined); assert.equal(base.pace.idle_runs, 4);
 });
 
 test('US-26-R42: a core goal no knob can move files one item that closes itself when the goal is met; a tenant goal never files into core', async () => {
@@ -176,7 +190,22 @@ test('US-26-R43: a goal held met for achieve_after readings proposes one stretch
   assert.equal((await one(db, "SELECT target FROM goals WHERE id = 'core.b+'")).target, 0.76, 'a lower-is-better goal is tightened to 80 percent');
   assert.equal((await run(db, cfg, t0 + 2 * H)).stretch.length, 0, 'the day cap holds');
   assert.equal((await run(db, cfg, t0 + 2 * H + DAY)).stretch.length, 1, 'the third goal is stretched on the next day');
+  const ap = await one(db, "SELECT met, streak, stretch_id FROM goals WHERE id = 'core.a+'");
+  assert.ok(ap.met === 1 && ap.streak >= 2, 'the stretch goal is itself held met');
+  assert.equal(ap.stretch_id, null, 'a stretch goal proposes none of its own: its stretch id would be its own id');
+  assert.equal((await one(db, "SELECT COUNT(*) n FROM goals WHERE id LIKE '%++'")).n, 0);
   vals.x = vals.y = vals.z = 0.2;
+  // no stretch for a target of 0 (a goal held at '<= 0' stays there) or for '=' (there is no harder direction)
+  vals.w = 0;
+  const zero = { control: { achieve_after: 2 }, goals: [goal('core.drops', { spec: 'w', op: '<=', target: 0 }), goal('core.eq', { spec: 'w', op: '=', target: 0 })], knobs: [] };
+  const zdb = makeDb(); let proposed = 0;
+  for (let i = 0; i < 6; i++) proposed += (await run(zdb, zero, t0 + i * H)).stretch.length;
+  for (const id of ['core.drops', 'core.eq']) {
+    const g = await one(zdb, 'SELECT met, streak, stretch_id FROM goals WHERE id = ?', id);
+    assert.equal(g.met, 1, `${id} is met`); assert.ok(g.streak >= 2, `${id} held met`); assert.equal(g.stretch_id, null, `${id} proposes no stretch`);
+  }
+  assert.equal(proposed, 0); assert.equal(zdb.raw.prepare("SELECT COUNT(*) n FROM goals WHERE origin = 'system'").get().n, 0);
+  vals.w = 0.2;
 });
 
 test('US-26-R44: a goal still unmet after its deadline is marked missed once, with one audit row', async () => {

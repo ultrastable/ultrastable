@@ -10,12 +10,13 @@ const by = (decisions, id) => decisions.find(d => d.id === id);
 
 test('US-26-R74: a loop whose last runs produced nothing backs off, doubling its cadence up to its maximum, and an event loop polls only as a fallback', () => {
   assert.deepEqual(DEFAULTS, { min_s: 300, max_s: 86400, idle_runs: 6, safety: 0.6, factor: 2 });
-  const L = [loop({ id: 'idle', outputs: 0 }), loop({ id: 'young', runs: 5, outputs: 0 }), loop({ id: 'cap', cadence_s: 60000, outputs: 0 }), loop({ id: 'hook', event: true, cadence_s: 600 }), loop({ id: 'own', cadence_s: 7200, outputs: 0, max_s: 9000 })];
+  const L = [loop({ id: 'idle', outputs: 0 }), loop({ id: 'young', runs: 5, outputs: 0 }), loop({ id: 'cap', cadence_s: 60000, outputs: 0 }), loop({ id: 'hook', event: true, cadence_s: 600 }), loop({ id: 'own', cadence_s: 7200, outputs: 0, max_s: 9000 }), loop({ id: 'top', cadence_s: 86400, outputs: 0 })];
   const p = plan(L, { requests: 1e6 });
   assert.deepEqual(by(p, 'idle'), { id: 'idle', from_s: 3600, to_s: 7200, action: 'back_off', why: '24 runs, 0 outputs' });
   assert.equal(by(p, 'young').action, 'hold', 'fewer than idle_runs runs is not yet idle');
   assert.equal(by(p, 'cap').to_s, 86400, 'never past max_s'); assert.equal(by(p, 'hook').action, 'event'); assert.equal(by(p, 'hook').to_s, 86400);
   assert.equal(by(p, 'own').to_s, 9000, "a loop's own max_s overrides the default");
+  assert.deepEqual([by(p, 'top').action, by(p, 'top').to_s], ['hold', 86400], 'an idle loop already at its maximum holds');
   assert.deepEqual(p.map(d => d.id), L.map(l => l.id), 'one decision per loop, in the order given');
 });
 

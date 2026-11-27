@@ -108,11 +108,13 @@ export async function measureCriticality(db, t, now) {
 }
 
 // Candidate predicates, in thresholds.origination.order. Each is true when its problem is present.
+// Q-TENANT-row-isolation (US-26-R28): the unowned backlog is this runtime's own (tenant_id NULL or its slug), the same rows the items:unowned gap reads,
+// so another tenant's unowned item never makes this runtime originate work for it.
 const CANDIDATES = {
   cost_cut: async (m, t) => m.cap_breached || m.spend_units > t.origination.spend_budget_units,
   flaky_deploy: async (m, t) => m.fail_rate > t.origination.max_fail_rate,
-  unowned_backlog: async (m, t, db) => Boolean(await first(db,
-    `SELECT 1 AS x FROM items WHERE status IN ('open','ready') AND owner_role NOT IN (SELECT role FROM roles) AND id NOT LIKE 'ORIGIN-%' LIMIT 1`)),
+  unowned_backlog: async (m, t, db, tenant = '') => Boolean(await first(db,
+    `SELECT 1 AS x FROM items WHERE status IN ('open','ready') AND owner_role NOT IN (SELECT role FROM roles) AND id NOT LIKE 'ORIGIN-%' AND (tenant_id IS NULL OR tenant_id = ?) LIMIT 1`, tenantOf(tenant))),
   generic: async () => true,
 };
 
@@ -121,7 +123,7 @@ export async function originate(db, t, m, ctx, ensureItem) {
   // While a spend cap is breached only the cost cut may be originated: no new work that spends.
   const order = m.cap_breached ? ['cost_cut'] : t.origination.order;
   for (const kind of order) {
-    if (!(await CANDIDATES[kind](m, t, db))) continue;
+    if (!(await CANDIDATES[kind](m, t, db, tenantOf(ctx)))) continue;
     const pre = `ORIGIN-${kind}-${day}`;
     const open = await first(db, `SELECT id FROM items WHERE id >= ? AND id < ? AND status NOT IN ('done','superseded','cancelled') LIMIT 1`, pre, pre + '\uffff');  // READ-BUDGET-9: a primary-key range; LIKE cannot use the index and read every item (578 rows a call, measured)
     if (open) return { kind, id: open.id, created: false }; // today's item for this problem is still at the head
