@@ -611,6 +611,42 @@
    "state": "4of6",
    "source": "site/research-data.js",
    "url": "https://ultrastable.io/research/safety-by-limits-2026"
+  },
+  {
+   "id": "ev:pv-2aec27fa39af",
+   "date": "2026-11-27",
+   "text": "Shipped by the system itself: docs(handoff): what the resumed specification run shipped, and what it did not (SHIP-PLAN-1). https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-9630e3e87a74",
+   "date": "2026-11-27",
+   "text": "Shipped by the system itself: feat(foundation): hits window, owner-action wording and spec tests. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-be2b32e88314",
+   "date": "2026-11-27",
+   "text": "Shipped by the system itself: feat(core): claims, elicit, vault, sla and walkthrough reconciled with their requirements. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-0b92005e4dc4",
+   "date": "2026-11-27",
+   "text": "Shipped by the system itself: feat(runtime): console and tick routes, launcher bundle and platform adapters. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
   }
  ]
 }
