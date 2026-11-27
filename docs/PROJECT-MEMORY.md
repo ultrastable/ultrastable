@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: feat(seed): Pérez López doctrine guard rules with drills (#2625)
+- 2026-11-27: feat(seed): reference homeostat harness with Ashby drills (#2621)
 - 2026-11-27: feat(ashby): bind Ashby's concept index to the code that carries it (#2617)
 - 2026-11-27: feat: wire the build-out modules and close the small module defects (integration 1) (#2607)
 - 2026-11-27: fix: carry the round-one fixes the early slices merged without (RC, WD1) (#2606)
