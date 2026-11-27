@@ -2074,6 +2074,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Ashby's journal runs as kernel mechanisms (ASHBY-KERNEL-1, Rowan 2026-11-27).** \"Implement Ashby's journal and concept index into",
+   "detail": "",
+   "how": "file:seed/worker/src/ashby.js + file:seed/worker/src/goals.js + file:seed/worker/src/regulation.js + file:doctrine/ashby-concepts.json + file:seed/worker/test/ashby.test.js + file:seed/worker/test/ashby-loop.test.js",
+   "id": "cited-4c3ff11885",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2965,6 +2974,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Ashby's journal runs as kernel mechanisms (ASHBY-KERNEL-1, Rowan 2026-11-27).** \"Implement Ashby's journal and concept index into",
+   "detail": "",
+   "how": "file:seed/worker/src/ashby.js + file:seed/worker/src/goals.js + file:seed/worker/src/regulation.js + file:doctrine/ashby-concepts.json + file:seed/worker/test/ashby.test.js + file:seed/worker/test/ashby-loop.test.js",
+   "id": "mirror-a5eb80dc6b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -3649,7 +3667,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 129 Python and 1078 Worker tests",
+   "claim": "seed-tests: 129 Python and 1072 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3658,7 +3676,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 1078 Worker tests",
+   "claim": "seed-worker-tests: 1072 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3917,7 +3935,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 432,
-  "total": 432
+  "pass": 434,
+  "total": 434
  }
 };
