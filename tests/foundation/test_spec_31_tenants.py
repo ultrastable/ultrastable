@@ -537,16 +537,16 @@ class SyncLoop(unittest.TestCase):
         self.assertEqual(tenantsync.file_items(d, m), [], "an item that is open is not filed again")
         body = json.loads((d / "docs/issues/Q-SYNC-DRIFT-t.json").read_text())["body"]
         self.assertIn("**Closing probe:** cmd:python3 -m foundation tenantsync --probe drift:t", body)
-        self.assertFalse(tenantsync.probe(d, "drift:t"))
-        self.assertFalse(tenantsync.probe(d, "upstream"))
-        self.assertFalse(tenantsync.probe(d, "nonsense:t"))
+        self.assertFalse(tenantsync.probe(d, "drift:t", self.NOW))
+        self.assertFalse(tenantsync.probe(d, "upstream", self.NOW))
+        self.assertFalse(tenantsync.probe(d, "nonsense:t", self.NOW))
 
     def test_US_31_R25_a_tenant_back_in_sync_or_inside_the_limit_is_ok_and_a_lift_that_reached_the_core_counts(self):
         d = self.world([{"at": self.ago(days=1), "tenant": "t", "status": "in-sync"}, {"at": self.ago(hours=2), "tenant": "t", "status": "needs-pr", "revendor": {"changed": 1}, "send_up": ["add x"]},
                         {"at": self.ago(hours=1), "tenant": "t", "action": "core-pr", "result": "https://github.com/o/c/pull/9"}])
         m = tenantsync.metrics(d, self.NOW)
         self.assertEqual((m["tenants"]["t"]["ok"], m["upstream_prs_30d"], m["upstream_ok"]), (True, 1, True))
-        self.assertTrue(tenantsync.probe(d, "drift:t"))
+        self.assertTrue(tenantsync.probe(d, "drift:t", self.NOW))
         self.assertEqual(tenantsync.file_items(d, m), [])
         self.assertEqual(tenantsync.metrics(self.world([]), self.NOW)["tenants"]["t"], {"status": "unmeasured", "drift_files": 0, "days_behind": 0, "ok": False})
 
