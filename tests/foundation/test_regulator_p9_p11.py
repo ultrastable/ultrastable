@@ -24,8 +24,8 @@ class Prefix(unittest.TestCase):
 
 class Hook(unittest.TestCase):
     def test_hook_payload_lands_in_ledger(self):
-        import os, tempfile
-        db = os.path.join(tempfile.mkdtemp(), "l.sqlite")
+        from _repo import scratch
+        db = str(scratch() / "l.sqlite")
         payload = {"session_id": "s1", "tool_name": "Read", "tool_input": {"file_path": "a"}, "tool_response": "x" * 400}
         with mock.patch("sys.stdin", io.StringIO(json.dumps(payload))):
             cli.main(["hook", "--db", db])
