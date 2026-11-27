@@ -60,7 +60,8 @@ The console shows the manifest's `enable_gate` text as a decision card (what the
 | US-21-R13 unsubscribe and bounce immediate | BUILT | `unsubscribe`, `recordBounce` |
 | s7 subscribe, confirm, unsubscribe, send, bounces | BUILT | `service.js` |
 | One-click unsubscribe header | BUILT | `List-Unsubscribe`, `List-Unsubscribe-Post` |
-| Webhook intake of provider bounce events | PLANNED (`recordBounce` is the entry; the HTTP route is not wired) | |
-| Composing messages from the claims registry (US-SPEC-22) | PLANNED (caller supplies text) | |
+| Webhook intake of provider bounce events | BUILT: `core/packs/bounce.js` (`POST /packs/bounces` behind `x-bounce-token` through `packs.routes`), delivered to this pack by the manifest hook `hooks.bounce` -> `loops.js` `onBounce` (US-21-R21) | `core/packs/bounce.js`, `loops.js`, `email.test.js` |
+| Composing messages from the claims registry (US-SPEC-22) | BUILT: the `compose` loop queues a newsletter from fresh public claims after a separate checker passes it | `compose.js`, `compose.test.js` |
 | Per-subscriber unsubscribe preference center | NOT COVERED | |
-| Applying the migration, scheduling `send` on a real Worker cron | PLANNED (host) | |
+| Applying the migration, scheduling `send` | BUILT: `enablePack` applies the manifest migrations once (`core/packs/loader.js`) and the host's `packs` tick step runs `send` (`core/org/index.js`); the real Worker cron is the host's | `core/packs/loader.js`, `core/packs/loader.test.js` |
+| Read-only provider token check | BUILT: `probe()` on the Cloudflare adapter, and on the relay adapter when `verifyEndpoint` is configured (US-21-R25) | `channels/*.js`, `probe.test.js` |

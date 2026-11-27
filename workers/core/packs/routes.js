@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// The person-facing pack surface (US-21-R18): the one place a person sees a pack's enable card, enables or disables it, engages a
+// The person-facing pack surface (US-21-R30): the one place a person sees a pack's enable card, enables or disables it, engages a
 // kill switch, and approves or rejects a queued send. Plain JSON over fetch-style Request/Response, so any host can mount it.
 // Default deny: authorize(request) must return the actor's name (a string) or the route answers 401. Every mutation is recorded in
 // packs_actions with the actor; no response carries a recipient or message content beyond the decision card's own text.

@@ -264,7 +264,7 @@ test('US-11-R12: collisions per minute are measured from the enabled schedules',
   await assert.rejects(() => fleet.setCron(ctx, { name: 'bad', expr: 'every minute', task_id: 't' }));
 });
 
-test('US-11-R12: stagger moves periodic schedules apart, keeps period and other fields, and a second run changes nothing', async () => {
+test('US-11-R12, US-11-R18 and US-11-T08: stagger moves periodic schedules apart, keeps period and other fields, and a second run changes nothing', async () => {
   const { ctx } = mk();
   const win = { from: T('2026-03-02 12:00:00'), to: T('2026-03-03 12:00:00') };
   await fleet.setCron(ctx, { name: 'a', expr: '*/10 * * * *', task_id: 't' });
@@ -294,7 +294,7 @@ test('US-11-R12: stagger moves periodic schedules apart, keeps period and other 
   assert.deepEqual((await fleet.stagger(ctx, { ...win, apply: true })).changes, []);
 });
 
-test('US-11-R12: auto_stagger in step is off by default; on, the step staggers before it dispatches; literals move only when asked', async () => {
+test('US-11-R12 and US-11-R18: auto_stagger in step is off by default; on, the step staggers before it dispatches; literals move only when asked', async () => {
   const { ctx } = mk(); inline(ctx);
   await fleet.setTask(ctx, { id: 't', type: 'sql', definition: { statement: 'SELECT 1 AS x' } });
   await fleet.setTask(ctx, { id: 'u', type: 'sql', definition: { statement: 'SELECT 2 AS x' } });
@@ -359,7 +359,7 @@ test('US-11-R02: deployed state is reconciled against the registry; one state pe
   assert.equal((await fleet.reconcile({ ...ctx, deployed: undefined })).reason, 'no_deployed_port');
 });
 
-test('US-11-R14: event-triggered scheduling: an accepted event starts its tasks once; rejected and repeated events start nothing', async () => {
+test('US-11-R23: event-triggered scheduling: an accepted event starts its tasks once; rejected and repeated events start nothing', async () => {
   const { ctx } = mk(); inline(ctx);
   await fleet.setTask(ctx, { id: 'recount', type: 'sql', definition: { statement: 'SELECT COUNT(*) AS n FROM items' } });
   await fleet.setTrigger(ctx, { id: 'on-merge', event_kind: 'repo.merged', task_id: 'recount' });
@@ -694,7 +694,7 @@ test('US-11-R22: the fleet envelope round-trips as a CloudEvents 1.0 event; a ta
 
 // ---- round 2 additions: findings of the verification of US-SPEC-11 --------------------------------
 
-test('US-11-R12: moving a schedule that already fired this hour does not fire it again in that hour', async () => {
+test('US-11-R12: the hour-minute planner: moving a schedule that already fired this hour does not fire it again in that hour', async () => {
   const { ctx, at } = mk(); inline(ctx);
   await fleet.setTask(ctx, { id: 't', type: 'sql', definition: { statement: 'SELECT 1 AS x' } });
   await fleet.setCron(ctx, { name: 'a', expr: '0 * * * *', task_id: 't' });
@@ -754,4 +754,134 @@ test('US-11-R02: a paused worker is paused even when its health is bad: paused i
   assert.deepEqual([r.states.p, r.states.q], ['paused', 'degraded']);
   assert.equal(await one(ctx, `SELECT id FROM items WHERE id LIKE 'FLEET-DEGRADED-p'`), null);
   assert.ok(await one(ctx, `SELECT id FROM items WHERE id LIKE 'FLEET-DEGRADED-q'`));
+});
+
+// ---- round 3 additions: one writer for both stagger planners ------------------------------------
+
+test('US-11-R12: the day-window planner: a */30 pair moved after it fired does not fire twice in the half hour, and an unfired schedule stays due', async () => {
+  const { ctx, at } = mk(); inline(ctx);
+  await fleet.setTask(ctx, { id: 't', type: 'sql', definition: { statement: 'SELECT 1 AS x' } });
+  await fleet.setCron(ctx, { name: 'a', expr: '*/30 * * * *', task_id: 't' });
+  await fleet.setCron(ctx, { name: 'b', expr: '*/30 * * * *', task_id: 't' });
+  const fired = async name => (await all(ctx, `SELECT ts_start FROM fleet_runs WHERE cron_name = ? ORDER BY run_id`, name)).map(r => r.ts_start);
+  at('2026-03-02 12:00:00');
+  assert.deepEqual((await fleet.dispatch(ctx)).fired.map(f => f.cron), ['a', 'b']);
+  at('2026-03-02 12:01:00');
+  const moved = await fleet.stagger(ctx, { apply: true });
+  assert.deepEqual(moved.changes.map(c => [c.name, c.to]), [['b', '1,31 * * * *']]);
+  assert.equal((await one(ctx, `SELECT next_fire FROM fleet_crons WHERE name = 'b'`)).next_fire, '2026-03-02 12:31:00'); // the first new slot at or after the old next slot
+  for (const t of ['12:02', '12:30', '12:31']) { at(`2026-03-02 ${t}:00`); await fleet.dispatch(ctx); }
+  assert.deepEqual(await fired('b'), ['2026-03-02 12:00:00', '2026-03-02 12:31:00']);   // once in each half hour, never at 12:02
+  assert.deepEqual(await fired('a'), ['2026-03-02 12:00:00', '2026-03-02 12:30:00']);
+  // a schedule that has not fired yet (next_fire null: due) stays due after a move
+  await fleet.setCron(ctx, { name: 'c', expr: '*/30 * * * *', task_id: 't' });
+  const again = await fleet.stagger(ctx, { apply: true });
+  assert.deepEqual(again.changes.map(c => c.name), ['c']);
+  assert.equal((await one(ctx, `SELECT next_fire FROM fleet_crons WHERE name = 'c'`)).next_fire, null);
+});
+
+test('US-11-R12: the day-window planner never moves a pinned schedule, moves a declared procedure with its schedule and logs every rewrite', async () => {
+  const { ctx } = mk({ config: { auto_stagger: true, stagger_pin: ['b'] } }); inline(ctx);
+  await fleet.setTask(ctx, { id: 't', type: 'sql', definition: { statement: 'SELECT 1 AS x' } });
+  for (const name of ['a', 'b', 'c']) await fleet.setCron(ctx, { name, expr: '*/10 * * * *', task_id: 't' });
+  await fleet.declareProcedure(ctx, { name: 'c', expr: '*/10 * * * *', schedulers: ['dispatcher'] });
+  const s = await fleet.step(ctx);
+  assert.deepEqual([s.stagger_planner, s.staggered], ['day', 2]);
+  const rows = Object.fromEntries((await all(ctx, `SELECT name, expr FROM fleet_crons`)).map(r => [r.name, r.expr]));
+  assert.deepEqual(rows, { a: '1,11,21,31,41,51 * * * *', b: '*/10 * * * *', c: '2,12,22,32,42,52 * * * *' });   // the pinned name keeps its minutes; the others move off them
+  assert.equal((await one(ctx, `SELECT expr FROM fleet_procedures WHERE name = 'c'`)).expr, rows.c);           // the dead-man check expects the new slots
+  const log = await all(ctx, `SELECT name, old_expr, new_expr, collisions_before, collisions_after FROM fleet_stagger_log ORDER BY id`);
+  assert.deepEqual(log.map(l => [l.name, l.old_expr, l.new_expr]), [['a', '*/10 * * * *', rows.a], ['c', '*/10 * * * *', rows.c]]);
+  assert.ok(log.every(l => l.collisions_before > 0 && l.collisions_after === 0));
+  const plan = await fleet.stagger(ctx, {});
+  assert.deepEqual([plan.changes, plan.pinned], [[], ['b']]);
+  assert.equal((await fleet.step(ctx)).staggered, 0);
+  assert.equal((await one(ctx, `SELECT COUNT(*) AS n FROM fleet_stagger_log`)).n, 2);                          // a second tick rewrites nothing
+});
+
+test('US-11-R12: with both planners switched on one runs per tick, so a second tick rewrites nothing', async () => {
+  const { ctx, at } = mk({ config: { auto_stagger: true, stagger_auto: true } }); inline(ctx);
+  await fleet.setTask(ctx, { id: 't', type: 'sql', definition: { statement: 'SELECT 1 AS x' } });
+  for (const [name, expr] of [['a', '*/10 * * * *'], ['b', '*/10 * * * *'], ['daily', '0 3 * * *'], ['h', '0 * * * *']]) await fleet.setCron(ctx, { name, expr, task_id: 't' });
+  const first = await fleet.step(ctx);
+  assert.equal(first.stagger_planner, 'day');
+  const exprs = async () => (await all(ctx, `SELECT name, expr FROM fleet_crons ORDER BY name`)).map(r => `${r.name}=${r.expr}`);
+  const after = await exprs(), logged = (await one(ctx, `SELECT COUNT(*) AS n FROM fleet_stagger_log`)).n;
+  assert.ok(logged > 0);
+  for (const t of ['12:13', '12:23', '12:33']) { at(`2026-03-02 ${t}:00`); assert.equal((await fleet.step(ctx)).staggered, 0); }
+  assert.deepEqual(await exprs(), after);
+  assert.equal((await one(ctx, `SELECT COUNT(*) AS n FROM fleet_stagger_log`)).n, logged);
+  const hourOnly = await fleet.step({ ...ctx, config: { stagger_auto: true } });
+  assert.equal(hourOnly.stagger_planner, 'hour');
+});
+
+// ---- round 4 additions: the dead-man check after a stagger move ---------------------------------
+
+// Two schedules with declared procedures, dispatched every 10 minutes from 11:00 to `until`, moved apart at 12:01 by one planner.
+// `silentFrom` switches b's dispatcher off from that minute on, so b's scheduler goes silent after the move.
+async function movedPair(planner, { until, silentFrom = null }) {
+  const { ctx, at } = mk(); inline(ctx);
+  const expr = planner === 'day' ? '*/30 * * * *' : '0 * * * *';
+  await fleet.setTask(ctx, { id: 't', type: 'sql', definition: { statement: 'SELECT 1 AS x' } });
+  for (const name of ['a', 'b']) { await fleet.setCron(ctx, { name, expr, task_id: 't' }); await fleet.declareProcedure(ctx, { name, expr, schedulers: ['dispatcher'] }); }
+  let moved = null;
+  for (let t = T('2026-03-02 11:00:00'); t <= T(until); t += 60000) {
+    at(new Date(t).toISOString().slice(0, 19).replace('T', ' '));
+    if (t === T('2026-03-02 12:01:00')) moved = planner === 'day' ? await fleet.stagger(ctx, { apply: true }) : await fleet.staggerHourly(ctx, { apply: true });
+    if (silentFrom && t === T(silentFrom)) await ctx.db.prepare(`UPDATE fleet_crons SET enabled = 0 WHERE name = 'b'`).run();
+    if ((t / 60000) % 10 === 0) await fleet.dispatch(ctx);
+  }
+  const dm = await fleet.deadman(ctx, { from: T('2026-03-02 11:00:00'), to: T(until) });
+  return { ctx, moved, dm, alerts: dm.alerts.map(a => [a.procedure, a.slot, a.kind]), b: dm.procedures.find(p => p.procedure === 'b') };
+}
+
+test('US-11-R08 and US-11-R12: the day-window planner: the slot a move leaves unfired on purpose is not judged; a silence from the first new slot still stops', async () => {
+  const ok = await movedPair('day', { until: '2026-03-02 13:10:00' });
+  assert.deepEqual(ok.moved.changes.map(c => [c.name, c.to]), [['b', '1,31 * * * *']]);
+  assert.deepEqual(ok.alerts, []);                                             // b ran at 12:00 and next at 12:40: the 12:01 slot was skipped by the move
+  assert.deepEqual([ok.b.slots, ok.b.skipped, ok.b.reliability.dispatcher], [3, 1, 1]);
+  assert.deepEqual({ ...await one(ok.ctx, `SELECT procedure, expr, moved_at, first_fire FROM fleet_stagger_skips`) },
+    { procedure: 'b', expr: '1,31 * * * *', moved_at: '2026-03-02 12:01:00', first_fire: '2026-03-02 12:31:00' });
+  const silent = await movedPair('day', { until: '2026-03-02 13:10:00', silentFrom: '2026-03-02 12:32:00' });
+  assert.deepEqual(silent.alerts, [['b', '2026-03-02 12:31:00', 'stop']]);       // the first slot the move left to fire is judged
+  const later = await movedPair('day', { until: '2026-03-02 13:40:00', silentFrom: '2026-03-02 12:41:00' });
+  assert.deepEqual(later.alerts, [['b', '2026-03-02 13:01:00', 'stop']]);        // silent after its first new firing (12:40): one stop
+});
+
+test('US-11-R08 and US-11-R12: the hour-minute planner: the slot a move leaves unfired on purpose is not judged; a silence from the first new slot still stops', async () => {
+  const ok = await movedPair('hour', { until: '2026-03-02 14:10:00' });
+  assert.deepEqual(ok.moved.changes.map(c => [c.name, c.to]), [['b', '1 * * * *']]);
+  assert.deepEqual(ok.alerts, []);                                             // b ran at 12:00 and next at 13:10: the 12:01 slot was skipped by the move
+  assert.deepEqual([ok.b.slots, ok.b.skipped, ok.b.reliability.dispatcher], [2, 1, 1]);
+  const silent = await movedPair('hour', { until: '2026-03-02 14:10:00', silentFrom: '2026-03-02 12:32:00' });
+  assert.deepEqual(silent.alerts, [['b', '2026-03-02 13:01:00', 'stop']]);       // the first slot the move left to fire is judged
+});
+
+test('US-11-R08 and US-11-R12: a schedule moved while it was still due skips nothing, and a planner switched on in step for a firing fleet files no false stop', async () => {
+  // still due at the move (next_fire null): it fires at the next dispatch, so no slot is left unfired and nothing is skipped
+  const { ctx, at } = mk(); inline(ctx);
+  await fleet.setTask(ctx, { id: 't', type: 'sql', definition: { statement: 'SELECT 1 AS x' } });
+  for (const name of ['a', 'b']) { await fleet.setCron(ctx, { name, expr: '*/30 * * * *', task_id: 't' }); await fleet.declareProcedure(ctx, { name, expr: '*/30 * * * *', schedulers: ['dispatcher'] }); }
+  at('2026-03-02 12:01:00'); await fleet.stagger(ctx, { apply: true });
+  assert.equal((await one(ctx, `SELECT next_fire FROM fleet_crons WHERE name = 'b'`)).next_fire, null);
+  assert.equal((await one(ctx, `SELECT COUNT(*) AS n FROM fleet_stagger_skips`)).n, 0);
+  // a schedule with no declared procedure at its old expression moves alone: the dead-man check has nothing to skip for it
+  const lone = mk(); inline(lone.ctx);
+  await fleet.setTask(lone.ctx, { id: 't', type: 'sql', definition: { statement: 'SELECT 1 AS x' } });
+  for (const name of ['a', 'b']) await fleet.setCron(lone.ctx, { name, expr: '*/30 * * * *', task_id: 't' });
+  lone.at('2026-03-02 12:00:00'); await fleet.dispatch(lone.ctx);
+  lone.at('2026-03-02 12:01:00'); await fleet.stagger(lone.ctx, { apply: true });
+  assert.equal((await one(lone.ctx, `SELECT COUNT(*) AS n FROM fleet_stagger_skips`)).n, 0);
+  // through step: a */30 pair fires for an hour, then auto_stagger is switched on at 12:10
+  const s = mk(); inline(s.ctx);
+  await fleet.setTask(s.ctx, { id: 't', type: 'sql', definition: { statement: 'SELECT 1 AS x' } });
+  for (const name of ['a', 'b']) { await fleet.setCron(s.ctx, { name, expr: '*/30 * * * *', task_id: 't' }); await fleet.declareProcedure(s.ctx, { name, expr: '*/30 * * * *', schedulers: ['dispatcher'] }); }
+  for (let m = 0; m <= 180; m += 10) {
+    s.at(new Date(T('2026-03-02 11:00:00') + m * 60000).toISOString().slice(0, 19).replace('T', ' '));
+    s.ctx.config = m >= 70 ? { auto_stagger: true } : {};
+    await fleet.step(s.ctx);
+  }
+  assert.equal((await one(s.ctx, `SELECT expr FROM fleet_procedures WHERE name = 'b'`)).expr, '1,31 * * * *');
+  const items = (await all(s.ctx, `SELECT id FROM items WHERE id LIKE 'DEADMAN-%' ORDER BY id`)).map(r => r.id);
+  assert.deepEqual(items.filter(id => !/-2026030210\d\d$/.test(id)), []);    // only the slots before the first tick (10:00, 10:30) had no record
 });

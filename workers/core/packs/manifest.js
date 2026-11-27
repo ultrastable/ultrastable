@@ -43,6 +43,11 @@ function scanDefaults(value, path, tenantNames, errors) {
 const isStr = v => typeof v === 'string' && v.trim() !== '';
 const isStrList = v => Array.isArray(v) && v.every(isStr);
 
+// A loop or hook entry must be a file the source scan reads (sandbox.js scanPackSource): a .js or .mjs file inside the pack, not a test file and
+// not under node_modules, so the host never runs code the scan did not see.
+const scannedEntry = (mod) => !/^([a-z]:|[\\/])/i.test(mod) && !mod.split(/[\\/]/).includes('..') && !mod.split(/[\\/]/).includes('node_modules')
+  && /\.(m?js)$/.test(mod) && !/\.test\.m?js$/.test(mod);
+
 export function parseEntry(entry) {
   if (typeof entry === 'string') { const [module, exp = 'default'] = entry.split('#'); return { module, export: exp }; }
   if (entry && typeof entry === 'object') return { module: entry.module, export: entry.export || 'default' };
@@ -104,7 +109,7 @@ export function validateManifest(m, { tenantNames = [], readProbeCheck = null } 
     if (!Number.isInteger(l.every_ticks) || l.every_ticks < 1) e.push(`${w}.every_ticks must be a positive integer`);
     const en = parseEntry(l.entry);
     if (!en || !isStr(en.module)) e.push(`${w}.entry is required (module and export)`);
-    else if (/^([a-z]:|[\\/])/i.test(en.module) || en.module.split(/[\\/]/).includes('..') || !/\.(m?js)$/.test(en.module)) e.push(`${w}.entry must be a .js file inside the pack directory`);
+    else if (!scannedEntry(en.module)) e.push(`${w}.entry must be a .js file inside the pack directory, not a test file or a dependency (the source scan reads only those, US-21-R27)`);
     if (typeof l.outbound !== 'boolean') e.push(`${w}.outbound must be true or false`);
   });
   const anyOutbound = loops.some(l => l && l.outbound === true);
@@ -118,8 +123,8 @@ export function validateManifest(m, { tenantNames = [], readProbeCheck = null } 
       if (!cap || !Number.isInteger(cap.per_day) || cap.per_day < 0 || !Number.isInteger(cap.per_week) || cap.per_week < 0) e.push(`outbound.caps.${ch} needs integer per_day and per_week`);
     }
     if (o.hosts !== undefined) {
-      if (!Array.isArray(o.hosts) || !o.hosts.length) e.push('outbound.hosts must be a non-empty list of host names when present (US-21-R16)');
-      else for (const h of o.hosts) if (!isStr(h) || !/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i.test(h)) e.push(`outbound.hosts entries are bare host names, no scheme, path or port (got "${String(h).slice(0, 30)}") (US-21-R16)`);
+      if (!Array.isArray(o.hosts) || !o.hosts.length) e.push('outbound.hosts must be a non-empty list of host names when present (US-21-R28)');
+      else for (const h of o.hosts) if (!isStr(h) || !/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i.test(h)) e.push(`outbound.hosts entries are bare host names, no scheme, path or port (got "${String(h).slice(0, 30)}") (US-21-R28)`);
     }
     if (!CONSENT_MODES.includes(o.consent)) e.push(`outbound.consent must be one of ${CONSENT_MODES.join(', ')}`);
     if (o.suppression !== true) e.push('outbound.suppression must be true (US-21-R13)');
@@ -132,7 +137,7 @@ export function validateManifest(m, { tenantNames = [], readProbeCheck = null } 
       if (k !== 'bounce') { e.push(`hooks.${k} is not a known hook (known: bounce)`); continue; }
       const en = parseEntry(v);
       if (!en || !isStr(en.module)) e.push('hooks.bounce.entry is required (module and export)');
-      else if (/^([a-z]:|[\\/])/i.test(en.module) || en.module.split(/[\\/]/).includes('..') || !/\.(m?js)$/.test(en.module)) e.push('hooks.bounce must be a .js file inside the pack directory');
+      else if (!scannedEntry(en.module)) e.push('hooks.bounce must be a .js file inside the pack directory, not a test file or a dependency (US-21-R27)');
     }
   }
   if (m.migrations !== undefined && !isStrList(m.migrations)) e.push('migrations must be a list of file paths');

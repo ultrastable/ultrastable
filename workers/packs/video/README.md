@@ -13,3 +13,7 @@ Class B pack (`US-SPEC-21`). OFF until enabled; every publish passes `guard.send
 | `metrics` loop | counts, views, removal detection (`VIDEOREMOVED-<id>`) |
 
 Channel port: `publish({title, description, assetRef, assetSha256, durationS, provenance, provenanceHash}) -> {id, url}`, `fetchVideo(id) -> {state, provenanceHash?, views?, url?} | null`. Secret by name only: `VIDEO_CHANNEL_TOKEN`. Tests: `video.test.js`.
+
+## YouTube channel
+
+`channels/youtube.js` (`createYoutubeChannel({ fetch, env, readAsset, privacy })`) is the JS counterpart of `../seed/plugins/youtube/plugin.py`: a resumable upload through an injected fetch, `private` or `unlisted` only (a request for `public` is refused: public release is a decision card for a person, US-21-R24), the provenance hash carried in the description and read back by `fetchVideo`, a read-only `probe()` (US-21-R25), and no credential in any URL or error. Tests: `channels.test.js`. The composition of the video itself runs server-side in `.github/workflows/demo-video.yml` with `../scripts/video_build.py`; this pack publishes what that produces.

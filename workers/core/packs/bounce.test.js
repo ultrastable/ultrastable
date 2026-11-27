@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Tests for bounce and complaint intake (US-21-R13): every channel ends in guard.suppress, immediately and idempotently.
+// Tests for bounce and complaint intake (US-21-R13, US-21-R15): every channel ends in guard.suppress, immediately and idempotently.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -29,7 +29,7 @@ async function setup(config = {}) {
 const msg = (channel, o = {}) => ({ pack: 'example', channel, kind: 'notice', recipient: 'p@example.com', content: 'hello there', idempotencyKey: `k-${channel}-${Math.random()}`, ...o });
 const reasons = (db) => db.raw.prepare(`SELECT reason FROM guard_suppression ORDER BY channel`).all().map(r => r.reason);
 
-test('a hard bounce suppresses that channel at once; other channels for the person are untouched', async () => {
+test('US-21-R15: a hard bounce suppresses that channel at once; other channels for the person are untouched', async () => {
   const { db, packs, guard } = await setup();
   for (const ch of ['fake', 'email']) await guard.consent.grant({ channel: ch, recipient: 'p@example.com' });
   assert.equal((await guard.send(msg('email'))).decision, 'sent');
@@ -40,7 +40,7 @@ test('a hard bounce suppresses that channel at once; other channels for the pers
   assert.deepEqual(reasons(db), ['bounce']);
 });
 
-test('a complaint or an unsubscribe suppresses every channel and cancels queued sends', async () => {
+test('US-21-R15: a complaint or an unsubscribe suppresses every channel and cancels queued sends', async () => {
   for (const kind of ['complaint', 'unsubscribe']) {
     const { db, packs, guard } = await setup();
     for (const ch of ['fake', 'email', 'social']) await guard.consent.grant({ channel: ch, recipient: 'p@example.com' });
@@ -55,7 +55,7 @@ test('a complaint or an unsubscribe suppresses every channel and cancels queued 
   }
 });
 
-test('soft bounces are counted and suppress only at the limit inside the window', async () => {
+test('US-21-R15: soft bounces are counted and suppress only at the limit inside the window', async () => {
   const { db, packs, clock, guard } = await setup({ soft_limit: 3, soft_window_days: 7 });
   await guard.consent.grant({ channel: 'email', recipient: 'p@example.com' });
   const soft = id => packs.bounces.ingest({ channel: 'email', recipient: 'p@example.com', kind: 'soft', eventId: id });
@@ -68,7 +68,7 @@ test('soft bounces are counted and suppress only at the limit inside the window'
   assert.equal((await guard.send(msg('email'))).reason, 'suppressed');
 });
 
-test('a retried event id changes nothing', async () => {
+test('US-21-R15: a retried event id changes nothing', async () => {
   const { db, packs } = await setup({ soft_limit: 2 });
   const ev = { channel: 'email', recipient: 'p@example.com', kind: 'soft', eventId: 'same' };
   assert.equal((await packs.bounces.ingest(ev)).results[0].action, 'counted');
@@ -89,7 +89,7 @@ test('provider email payloads: permanent, transient and complaint notifications,
   assert.equal((await packs.bounces.ingest({ type: 'Bounce', bounceType: 'Permanent', id: 'n1', recipients: ['a@example.com'] }, { format: 'email' })).results[0].action, 'duplicate');
 });
 
-test('bad input is reported without stopping the batch or storing an address', async () => {
+test('US-21-R15: bad input is reported without stopping the batch or storing an address', async () => {
   const { db, packs } = await setup();
   assert.equal((await packs.bounces.ingest({}, { format: 'nope' })).reason, 'unknown_format');
   assert.equal((await packs.bounces.ingest([], { format: 'generic' })).reason, 'no_events');

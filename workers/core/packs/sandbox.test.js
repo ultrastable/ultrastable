@@ -188,3 +188,85 @@ test('US-21-R08: the id bound to a shared-table write must start with the pack i
   assert.equal(calls.length, 5);
   assert.equal(typeof db.prepare('SELECT 1 FROM social_x WHERE a = ?').bind, 'function', 'a statement with no shared write is passed through unchanged');
 });
+
+// ---------------- US-21-R08 (T21-18): what the stripping, a string in place of a name and an overwrite could not reach ----------------
+test('T21-18 US-21-R08: a -- or /* inside a string does not hide a later table, write target or queue read', () => {
+  const bad = {
+    "SELECT id AS a, title AS b FROM items WHERE title = '--' UNION ALL SELECT recipient, content FROM guard_queue": 'forbidden_table_columns:guard_queue',
+    "WITH c(x) AS (SELECT '--') DELETE FROM items": 'shared_table_delete:items',
+    "SELECT '/*' AS a FROM items UNION ALL SELECT rung FROM trust_ledger -- */": 'forbidden_table',
+    "SELECT '--' FROM x_things; DELETE FROM guard_ledger": 'multiple_statements',
+  };
+  for (const [s, why] of Object.entries(bad)) assert.equal(checkSql(s, 'x'), why, s);
+});
+
+test('T21-18 US-21-R08: a string literal where SQLite reads a table name is refused; strings in value positions still pass', () => {
+  const bad = ["SELECT * FROM 'trust_ledger'", "SELECT * FROM items, 'trust_ledger'", "SELECT * FROM items JOIN 'roles' ON 1 = 1", "DELETE FROM 'items'",
+    "INSERT INTO 'guard_ledger' (id) VALUES (?)", "UPDATE 'predictions' SET verdict = 'hit' WHERE id = ?", "SELECT * FROM main.'gate_cards'",
+    "SELECT * FROM items i JOIN x_things t ON t.a = i.id, 'guard_queue'"];
+  for (const s of bad) assert.equal(checkSql(s, 'x'), 'string_as_table_name', s);
+  assert.equal(checkSql("SELECT * FROM pragma_table_info('roles')", 'x'), 'forbidden_table', 'a pragma table function reads the schema');
+  const ok = ["SELECT * FROM items WHERE title IN ('a', 'b')", "SELECT 'x', 'y' FROM items", "UPDATE x_things SET a = 'q', b = 'r'", "SELECT a AS 'label' FROM x_things",
+    "SELECT * FROM items WHERE status = 'ready' AND kind = 'fix'", "INSERT INTO x_things (a, b) VALUES ('p', 'q')"];
+  for (const s of ok) assert.equal(checkSql(s, 'x'), null, s);
+});
+
+test('T21-18 US-21-R08: a shared row is never overwritten: OR REPLACE, REPLACE INTO and an upsert on items or predictions are refused; on own tables they stay allowed', () => {
+  const bad = {
+    'INSERT OR REPLACE INTO items (id, title) VALUES (?, ?)': 'shared_table_overwrite:items',
+    'REPLACE INTO predictions (id, metric) VALUES (?, ?)': 'shared_table_overwrite:predictions',
+    "INSERT INTO items (id, title) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET status = 'done'": 'shared_table_overwrite:items',
+    'UPDATE OR REPLACE predictions SET verdict = ? WHERE id = ?': 'shared_table_overwrite:predictions',
+  };
+  for (const [s, why] of Object.entries(bad)) assert.equal(checkSql(s, 'x'), why, s);
+  assert.equal(checkSql('INSERT OR REPLACE INTO x_things (a) VALUES (?)', 'x'), null);
+  assert.equal(checkSql('INSERT OR IGNORE INTO items (id, title) VALUES (?, ?)', 'x'), null, 'an insert that never replaces stays allowed');
+});
+
+test('T21-18 US-21-R08: a pack whose id prefixes another id family cannot change that family\'s rows; it updates only predictions it created', async () => {
+  const { db } = host();
+  db.raw.exec(`INSERT INTO items (id, title, owner_role, done_check, status) VALUES ('BREACH-M-tick', 'breach', 'operations', 'x', 'open'), ('PACKPROBE-email-smtp', 'probe', 'pack-manager-email', 'x', 'open');
+    INSERT INTO predictions (id, metric, op, target, due_at) VALUES ('runner-1', 'm', '=', 1, '2026-12-01 00:00:00');`);
+  const breach = sandboxDb(db, 'breach');
+  await assert.rejects(() => breach.prepare('INSERT INTO items (id, title, owner_role, done_check, status) VALUES (?,?,?,?,?)').bind('BREACH-M-tick', 'x', 'r', 'x', 'done').run());
+  assert.throws(() => breach.prepare('INSERT OR REPLACE INTO items (id, title, owner_role, done_check, status) VALUES (?,?,?,?,?)'), /shared_table_overwrite/);
+  assert.throws(() => sandboxDb(db, 'pack').prepare('INSERT INTO items (id, title, owner_role, done_check) VALUES (?,?,?,?)').bind('PACKPROBE-email-smtp', 'x', 'r', 'x'), /shared_table_id_not_owned/);
+  assert.equal(db.raw.prepare(`SELECT status FROM items WHERE id = 'BREACH-M-tick'`).get().status, 'open');
+  const runner = sandboxDb(db, 'runner');
+  await assert.rejects(() => runner.prepare('UPDATE predictions SET observed = ?, verdict = ? WHERE id = ?').bind(1, 'hit', 'runner-1').run(), /shared_table_id_not_owned/);
+  assert.equal(db.raw.prepare(`SELECT verdict FROM predictions WHERE id = 'runner-1'`).get().verdict, null, 'the host prediction is unchanged');
+  await runner.prepare('INSERT OR IGNORE INTO predictions (id, metric, op, target, due_at) VALUES (?,?,?,?,?)').bind('runner-own-1', 'm', '=', 1, '2026-12-01 00:00:00').run();
+  await runner.prepare('UPDATE predictions SET observed = ?, verdict = ? WHERE id = ?').bind(1, 'hit', 'runner-own-1').run();
+  assert.equal(db.raw.prepare(`SELECT verdict FROM predictions WHERE id = 'runner-own-1'`).get().verdict, 'hit', 'a prediction the pack created is its own to score');
+  await runner.prepare('INSERT OR IGNORE INTO predictions (id, metric, op, target, due_at) VALUES (?,?,?,?,?)').bind('runner-1', 'm', '=', 1, '2026-12-01 00:00:00').run();
+  await assert.rejects(() => runner.prepare('UPDATE predictions SET observed = ?, verdict = ? WHERE id = ?').bind(1, 'hit', 'runner-1').run(), /shared_table_id_not_owned/, 'an ignored insert does not make a host row the pack\'s');
+  assert.throws(() => checkSqlOrThrow(runner, 'SELECT * FROM packs_rows'), /forbidden_table/, 'the ownership ledger is not readable by a pack');
+});
+const checkSqlOrThrow = (sdb, sql) => sdb.prepare(sql);
+
+test('T21-18 US-21-R08: numbered and named parameters are refused, so the id the sandbox checks is the id SQLite binds', async () => {
+  // SQLite numbers a bare ? after the largest ?NNN seen, so ?5 before a bare ? moves the WHERE id to the sixth argument; :v, @v and $v do the same.
+  const shifted = ['UPDATE predictions SET verdict = ?5 WHERE id = ?', 'INSERT INTO items (title, id, owner_role, done_check, status) VALUES (?3, ?, ?, ?, ?)',
+    'UPDATE predictions SET verdict = :v WHERE id = ?', 'UPDATE predictions SET verdict = @v WHERE id = ?', 'UPDATE predictions SET verdict = $v WHERE id = ?',
+    'SELECT * FROM x_things WHERE a = ?1', 'INSERT INTO x_things (a) VALUES (:a)'];
+  for (const s of shifted) assert.equal(checkSql(s, 'runner'), 'numbered_parameter', s);
+  for (const s of ["SELECT * FROM x_things WHERE a = '?5' AND b = ':v'", 'SELECT a$b FROM x_things WHERE a = ?', 'SELECT 1 AS "x:y" FROM x_things'])
+    assert.notEqual(checkSql(s, 'x'), 'numbered_parameter', `${s}: text, a name with $ inside, or a quoted name is not a parameter`);
+  const { db } = host();
+  db.raw.exec(`INSERT INTO predictions (id, metric, op, target, due_at) VALUES ('runner-1', 'm', '=', 1, '2026-12-01 00:00:00');`);
+  const runner = sandboxDb(db, 'runner');
+  await runner.prepare('INSERT OR IGNORE INTO predictions (id, metric, op, target, due_at) VALUES (?,?,?,?,?)').bind('runner-own-1', 'm', '=', 1, '2026-12-01 00:00:00').run();
+  assert.throws(() => runner.prepare('UPDATE predictions SET verdict = ?5 WHERE id = ?'), /numbered_parameter/);
+  assert.throws(() => runner.prepare('INSERT INTO items (title, id, owner_role, done_check, status) VALUES (?3, ?, ?, ?, ?)'), /numbered_parameter/);
+  assert.equal(db.raw.prepare(`SELECT verdict FROM predictions WHERE id = 'runner-1'`).get().verdict, null, 'the host prediction is unchanged');
+  assert.equal(db.raw.prepare(`SELECT COUNT(*) n FROM items WHERE id LIKE 'PACKFAIL%'`).get().n, 0, 'no host-namespace item was created');
+});
+
+test('T21-18 US-21-R08: a pack migration cannot expose a table the pack may not read through its own view or copy one into its own table', async () => {
+  const { checkMigrationStatement } = await import('./loader.js');
+  for (const s of ['CREATE VIEW x_v AS SELECT * FROM gate_cards', "CREATE VIEW x_v AS SELECT * FROM 'trust_ledger'", 'CREATE VIEW x_v AS SELECT sql FROM sqlite_master',
+    'INSERT INTO x_a SELECT recipient, content FROM guard_queue', "CREATE VIEW x_v AS SELECT '--' AS a UNION ALL SELECT rung FROM trust_ledger"]) {
+    assert.notDeepEqual(checkMigrationStatement(s, 'x'), [], s);
+  }
+  assert.deepEqual(checkMigrationStatement('CREATE VIEW IF NOT EXISTS x_v AS SELECT id, title FROM items', 'x'), []);
+});

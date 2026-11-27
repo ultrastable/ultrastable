@@ -50,7 +50,7 @@ test('migration is idempotent and every table is packs_ or guard_ prefixed', () 
   const sql = readFileSync(new URL('./migrations/0001_packs.sql', import.meta.url), 'utf8');
   db.raw.exec(sql); db.raw.exec(sql);
   const names = rows(db, `SELECT name FROM sqlite_master WHERE type='table' AND (name LIKE 'packs_%' OR name LIKE 'guard_%')`).map(r => r.name).sort();
-  assert.deepEqual(names, ['guard_bounces', 'guard_consent', 'guard_inflight', 'guard_ledger', 'guard_queue', 'guard_suppression', 'packs_actions', 'packs_migrations', 'packs_probes', 'packs_registry', 'packs_runs', 'packs_switches']);
+  assert.deepEqual(names, ['guard_bounces', 'guard_consent', 'guard_inflight', 'guard_ledger', 'guard_queue', 'guard_suppression', 'packs_actions', 'packs_migrations', 'packs_probes', 'packs_registry', 'packs_rows', 'packs_runs', 'packs_switches']);
 });
 
 // ---- T21-1: inert until enabled; decision recorded; disable stops loops (R01, R04) ----
@@ -437,14 +437,14 @@ test('US-21-R02 every case tag in bootstrap/cases.json is covered by a shipped p
   assert.deepEqual(UNMAPPED.filter(t => covered.has(t)), [], 'an unmapped tag that a pack now covers must leave the list');
 });
 
-// ---------------- US-21-R14: a send is reserved before the provider is called ----------------
+// ---------------- US-21-R14, US-21-R26: a send is reserved before the provider is called ----------------
 function slowChannel(ms = 5) {
   const c = { sent: [], calls: 0 };
   c.send = async (m) => { c.calls++; await new Promise(r => setTimeout(r, ms)); c.sent.push(m); return { id: `prov-${c.sent.length}` }; };
   return c;
 }
 
-test('US-21-R14: three simultaneous sends with one idempotency key deliver once and refuse the others as duplicates', async () => {
+test('US-21-R14 and US-21-R26: three simultaneous sends with one idempotency key deliver once and refuse the others as duplicates', async () => {
   const channel = slowChannel(), { db, guard, packs } = setup({ channel });
   await enable(packs); await consented(guard);
   const out = await Promise.all([1, 2, 3].map(() => guard.send(msg({ idempotencyKey: 'same' }))));
@@ -454,7 +454,7 @@ test('US-21-R14: three simultaneous sends with one idempotency key deliver once 
   assert.equal(one(db, `SELECT COUNT(*) n FROM guard_inflight`).n, 0, 'the reservation is released when the delivery ends');
 });
 
-test('US-21-R14: simultaneous sends with different keys cannot pass a cap together (per_day is 2)', async () => {
+test('US-21-R14 and US-21-R26: simultaneous sends with different keys cannot pass a cap together (per_day is 2)', async () => {
   const channel = slowChannel(), { guard, packs } = setup({ channel });
   await enable(packs); await consented(guard);
   const out = await Promise.all(['a', 'b', 'c', 'd'].map(k => guard.send(msg({ idempotencyKey: k }))));
@@ -463,7 +463,7 @@ test('US-21-R14: simultaneous sends with different keys cannot pass a cap togeth
   assert.equal(channel.calls, 2);
 });
 
-test('US-21-R14: a failed delivery releases its reservation so the key can be retried, and a stale reservation (a crash) stops blocking after inflight_ttl_ms', async () => {
+test('US-21-R14 and US-21-R26: a failed delivery releases its reservation so the key can be retried, and a stale reservation (a crash) stops blocking after inflight_ttl_ms', async () => {
   const flaky = { n: 0, send: async () => { if (flaky.n++ === 0) throw new Error('provider down'); return { id: 'ok' }; } };
   const { db, guard, packs, clock } = setup({ channel: flaky, config: { inflight_ttl_ms: 60000 } });
   await enable(packs); await consented(guard);
@@ -477,7 +477,7 @@ test('US-21-R14: a failed delivery releases its reservation so the key can be re
   assert.equal((await guard.send(msg({ idempotencyKey: 'crashed' }))).decision, 'sent', 'after the ttl it no longer does');
 });
 
-test('US-21-R14: approving the same queued entry twice at once delivers once', async () => {
+test('US-21-R14 and US-21-R26: approving the same queued entry twice at once delivers once', async () => {
   const channel = slowChannel(), { db, guard, packs } = setup({ channel, rung: 'assisted' });
   await enable(packs); await consented(guard);
   const q = await guard.send(msg({ idempotencyKey: 'q1' }));
@@ -487,4 +487,61 @@ test('US-21-R14: approving the same queued entry twice at once delivers once', a
   assert.equal(out.find(r => r.decision !== 'sent').reason, 'decision_in_progress');
   assert.equal(channel.calls, 1);
   assert.equal(one(db, `SELECT status FROM guard_queue WHERE id = ?`, q.queueId).status, 'sent', 'the entry keeps the status of the decision that delivered it');
+});
+
+test('T21-17 US-21-R26: a second approve or a reject that starts while the first approve is delivering changes nothing, and the entry keeps the deliverer\'s status', async () => {
+  for (const second of ['approve', 'reject']) {
+    const channel = slowChannel(30), { db, guard, packs } = setup({ channel, rung: 'assisted' });
+    await enable(packs); await consented(guard);
+    const q = await guard.send(msg({ idempotencyKey: 'q1' }));
+    const p1 = guard.approve(q.queueId, { by: 'a' });
+    await new Promise(r => setTimeout(r, 10));                   // the first approve is inside the provider call
+    const ledgerBefore = one(db, `SELECT COUNT(*) n FROM guard_ledger`).n;
+    const late = await guard[second](q.queueId, { by: 'b' });
+    assert.equal(late.reason, 'decision_in_progress', second);
+    assert.equal(one(db, `SELECT COUNT(*) n FROM guard_ledger`).n, ledgerBefore, `the late ${second} records nothing`);
+    const first = await p1;
+    assert.equal(first.decision, 'sent');
+    assert.equal(channel.calls, 1);
+    const row = one(db, `SELECT status, decided_by, recipient, content FROM guard_queue WHERE id = ?`, q.queueId);
+    assert.deepEqual({ ...row }, { status: 'sent', decided_by: 'a', recipient: null, content: null }, second);
+    assert.equal((await guard.approve(q.queueId, { by: 'c' })).reason, 'not_pending', 'after the delivery the entry is decided');
+  }
+});
+
+test('T21-17 US-21-R26: an approve and a reject of one queued send that start together: exactly one decides, and a message a person rejected is never sent', async () => {
+  for (const order of ['approve-first', 'reject-first']) {
+    const channel = slowChannel(30), { db, guard, packs } = setup({ channel, rung: 'assisted' });
+    await enable(packs); await consented(guard);
+    const q = await guard.send(msg({ idempotencyKey: 'q1' }));
+    const calls = order === 'approve-first' ? [() => guard.approve(q.queueId, { by: 'a' }), () => guard.reject(q.queueId, { by: 'b' })] : [() => guard.reject(q.queueId, { by: 'b' }), () => guard.approve(q.queueId, { by: 'a' })];
+    const out = await Promise.all(calls.map(f => f()));
+    const winner = order === 'approve-first' ? { decision: 'sent', status: 'sent', by: 'a', provider: 1 } : { decision: 'refused', status: 'rejected', by: 'b', provider: 0 };
+    assert.equal(out[0].decision, winner.decision, order);
+    assert.equal(out[1].reason, 'decision_in_progress', `${order}: the decision that started second changes nothing`);
+    assert.equal(channel.calls, winner.provider, `${order}: provider calls`);
+    const row = one(db, `SELECT status, decided_by FROM guard_queue WHERE id = ?`, q.queueId);
+    assert.deepEqual({ ...row }, { status: winner.status, decided_by: winner.by }, order);
+    const decided = db.raw.prepare(`SELECT decision, reason FROM guard_ledger WHERE idem_key = 'q1' AND decision != 'queued_for_approval'`).all().map(r => r.reason || r.decision);
+    assert.deepEqual(decided, [order === 'approve-first' ? 'sent' : 'approval_rejected'], `${order}: one decision in the ledger, never a send and a rejection`);
+    const again = await guard.send(msg({ idempotencyKey: 'q1' }));
+    assert.notEqual(again.decision, 'sent', `${order}: the key of a decided entry is not sent by a later request (it is refused as sent, or queued for a person again)`);
+    assert.equal(channel.calls, winner.provider);
+  }
+});
+
+test('T21-17 US-21-R26: while a decision holds a queued entry its key cannot be sent by another path, and a claim left by a crash is taken again after inflight_ttl_ms', async () => {
+  const channel = slowChannel(30), { db, guard, packs, clock } = setup({ channel, rung: 'assisted', config: { inflight_ttl_ms: 60000 } });
+  await enable(packs); await consented(guard);
+  const q = await guard.send(msg({ idempotencyKey: 'q2' }));
+  const { iso } = await import('../kernel/util.js');
+  db.raw.prepare(`UPDATE guard_queue SET status = 'deciding', decided_by = 'crashed', decided_at = ?, reason = 'claim:x' WHERE id = ?`).run(iso(clock.t), q.queueId);
+  assert.equal((await guard.approve(q.queueId, { by: 'a' })).reason, 'decision_in_progress', 'a fresh claim belongs to its decision');
+  assert.equal((await guard.send(msg({ idempotencyKey: 'q2' }))).reason, 'duplicate_idempotency_key', 'an entry being decided still holds its key');
+  assert.deepEqual([(await guard.pending()).length, (await packs.queue()).length], [0, 0], 'an entry being decided is not listed as open');
+  clock.t += 120000;
+  assert.deepEqual([(await guard.pending()).map(r => r.id), (await packs.queue()).map(r => r.id)], [[q.queueId], [q.queueId]], 'a claim left by a crash lists the entry as open again');
+  const r = await guard.approve(q.queueId, { by: 'a' });
+  assert.equal(r.decision, 'sent', 'after the ttl the claim no longer blocks');
+  assert.deepEqual({ ...one(db, `SELECT status, decided_by, reason FROM guard_queue WHERE id = ?`, q.queueId) }, { status: 'sent', decided_by: 'a', reason: null });
 });

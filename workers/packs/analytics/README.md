@@ -12,3 +12,7 @@ Class A pack (`US-SPEC-21`): no outbound channel. `recordPageview({db, now, sett
 | `metrics` | views in 7 days, visitors today, raw event count |
 
 `report({db, days})` gives views, top pages and top sources. Secret by name only: `ANALYTICS_SALT`. Tests: `analytics.test.js`.
+
+## Search presence
+
+The `search` loop reads search-engine analytics through a read-only port the host supplies (`settings.ports.search_analytics({ from, to, hosts }) -> [{ date, page, clicks, impressions, position }]`) and stores one row per page and day in `analytics_search`; a row whose page carries a query string or fragment is dropped, and no query text is ever stored. With no port configured the loop only notes it. A real provider adapter needs the owner's search property and an access token, so it is not written here (PLANNED; the account step is the owner's). Tests: `analytics.test.js`.

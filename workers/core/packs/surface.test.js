@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // Tests for the person-facing surface, presence-only secrets, bounce hooks, the guard transport and read-only channel probes
-// (US-21-R18, R20, R21, R23, R25). Fake channel ports and an in-memory database; no network.
+// (US-21-R30, R20, R21, R23, R25). Fake channel ports and an in-memory database; no network.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, mkdtempSync, writeFileSync, copyFileSync } from 'node:fs';
@@ -42,8 +42,8 @@ const register = async (packs, { dir, m }) => { const r = await packs.register(m
 const enable = (packs, m, by = 'owner') => packs.enablePack(m.id, { by, cardText: m.enable_gate });
 const req = (method, url, body, headers = {}) => new Request(`https://host.example${url}`, { method, headers: { 'content-type': 'application/json', ...headers }, body: body === undefined ? undefined : JSON.stringify(body) });
 
-// ---------------- US-21-R18: the person-facing surface ----------------
-test('US-21-R18: an unauthenticated request to every /packs route is 401', async () => {
+// ---------------- US-21-R30: the person-facing surface ----------------
+test('T21-12 US-21-R30: an unauthenticated request to every /packs route is 401', async () => {
   const { packs, db } = setup();
   const routes = packs.routes({ authorize: () => null, bounceSecret: 's3cret' });
   for (const [m, u] of [['GET', '/packs'], ['POST', '/packs/example/enable'], ['POST', '/packs/example/disable'], ['GET', '/packs/switches'], ['POST', '/packs/switches'], ['GET', '/packs/queue'], ['POST', '/packs/queue/1/approve'], ['POST', '/packs/queue/1/reject']]) {
@@ -53,7 +53,7 @@ test('US-21-R18: an unauthenticated request to every /packs route is 401', async
   assert.equal(one(db, `SELECT COUNT(*) n FROM packs_actions`).n, 0);
 });
 
-test('US-21-R18: GET /packs shows the enable card text exactly as the manifest states it; enabling with different text is refused and nothing is recorded', async () => {
+test('US-21-R30: GET /packs shows the enable card text exactly as the manifest states it; enabling with different text is refused and nothing is recorded', async () => {
   const { packs, db } = setup();
   const m = loadManifest(EXAMPLE_DIR); await packs.register(m, { dir: EXAMPLE_DIR });
   const routes = packs.routes({ authorize: () => 'rowan' });
@@ -67,7 +67,7 @@ test('US-21-R18: GET /packs shows the enable card text exactly as the manifest s
   assert.equal(one(db, `SELECT COUNT(*) n FROM kernel_decisions`).n, 0);
 });
 
-test('US-21-R01 and US-21-R18: enable via the route records who, when and the card text; disable via the route stops the loops on the next tick', async () => {
+test('US-21-R01 and US-21-R30: enable via the route records who, when and the card text; disable via the route stops the loops on the next tick', async () => {
   const { packs, db } = setup();
   const m = loadManifest(EXAMPLE_DIR); await packs.register(m, { dir: EXAMPLE_DIR });
   const routes = packs.routes({ authorize: r => r.headers.get('x-user') });
@@ -83,7 +83,7 @@ test('US-21-R01 and US-21-R18: enable via the route records who, when and the ca
   assert.equal((await routes.handle(req('POST', '/packs/nope/disable', {}, h))).status, 404);
 });
 
-test('US-21-R18: approving a queued send through the route delivers it once; rejecting sends nothing and clears recipient and content', async () => {
+test('US-21-R30: approving a queued send through the route delivers it once; rejecting sends nothing and clears recipient and content', async () => {
   const { packs, db, channel } = setup({ rung: 'assisted' });                              // below the act rung: sends queue
   const m = loadManifest(EXAMPLE_DIR); await packs.register(m, { dir: EXAMPLE_DIR }); await enable(packs, m);
   await packs.guard.consent.grant({ channel: 'fake', recipient: 'person@example.com' });
@@ -105,7 +105,7 @@ test('US-21-R18: approving a queued send through the route delivers it once; rej
   assert.deepEqual(rows(db, `SELECT action, result FROM packs_actions WHERE action IN ('approve','reject') ORDER BY id`).map(x => `${x.action}:${x.result}`), ['approve:ok', 'approve:not_pending', 'reject:ok']);
 });
 
-test('US-21-R07 and US-21-R18: engaging a pack switch through the route stops that pack and no other', async () => {
+test('US-21-R07 and US-21-R30: engaging a pack switch through the route stops that pack and no other', async () => {
   const { packs, db } = setup();
   const m = loadManifest(EXAMPLE_DIR); await packs.register(m, { dir: EXAMPLE_DIR }); await enable(packs, m);
   await packs.guard.consent.grant({ channel: 'fake', recipient: 'person@example.com' });
@@ -119,7 +119,7 @@ test('US-21-R07 and US-21-R18: engaging a pack switch through the route stops th
   assert.equal(one(db, `SELECT COUNT(*) n FROM packs_actions WHERE action = 'switch'`).n, 2);
 });
 
-test('US-21-R21 and US-21-R18: provider bounce events reach the core intake through the route behind the shared secret', async () => {
+test('US-21-R21 and US-21-R30: provider bounce events reach the core intake through the route behind the shared secret', async () => {
   const { packs, db } = setup();
   const routes = packs.routes({ authorize: () => null, bounceSecret: 's3cret' });
   const bad = await routes.handle(req('POST', '/packs/bounces?channel=fake', { recipient: 'p@example.com', kind: 'hard', eventId: 'e1' }, { 'x-bounce-token': 'wrong' }));
@@ -130,7 +130,7 @@ test('US-21-R21 and US-21-R18: provider bounce events reach the core intake thro
 });
 
 // ---------------- US-21-R20: presence-only secrets ----------------
-test('US-21-R20: a loop reads a declared secret from the tick env; an undeclared name is refused and recorded; a thrown value never reaches a log', async () => {
+test('T21-13 US-21-R20: a loop reads a declared secret from the tick env; an undeclared name is refused and recorded; a thrown value never reaches a log', async () => {
   const src = `export async function run({ secrets, ctx }) {
     ctx.notes.push('has declared: ' + secrets.has('EXAMPLE_KEY') + ', has other: ' + secrets.has('OTHER_KEY'));
     const v = secrets.get('EXAMPLE_KEY'); const o = secrets.get('OTHER_KEY');
@@ -151,7 +151,7 @@ test('US-21-R20: a loop reads a declared secret from the tick env; an undeclared
 });
 
 // ---------------- US-21-R21: delivery events reach the owning pack ----------------
-test('US-21-R21: a hard bounce, a complaint and a duplicate event reach the pack hook once each; a pack without a hook is untouched', async () => {
+test('T21-14 US-21-R21: a hard bounce, a complaint and a duplicate event reach the pack hook once each; a pack without a hook is untouched', async () => {
   const hook = `export async function onBounce({ db, event, outcome, guard }) {
     await db.prepare('INSERT INTO items (id, title, kind, owner_role, done_check, status) VALUES (?,?,?,?,?,?)').bind('EXAMPLEHOOK-' + event.kind + '-' + event.eventId, 'hook saw ' + event.kind + ' ' + outcome.action, 'fix', 'pack-manager-example', 'x', 'done').run();
   }`;
@@ -169,7 +169,7 @@ test('US-21-R21: a hard bounce, a complaint and a duplicate event reach the pack
   assert.deepEqual(rows(db, `SELECT result FROM outcomes WHERE surface = 'pack:example' ORDER BY id`).map(r => r.result), ['failed', 'hidden_failure']);
 });
 
-test('US-21-R21: a failing hook files one item and the suppression it follows stays applied', async () => {
+test('T21-14 US-21-R21: a failing hook files one item and the suppression it follows stays applied', async () => {
   const p = packWith({ 'hook.js': `export async function onBounce() { throw new Error('hook broke'); }` }, m => { m.hooks = { bounce: './hook.js#onBounce' }; return m; });
   const { db, packs } = setup();
   const m = await register(packs, p); await enable(packs, m);
@@ -181,7 +181,7 @@ test('US-21-R21: a failing hook files one item and the suppression it follows st
 });
 
 // ---------------- US-21-R23: the guard-backed transport ----------------
-test('US-21-R23: core/outreach.dispatch through the guard transport sends nothing for a guard-suppressed recipient and records the refusal', async () => {
+test('T21-15 US-21-R23: core/outreach.dispatch through the guard transport sends nothing for a guard-suppressed recipient and records the refusal', async () => {
   const { packs, db, channel } = setup({ extraMigrations: [OUTREACH_MIG] });
   const m = loadManifest(EXAMPLE_DIR); await packs.register(m, { dir: EXAMPLE_DIR }); await enable(packs, m);
   await packs.guard.consent.grant({ channel: 'fake', recipient: 'a@example.org' });
@@ -196,7 +196,7 @@ test('US-21-R23: core/outreach.dispatch through the guard transport sends nothin
   assert.equal(one(db, `SELECT reason FROM guard_ledger WHERE pack='example' ORDER BY id DESC LIMIT 1`).reason, 'suppressed');
 });
 
-test('US-21-R23 and US-21-R14: below the act rung the dispatch is queued as a decision card and dispatch does not mark it sent; at the act rung it sends through the same guard', async () => {
+test('T21-15 US-21-R23 and US-21-R14: below the act rung the dispatch is queued as a decision card and dispatch does not mark it sent; at the act rung it sends through the same guard', async () => {
   const { packs, db, channel } = setup({ extraMigrations: [OUTREACH_MIG], rung: 'assisted' });
   const m = loadManifest(EXAMPLE_DIR); await packs.register(m, { dir: EXAMPLE_DIR }); await enable(packs, m);
   await packs.guard.consent.grant({ channel: 'fake', recipient: 'a@example.org' });
@@ -215,7 +215,7 @@ test('US-21-R23 and US-21-R14: below the act rung the dispatch is queued as a de
 });
 
 // ---------------- US-21-R25: read-only probes and the live-trial gate ----------------
-test('US-21-R25: enabling an outbound pack opens the live-trial card with its default in effect; a passing probe closes it through the tick', async () => {
+test('T21-16 US-21-R25: enabling an outbound pack opens the live-trial card with its default in effect; a passing probe closes it through the tick', async () => {
   const probed = [];
   const channel = fakeChannel({ probe: async () => { probed.push('read'); return { ok: true, detail: 'session ok' }; } });
   const { db, packs } = setup({ channel });
@@ -230,7 +230,7 @@ test('US-21-R25: enabling an outbound pack opens the live-trial card with its de
   assert.equal(one(db, `SELECT status FROM gate_cards WHERE id = 'pack-trial-example'`).status, 'closed');
 });
 
-test('US-21-R25: a failing probe on an enabled pack files one PACKPROBE item with a redacted detail; a disabled pack is not probed', async () => {
+test('T21-16 US-21-R25: a failing probe on an enabled pack files one PACKPROBE item with a redacted detail; a disabled pack is not probed', async () => {
   let calls = 0;
   const channel = fakeChannel({ probe: async () => { calls++; throw new Error('401 Bearer abcdefghijklmnopqrstuvwxyz0123'); } });
   const { db, packs } = setup({ channel });

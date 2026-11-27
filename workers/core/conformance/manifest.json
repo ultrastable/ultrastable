@@ -1096,7 +1096,12 @@
   {
    "id": "US-11-T08",
    "spec": "US-SPEC-11",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R12, US-11-R18 and US-11-T08: stagger moves periodic schedules apart, keeps period and other fields, and a second run changes nothing"
+    }
+   ]
   },
   {
    "id": "US-12-T01",
@@ -6671,6 +6676,18 @@
     {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R08: slots that elapsed while the dead-man check was not running are judged on its next pass, up to the lookback"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R08 and US-11-R12: the day-window planner: the slot a move leaves unfired on purpose is not judged; a silence from the first new slot still stops"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R08 and US-11-R12: the hour-minute planner: the slot a move leaves unfired on purpose is not judged; a silence from the first new slot still stops"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R08 and US-11-R12: a schedule moved while it was still due skips nothing, and a planner switched on in step for a firing fleet files no false stop"
     }
    ]
   },
@@ -6746,11 +6763,11 @@
     },
     {
      "file": "core/fleet/fleet.test.js",
-     "name": "US-11-R12: stagger moves periodic schedules apart, keeps period and other fields, and a second run changes nothing"
+     "name": "US-11-R12, US-11-R18 and US-11-T08: stagger moves periodic schedules apart, keeps period and other fields, and a second run changes nothing"
     },
     {
      "file": "core/fleet/fleet.test.js",
-     "name": "US-11-R12: auto_stagger in step is off by default; on, the step staggers before it dispatches; literals move only when asked"
+     "name": "US-11-R12 and US-11-R18: auto_stagger in step is off by default; on, the step staggers before it dispatches; literals move only when asked"
     },
     {
      "file": "core/fleet/fleet.test.js",
@@ -6789,10 +6806,6 @@
     {
      "file": "../seed/worker/test/spec-11-fleet-runtime.test.js",
      "name": "US-11-R14, US-11-R15, US-11-R16 and US-11-R26: the beat is written before the body runs; a thrown error, a missing credential and ok:false are failed beats; the state names what is wrong"
-    },
-    {
-     "file": "core/fleet/fleet.test.js",
-     "name": "US-11-R14: event-triggered scheduling: an accepted event starts its tasks once; rejected and repeated events start nothing"
     }
    ]
   },
@@ -6863,9 +6876,18 @@
    "level": "L3",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R12, US-11-R18 and US-11-T08: stagger moves periodic schedules apart, keeps period and other fields, and a second run changes nothing"
+    },
+    {
+     "file": "core/fleet/fleet.test.js",
+     "name": "US-11-R12 and US-11-R18: auto_stagger in step is off by default; on, the step staggers before it dispatches; literals move only when asked"
+    }
+   ]
   },
   {
    "id": "US-12-R01",
@@ -10339,7 +10361,7 @@
     },
     {
      "file": "core/packs/surface.test.js",
-     "name": "US-21-R01 and US-21-R18: enable via the route records who, when and the card text; disable via the route stops the loops on the next tick"
+     "name": "US-21-R01 and US-21-R30: enable via the route records who, when and the card text; disable via the route stops the loops on the next tick"
     }
    ]
   },
@@ -10465,7 +10487,7 @@
     },
     {
      "file": "core/packs/surface.test.js",
-     "name": "US-21-R07 and US-21-R18: engaging a pack switch through the route stops that pack and no other"
+     "name": "US-21-R07 and US-21-R30: engaging a pack switch through the route stops that pack and no other"
     }
    ]
   },
@@ -10489,6 +10511,14 @@
     {
      "file": "core/packs/sandbox.test.js",
      "name": "US-21-R08: the id bound to a shared-table write must start with the pack id; another pack's, a core item's or the host's id is refused at bind time"
+    },
+    {
+     "file": "core/packs/sandbox.test.js",
+     "name": "T21-18 US-21-R08: a -- or /* inside a string does not hide a later table, write target or queue read"
+    },
+    {
+     "file": "core/packs/sandbox.test.js",
+     "name": "T21-18 US-21-R08: a string literal where SQLite reads a table name is refused; strings in value positions still pass"
     }
    ]
   },
@@ -10606,19 +10636,19 @@
     },
     {
      "file": "core/packs/packs.test.js",
-     "name": "US-21-R14: three simultaneous sends with one idempotency key deliver once and refuse the others as duplicates"
+     "name": "US-21-R14 and US-21-R26: three simultaneous sends with one idempotency key deliver once and refuse the others as duplicates"
     },
     {
      "file": "core/packs/packs.test.js",
-     "name": "US-21-R14: simultaneous sends with different keys cannot pass a cap together (per_day is 2)"
+     "name": "US-21-R14 and US-21-R26: simultaneous sends with different keys cannot pass a cap together (per_day is 2)"
     },
     {
      "file": "core/packs/packs.test.js",
-     "name": "US-21-R14: a failed delivery releases its reservation so the key can be retried, and a stale reservation (a crash) stops blocking after inflight_ttl_ms"
+     "name": "US-21-R14 and US-21-R26: a failed delivery releases its reservation so the key can be retried, and a stale reservation (a crash) stops blocking after inflight_ttl_ms"
     },
     {
      "file": "core/packs/packs.test.js",
-     "name": "US-21-R14: approving the same queued entry twice at once delivers once"
+     "name": "US-21-R14 and US-21-R26: approving the same queued entry twice at once delivers once"
     }
    ]
   },
@@ -10632,24 +10662,24 @@
    "proof": "named test",
    "tests": [
     {
-     "file": "core/packs/egress.test.js",
-     "name": "US-21-R15: a pack that calls global fetch, new WebSocket, XMLHttpRequest or imports cloudflare:sockets is refused at scan"
+     "file": "core/packs/bounce.test.js",
+     "name": "US-21-R15: a hard bounce suppresses that channel at once; other channels for the person are untouched"
     },
     {
-     "file": "core/packs/egress.test.js",
-     "name": "US-21-R15: globalThis.fetch and self.fetch are refused even when the file also declares a fetch parameter"
+     "file": "core/packs/bounce.test.js",
+     "name": "US-21-R15: a complaint or an unsubscribe suppresses every channel and cancels queued sends"
     },
     {
-     "file": "core/packs/egress.test.js",
-     "name": "US-21-R15: a fetch the pack receives as a parameter or destructured binding is allowed"
+     "file": "core/packs/bounce.test.js",
+     "name": "US-21-R15: soft bounces are counted and suppress only at the limit inside the window"
     },
     {
-     "file": "core/packs/egress.test.js",
-     "name": "US-21-R15: the shipped packs and the example still pass the source scan"
+     "file": "core/packs/bounce.test.js",
+     "name": "US-21-R15: a retried event id changes nothing"
     },
     {
-     "file": "core/packs/egress.test.js",
-     "name": "US-21-R15: a string holding // does not hide a global fetch call on the same line"
+     "file": "core/packs/bounce.test.js",
+     "name": "US-21-R15: bad input is reported without stopping the batch or storing an address"
     }
    ]
   },
@@ -10667,20 +10697,16 @@
      "name": "test US-21-R16 an unlisted egress host is refused"
     },
     {
-     "file": "core/packs/egress.test.js",
-     "name": "US-21-R16: createEgressFetch refuses http, an unlisted host and a lookalike suffix, and passes an allowed host and its subdomain"
+     "file": "core/packs/loader.test.js",
+     "name": "US-21-R16: enabling applies the pack own migrations once with a recorded digest; the other packs tables stay absent"
     },
     {
-     "file": "core/packs/egress.test.js",
-     "name": "US-21-R16: validateManifest refuses an outbound.hosts entry with a scheme, path, port or empty string, and accepts a bare host list"
+     "file": "core/packs/loader.test.js",
+     "name": "US-21-R16: a migration that touches anything outside the pack, or fails, leaves the pack disabled and the database unchanged"
     },
     {
-     "file": "core/packs/egress.test.js",
-     "name": "US-21-R16: packs.egressFetch limits a pack's fetch to its manifest outbound.hosts, records a refusal, and gives a pack with no declared hosts no network"
-    },
-    {
-     "file": "core/packs/egress.test.js",
-     "name": "US-21-R16: the shipped packs that call a fixed provider declare their hosts, and the declared hosts are the ones their channel code names"
+     "file": "core/packs/loader.test.js",
+     "name": "US-21-R16: editing an applied migration is refused; a pack with migrations but no directory cannot be enabled"
     }
    ]
   },
@@ -10694,24 +10720,24 @@
    "proof": "named test",
    "tests": [
     {
-     "file": "core/packs/trust.test.js",
-     "name": "US-21-R17: twenty verified outcomes with a policy whose mapped surface allows execute raise the rung to the act rung and the next send is delivered, not queued"
+     "file": "core/packs/redact.test.js",
+     "name": "US-21-R17: redactor removes raw, URL-encoded and base64 forms, longest first, plus secret shapes"
     },
     {
-     "file": "core/packs/trust.test.js",
-     "name": "US-21-R17: with the shipped policy a class B pack never passes the act rung (outreach is propose) and keeps queueing"
+     "file": "core/packs/redact.test.js",
+     "name": "US-21-R17: secretValuesFor reads declared names from env and secret-looking settings"
     },
     {
-     "file": "core/packs/trust.test.js",
-     "name": "US-21-R17: a promotion needs a different agent than the one that opened the item; the same agent is refused"
+     "file": "core/packs/redact.test.js",
+     "name": "US-21-R17: a loop that throws or notes a secret value leaves it out of the run row, the tick errors, the notes and the backlog item"
     },
     {
-     "file": "core/packs/trust.test.js",
-     "name": "US-21-R17: a removed post (hidden failure) lowers the rung and the next send queues again"
+     "file": "core/packs/redact.test.js",
+     "name": "US-21-R17: secret shapes are redacted even when the value is not a declared secret"
     },
     {
-     "file": "core/packs/trust.test.js",
-     "name": "US-21-R17: the policy overlay gives each pack a surface bounded by the surface its class maps to, and outcome kinds are stated"
+     "file": "core/packs/redact.test.js",
+     "name": "US-21-R17: a channel error that carries a secret is redacted in the guard ledger and the refusal reason"
     }
    ]
   },
@@ -10721,30 +10747,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/packs/surface.test.js",
-     "name": "US-21-R18: an unauthenticated request to every /packs route is 401"
-    },
-    {
-     "file": "core/packs/surface.test.js",
-     "name": "US-21-R18: GET /packs shows the enable card text exactly as the manifest states it; enabling with different text is refused and nothing is recorded"
-    },
-    {
-     "file": "core/packs/surface.test.js",
-     "name": "US-21-R01 and US-21-R18: enable via the route records who, when and the card text; disable via the route stops the loops on the next tick"
-    },
-    {
-     "file": "core/packs/surface.test.js",
-     "name": "US-21-R18: approving a queued send through the route delivers it once; rejecting sends nothing and clears recipient and content"
-    },
-    {
-     "file": "core/packs/surface.test.js",
-     "name": "US-21-R07 and US-21-R18: engaging a pack switch through the route stops that pack and no other"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-22-R01",

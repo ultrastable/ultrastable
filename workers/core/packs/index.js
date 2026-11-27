@@ -45,7 +45,7 @@ const withTimeout = (p, ms) => new Promise((res, rej) => {
 });
 
 // config: { step_timeout_ms, tenant_names, rungs, act_rung, ceilings, manager_model, packs: { <id>: settings } }
-export function createPacks({ db, now = Date.now, config = {}, channels = {}, deployRoute = null, env = {}, importer = d => import(pathToFileURL(d).href) } = {}) {
+export function createPacks({ db, now = Date.now, config = {}, channels = {}, deployRoute = null, env = {}, fetch: hostFetch = null, importer = d => import(pathToFileURL(d).href) } = {}) {
   // Secret values seen by any step (declared names resolved in env, secret-looking settings) are redacted from every pack log line.
   const known = new Set();
   const learn = (m, tickEnv) => { for (const v of secretValuesFor(m, { env: { ...env, ...(tickEnv || {}) }, settings: config.packs?.[m.id] || {} })) known.add(v); };
@@ -232,7 +232,7 @@ export function createPacks({ db, now = Date.now, config = {}, channels = {}, de
       },
       unsubscribe: a => guard.unsubscribe(a), suppress: a => guard.suppress(a),
       stats: () => guard.stats(packId),
-      // US-21-R17: a verified, failed or removed result of this pack's own action, recorded as trust on pack:<id> (never as another pack).
+      // US-21-R29: a verified, failed or removed result of this pack's own action, recorded as trust on pack:<id> (never as another pack).
       outcome: a => trust.outcome({ ...a, pack: packId }),
     });
   }
@@ -252,12 +252,13 @@ export function createPacks({ db, now = Date.now, config = {}, channels = {}, de
     guard, bounces, trust, register, loadFromDir, enablePack, disablePack, packSteps, boundGuard, list,
     setSwitch: (scope, on, reason) => setSwitch(db, scope, on, reason, now()),
     switches: () => all(db, `SELECT scope, is_on, reason, set_at FROM packs_switches ORDER BY scope`),
-    queue: () => all(db, `SELECT q.id, q.at, q.pack, q.channel, q.kind, q.card_id, g.what AS card FROM guard_queue q LEFT JOIN gate_cards g ON g.id = q.card_id WHERE q.status = 'pending' ORDER BY q.id`),
+    queue: () => all(db, `SELECT q.id, q.at, q.pack, q.channel, q.kind, q.card_id, g.what AS card FROM guard_queue q LEFT JOIN gate_cards g ON g.id = q.card_id WHERE q.status = 'pending' OR (q.status = 'deciding' AND q.decided_at <= ?) ORDER BY q.id`, guard.staleClaimBefore()),
     status: async () => all(db, `SELECT id, class, enabled, enabled_by, enabled_at, decision_id, rung_ceiling FROM packs_registry ORDER BY id`),
-    // US-21-R16: the one fetch a channel adapter for this pack may be built with: the host's real fetch, limited to the pack's declared outbound.hosts over
+    // US-21-R28: the one fetch a channel adapter for this pack may be built with: the host's real fetch, limited to the pack's declared outbound.hosts over
     // https. A pack that declares no hosts has no network (egress_hosts_not_declared), so a deployment declares them in the manifest it registers. A refused
     // call is recorded as a packs_runs row (loop `egress`, outcome `egress_refused`) and kept in egressRefusals(); a failure to record it is kept there too.
-    egressFetch: async (id, { fetch } = {}) => {
+    // `fetch` defaults to the one the host gave createPacks (core/org passes its own), so a hosted pack's channel fetch is limited without the host wiring it.
+    egressFetch: async (id, { fetch = hostFetch } = {}) => {
       const r = await row(id);
       if (!r) throw new Error(`unknown_pack:${id}`);
       const hosts = (JSON.parse(r.manifest_json).outbound || {}).hosts;
@@ -270,7 +271,7 @@ export function createPacks({ db, now = Date.now, config = {}, channels = {}, de
     egressRefusals: () => refusals.slice(),
     // US-21-R25: read-only probe of every declared channel of every enabled outbound pack. ports defaults to the channels given to createPacks.
     probeChannels: (ports = channels) => runChannelProbes({ db, now, ports, redact: redactor.redact, managerRole }),
-    // US-21-R18: mount with any host; authorize(request) returns the actor's name or null.
+    // US-21-R30: mount with any host; authorize(request) returns the actor's name or null.
     routes: ({ authorize, bounceSecret = null } = {}) => createPackRoutes({ packs: api, db, authorize, bounceSecret, now }),
     // US-21-R23: a transport for core/outreach and core/promote that sends through the guard as the named pack.
     transport: ({ pack, channel, kind, keyOf } = {}) => guardTransport({ guard: boundGuard(pack), channel, kind, keyOf }),
