@@ -53,7 +53,9 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
     if gh api -X POST "repos/$repo/actions/runs/$rid/approve" >/dev/null; then echo "#$n approved pull_request run $rid"; approved=1; else echo "lane: approving run $rid on #$n failed" >&2; echo x >>"$_SAFE_FAILS"; fi
   done
   if [ "$approved" = 1 ]; then echo "#$n pending: its approved run reports next pass"; continue; fi
-  runs=$(gh api "repos/$repo/commits/$sha/check-runs?per_page=100" --jq '[.check_runs[]|select(.name!="lane")]')
+  # SKIPPED-NOT-GREEN-1: one verdict per check name, the newest run's. A head can carry several runs of one name (a dispatched run and a
+  # pull_request run, or a re-run); an old failure a newer run replaced no longer holds the PR, and an old success no longer hides a newer failure.
+  runs=$(gh api "repos/$repo/commits/$sha/check-runs?per_page=100" --jq '[.check_runs[]|select(.name!="lane")]|group_by(.name)|map(max_by(.started_at // ""))')
   total=$(jq length <<<"$runs")
   pending=$(jq '[.[]|select(.status!="completed")]|length' <<<"$runs")
   bad=$(jq '[.[]|select(.status=="completed" and ((.conclusion|IN("success","neutral","skipped"))|not))]|length' <<<"$runs")

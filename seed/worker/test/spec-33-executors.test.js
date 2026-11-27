@@ -64,7 +64,7 @@ test('US-33-R60: the Worker pull-request executor takes the open issue with the 
 });
 
 test('US-33-R61: no executor writes a workflow, the policy, git, a secret or the executor log, a path may not leave the repository, and a change is bounded in files and bytes', () => {
-  assert.deepEqual(PROTECTED, ['.github/', 'autonomy/', 'doctrine/server-side.json']); assert.deepEqual([MAX_FILES, MAX_BYTES, PR_MAX_FILES, PR_MAX_BYTES], [3, 60000, 8, 200000]);
+  assert.deepEqual(PROTECTED, ['.github/', 'autonomy/', 'doctrine/server-side.json', 'actions-budget.json', 'ops/halt.json']); assert.deepEqual([MAX_FILES, MAX_BYTES, PR_MAX_FILES, PR_MAX_BYTES], [3, 60000, 8, 200000]);
   for (const p of ['.github/workflows/a.yml', 'autonomy/policy.json', 'doctrine/server-side.json']) assert.throws(() => guard([{ path: p, content: 'x' }]), /protected path/);
   for (const p of ['/etc/x', '../x', 'a/../b', 'a\\b', 'C:/x', '']) assert.throws(() => guard([{ path: p, content: 'x' }]), /unsafe path/, p);
   assert.throws(() => guard([]), /no files in the change/); assert.throws(() => guard([{ path: 'a', content: 'x'.repeat(60001) }]), /oversized/); assert.throws(() => guard([{ path: 'a', content: 5 }]), /bad or oversized/);
