@@ -82,7 +82,7 @@ export async function cfProxy(request, env, f) {
   if (ai && env.AI) {
     let j; try { j = await request.json(); } catch (e) { return J({ ok: false, error: "bad json" }, 400); }
     try { return J({ success: true, result: await env.AI.run(ai[1], j), errors: [], messages: [] }); }
-    catch (e) { console.error("ai-binding", ai[1], e && e.message); return J({ success: false, errors: [{ code: "ai_run_failed", message: "the model did not answer; the detail is in the worker log" }] }, 502); }
+    catch (e) { console.error("ai-binding", ai[1], e && e.message); return J({ success: false, errors: [{ code: "ai_run_failed", message: "the model did not answer", detail: String((e && e.message) || e).slice(0, 200) }] }, 502); }  // LADDER-DETAIL-1: the executor log names why a rung failed (a model's own error text carries no secret)
   }
   let body = ["GET", "DELETE"].includes(method) ? undefined : request.body;
   if (method === "POST" && /\/query$/.test(path.split("?")[0])) {

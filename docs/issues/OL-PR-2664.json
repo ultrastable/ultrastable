@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2664",
+  "title": "OL-PR-2664: land or supersede pull request #2664 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2664 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 2664\n**Status:** closed\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2664 (`ccr-ee4940b3-tx64sc-skipped-not-green` at ff4314313d, opened by rwnq8): fix(lane): a skipped required check never merges; restore and protect the Actions kill switch (SKIPPED-NOT-GREEN-1). The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (14): .github/workflows/checks.yml, doctrine/writeback/lesson-2026-11-27-skipped-not-green-1-a-skipped-required-check-is-read-as-pass.json, foundation/executor.py, ops/improvements.jsonl, research/papers/second-loop-2026.md, scripts/lane.sh, scripts/protected_paths.py, seed/worker/src/greenguard.js, seed/worker/src/maincommit.js, seed/worker/src/nativeexec.js, seed/worker/test/greenguard.test.js, seed/worker/test/spec-24-halt-and-beats.test.js, seed/worker/test/spec-33-executors.test.js, test/plan-limits.test.mjs.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2664 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2664` exits 0 (pull request #2664 is merged or closed).\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): pull request is closed\n",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

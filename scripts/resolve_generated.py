@@ -18,7 +18,7 @@ for f in list(conf):
             fcntl.flock(lock, fcntl.LOCK_UN)
     elif f.endswith(".jsonl") or f == "docs/PROJECT-MEMORY.md":  # append-only: keep both sides
         t = open(f).read(); open(f, "w").write("\n".join(l for l in t.splitlines() if not re.match(r"^(<<<<<<<|=======|>>>>>>>)", l)) + "\n")
-    elif f in ("ops/transparency.json", "site/dashboard-data.js", "site/claims-data.js", "site/research-data.js", "site/self-data.js", "seed/SYSTEM.md", "seed/docs/claims.json") or f.startswith("research/papers/"):  # papers are rebuilt by `research --page --apply` below   # claims-data.js is rewritten below from the merged doctrine/claims.json
+    elif f in ("ops/transparency.json", "site/dashboard-data.js", "site/claims-data.js", "site/research-data.js", "site/self-data.js", "seed/SYSTEM.md", "seed/docs/claims.json") or f.startswith("research/papers/") or re.match(r"^site/[^/]+-data\.js$", f) or re.match(r"^ops/(?:trajectory|runway|saydo|yearsim|balance)\.json$", f):  # papers are rebuilt by `research --page --apply` below   # claims-data.js is rewritten below from the merged doctrine/claims.json
         subprocess.run(["git", "checkout", "--theirs", f])
     else:
         continue

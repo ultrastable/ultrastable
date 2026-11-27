@@ -451,6 +451,14 @@
       "url": "idea-bank.schema.json"
     },
     {
+      "name": "identities.json",
+      "description": "Contract for doctrine/identities.json",
+      "fileMatch": [
+        "doctrine/identities.json"
+      ],
+      "url": "identities.schema.json"
+    },
+    {
       "name": "improve.json",
       "description": "Contract for doctrine/improve.json",
       "fileMatch": [
@@ -465,6 +473,14 @@
         "doctrine/insight.json"
       ],
       "url": "insight.schema.json"
+    },
+    {
+      "name": "instructions-budget.json",
+      "description": "Contract for doctrine/instructions-budget.json",
+      "fileMatch": [
+        "doctrine/instructions-budget.json"
+      ],
+      "url": "instructions-budget.schema.json"
     },
     {
       "name": "intent-yield.json",
@@ -761,6 +777,14 @@
         "doctrine/registers.json"
       ],
       "url": "registers.schema.json"
+    },
+    {
+      "name": "repo-design.json",
+      "description": "Contract for doctrine/repo-design.json",
+      "fileMatch": [
+        "doctrine/repo-design.json"
+      ],
+      "url": "repo-design.schema.json"
     },
     {
       "name": "repo-shape.json",

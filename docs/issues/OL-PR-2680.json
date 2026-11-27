@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2680",
+  "title": "OL-PR-2680: land or supersede pull request #2680 (ci-failed)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2680 is ci-failed\n**Done check:** cmd:python3 -m foundation loopowner --closed 2680\n**Status:** closed\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2680 (`agent/LADDER-1-route-health` at 01c82f14fb, opened by rwnq8): fix(executor): a model-level failure no longer downs the provider route; retire GitHub Models rungs (LADDER-1). The session that opened it is not its closer and is never asked to act. A check failed on the head commit. Read the failing run, then land the same change so that every check passes: push a fix to the branch, or open a new pull request from main that carries the change and close this one as superseded. Failed checks: checks, fast, foundation, tests-a, tests-b, worker-gate. Files (18): .github/workflows/checks.yml, .github/workflows/executor.yml, docs/issues/Q-LLM-copilot-route.json, docs/issues/Q-REPO-agents-map.json, doctrine/code-agents.json, doctrine/instructions-budget.json, doctrine/schemas/catalog.json, doctrine/schemas/instructions-budget.schema.json, doctrine/writeback/lesson-2026-11-27-executor-ladder-a-model-level-failure-must-not-down-the-prov.json, foundation/agent_ladder.py, foundation/agents.py, scripts/instructions_budget.py, site/aibinding.test.mjs, site/deployer.js, tests/foundation/test_agent_ladder.py, tests/foundation/test_agents.py, tests/foundation/test_spec_33_executor.py, tests/test_instructions_budget.py.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2680 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2680` exits 0 (pull request #2680 is merged or closed).\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): pull request is merged\n",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

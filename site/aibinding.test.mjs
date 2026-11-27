@@ -23,5 +23,7 @@ test("a binding error is a 502 with a plain error code, not a silent pass", asyn
   const env = { CF_ACCOUNT_ID: "a", CF_DEPLOY_TOKEN: "t", AI: { run: async () => { throw new Error("5028 model deprecated"); } } };
   const r = await cfProxy(req("ai/run/@cf/x/y", {}), env, async () => new Response("{}"));
   assert.equal(r.status, 502);
-  assert.equal((await r.json()).errors[0].code, "ai_run_failed");
+  const e = (await r.json()).errors[0];
+  assert.equal(e.code, "ai_run_failed");
+  assert.match(e.detail, /5028 model deprecated/);  // LADDER-DETAIL-1: the caller's log says why
 });

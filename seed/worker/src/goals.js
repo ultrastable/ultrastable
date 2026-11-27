@@ -13,6 +13,7 @@
 // ids, bounds and values. Config: seed/autonomy/goals.json (config.goals). Page: /goals on the site, data at /api/goals.
 import { record } from './auditchain.js';
 import { beatStats24h } from './beatstats.js';  // READ-BUDGET-9
+import { goalSamples14d } from './goalsamples.js';  // READ-BUDGET-11
 import { dampedCooldown, errorBudget } from './control.js';  // CONTROL-1: knob damping, goal error budgets
 import { nextTrial, upsets, accessibility, reducibility, searchBudget, jointRest, cylindrance, protocol, variety, transmission } from './ashby.js';  // ASHBY-KERNEL-1
 import { varietyReading, OWN_ITEM } from './regulation.js';  // ASHBY-KERNEL-1: requisite variety read from the work queue
@@ -365,7 +366,7 @@ export async function structureOf(db, { now = Date.now(), samples = null, max_jo
     return { ...c, search: searchBudget(ks.map(k => Math.round((k.max - k.min) / k.step) + 1), { trial_h: Math.max(1, ...ks.map(k => k.review_h + k.cooldown_h)) }) }; });
   const gs = await all(db, `SELECT id, op, target FROM goals WHERE status = 'active' AND level = 'target'`), spec = Object.fromEntries(gs.filter(g => OPS[g.op]).map(g => [g.id, g]));
   const rowsAt = new Map();
-  for (const x of samples || await all(db, `SELECT goal_id, at, value FROM goal_samples WHERE at >= ? ORDER BY at`, now - 14 * 86400e3)) { const g = spec[x.goal_id]; if (!g) continue; const r = rowsAt.get(x.at) || {}; r[x.goal_id] = OPS[g.op](x.value, g.target); rowsAt.set(x.at, r); }
+  for (const x of samples || await goalSamples14d(db, now)) { const g = spec[x.goal_id]; if (!g) continue; const r = rowsAt.get(x.at) || {}; r[x.goal_id] = OPS[g.op](x.value, g.target); rowsAt.set(x.at, r); }
   const ids = Object.keys(spec).sort(), full = [...rowsAt.values()].filter(r => ids.every(i => i in r)), over = ids.slice(0, 10);
   const dep = [];
   if (full.length >= 24) for (let i = 0; i < over.length; i++) for (let j = i + 1; j < over.length; j++) { const t = transmission(full.map(r => [r[over[i]], r[over[j]]])); if (t.bits >= 0.1) dep.push({ a: over[i], b: over[j], bits: t.bits }); }
@@ -386,7 +387,7 @@ export async function structureOf(db, { now = Date.now(), samples = null, max_jo
 export async function readGoals(db, { builtins = {}, loops = true, now = Date.now(), slo = 0.9 } = {}) {
   await ensure(db);
   const gs = await all(db, `SELECT * FROM goals WHERE status != 'retired' OR retired_reason IS NOT NULL ORDER BY tenant, level, id`);
-  const samples = await all(db, `SELECT goal_id, at, value FROM goal_samples WHERE at >= ? ORDER BY at`, now - 14 * 86400e3);
+  const samples = await goalSamples14d(db, now);
   const by = {}; for (const s of samples) (by[s.goal_id] ||= []).push(s);
   const knobs = await all(db, 'SELECT * FROM goal_knobs ORDER BY tenant, id');
   const adj = await all(db, 'SELECT * FROM goal_adjustments ORDER BY id DESC LIMIT 40');
