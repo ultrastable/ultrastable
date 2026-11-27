@@ -25,10 +25,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 -m foundation issueloop --apply --file
+      - name: Archive closed queue items (STATE-ARCHIVE-1, ZHC-R1)
+        run: python3 -m foundation statesink --archive --apply
       - name: Commit filed queue items
         run: |
           git config user.name "ultrastable-bot"; git config user.email "bot@users.noreply.github.com"
           python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
           if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
           git add docs/issues
-          bash tools/record_main.sh "issueloop: file Q-ISSUE items for unprobed or failing issues"
+          bash tools/record_main.sh "issueloop: file Q-ISSUE items and archive closed ones"
