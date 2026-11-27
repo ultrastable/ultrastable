@@ -498,6 +498,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["routehealth"]:  # ROUTE-CANARY-1: foundation/routehealth.py
         from . import routehealth
         return routehealth.main(_av[1:])
+    if _av[:1] == ["testguard"]:  # TESTS-PROTECTED-1: foundation/testguard.py
+        from . import testguard
+        return testguard.main(_av[1:])
     if _av[:1] == ["agent_ladder"]:
         from . import agent_ladder
         return agent_ladder.main(_av[1:])
