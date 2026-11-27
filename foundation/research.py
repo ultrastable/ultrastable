@@ -625,6 +625,27 @@ def intake(root=REPO, apply=False, fetch=_fetch) -> dict:
     return {"candidates": len(cands), "filed": filed, "errors": errors}
 
 
+def canon(root=REPO, apply=False) -> dict:
+    """CANON-1: file the next primary source of the cybernetics program that no study ingests yet (source_id canon:<id>)."""
+    pol = load(root)
+    cn = pol.get("canon") or {}
+    have = {s.get("source_id") for s in studies(root, pol)}
+    todo = [c for c in cn.get("sources", []) if f"canon:{c['id']}" not in have]
+    filed = []
+    for c in todo[: cn.get("per_pass", 1)]:
+        iid = "Q-RES-CANON-" + c["id"]
+        where = c.get("url") or "the original edition (cite publisher, year and pages)"
+        body = (f"**Owner:** product-manager\n**Trigger:** research canon, next source not yet ingested\n"
+                f"**Done check:** cmd:python3 -m foundation research --probe intake:canon:{c['id']}\n"
+                f"**Prediction:** research_findings_met_share >= 0 within 336 h\n**Out of scope:** paraphrase from secondary sources; numbers not in the original\n**Status:** open\n\n"
+                f"Read {c['title']} by {c['authors']} ({c['year']}) from {where}. Add research/studies/{c['id']}.json with \"source_id\": \"canon:{c['id']}\", "
+                f"a misperception it answers for AI systems, and findings bound to metrics in foundation/research.py METRICS, each with a mechanism path in this repository. "
+                f"State the ideas in our own words with page or chapter. Then run research --run --apply; the thought loop posts it.")
+        if apply and _issue(root, iid, f"research canon: {c['title'][:80]} ({c['authors']}, {c['year']})", body, ["role:product-manager", "research"]):
+            filed.append(iid)
+    return {"remaining": len(todo), "filed": filed}
+
+
 def _gh(url) -> str:
     tok = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
     req = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json", "User-Agent": "ultrastable-research/1", **({"Authorization": f"Bearer {tok}"} if tok else {})})
@@ -708,7 +729,7 @@ def main(argv=None) -> int:
         print(why)
         return 0 if ok else 1
     if "--intake" in av:
-        print(json.dumps(intake(REPO, apply), indent=1))
+        print(json.dumps({**intake(REPO, apply), "canon": canon(REPO, apply)}, indent=1))
         return 0
     if "--refresh-prs-if-stale" in av:  # REDTEAM-1 (stale): the papers say they regenerate after every merge, so their source may not be days old
         snap = REPO / load(REPO)["state_dir"] / "prs.json"

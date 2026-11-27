@@ -160,7 +160,8 @@ class Conflicts(unittest.TestCase):
 
 
 class Bounds(unittest.TestCase):
-    PR = lambda self, n, created, *labels, updated=None: {"number": n, "createdAt": iso(created), "updatedAt": iso(updated if updated is not None else 1), "labels": [{"name": x} for x in labels]}
+    PR = lambda self, n, created, *labels, updated=None, labelled=None: {"number": n, "createdAt": iso(created), "updatedAt": iso(updated if updated is not None else 1), "labels": [{"name": x} for x in labels],
+                                                                         "since": {x: iso(created if labelled is None else labelled) for x in labels} if labelled != "unread" else {}}
 
     def test_us_33_r55_a_pull_request_the_lane_labelled_conflict_or_ci_failed_is_closed_past_its_bound_with_its_branch_kept_and_a_held_one_is_never_closed(self):
         """US-33-R55"""
@@ -168,7 +169,12 @@ class Bounds(unittest.TestCase):
         now = NOW.timestamp()
         close, stale = prbound.read([self.PR(1, 31, "conflict"), self.PR(2, 29, "conflict"), self.PR(3, 61, "ci-failed"), self.PR(4, 59, "ci-failed"), self.PR(5, 500, "conflict", "hold"), self.PR(6, 130), self.PR(7, 119)], now)
         self.assertEqual([n for n, _ in close], [1, 3]); self.assertIn("merge conflict with main unresolved for 31 min", close[0][1]); self.assertIn("a failing check unrepaired for 61 min", close[1][1])
-        self.assertEqual(stale, [(6, 2.2)], "the age is minutes since it opened: the lane's own labels and comments refresh updatedAt, so that clock never ran out; a held pull request is exempt")
+        self.assertEqual(stale, [(6, 2.2)], "staleness is minutes since it opened: the lane's own labels and comments refresh updatedAt, so that clock never ran out; a held pull request is exempt")
+        # PR-BOUND-3: the close is on the condition's clock. #2686 had been open 90 minutes when main moved under it and was closed 17 seconds later as "unresolved for 90 min"
+        self.assertEqual(prbound.read([self.PR(9, 90, "conflict", labelled=1), self.PR(10, 90, "ci-failed", labelled=59), self.PR(11, 90, "conflict", labelled="unread")], now)[0], [], "a condition that just began, or whose start was not read, closes nothing")
+        self.assertEqual(prbound.read([self.PR(12, 90, "conflict", labelled=30)], now)[0], [(12, "merge conflict with main unresolved for 30 min")])
+        events = [{"event": "labeled", "label": {"name": "conflict"}, "created_at": iso(80)}, {"event": "unlabeled", "label": {"name": "conflict"}, "created_at": iso(70)}, {"event": "labeled", "label": {"name": "conflict"}, "created_at": iso(2)}, {"event": "labeled", "label": {"name": "queue"}, "created_at": iso(1)}]
+        self.assertEqual(prbound.since("o/r", 9, api=lambda path: events), {"conflict": iso(2)}, "the newest time the label was put on: an earlier episode that cleared does not count")
         self.assertEqual(prbound.read([self.PR(8, 40, "conflict", updated=0)], now)[0][0][0], 8)
         d = tmp(self); ran = []
         real = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(minutes=31)).strftime("%Y-%m-%dT%H:%M:%SZ"); prs = [{"number": 1, "created_at": real, "updated_at": real, "labels": [{"name": "conflict"}]}]
@@ -177,7 +183,8 @@ class Bounds(unittest.TestCase):
             ran.append((repo, n, why))
             return {"closed": True, "ref": f"refs/archive/pr-{n}-abc1234"}
         old = os.getcwd(); os.chdir(d); self.addCleanup(os.chdir, old); (d / "ops").mkdir()
-        with mock.patch.object(prbound.prsafe, "gh_api", lambda *a, **k: prs), mock.patch.object(prbound.prsafe, "safe_close", close), mock.patch.dict(os.environ, {"GITHUB_REPOSITORY": "o/r"}):
+        api = lambda path, *a, **k: [{"event": "labeled", "label": {"name": "conflict"}, "created_at": real}] if "/events" in path else prs
+        with mock.patch.object(prbound.prsafe, "gh_api", api), mock.patch.object(prbound.prsafe, "safe_close", close), mock.patch.dict(os.environ, {"GITHUB_REPOSITORY": "o/r"}):
             self.assertEqual(prbound.main(["--apply"]), 0)
         self.assertEqual([(r, n) for r, n, _ in ran], [("o/r", 1)])
         row = json.loads((d / "ops/prbound.jsonl").read_text()); self.assertEqual(row["pr"], 1); self.assertTrue(row["ref"].startswith("refs/archive/"))

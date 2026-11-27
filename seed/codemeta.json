@@ -1,0 +1,22 @@
+{
+ "@context": "https://w3id.org/codemeta/3.0",
+ "@type": "SoftwareSourceCode",
+ "name": "Ultrastable seed",
+ "description": "The code-only kernel a new autonomous system starts from: bootstrapper, tick Worker, roles, agent instructions and the loops that take it to criticality. A copy of seed/ in the Ultrastable platform.",
+ "codeRepository": "https://github.com/ultrastable/seed",
+ "url": "https://github.com/ultrastable/seed",
+ "license": "https://github.com/ultrastable/seed/blob/main/LICENSE",
+ "author": [
+  {
+   "@type": "Person",
+   "@id": "https://orcid.org/0009-0002-4317-5604",
+   "name": "Rowan Brad Quni-Gudzinas"
+  }
+ ],
+ "keywords": [
+  "autonomous-agents",
+  "cloudflare-workers",
+  "template",
+  "ultrastable"
+ ]
+}

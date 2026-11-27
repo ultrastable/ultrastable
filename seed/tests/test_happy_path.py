@@ -34,6 +34,20 @@ def fresh(d):
     return Path(d)
 
 
+def as_template(d):
+    """In a system that already took its own identity, its copy is put back to the template's identity, so the adopt story reads the same in the
+    template and in every system born from it (IDENTITY-AT-BIRTH-1)."""
+    p = Path(d) / "ultrastable.json"
+    m = json.loads(p.read_text())
+    if m["identity"].get("layer") != "template":
+        m["identity"].update({"name": "Ultrastable seed", "slug": "seed", "repo": "ultrastable/seed", "layer": "template", "public_url": None, "runs_as": []})
+        m["identity"]["status"] = "live"
+        if isinstance(m.get("org"), dict):
+            m["org"].update({k: m["identity"][k] for k in ("name", "slug") if k in m["org"]})
+        p.write_text(json.dumps(m, indent=2) + "\n")
+    return Path(d)
+
+
 class Story(unittest.TestCase):
     def setUp(self):
         self.saved = {k: os.environ.pop(k, None) for k in KEYS}
@@ -90,6 +104,61 @@ class Story(unittest.TestCase):
             log = json.loads((Path(d) / "org/boot-log.json").read_text())
             self.assertEqual(next(s["status"] for s in log["stages"] if s["stage"] == "qualify"), "ok")
             self.assertEqual(next(s["status"] for s in log["stages"] if s["stage"] == "year_gate"), "ok", "the year gate ran on the person's own idea")
+
+    def test_2b_the_copy_takes_its_own_name_and_repository_and_keeps_them(self):
+        # IDENTITY-AT-BIRTH-1: in the Action's own checkout the boot gives the copy its identity once; the daily retry changes nothing
+        with tempfile.TemporaryDirectory() as d:
+            intake.take(as_template(fresh(d)), FORM, "ada", "OWNER")
+            saved = os.environ.get("GITHUB_WORKSPACE")
+            os.environ["GITHUB_WORKSPACE"] = d
+            try:
+                self.boot(d)
+                first = json.loads((Path(d) / "org/boot-log.json").read_text())
+                self.boot(d)
+            finally:
+                os.environ.pop("GITHUB_WORKSPACE", None)
+                if saved is not None:
+                    os.environ["GITHUB_WORKSPACE"] = saved
+            step = lambda log: next(s for s in log["stages"] if s["stage"] == "adopt")  # noqa: E731
+            self.assertIn("took its own identity as ada/my-system", step(first)["detail"])
+            again = step(json.loads((Path(d) / "org/boot-log.json").read_text()))
+            self.assertEqual((again["status"], again["detail"].endswith("nothing to change")), ("ok", True), again)
+            name = bs.parse_idea((Path(d) / "IDEA.md").read_text())["front"]["org_name"]
+            i = json.loads((Path(d) / "ultrastable.json").read_text())["identity"]
+            self.assertEqual((i["name"], i["repo"], i["layer"]), (name, "ada/my-system", "seeded-system"))
+            self.assertTrue((Path(d) / "llms.txt").read_text().startswith(f"# {name}\n"))
+            self.assertIn("github.com/ada/my-system", (Path(d) / "CITATION.cff").read_text())
+            self.assertIn('"repo": "ada/my-system"', (Path(d) / "worker/src/config.js").read_text(), "the Worker serves its own repository, not the template's")
+            sys.path.insert(0, str(Path(d) / "scripts"))
+            try:
+                import surfaces
+                self.assertEqual(surfaces.check(Path(d)), [])
+            finally:
+                sys.path.pop(0)
+
+    def test_2c_a_licence_that_names_no_holder_never_stops_the_boot(self):
+        # BOOT-2: a fact the repository lacks holds back only the surfaces that need it; the stage is recorded and the boot goes on
+        with tempfile.TemporaryDirectory() as d:
+            intake.take(as_template(fresh(d)), FORM, "ada", "OWNER")
+            # REUSE-IgnoreStart  (a licence text the test writes, not this file's own)
+            (Path(d) / "LICENSE").write_text("Licensed under the Apache License, Version 2.0.\n\nCopyright [yyyy] [name of copyright owner]\n")
+            # REUSE-IgnoreEnd
+            (Path(d) / "CITATION.cff").unlink()
+            saved = os.environ.get("GITHUB_WORKSPACE")
+            os.environ["GITHUB_WORKSPACE"] = d
+            try:
+                self.boot(d)
+            finally:
+                os.environ.pop("GITHUB_WORKSPACE", None)
+                if saved is not None:
+                    os.environ["GITHUB_WORKSPACE"] = saved
+            log = json.loads((Path(d) / "org/boot-log.json").read_text())
+            step = next(s for s in log["stages"] if s["stage"] == "adopt")
+            self.assertEqual(step["status"], "degraded", step)
+            self.assertIn("never guessed", step["detail"])
+            self.assertIn("qualify", [s["stage"] for s in log["stages"]], "the stages after it still ran")
+            self.assertEqual(json.loads((Path(d) / "ultrastable.json").read_text())["identity"]["repo"], "ada/my-system")
+            self.assertTrue((Path(d) / "llms.txt").read_text().startswith("# "), "the surfaces that need no holder were rendered")
 
     def test_3_the_guided_interview_also_ends_in_a_system_not_in_not_a_fit(self):
         answers = {}

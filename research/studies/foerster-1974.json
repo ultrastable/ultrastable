@@ -81,5 +81,6 @@
    },
    "prediction": "spec_quality >= 0.9 within 72 h"
   }
- ]
+ ],
+ "source_id": "canon:vonfoerster-1974"
 }

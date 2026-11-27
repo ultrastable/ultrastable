@@ -1,91 +1,69 @@
 {
- "schema": "research-study/1",
- "id": "conant-ashby-1970",
- "order": 7,
- "title": "Every good regulator of a system must be a model of that system",
- "paper_title": "The regulator is a model: does an AI system know the disturbances it claims to regulate?",
- "paper_frame": "Conant and Ashby proved that a regulator which is as simple as it can be and still regulates well must contain a model of the system it regulates. For an AI system that runs itself, the model is its register of failure modes, and each entry is only a model if something watches for it. We count.",
- "authors": [
-  "Roger C. Conant",
-  "W. Ross Ashby"
- ],
- "institution": "International Journal of Systems Science 1(2), 89-97",
- "kind": "journal article",
- "version": "1970",
- "seeded_by": "owner, 2026-11-27 (CYBERNETICS-PROGRAM-1)",
- "source_url": "https://doi.org/10.1080/00207727008920220",
- "data": "Theory. The result is a theorem about regulators and the systems they regulate; the application to software is ours.",
- "summary": "A regulator that does its job well, with no unnecessary complexity, is a model of the thing it regulates: what it does mirrors the structure of what it faces. For an autonomous software system this means its list of failure modes is its model of the environment, and a failure mode that nothing detects is a part of the environment the regulator does not model.",
- "perspectives": [
-  "systems",
-  "reliability",
-  "safety"
- ],
- "limits": [
-  "Reading. The source was not machine-read for this paper: its argument is stated in our own words from the publication's well-known content, with no quotation, and a reader should check the claim against the source linked above.",
-  "Reading of the theorem. The theorem is about the minimal regulator under stated conditions; we use it as a design test (every named disturbance has a detector), not as a proof about this system.",
-  "Declared versus observed. A detector that exists is not a detector that passes today; the share counts declared detectors."
- ],
- "misperception": {
-  "belief": "A capable enough AI system does not need an explicit model of what can go wrong; it will cope.",
-  "short": "A capable AI needs no explicit model of its failures.",
-  "counter": "A regulator that does its job well must contain a model of what it regulates. In software that model is a register of failure modes, each one watched by a detector, and it can be counted."
- },
- "findings": [
-  {
-   "id": "G1",
-   "concern": "A failure mode nothing watches",
-   "claim": "The register of failure modes is the system's model of its environment. A mode with no detector is a part of that environment the regulator does not model, so the system cannot respond to it. We count the share of registered modes that have at least one detector.",
-   "where": "Theorem and its discussion (our statement)",
-   "perspective": "reliability",
-   "mechanisms": [
-    {
-     "rule": "FAILURE-RESOLVE-1",
-     "path": "doctrine/registers.json",
-     "how": "every failure mode is a row with trigger, symptom, blast radius, detection and root cause"
-    },
-    {
-     "rule": "FAILURE-RESOLVE-1",
-     "path": "doctrine/detectors.json",
-     "how": "each detector names the failure mode it watches"
-    },
-    {
-     "rule": "FAILURE-RESOLVE-1",
-     "path": "foundation/failure_audit.py",
-     "how": "a mode nothing watches fails the audit"
-    }
-   ],
-   "metric": "failure_modes_detected_share",
-   "target": {
-    "op": ">=",
-    "value": 1.0
-   },
-   "prediction": "failure_modes_detected_share >= 1 within 24 h"
+  "schema": "research-study/1",
+  "id": "conant-ashby-1970",
+  "order": 8,
+  "source_id": "canon:conant-ashby-1970",
+  "paper_title": "Every good regulator is a model: what Conant and Ashby mean for AI systems that run themselves",
+  "paper_frame": "Conant and Ashby argued that the best possible regulator of a system must be, in effect, a model of that system. An AI system that runs a business without an explicit model of its own parts is regulating blind. We check whether this system keeps such a model: a knowledge graph of its own data, declared limits for what it must hold steady, and work items specific enough to be checked.",
+  "title": "Every good regulator of a system must be a model of that system",
+  "authors": ["Roger C. Conant", "W. Ross Ashby"],
+  "institution": "International Journal of Systems Science, vol. 1, no. 2, pp. 89-97",
+  "kind": "article",
+  "version": "1970",
+  "seeded_by": "canon queue, owner request 2026-11-27",
+  "source_url": "http://pespmc1.vub.ac.be/books/Conant_Ashby.pdf",
+  "data": "Theorem with proof, in information-theoretic terms.",
+  "summary": "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: to control something well you must model it, and the quality of control is bounded by the quality of the model.",
+  "perspectives": ["systems", "oversight"],
+  "limits": [
+    "The theorem is about optimal and simplest regulators. We use it as a design rule, not as proof that this system's model is good enough.",
+    "The graph reading counts systems whose graph is built; it does not measure how faithful each graph is."
+  ],
+  "misperception": {
+    "belief": "An AI agent can manage a system it has no explicit model of, because the model is in its weights.",
+    "short": "The model is in the weights.",
+    "counter": "A regulator is only as good as its model of the thing it regulates. A system that runs itself needs an explicit, current model of its own parts, kept as data it can read and check."
   },
-  {
-   "id": "G2",
-   "concern": "A model that is never checked against the world",
-   "claim": "A model of the environment goes stale unless something compares it with the environment. Every loop must declare a closing probe and a server-side owner, so the register of loops is also checked against what actually runs.",
-   "where": "Theorem and its discussion (our statement)",
-   "perspective": "systems",
-   "mechanisms": [
+  "findings": [
     {
-     "rule": "CLOCKWORK-1",
-     "path": "doctrine/clocks.json",
-     "how": "each loop has an expected interval, so a loop that stops is read from recorded beats"
+      "id": "R1",
+      "concern": "A regulator with no model of the regulated system",
+      "claim": "Each system the platform runs should keep a model of its own data. Here that is the knowledge graph each system builds from its own tables.",
+      "where": "Section 1 and the theorem (our statement)",
+      "perspective": "systems",
+      "mechanisms": [
+        {"rule": "DATAGRAPH-1", "path": "seed/worker/src/datagraph.js", "how": "every table becomes graph nodes and edges, kept each pass"},
+        {"rule": "DATAGRAPH-1", "path": "doctrine/knowledge-graph.json", "how": "every system has a row, built or pending"}
+      ],
+      "metric": "kg_systems_share",
+      "target": {"op": ">=", "value": 1.0},
+      "prediction": "kg_systems_share >= 1 within 336 h"
     },
     {
-     "rule": "MANAGERS-1",
-     "path": "foundation/managers.py",
-     "how": "a manager with no loop is a title, not a regulator"
+      "id": "R2",
+      "concern": "A model with no stated outcomes to hold",
+      "claim": "The theorem measures a regulator by the outcomes it keeps. A model is useless for regulation unless the outcomes it serves are declared with limits.",
+      "where": "Section 2 (our statement)",
+      "perspective": "systems",
+      "mechanisms": [
+        {"rule": "ASHBY-1", "path": "doctrine/ultrastability.json", "how": "essential variables declared with limits"}
+      ],
+      "metric": "essential_bounded_share",
+      "target": {"op": ">=", "value": 1.0},
+      "prediction": "essential_bounded_share >= 1 within 24 h"
+    },
+    {
+      "id": "R3",
+      "concern": "Work items too vague to map to a state",
+      "claim": "If the regulator's actions are a mapping of system states, each action has to name the state it changes and how to check it. A work item without a done check and a live probe is an action mapped to nothing.",
+      "where": "The theorem (our application)",
+      "perspective": "oversight",
+      "mechanisms": [
+        {"rule": "SPEC-GATE-1", "path": "seed/scripts/specgate.py", "how": "fails items with no done check, prediction, out-of-scope line or live probe"}
+      ],
+      "metric": "spec_quality",
+      "target": {"op": ">=", "value": 0.9},
+      "prediction": "spec_quality >= 0.9 within 336 h"
     }
-   ],
-   "metric": "loops_closing_probe_share",
-   "target": {
-    "op": ">=",
-    "value": 1.0
-   },
-   "prediction": "loops_closing_probe_share >= 1 within 24 h"
-  }
- ]
+  ]
 }

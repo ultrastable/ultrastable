@@ -52,7 +52,11 @@
    "SYSTEM.md",
    "schemas/",
    ".devcontainer/",
-   ".editorconfig"
+   ".editorconfig",
+   "LICENSES/",
+   "codemeta.json",
+   "package.json",
+   "wrangler.jsonc"
   ],
   "keep": [
    "NOTICE",
@@ -614,12 +618,21 @@
   }
  },
  "identity": {
-  "_doc": "LIVE-LINKS-1: what a seeded system owns and no sync may overwrite. The kernel sync (foundation/upstream.py OWNED) leaves these alone; the step that fills a new repository from seed/ renders README.md for the system (its own title and Live block) instead of copying the template's.",
+  "_doc": "LIVE-LINKS-1: what a seeded system owns and no sync may overwrite. The kernel sync (foundation/upstream.py OWNED) leaves these alone; the step that fills a new repository from seed/ renders README.md for the system (its own title and Live block) instead of copying the template's, and the seed's boot adopts the rest of its identity files (seed/scripts/surfaces.py adopt, IDENTITY-AT-BIRTH-1).",
   "files": [
    "README.md",
    "IDEA.md",
    "instance.json",
-   "docs/PROJECT-MEMORY.md"
+   "docs/PROJECT-MEMORY.md",
+   "ultrastable.json",
+   "CITATION.cff",
+   "publiccode.yml",
+   "catalog-info.yaml",
+   "llms.txt",
+   "REUSE.toml",
+   "codemeta.json",
+   "CHANGELOG.md",
+   ".ultrastable/"
   ]
  }
 }

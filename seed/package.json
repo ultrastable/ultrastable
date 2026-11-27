@@ -1,0 +1,28 @@
+{
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "build": "python3 bootstrap/bootstrap.py --dry-run --real",
+    "deploy": "wrangler deploy && wrangler d1 migrations apply DB --remote",
+    "test": "node worker/test/run.mjs && python3 -m unittest discover -s tests"
+  },
+  "devDependencies": {
+    "wrangler": "4.168.0"
+  },
+  "cloudflare": {
+    "bindings": {
+      "DB": {
+        "description": "The system's own database: its work items, checks, schedule and history. It is created for you and set up on the first deploy."
+      },
+      "AI": {
+        "description": "The AI models of your own Cloudflare account. The system uses them to plan and do its work, so no AI key is needed."
+      },
+      "PUBLIC_HEALTH_ONLY": {
+        "description": "What the public sees: `0` shows the system's page, health report and directory listing; `1` shows only the health report."
+      }
+    }
+  }
+}

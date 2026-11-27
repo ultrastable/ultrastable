@@ -10,12 +10,15 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: feat(executor): refuse a model reply of the wrong shape (R12) (#2708)
+- 2026-11-27: feat(deploy): read live Workers against main (R6) (#2706)
 - 2026-11-27: feat(deploy): roll back drifted Worker deploys (R6) (#2701)
 - 2026-11-27: fix(lane): a pull request carries no generator-owned files, so main moving under it cannot kill it (PR-NO-GENERATED-1) (#2694)
 - 2026-11-27: feat(checks): workflow tokens read-only at the top, identities registered (ZHC-R4) (#2697)
 - 2026-11-27: fix(site): growth hits window in milliseconds and cached (READ-BUDGET-12) (#2696)
 - 2026-11-27: fix(executor): take only the org's own issues and fence issue text as data (ZHC-R12) (#2695)
 - 2026-11-27: feat(checks): refuse executor PRs that only undo main's last day (ZHC-R13) (#2690)
+- 2026-11-27: REPO-CONFORM-2 stage 1 of 3, the kit's identity renderer and its deploy button (Rowan: "Deploying Ultrastable shall be effortless and automatic."). `seed/scripts/surfaces.py` renders every identity file from `ultrastable.json` (README blocks, `CITATION.cff`, `publiccode.yml`, `catalog-info.yaml`, `llms.txt`, `REUSE.toml`, `codemeta.json`, `LICENSES/<id>.txt`; `CHANGELOG.md`, `CONTRIBUTING.md` and `SECURITY.md` only when missing) and `adopt` gives a copy of the template its own identity; the boot's new `adopt` stage (`seed/bootstrap/bootstrap.py`, IDENTITY-AT-BIRTH-1) calls it, the bootstrap workflow commits what it adopted, and `foundation/upstream.py` OWNED and `doctrine/fleet-map.json` leave those files to the system. `seed/wrangler.jsonc` and `seed/package.json` let the Deploy to Cloudflare button build from the kit root (`wrangler deploy` creates the D1 database, then `wrangler d1 migrations apply DB --remote`), and `runTick` runs the migrate step before the heartbeat row (MIGRATE-FIRST-1, `seed/worker/test/deploy-config.test.js`). The change is too large for one pull request (`seed/autonomy/prsize.json`), so it lands as three: this one, then the conformance reader with the agent files and the core's root files, then the system definition and the tenant standard. Stage 2 must reconcile with #2663, which landed the core's root `llms.txt`, `REUSE.toml` and `publiccode.yml` and the quoted-YAML reader while stage 1 was built.
 - 2026-11-27: feat(checks): tests-protected guard (ZHC-R11) (#2689)
 - 2026-11-27: fix(executor): carry the trailers into the squash merge (ZHC-R7) (#2688)
 - 2026-11-27: fix(executor): a model-level failure no longer downs the provider route; retire GitHub Models rungs (LADDER-1) (#2680)
@@ -997,6 +1000,11 @@ Rowan: "these are grave shortcomings of the ultra-stable system ... something's 
 - Site statements that were false and are corrected: "every change is rolled back automatically" (only handed-off changes are; `Q-RULEREFS-deploy-revert`), "a person replies within two working days" (nothing reads pilot applications; `Q-RULEREFS-pilot-consumer`). The seed's rule file names 353 files and commands the seed does not carry (`Q-RULEREFS-seed-rules`).
 - Lessons for any session integrating parallel work: two workers each made a standard for the same file (branch cleanup) and every tenant's CI went red until one owner was named; give every shared file one owner before fanning out. A targeted check list that omits `doctrine --check` misses the README brand block. The generated-system workflow lint said weekly while the rule said daily; one rule now (daily).
 
+## 2026-11-27: the pull request closer times a condition from when it began (PR-BOUND-3) (Session: session_0156nqDsPJ1YLdic5NVSU9iG)
+
+- Measured: #2686 was closed by `prbound --apply` 17 seconds after main moved under it, with the reason "unresolved for 90 min". PR-BOUND-2 counted minutes since the pull request opened, so any pull request open past 30 minutes was closed on the first lane pass that saw a conflict, and past 60 minutes on the first failed check. #2664 and #2615 were closed the same way.
+- Now: `foundation/prbound.py` reads when the `conflict` or `ci-failed` label was last put on (issue events) and bounds that. The lane adds the label once per episode and removes it when the condition clears, so its own comments cannot refresh the clock. A label time that cannot be read is reported as unmeasured and closes nothing. `max_open_h` still reports any pull request open past two hours.
+- With PR-NO-GENERATED-1 (#2694, merged the same day) the two causes of session pull requests dying are both removed: main no longer conflicts with generated files a pull request carries, and a conflict that does appear gets its full 30 minutes.
 ## 2026-11-27: agents load one short entry; rules are fetched by path (AGENT-ENTRY-1) (Session: session_0156nqDsPJ1YLdic5NVSU9iG)
 
 - Measured before the change: `CLAUDE.md` imported about 224 KB of instructions (`agents/AGENTS.md` alone 155 KB), and a session with several repositories open loaded one copy per repository. Codex stops reading project instructions at 32 KiB; Claude Code's guidance is under 200 lines per file; an `@import` loads the whole imported file. A small server-side model could not read the rules at all.
