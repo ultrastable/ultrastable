@@ -6471,6 +6471,15 @@
    "body": "The workers' ratchets and specification-citing tests, applied to the latest main after FT merged, with the conformance manifest and generated bundles regenerated from the tree as it is now.",
    "probe": "file:workers/core/conformance/manifest.json",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-27-round-one-fixes-the-early-slices-merged-without-are-carried-",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Round-one fixes the early slices merged without are carried to main (RC, WD1)",
+   "body": "Slices W01 to W09, PK and WI merged (#2530, #2544, #2575, #2576, #2581, #2583, #2585, #2586, #2588, #2593, #2594) before the round-one fixers changed 34 of their files, so main kept the pre-fix versions: claims trigger paging and gate, console-l3 health and drop items, deploy review, graph blast radius, fleet stagger, describe claims. RC carries them three ways onto main and WD1 adds the REST pull-request reader and the scan and review fixes; on the carried tree the core and packs suite ran 2043 tests with 0 failures and the workers Python suite passes. The comparison that finds such a file: every run-changed file's fixed version against main after each merge, not only the files of the slice being merged.",
+   "probe": "file:workers/core/claims/triggers.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
