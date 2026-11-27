@@ -1,5 +1,5 @@
 """CODE-AGENTS-1: every adapter is invoked through a recorded transport; routing by cost; disjoint-family ensemble; fallback."""
-import unittest
+import json, unittest
 from pathlib import Path
 from foundation import agents
 
@@ -35,6 +35,18 @@ class Agents(unittest.TestCase):
     def test_a_retired_route_is_never_asked(self):  # ROUTE-RETIRED-1: GitHub Models shut down 2026-07-30
         self.assertEqual(agents.route_authors({"GITHUB_TOKEN": "g"}, REPO), [])
         self.assertEqual(agents.ensemble("openai", {"GITHUB_TOKEN": "g"}, REPO), [])
+
+    def test_invoke_workers_ai_gpt_oss_and_qwen3(self):  # LADDER-WIDE-1
+        for i, fam in (("workers-ai-gpt-oss", "openai"), ("workers-ai-qwen3", "qwen")):
+            c = []; out = agents.invoke(A[i], "p", ENV, fake(c)); self.assertEqual(A[i]["family"], fam); self.assertIn("summary", out); self.assertIn("/ai/run/@cf/", c[0][0])
+
+    def test_workers_ai_reply_shapes(self):  # LADDER-CONTENT-1: shapes measured live 2026-11-27
+        a = A["workers-ai-glm"]
+        self.assertEqual(agents.parse_text(a, {"result": {"choices": [{"message": {"content": "x"}}]}}), "x")
+        self.assertEqual(json.loads(agents.parse_text(a, {"result": {"response": {"summary": "s", "files": []}}})), {"summary": "s", "files": []})  # JSON prompt: the object itself
+        with self.assertRaises(ValueError) as cm:  # thinking used every token: content null, reasoning is not the answer
+            agents.parse_text(a, {"result": {"choices": [{"message": {"content": None, "reasoning": "1. analyze"}, "finish_reason": "length"}]}})
+        self.assertIn("length", str(cm.exception))
 
     def test_registry_is_clean(self):
         self.assertEqual(agents.check(REPO), [])

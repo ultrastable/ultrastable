@@ -1,0 +1,13 @@
+{
+ "_doc": "INSTRUCTIONS-BUDGET-1 (research 2026-11-27): Codex stops loading AGENTS.md at 32 KiB combined, silently; OpenAI's zero-human-code harness keeps AGENTS.md near 100 lines as a map. `limits` are per file kind (root_bytes: root AGENTS.md and CLAUDE.md, file_bytes: any other instruction file, skill_lines: a SKILL.md); `baseline` lists files already over their limit at their size on 2026-11-27 and only shrinks. Read by scripts/instructions_budget.py (check in `checks`), tests/test_instructions_budget.py.",
+ "limits": {
+  "root_bytes": 8192,
+  "file_bytes": 8192,
+  "skill_lines": 500
+ },
+ "baseline": {
+  "agents/AGENTS.md": 155135,
+  "agents/PROJECT-INSTRUCTIONS.md": 103792,
+  "seed/agents/AGENTS.md": 153605
+ }
+}

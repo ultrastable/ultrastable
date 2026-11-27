@@ -115,10 +115,13 @@ export const ADAPTERS = [
   { id: 'workers-ai-glm', model: '@cf/zai-org/glm-4.7-flash', family: 'glm', price: 0.4605, extra: { reasoning_effort: 'low', max_tokens: 8000 } },
   { id: 'workers-ai-llama', model: '@cf/meta/llama-3.3-70b-instruct-fp8-fast', family: 'llama', price: 2.546, extra: { max_tokens: 3000 } },
   { id: 'workers-ai-qwen-coder', model: '@cf/qwen/qwen2.5-coder-32b-instruct', family: 'qwen', price: 1e6, extra: { max_tokens: 7000 } },
+  // LADDER-1: reasoning models answer in choices[0].message.content; they need room (8000 tokens) so reasoning cannot exhaust the reply. Price unknown, so after the priced rows.
+  { id: 'workers-ai-gpt-oss', model: '@cf/openai/gpt-oss-20b', family: 'openai', price: 1e6, extra: { max_tokens: 8000 } },
+  { id: 'workers-ai-qwen3', model: '@cf/qwen/qwen3.8-27b', family: 'qwen', price: 1e6, extra: { max_tokens: 8000 } },
 ];
 
 // MODEL-REPLY-1: Workers AI may return an already-parsed object in `response`; callers need a string (parseJson called t.indexOf on it).
-const text = r => { const v = (r && (r.response || (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || ''; return typeof v === 'string' ? v : JSON.stringify(v); };
+const text = r => { const empty = x => x == null || x === '' || (typeof x === 'object' && !Object.keys(x).length); const v = r && (!empty(r.response) ? r.response : (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content)); return empty(v) ? '' : (typeof v === 'string' ? v : JSON.stringify(v)); };
 
 // LOOP-SHIP-1: the router's default cap (8,000 free neurons a day) stopped the code agent by noon on 2026-11-26: six orchestrator runs failed with
 // 'daily free neurons used' and the loops merged nothing while sessions merged 13. The account is on Workers Paid, so neurons past the free 10,000

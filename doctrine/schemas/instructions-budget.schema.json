@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/instructions-budget.schema.json",
+  "title": "instructions-budget (doctrine/instructions-budget.json)",
+  "description": "Contract for doctrine/instructions-budget.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "root_bytes": {
+          "type": "number"
+        },
+        "file_bytes": {
+          "type": "number"
+        },
+        "skill_lines": {
+          "type": "number"
+        }
+      }
+    },
+    "baseline": {
+      "type": "object",
+      "properties": {
+        "agents/AGENTS.md": {
+          "type": "number"
+        },
+        "agents/PROJECT-INSTRUCTIONS.md": {
+          "type": "number"
+        },
+        "seed/agents/AGENTS.md": {
+          "type": "number"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "baseline",
+    "limits"
+  ]
+}
