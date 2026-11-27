@@ -13,7 +13,7 @@
   "seeded_by": "canon queue, owner request 2026-11-27",
   "source_url": "http://pespmc1.vub.ac.be/books/Conant_Ashby.pdf",
   "data": "Theorem with proof, in information-theoretic terms.",
-  "summary": "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: to control something well you must model it, and the quality of control is bounded by the quality of the model.",
+  "summary": "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of something needs a model of it, and the quality of control is bounded by the quality of the model.",
   "perspectives": ["systems", "oversight"],
   "limits": [
     "The theorem is about optimal and simplest regulators. We use it as a design rule, not as proof that this system's model is good enough.",

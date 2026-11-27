@@ -49,7 +49,7 @@ export default {
      "AI systems leave their loops open. Put in place: an output with no code consumer fails the build. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 172 (n = 22744; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.778 (n = 18; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 172 (n = 22820; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.778 (n = 18; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. Chapters 7 and 8 were not machine-read for this paper: the archive.org text the research loop could reach ends in chapter 2. Ashby's mechanism is stated here in our own words from the book's contents and preface; the only verbatim quotation is from the preface (page v).",
@@ -160,7 +160,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 172,
      "status": "met",
-     "n": 22744,
+     "n": 22820,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -1555,7 +1555,7 @@ export default {
      "Limits on everything that matters. Put in place: the check fails a variable with no limits. Check it with one number, share of declared essential variables that have limits (doctrine/ultrastability.json), and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 80 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.006 (n = 165; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.688 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 80 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.006 (n = 165; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.625 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Source. Own R&D question set, regenerated from this system's records, version 2026-11-25."
@@ -1677,7 +1677,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 72 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.688,
+     "measured": 0.625,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
@@ -1810,7 +1810,7 @@ export default {
      "A response that is never checked against the world. Put in place: every item names a live closing probe. Check it with one number, share of uploaded deploys proven live against their commit, and set a limit for it (>= 0.95 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 3 of 3 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 120; source: instances/ultrastable/loop-registry.json (declared)). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 172 (n = 22744; source: ops/ultrastability.jsonl). Share of uploaded deploys proven live against their commit reads 0.999 (n = 720; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 3 of 3 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 120; source: instances/ultrastable/loop-registry.json (declared)). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 172 (n = 22820; source: ops/ultrastability.jsonl). Share of uploaded deploys proven live against their commit reads 0.999 (n = 720; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "We state the law in our own words from chapter 11. We do not count disturbance classes directly; we read proxies from the loop registry, the second loop's log and the deploy ledger.",
@@ -1924,7 +1924,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 172,
      "status": "met",
-     "n": 22744,
+     "n": 22820,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -2013,7 +2013,7 @@ export default {
      "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 3 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
     ],
     "problem": [
-     "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: to control something well you must model it, and the quality of control is bounded by the quality of the model. [1]",
+     "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of something needs a model of it, and the quality of control is bounded by the quality of the model. [1]",
      "This matters now because the usual answer, the model is in the weights, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
      "The problems in detail:"
     ],
@@ -2040,7 +2040,7 @@ export default {
      "Work items too vague to map to a state. Put in place: fails items with no done check, prediction, out-of-scope line or live probe. Check it with one number, share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py), and set a limit for it (>= 0.9 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 2 of 3 of these checks pass today. Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending reads 1.0 (n = 5; source: doctrine/knowledge-graph.json (declared)). Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.688 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 2 of 3 of these checks pass today. Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending reads 1.0 (n = 5; source: doctrine/knowledge-graph.json (declared)). Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.625 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "The theorem is about optimal and simplest regulators. We use it as a design rule, not as proof that this system's model is good enough.",
@@ -2084,9 +2084,9 @@ export default {
     "kind": "article",
     "version": "1970",
     "data": "Theorem with proof, in information-theoretic terms.",
-    "summary": "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: to control something well you must model it, and the quality of control is bounded by the quality of the model."
+    "summary": "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of something needs a model of it, and the quality of control is bounded by the quality of the model."
    },
-   "abstract": "Roger C. Conant, W. Ross Ashby (International Journal of Systems Science, vol. 1, no. 2, pp. 89-97): Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: to control something well you must model it, and the quality of control is bounded by the quality of the model. Conant and Ashby argued that the best possible regulator of a system must be, in effect, a model of that system. An AI system that runs a business without an explicit model of its own parts is regulating blind. We check whether this system keeps such a model: a knowledge graph of its own data, declared limits for what it must hold steady, and work items specific enough to be checked. 2 of 3 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "abstract": "Roger C. Conant, W. Ross Ashby (International Journal of Systems Science, vol. 1, no. 2, pp. 89-97): Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of something needs a model of it, and the quality of control is bounded by the quality of the model. Conant and Ashby argued that the best possible regulator of a system must be, in effect, a model of that system. An AI system that runs a business without an explicit model of its own parts is regulating blind. We check whether this system keeps such a model: a knowledge graph of its own data, declared limits for what it must hold steady, and work items specific enough to be checked. 2 of 3 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
    "window": {
     "start": "2026-11-19T01:23:24Z",
     "end": "2026-11-26T21:42:44Z",
@@ -2175,7 +2175,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 336 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.688,
+     "measured": 0.625,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
