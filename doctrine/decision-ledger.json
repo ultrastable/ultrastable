@@ -6914,6 +6914,33 @@
    "body": "spinoffs/registry.js is written by foundation/spinoff.py (do not edit) but was classed as code, so the daily spinoff PR failed SUBSTANCE-1 and its free-tier snapshot could not land. It is now a generated file in doctrine/substance.json.",
    "probe": "grep:doctrine/substance.json::spinoffs/registry.js",
    "session": "session_0156nqDtsm3xWA5HrxzuWq8X"
+  },
+  {
+   "id": "lesson-2026-11-27-code-regulator-1-algedonic-preempt-stable-prefix-check-postt",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "CODE-REGULATOR-1 algedonic preempt, stable prefix check, PostToolUse token feed",
+   "body": "Adds P9 debounced preempt channels, P11 prefix stability check and the hook that feeds the experiment 1 token ledger. Ran 16 regulator tests, they pass. The token counts are estimates (characters divided by 4), so the ledger gives shares by tool kind, not billing. Still a hypothesis that this lowers cost; threshold is the 15 percent cut set in the first lesson.",
+   "probe": "grep:foundation/regulator/ledger_hook.py::def record",
+   "session": "session_0156nqDsD3rf97bBozkQVuW7"
+  },
+  {
+   "id": "lesson-2026-11-27-a-bot-data-pr-needs-its-tests-run-before-it-opens",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "A bot data PR needs its tests run before it opens",
+   "body": "Bot data PRs get no check run of their own, so #2765 reached main with a snapshot that broke two suites. spinoff.yml now runs ideas --check, spinoff --check and the two suites on the files it just wrote, before any PR opens.",
+   "probe": "grep:.github/workflows/spinoff.yml::SPINOFF-DATA-GATE-1",
+   "session": "session_0156nqDtsm3xWA5HrxzuWq8X"
+  },
+  {
+   "id": "lesson-2026-11-27-tests-must-not-read-the-live-free-tier-snapshot",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Tests must not read the live free-tier snapshot",
+   "body": "test_ideas and test_spinoff copied ops/free-tier.json, which the spinoff loop rewrites daily with real usage. When #2765 landed a snapshot at level shed, both suites failed on main. They now copy tests/foundation/fixtures/free-tier-2026-11-17.json.",
+   "probe": "grep:tests/foundation/test_spinoff.py::free-tier-2026-11-17",
+   "session": "session_0156nqDtsm3xWA5HrxzuWq8X"
   }
  ]
 }
