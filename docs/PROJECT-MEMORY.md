@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: test: the foundation's specification-citing tests (FT) (#2600)
 - 2026-11-27: feat(seed): the specification run's seed tests and the fixes they prove (SW+FX) (#2595)
 - 2026-11-27: ZERO-MINUTES-1: worker merged #2596
 - 2026-11-27: queue: closing-probe verdicts for 25 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci] (#2596)
