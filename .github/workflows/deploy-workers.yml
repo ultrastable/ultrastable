@@ -3,7 +3,7 @@ name: deploy-workers
 # budget: ~2 min per run, only when worker sources change
 # trigger: push to main on the listed paths, dispatch by the lane after a merge (GITHUB_TOKEN merges fire no push events), manual dispatch; never faster than the merge rate
 # free-alternative: run `node deploy/deploy-workers.mjs` from a session with a Cloudflare token
-# Verify-only mode (`verify` input, run by the daily drift probe) fails and re-dispatches a deploy when live code differs from main.
+# Verify-only mode (`verify` input, manual dispatch) fails when live code differs from this commit. The standing drift reading is `python3 -m foundation deploydrift` (DEPLOY-DRIFT-1).
 on:
   push:
     branches: [main]
