@@ -1598,11 +1598,11 @@ export default {
   },
   {
    "claim": "\"detail\": \"python3 -m foundation claimcode --check: FAIL agents/AGENTS.md:42: states a number, cadence or guarantee with no registered",
-   "detail": "",
-   "how": "file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b",
+   "detail": "the sentence is no longer on the surface: update the registry or restore the words",
+   "how": "sentence on surface",
    "id": "cited-91e6fd7e7e",
    "kind": "claim",
-   "pass": true,
+   "pass": false,
    "surface": "site/saydo-data.js"
   },
   {
@@ -3961,8 +3961,8 @@ export default {
   }
  ],
  "summary": {
-  "drift": 0,
-  "pass": 437,
+  "drift": 1,
+  "pass": 436,
   "total": 437
  }
 };
