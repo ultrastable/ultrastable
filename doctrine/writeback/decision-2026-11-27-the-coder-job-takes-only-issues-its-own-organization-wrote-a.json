@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-the-coder-job-takes-only-issues-its-own-organization-wrote-a",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "The coder job takes only issues its own organization wrote, and reads issue text fenced as data",
+  "body": "RULE-OF-TWO-1 (ZHC-R12 #2677): executor.pick skips issues not by an owner, member, collaborator or the org's own bots; crossrepo reads REST issues so the author is known; issue text is wrapped in a random-marker data block.",
+  "probe": "grep:foundation/executor.py::def trusted",
+  "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+ },
+ "kind": "decision",
+ "title": "The coder job takes only issues its own organization wrote, and reads issue text fenced as data",
+ "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+}
