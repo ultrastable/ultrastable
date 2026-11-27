@@ -1,0 +1,12 @@
+{
+  "id": "Q-AUDIT-2790",
+  "title": "Q-AUDIT-2790: audit merged PR #2790",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation sampleaudit --probe 2790\n**Status:** open\n\nSAMPLE-AUDIT-1: PR #2790 (Fix red main from the spinoff snapshot, and gate spinoff data) merged at 2026-11-27T12:38:26Z was picked for audit (protected path).\n\nRead the merged diff with a clean context; the reviewer is not the author. Write `\"verdict\": \"clean\"` or `\"verdict\": \"defect\"` and a `\"reason\"` into this file. A defect also gets its own fix item.",
+  "merged_at": "2026-11-27T12:38:26Z",
+  "labels": [
+    "role:staff",
+    "audit"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

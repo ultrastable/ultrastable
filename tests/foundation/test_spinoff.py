@@ -17,7 +17,7 @@ def sandbox():
     shutil.copy(REPO / "doctrine/blindspots.json", d / "doctrine/blindspots.json")
     (d / "spinoffs").mkdir()
     (d / "ops").mkdir()
-    shutil.copy(REPO / "ops/free-tier.json", d / "ops/free-tier.json")
+    shutil.copy(REPO / "tests/foundation/fixtures/free-tier-2026-11-17.json", d / "ops/free-tier.json")  # fixed snapshot: the loop rewrites the live one daily
     ic = json.loads((REPO / "doctrine/spinoff-ideas.json").read_text())
     ic.pop("depth", None)  # launch mechanics only; DEPTH-1 refusal of these shallow candidates is tested in test_ideas.py
     ic["bank"] = []  # these tests are about the blind-spot candidates; the idea bank has its own tests in test_ideas.py
