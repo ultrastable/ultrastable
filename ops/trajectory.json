@@ -85,7 +85,7 @@
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 45601,
+   "recent7": 45647,
    "series": [
     0,
     0,
@@ -116,12 +116,12 @@
     0,
     0,
     0,
-    45601
+    45647
    ],
-   "share_recent": 0.109,
-   "share_trend": 0.109,
-   "slope": 294.2,
-   "total": 45601
+   "share_recent": 0.11,
+   "share_trend": 0.11,
+   "slope": 294.4968,
+   "total": 45647
   },
   {
    "area": "seed/worker",
@@ -208,7 +208,7 @@
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 27502,
+   "recent7": 27565,
    "series": [
     0,
     0,
@@ -239,12 +239,12 @@
     0,
     0,
     0,
-    27502
+    27565
    ],
    "share_recent": 0.066,
    "share_trend": 0.066,
-   "slope": 177.4323,
-   "total": 27502
+   "slope": 177.8387,
+   "total": 27565
   },
   {
    "area": "doctrine/schemas",
@@ -905,7 +905,7 @@
   {
    "area": "docs",
    "quiet_days": 0,
-   "recent7": 2087,
+   "recent7": 2089,
    "series": [
     0,
     0,
@@ -936,12 +936,12 @@
     0,
     0,
     0,
-    2087
+    2089
    ],
    "share_recent": 0.005,
    "share_trend": 0.005,
-   "slope": 13.4645,
-   "total": 2087
+   "slope": 13.4774,
+   "total": 2089
   },
   {
    "area": "agents",
@@ -1026,7 +1026,7 @@
    "total": 1697
   }
  ],
- "at": "2026-11-27T13:33:13Z",
+ "at": "2026-11-27T13:40:48Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1678,7 +1678,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 398,
+   "rows": 399,
    "series": [
     0,
     0,
@@ -1709,9 +1709,9 @@
     1,
     153,
     109,
-    65
+    66
    ],
-   "slope": 2.2154
+   "slope": 2.2218
   },
   {
    "loop": "resilience",

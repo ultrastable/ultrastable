@@ -85,7 +85,7 @@ export default {
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 45601,
+   "recent7": 45647,
    "series": [
     0,
     0,
@@ -116,11 +116,11 @@ export default {
     0,
     0,
     0,
-    45601
+    45647
    ],
-   "share_recent": 0.109,
-   "share_trend": 0.109,
-   "total": 45601
+   "share_recent": 0.11,
+   "share_trend": 0.11,
+   "total": 45647
   },
   {
    "area": "seed/worker",
@@ -205,7 +205,7 @@ export default {
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 27502,
+   "recent7": 27565,
    "series": [
     0,
     0,
@@ -236,11 +236,11 @@ export default {
     0,
     0,
     0,
-    27502
+    27565
    ],
    "share_recent": 0.066,
    "share_trend": 0.066,
-   "total": 27502
+   "total": 27565
   },
   {
    "area": "doctrine/schemas",
@@ -323,7 +323,7 @@ export default {
    "total": 17582
   }
  ],
- "at": "2026-11-27T13:33:13Z",
+ "at": "2026-11-27T13:40:48Z",
  "days": 30,
  "findings": [
   {
