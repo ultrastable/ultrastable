@@ -27,6 +27,14 @@
       "url": "agent-standards.schema.json"
     },
     {
+      "name": "ashby-concepts.json",
+      "description": "Contract for doctrine/ashby-concepts.json",
+      "fileMatch": [
+        "doctrine/ashby-concepts.json"
+      ],
+      "url": "ashby-concepts.schema.json"
+    },
+    {
       "name": "backup.json",
       "description": "Contract for doctrine/backup.json",
       "fileMatch": [

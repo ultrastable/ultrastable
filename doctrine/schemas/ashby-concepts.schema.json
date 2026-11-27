@@ -1,0 +1,3 @@
+{"$schema": "https://json-schema.org/draft/2020-12/schema", "title": "ashby-concepts", "type": "object", "required": ["id", "concepts"],
+ "properties": {"concepts": {"type": "array", "items": {"type": "object", "required": ["id", "url", "summary", "mechanisms", "status"],
+  "properties": {"status": {"enum": ["implemented", "gap"]}, "mechanisms": {"type": "array", "items": {"type": "string"}}}}}}}
