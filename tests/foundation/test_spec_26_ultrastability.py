@@ -17,7 +17,8 @@ BAD = {"criticality.cost": 3.0, "criticality.verified_share": 1.0, "claims.drift
 GOOD = {**BAD, "criticality.cost": 0.5}
 NOW = datetime(2026, 11, 13, 12, 0, tzinfo=timezone.utc)
 VARS = ["spend", "deploy_health", "claims_drift", "value", "stalled_clocks", "ui_findings", "happy_paths", "unattended_horizon", "self_shipping",
-        "owner_interventions", "second_loop_keep_rate", "spec_quality", "research_in_code", "lessons_enforced"]
+        "owner_interventions", "second_loop_keep_rate", "spec_quality", "research_in_code", "lessons_enforced",
+        "survival_levels"]  # FREELY-ADAPTIVE-1 (Pérez López 1974): effective, attractive and consistent at once
 
 
 class Loop(unittest.TestCase):
@@ -65,7 +66,7 @@ class Declaration(Loop):
         self.edit("doctrine/ultrastability.json", lambda c: c["scopes"]["platform"]["variables"][0].update(ladder=[{"kind": "item", "what": "x", "labels": [], "workstream": "U"}], reading="no.such.reading"))
         self.assertTrue(any("which nothing computes" in e for e in u.check(self.d)))
         a = u.ashby(REPO)
-        self.assertEqual((a["variables"], a["bounded"], a["bounded_share"]), (18, 18, 1.0)); self.assertTrue(a["search_after_ladder"] and a["with_step_function"] > 0)
+        self.assertEqual((a["variables"], a["bounded"], a["bounded_share"]), (len(VARS) + 4, len(VARS) + 4, 1.0)); self.assertTrue(a["search_after_ladder"] and a["with_step_function"] > 0)
 
     def test_r55_unmeasured_is_never_in_bounds_and_never_a_reason_to_act(self):
         """US-26-R55: a variable that cannot be read is unmeasured: out of bounds in the record, no step, one item that names what cannot be read."""
