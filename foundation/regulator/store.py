@@ -32,6 +32,9 @@ class Store:
     def __init__(self, path=":memory:"):
         self.db = sqlite3.connect(path)
         self.db.row_factory = sqlite3.Row
+        self.db.execute("PRAGMA busy_timeout=5000")  # a second writer waits up to 5 s instead of failing with "database is locked"
+        if path != ":memory:":
+            self.db.execute("PRAGMA journal_mode=WAL")  # readers do not block the single writer
         self.db.executescript(SCHEMA)
 
     def __enter__(self):

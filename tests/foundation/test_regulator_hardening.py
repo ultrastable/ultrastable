@@ -46,3 +46,18 @@ class FailureModes(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ConcurrentWriters(unittest.TestCase):
+    def test_two_processes_writing_one_ledger_lose_no_rows(self):
+        import subprocess, sys
+        db = str(scratch() / "c.sqlite")
+        Store(db).close()
+        code = ("import sys; from foundation.regulator import Store; s=Store(sys.argv[1])\n"
+                "for i in range(100): s.log_tokens(sys.argv[2], 'm', 'read', 1, 1)\ns.close()")
+        root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        ps = [subprocess.Popen([sys.executable, "-c", code, db, t], cwd=root) for t in ("a", "b", "c")]
+        self.assertEqual([p.wait() for p in ps], [0, 0, 0])
+        s = Store(db)
+        self.assertEqual(s.db.execute("select count(*) from token_log").fetchone()[0], 300)
+        s.close()
