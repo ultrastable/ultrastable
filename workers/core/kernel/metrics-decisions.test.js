@@ -118,6 +118,11 @@ test('US-05-R16: a missed prediction is reverted; an unmeasured target is not ke
   db.raw.exec(`DELETE FROM t_vals`);
   const r = await evaluateDecision(db, 'D', { now: NOW() });
   assert.equal(r.status, 'unmeasured');
+  // US-05-R16: an unmeasured decision files its revert item (it is not left applied and unverified) and is not evaluated twice.
+  assert.equal(r.item_id, 'REVERT-D');
+  const it = one(db, `SELECT * FROM items WHERE id='REVERT-D'`);
+  assert.ok(it, 'the revert item exists'); assert.match(it.title, /unmeasured/); assert.match(it.done_check, /revert applied via: r/);
+  assert.equal(one(db, `SELECT item_id, status FROM kernel_decisions WHERE id='D'`).item_id, 'REVERT-D');
 });
 
 test('a decision is not evaluated before its window ends; health numbers are published (US-05-R08)', async () => {

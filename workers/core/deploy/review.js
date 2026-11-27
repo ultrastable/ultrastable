@@ -84,6 +84,8 @@ export function createReviewGate({ db, now = () => Date.now(), config = {}, revi
     if (!change || !change.id || !change.head) throw new Error('change requires id and head');
     await run(`UPDATE deploy_review_holds SET status='released', released_at=?, release_reason='new push' WHERE change_id=? AND head<>? AND status='open'`,
       iso(now()), change.id, change.head);
+    // US-07-R25: a hold released only because a newer head replaced it still refuses its own head; reviewing that head again is what lifts it.
+    await run(`UPDATE deploy_review_holds SET release_reason='re-reviewed' WHERE change_id=? AND head=? AND status='released' AND release_reason='new push'`, change.id, change.head);
     if (mode === 'off') return { status: 'skipped', hold: false, run: await record(change, [], [], 'skipped', 'gate is off') };
     const risk = riskClasses(change, classes);
     if (!risk.length) return { status: 'skipped', hold: false, risk, run: await record(change, risk, [], 'skipped', 'not a risk class') };
@@ -130,10 +132,18 @@ export function createReviewGate({ db, now = () => Date.now(), config = {}, revi
     return runId;
   }
 
-  /** The merge step asks here. It refuses while a hold marker is open for this head. */
+  /**
+   * The merge step asks here. It refuses while a hold marker is open for this head (US-07-R18) and, by US-07-R25, for a head whose
+   * hold was released only because a newer push replaced it (the held code is the same code, so it is not cleared until it is
+   * reviewed again). With config.requireReview and in hold mode it also refuses a head that has no review run at all: a head nobody
+   * reviewed cannot be shown not to be in a risk class (US-07-R10).
+   */
   async function mergeAllowed(changeId, head) {
-    const h = await first(`SELECT marker FROM deploy_review_holds WHERE change_id=? AND head=? AND status='open'`, changeId, head);
-    return h ? { ok: false, reason: 'hold_marker', marker: h.marker } : { ok: true };
+    const h = await first(`SELECT marker, status, release_reason FROM deploy_review_holds WHERE change_id=? AND head=?`, changeId, head);
+    if (h && h.status === 'open') return { ok: false, reason: 'hold_marker', marker: h.marker };
+    if (h && h.status === 'released' && h.release_reason === 'new push') return { ok: false, reason: 'superseded_hold', marker: h.marker };
+    if (config.requireReview && mode === 'hold' && !(await first(`SELECT 1 AS x FROM deploy_review_runs WHERE change_id=? AND head=?`, changeId, head))) return { ok: false, reason: 'not_reviewed' };
+    return { ok: true };
   }
 
   const runs = (changeId) => all(`SELECT * FROM deploy_review_runs WHERE change_id=? ORDER BY id`, changeId);

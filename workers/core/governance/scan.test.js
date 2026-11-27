@@ -55,6 +55,37 @@ test('US-07-R23: the limit truncates openly: a draft past the limit is listed, n
   assert.equal(r2.skipped, 2);
 });
 
+test('US-07-R23: a source that honours `since` still returns a draft the limit left unscanned (the cursor is the draft time, not the pass time)', async () => {
+  const db = await mk();
+  const t = (n) => new Date(NOW - n * 3600e3).toISOString();
+  const all3 = [{ ref: 'c', draft: CLEAN, at: t(1) }, { ref: 'a', draft: CLEAN, at: t(3) }, { ref: 'b', draft: CLEAN, at: t(2) }]; // not in time order
+  const src = { name: 'since-source', read: async (since) => all3.filter(d => d.at >= since) };
+  const r1 = await G.scanSources(db, { sources: [src], now: NOW, limit: 2 });
+  assert.equal(r1.scanned, 2);
+  assert.deepEqual(r1.truncated, ['since-source:c'], 'the oldest drafts go first; the newest is left');
+  const r2 = await G.scanSources(db, { sources: [src], now: NOW + 3600e3, limit: 2 });
+  assert.equal(r2.scanned, 1, 'the left draft is scanned on the next pass');
+  assert.deepEqual(r2.truncated, []);
+  const r3 = await G.scanSources(db, { sources: [src], now: NOW + 7200e3, limit: 2 });
+  assert.equal(r3.scanned, 0);
+  assert.equal(one(db, `SELECT COUNT(*) AS n FROM governance_scan_cursor`).n, 3);
+});
+
+test('US-07-R23: a cut source whose drafts carry no time keeps its old cursor, so a draft the limit left is read again', async () => {
+  const db = await mk();
+  const seenSince = [];
+  const ts = { a: NOW - 3 * 3600e3, b: NOW - 2 * 3600e3, c: NOW - 3600e3 };
+  const src = { name: 'no-at', read: async (since) => { seenSince.push(since); return Object.keys(ts).filter(k => ts[k] >= Date.parse(since)).map(k => ({ ref: k, draft: CLEAN })); } };
+  const r1 = await G.scanSources(db, { sources: [src], now: NOW, limit: 2 });
+  assert.equal(r1.scanned, 2);
+  assert.equal(r1.truncated.length, 1);
+  const left = r1.truncated[0].split(':')[1];
+  const r2 = await G.scanSources(db, { sources: [src], now: NOW + 1000, limit: 2 });
+  assert.equal(r2.scanned, 1, 'the draft the limit left is scanned');
+  assert.equal(one(db, `SELECT 1 AS x FROM governance_scan_cursor WHERE ref = ?`, left).x, 1);
+  assert.equal(seenSince[1], seenSince[0], 'the second read starts where the first did');
+});
+
 test('US-07-R23: step() runs the scan when sources are declared and reports it', async () => {
   const db = await mk();
   const out = await G.step({ db, now: NOW, sources: [{ name: 'item-comments', read: async () => [{ ref: 'c1', draft: T01 }] }] });

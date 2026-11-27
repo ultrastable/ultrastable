@@ -691,3 +691,67 @@ test('US-11-R22: the fleet envelope round-trips as a CloudEvents 1.0 event; a ta
   const started = await fleet.emit(ctx, fleet.toCloudEvent(env2, payload), undefined);
   assert.deepEqual([started.accepted, started.started.length], [true, 1]);
 });
+
+// ---- round 2 additions: findings of the verification of US-SPEC-11 --------------------------------
+
+test('US-11-R12: moving a schedule that already fired this hour does not fire it again in that hour', async () => {
+  const { ctx, at } = mk(); inline(ctx);
+  await fleet.setTask(ctx, { id: 't', type: 'sql', definition: { statement: 'SELECT 1 AS x' } });
+  await fleet.setCron(ctx, { name: 'a', expr: '0 * * * *', task_id: 't' });
+  await fleet.setCron(ctx, { name: 'b', expr: '0 * * * *', task_id: 't' });
+  const firedB = async () => (await one(ctx, `SELECT COUNT(*) AS n FROM fleet_runs WHERE cron_name = 'b'`)).n;
+  at('2026-03-02 12:00:00');
+  assert.deepEqual((await fleet.dispatch(ctx)).fired.map(f => f.cron), ['a', 'b']);
+  at('2026-03-02 12:01:00');
+  const moved = await fleet.staggerHourly(ctx, { apply: true });
+  assert.deepEqual(moved.changes.map(c => [c.name, c.to]), [['b', '1 * * * *']]);
+  assert.equal((await one(ctx, `SELECT next_fire FROM fleet_crons WHERE name = 'b'`)).next_fire, '2026-03-02 13:01:00'); // the first new slot at or after the old next slot
+  at('2026-03-02 12:02:00'); await fleet.dispatch(ctx);
+  assert.equal(await firedB(), 1);                                            // not due again in the hour of the move
+  at('2026-03-02 13:00:00'); await fleet.dispatch(ctx);
+  assert.equal(await firedB(), 1);
+  at('2026-03-02 13:01:00'); assert.deepEqual((await fleet.dispatch(ctx)).fired.map(f => f.cron), ['b']);
+  assert.equal(await firedB(), 2);
+  // a schedule that has not fired yet (next_fire null: due) stays due after a move, so its pending firing is not lost
+  await fleet.setCron(ctx, { name: 'c', expr: '1 * * * *', task_id: 't' });
+  await fleet.setCron(ctx, { name: 'd', expr: '1 * * * *', task_id: 't' });
+  await fleet.staggerHourly(ctx, { apply: true });
+  const rows = await all(ctx, `SELECT name, expr, next_fire FROM fleet_crons WHERE name IN ('c','d') ORDER BY name`);
+  assert.ok(rows.some(r => r.expr !== '1 * * * *'));
+  assert.ok(rows.every(r => r.next_fire === null));
+});
+
+test('US-11-R11: a running row older than the running ttl ends failed as stale_running and files FLEET-STALE; a younger one is left', async () => {
+  const { ctx } = mk();                                                       // now 12:03, running_ttl_minutes 60
+  const ins = (task, start) => ctx.db.prepare(`INSERT INTO fleet_runs (worker, trigger, status, task_id, ts_start, queued_at) VALUES ('fleet', 'cron', 'running', ?, ?, ?)`).bind(task, start, start).run();
+  await ins('old', '2026-03-02 11:00:00');                                    // 63 minutes
+  await ins('young', '2026-03-02 11:30:00');                                  // 33 minutes
+  const r = await fleet.reapStale(ctx);
+  assert.equal(r.reaped.length, 1);
+  assert.deepEqual({ ...await one(ctx, `SELECT status, error_class, error FROM fleet_runs WHERE task_id = 'old'`) }, { status: 'failed', error_class: 'stale_running', error: 'never finished' });
+  assert.equal((await one(ctx, `SELECT status FROM fleet_runs WHERE task_id = 'young'`)).status, 'running');
+  assert.ok(await one(ctx, `SELECT id FROM items WHERE id = 'FLEET-STALE-old'`));
+  assert.equal(await one(ctx, `SELECT id FROM items WHERE id = 'FLEET-STALE-young'`), null);
+});
+
+test('US-11-R21: a retry count above max_retries is clamped for an inline task, and a configured max_retries is honoured', async () => {
+  let hits = 0;
+  const { ctx } = mk({ fetch: async () => { hits++; return new Response('down', { status: 503 }); } });
+  const task = { type: 'http', retries: 1000, definition: { url: 'https://svc.example/x' } };
+  const r = await fleet.execute(ctx, { task, task_id: 'clamped', trigger: 'manual' });
+  assert.deepEqual([r.ok, r.attempts, hits], [false, 6, 6]);                  // 1 + max_retries (default 5)
+  hits = 0; ctx.config = { max_retries: 2 };
+  assert.equal((await fleet.execute(ctx, { task, task_id: 'clamped2', trigger: 'manual' })).attempts, 3);
+  assert.equal(hits, 3);
+});
+
+test('US-11-R02: a paused worker is paused even when its health is bad: paused is checked before health, and files no degraded item', async () => {
+  const bad = live('p', { health: { status: 'degraded', worker: 'p', version: '1.2.0', enabled: false, bindings_ok: false } });
+  const bad2 = live('q', { health: { status: 'degraded', worker: 'q', version: '1.2.0', enabled: true, bindings_ok: false } });
+  const { ctx } = mk({ deployed: { list: async () => [bad, bad2] } });
+  await fleet.register(ctx, member('p')); await fleet.register(ctx, member('q'));
+  const r = await fleet.reconcile(ctx);
+  assert.deepEqual([r.states.p, r.states.q], ['paused', 'degraded']);
+  assert.equal(await one(ctx, `SELECT id FROM items WHERE id LIKE 'FLEET-DEGRADED-p'`), null);
+  assert.ok(await one(ctx, `SELECT id FROM items WHERE id LIKE 'FLEET-DEGRADED-q'`));
+});
