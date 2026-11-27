@@ -33,3 +33,4 @@
 {"at": "2026-11-26T16:41:43Z", "decided_at": "2026-11-19T16:00:14Z", "hit": true, "id": "d-3a4b6b4b896a", "measured": 4.0, "point": "spinoff-launch", "predicted": 4.0}
 {"at": "2026-11-26T16:41:43Z", "decided_at": "2026-11-19T16:00:14Z", "hit": false, "id": "d-401d748d2ad5", "measured": 0.0, "point": "spinoff-launch", "predicted": 4.0}
 {"at": "2026-11-27T15:37:29Z", "decided_at": "2026-11-20T15:36:47Z", "hit": true, "id": "d-5f6b01acf6d6", "measured": 1.0, "point": "self-code-finding", "predicted": 1.0}
+{"at": "2026-11-27T16:59:49Z", "decided_at": "2026-11-20T16:41:36Z", "hit": true, "id": "d-a22e11d0fb0d", "measured": 1.0, "point": "self-code-finding", "predicted": 1.0}
