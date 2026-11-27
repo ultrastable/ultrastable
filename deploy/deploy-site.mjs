@@ -1,4 +1,4 @@
-// Deploys site/worker.js to Cloudflare and attaches the four hostnames. Usage:
+// Deploys site/edge.js (the stamping wrapper around site/worker.js) to Cloudflare and attaches the four hostnames. Usage:
 //   CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... node deploy/deploy-site.mjs
 // This is the same sequence used for the first deploy on 2026-11-10 (Workers script upload, then Workers custom domains).
 import { readFileSync, readdirSync } from "node:fs";
@@ -22,7 +22,7 @@ for (const f of readdirSync(new URL("../site/assets/", import.meta.url)))
 // so a module imported by a module (agentic.js -> sop.js, controlplane.js -> ../seed/worker/src/handoff.js) is uploaded too. Root cause it closes: the
 // one-level flattening uploaded worker.js's direct imports only and Cloudflare rejected the script with 10021 "No such module".
 const ROOT_DIR = new URL("../", import.meta.url);
-const MODS = await collectModules(async (p) => readFileSync(new URL(p, ROOT_DIR), "utf8"), "site/worker.js");
+const MODS = await collectModules(async (p) => readFileSync(new URL(p, ROOT_DIR), "utf8"), "site/edge.js");
 const src = MODS[0].src;
 // TOPOLOGY-1: bindings come from doctrine/topology.json (same mapping as foundation/topology.py `bindings`, live targets only), so the declaration and the deploy cannot disagree.
 // Plain Node on purpose: the deploy workflow has no Python dependencies installed.
@@ -39,7 +39,7 @@ function topologyBindings(id) {
 const TOPOLOGY_BINDINGS = topologyBindings("ultrastable-site");
 if (!TOPOLOGY_BINDINGS.some(b => b.name === "ASSETS" && b.namespace_id === ns.id)) { console.error("topology ASSETS namespace differs from the account's " + NS_TITLE); process.exit(1); }
 const form = new FormData();
-form.append("metadata", new Blob([JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04", bindings: TOPOLOGY_BINDINGS, keep_bindings: ["secret_text", "secret_key"], observability: { enabled: true, head_sampling_rate: 1 } })], { type: "application/json" }));
+form.append("metadata", new Blob([JSON.stringify({ main_module: MODS[0].name, compatibility_date: "2026-11-04", bindings: TOPOLOGY_BINDINGS, keep_bindings: ["secret_text", "secret_key"], observability: { enabled: true, head_sampling_rate: 1 } })], { type: "application/json" }));
 for (const m of MODS) form.append(m.name, new Blob([m.src], { type: m.type }), m.name);
 const up = await api("PUT", `/accounts/${A}/workers/scripts/ultrastable-site`, form);
 console.log("upload", up.success);
@@ -65,7 +65,7 @@ for (const [hostname, zone_id] of Object.entries(zones)) {
   for (const m of miss) console.log("::warning::BUILD-2 subdomain setup incomplete, owner card: grant the deploy token Zone DNS Edit + Workers Routes Edit on ultrastable.io. Exact error: " + m);
 }
 // Verify live: the served version must equal the repo version (a green deploy that serves old code is a failed deploy).
-const want = /var VERSION = "([^"]+)"/.exec(src)[1];
+const want = /var VERSION = "([^"]+)"/.exec(MODS.map(m => m.src).join("\n"))[1];
 let got = "";
 for (let i = 0; i < 12 && got !== want; i++) { await new Promise(r => setTimeout(r, 5000)); try { got = (await (await fetch("https://ultrastable.io/health?v=" + Date.now())).json()).version; } catch {} }
 console.log("live version", got, "want", want);
