@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
-// Copyright (c) Ultrastable
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // PR-NEVER-LOSE-1 (2026-11-27): automation never discards unmerged work. PR #2615 was closed on a stale `conflict` reading although its branch merged cleanly with main.
 // Every Worker closer of an unmerged pull request goes through safeClose: read it again live (a null `mergeable` is retried, and still unknown is NOT a conflict),
 // never close a mergeable one, try GitHub's update-branch once, and pin the head under refs/archive/pr-<n>-<sha7> (read back) before the close.

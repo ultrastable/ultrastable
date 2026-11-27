@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/secondloop.schema.json",
+  "title": "secondloop (seed/autonomy/secondloop.json)",
+  "description": "Contract for seed/autonomy/secondloop.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "marker": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string"
+    },
+    "tick_step": {
+      "type": "string"
+    },
+    "item": {
+      "type": "string"
+    },
+    "archive": {
+      "type": "object",
+      "properties": {
+        "home": {
+          "type": "string"
+        },
+        "journal": {
+          "type": "string"
+        },
+        "index": {
+          "type": "string"
+        },
+        "page_pattern": {
+          "type": "string"
+        },
+        "volume_pattern": {
+          "type": "string"
+        },
+        "other_index_pattern": {
+          "type": "string"
+        },
+        "store": {
+          "type": "string"
+        },
+        "licence_note": {
+          "type": "string"
+        }
+      }
+    },
+    "helpers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "exports": {
+            "type": "array"
+          },
+          "failure_mode": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "module": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "array"
+          },
+          "statement": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "not_yet_code": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "platform_map": {
+      "type": "string"
+    },
+    "work_record": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "$schema",
+    "_doc",
+    "archive",
+    "code",
+    "concepts",
+    "helpers",
+    "id",
+    "item",
+    "marker",
+    "not_yet_code",
+    "platform_map",
+    "tick_step",
+    "version",
+    "work_record"
+  ]
+}
