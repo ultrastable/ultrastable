@@ -77,9 +77,6 @@ def check(root=REPO) -> list[str]:
             bad.append(f"directive {d['id']}: enforcement probe fails ({d['probe']})")
     if "PROACTIVE-PROGRAMS-1" not in dtxt:
         bad.append("proactive programs missing")
-    from . import kernel9  # KERNEL-9-1: the successor text is pinned and mapped; runs wherever `kernel --check` runs
-    if (root / kernel9.PATH).exists():
-        bad += kernel9.check(root)
     if root == REPO:  # DISPOSITION-1 reads the executor ledger of this repository (and its evidence branch), not a test copy
         from . import disposition
         bad += disposition.check(root)

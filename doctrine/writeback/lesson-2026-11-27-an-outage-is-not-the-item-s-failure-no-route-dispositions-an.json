@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-an-outage-is-not-the-item-s-failure-no-route-dispositions-an",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "An outage is not the item's failure: no-route, dispositions, and recall of earlier failures",
+  "body": "Measured 2026-11-27: 549 of 592 failed executor rows were provider outages (all rungs 502, or the retired GitHub Models route) recorded as bad replies, spending three attempts and labelling the item executor-failed. NO-ROUTE-1 ends such a run as no-route (deferred_budget) and releases the claim; ladderwatch reads no-route rows. DISPOSITION-1 maps every executor result to one of five dispositions and refuses a self-verified done; FLAG-1 records a contradiction instead of forcing a pass; earlier failures of an item go into its next prompt (failure_recall 0.968).",
+  "probe": "grep:foundation/executor.py::class NoRoute",
+  "session": "session_0156nqDu99kqGWBE1LgcyCMo"
+ },
+ "kind": "lesson",
+ "title": "An outage is not the item's failure: no-route, dispositions, and recall of earlier failures",
+ "session": "session_0156nqDu99kqGWBE1LgcyCMo"
+}

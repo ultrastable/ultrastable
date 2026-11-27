@@ -45,7 +45,8 @@ if __name__ == "__main__":
 
 class NoRouteReading(unittest.TestCase):
     def test_no_route_rows_mark_the_ladder_dead(self):
-        d = Path(tempfile.mkdtemp())
+        import _repo
+        d = Path(_repo.scratch())
         (d / "docs/issues").mkdir(parents=True)
         now = datetime(2026, 11, 27, 13, 0, tzinfo=timezone.utc)
         rows = [{"at": "2026-11-27T12:0%d:00Z" % i, "issue": f"Q-{i}", "result": "no-route",
