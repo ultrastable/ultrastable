@@ -56,7 +56,7 @@ export function parseSpec(name, text) {
   let k = 0;
   for (const [cap, status] of rowsOf(section)) {
     k++;
-    const labels = status.match(LABEL);
+    const labels = `${cap} ${status}`.match(LABEL);   // the head of a bullet ("- PLANNED: ...") is part of the row, as in tools/spec_backlog.py
     if (!labels) continue;
     let label = labels[0];
     if (label === 'RUNNING') label = labels.includes('BUILT') ? 'BUILT' : 'RUNNING_ONLY';

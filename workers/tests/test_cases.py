@@ -109,6 +109,15 @@ class ScopePacks(unittest.TestCase):
         self.assertIn("BC-1", plan["applicable"])
         self.assertNotIn("BC-3", plan["applicable"])
 
+    def test_a_pack_that_covers_a_blocker_tag_brings_its_cases(self):
+        # the drafts pack's manifest lists patent and business under `covers`; the email and social packs list outreach
+        self.assertEqual(cases.pack_covers(("drafts",)), ("business", "patent"))
+        self.assertEqual(cases.pack_covers(("email", "social")), ("outreach",))
+        self.assertEqual(cases.pack_covers(("analytics", "nope")), ())
+        by_covers = cases.plan_cases({}, packs=("drafts",), covers=cases.pack_covers(("drafts",)))
+        self.assertIn("BC-1", by_covers["applicable"]); self.assertEqual(by_covers["applicable"], cases.plan_cases({}, packs=("patent", "business"))["applicable"])
+        self.assertNotIn("BC-1", cases.plan_cases({}, packs=("drafts",))["applicable"], "without the covers list the tag alone is not enough")
+
     def test_every_tagged_case_names_a_known_pack(self):
         for c in cases.load_library()["cases"]:
             self.assertIn(c.get("pack"), (None,) + ALL_PACKS, c["id"])

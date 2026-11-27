@@ -3,7 +3,7 @@
 // Tests for the merged pull request reader (adapters/github/pulls.js): paged, bounded, read only, fake fetch only.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { githubPulls } from './pulls.js';
+import { githubPulls, githubPullReader } from './pulls.js';
 import { measures } from '../../core/steward/measures.js';
 
 const prRow = (n, o = {}) => ({ number: n, user: { login: 'someone' }, body: 'b' + n, labels: [{ name: 'x' }], merged_at: '2026-11-18T00:00:00Z', updated_at: '2026-11-18T00:00:00Z', ...o });
@@ -60,4 +60,22 @@ test('an unreadable host, a missing token or a bad repo name throws instead of r
   await assert.rejects(githubPulls(bad).mergedPulls(), /http 403/);
   await assert.rejects(githubPulls({ ...bad, env: {} }).mergedPulls(), /token variable/);
   assert.throws(() => githubPulls({ ...bad, repo: 'nope' }), /owner\/name/);
+});
+
+test('githubPullReader: one read of the pull request, state open, closed or merged, the token only in the Authorization header; an unset token, a bad repo or a failed read throws (never reads as closed)', async () => {
+  const seen = [];
+  const answer = body => async (url, init) => { seen.push({ url: String(url), auth: init.headers.authorization }); return { ok: true, status: 200, json: async () => body }; };
+  const read = body => githubPullReader({ fetch: answer(body), env: { VCS_TOKEN: 'tok-123456789' } });
+  assert.deepEqual(await read({ state: 'open', merged_at: null, closed_at: null })('o/r', 7), { state: 'open', merged_at: null, closed_at: null });
+  assert.deepEqual(await read({ state: 'closed', merged_at: null, closed_at: '2026-11-02T00:00:00Z' })('o/r', 7), { state: 'closed', merged_at: null, closed_at: '2026-11-02T00:00:00Z' });
+  assert.equal((await read({ state: 'closed', merged_at: '2026-11-03T00:00:00Z', closed_at: '2026-11-03T00:00:00Z' })('o/r', 7)).state, 'merged');
+  assert.equal(seen[0].url, 'https://api.github.com/repos/o/r/pulls/7'); assert.equal(seen[0].auth, 'Bearer tok-123456789');
+  assert.ok(!seen.some(c => c.url.includes('tok-123456789')), 'the token is never in the url');
+  await assert.rejects(githubPullReader({ fetch: answer({}), env: {} })('o/r', 7), /VCS_TOKEN is not set/);
+  assert.equal(seen.length, 3, 'an unset token makes no request');
+  await assert.rejects(read({})('not a repo', 7), /owner\/name/);
+  await assert.rejects(read({})('o/r', 0), /pull request number/);
+  await assert.rejects(githubPullReader({ fetch: async () => ({ ok: false, status: 404 }), env: { VCS_TOKEN: 'x' } })('o/r', 7), /http 404/);
+  assert.throws(() => githubPullReader({}), /fetch port/);
+  const other = githubPullReader({ fetch: answer({ state: 'open' }), env: { OTHER: 'tok-xyz' }, tokenEnv: 'OTHER' }); await other('o/r', 1); assert.equal(seen.at(-1).auth, 'Bearer tok-xyz');
 });

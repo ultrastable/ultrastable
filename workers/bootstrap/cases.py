@@ -17,9 +17,22 @@ def load_library(path=None):
     return json.loads(Path(path or LIB).read_text())
 
 
-def plan_cases(facts, library=None, packs=()):
-    """Cases tagged with a pack apply only if that Capability Pack is enabled (SCOPE.md); untagged cases are core."""
+def pack_covers(packs, packs_dir=None):
+    """The blocker tags each enabled Capability Pack's manifest lists under `covers` (packs/drafts: patent, business; email and social: outreach)."""
+    root = Path(packs_dir or Path(__file__).resolve().parent.parent / "packs")
+    out = set()
+    for pid in packs or ():
+        try:
+            out.update(json.loads((root / pid / "pack.json").read_text()).get("covers") or [])
+        except (OSError, ValueError):
+            continue  # a pack with no readable manifest covers nothing; the case stays off, which is the conservative default
+    return tuple(sorted(out))
+
+
+def plan_cases(facts, library=None, packs=(), covers=None):
+    """Cases tagged with a pack apply only if that Capability Pack is enabled (SCOPE.md) or an enabled pack's manifest `covers` the tag; untagged cases are core."""
     lib = library or load_library()
+    on = set(packs or ()) | set(covers or ())
     merged, assumed = dict(lib["defaults"]), []
     for k in lib["defaults"]:
         if k not in (facts or {}):
@@ -27,7 +40,7 @@ def plan_cases(facts, library=None, packs=()):
     merged.update({k: v for k, v in (facts or {}).items()})
     applicable, cards, routes = [], {}, []
     for c in lib["cases"]:
-        if c.get("pack") and c["pack"] not in packs:
+        if c.get("pack") and c["pack"] not in on:
             continue
         if all(merged.get(k) == v for k, v in c["when"].items()):
             applicable.append(c["id"])

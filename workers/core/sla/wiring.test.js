@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // US-SPEC-13 in the composed organisation: the objective F, the monthly autonomy card and the step-budget sweep must run on a real
-// tick, not only in module tests. The first two tests build the organisation with createOrg and pass once the composition root hands
-// its report-card writer (l3) to the build-out ports (integration request H-03: core/org/index.js, the buildoutSteps ports object gains `l3`).
-// The third test proves the same assertions through buildoutSteps with l3 supplied, so the behaviour is known good before the wiring lands.
+// tick, not only in module tests. The first two tests build the organisation with createOrg: the composition root hands its report-card
+// writer (l3) to the build-out ports (core/org/index.js buildoutPortsFor). The third proves the same assertions through buildoutSteps with l3 supplied.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
@@ -32,14 +31,14 @@ async function wired() {
   return { db, org, clock };
 }
 
-test('US-13-R11 and US-13-T04 and US-13-R19 in the wired org: a step 9 h into a 4 h budget files one item and one question', { todo: 'integration request H-03: core/org/index.js passes l3 to buildoutSteps; remove this todo when the integrator wires it' }, async () => {
+test('US-13-R11 and US-13-T04 and US-13-R19 in the wired org: a step 9 h into a 4 h budget files one item and one question', async () => {
   const { db, org, clock } = await wired();
   clock.t += 60e3; await org.tick();
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM items WHERE id='STEPBUDGET-CHANGE-REVIEW'`).n, 1);
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM gate_cards WHERE id LIKE 'stepq-change-review%'`).n, 1);
 });
 
-test('US-13-T07 and US-13-R19: the wired org computes the autonomy card and the stored objective on its first tick', { todo: 'integration request H-03: core/org/index.js passes l3 to buildoutSteps; remove this todo when the integrator wires it' }, async () => {
+test('US-13-T07 and US-13-R19: the wired org computes the autonomy card and the stored objective on its first tick', async () => {
   const { db, org, clock } = await wired();
   clock.t += 60e3; await org.tick();
   assert.ok(one(db, `SELECT name FROM sla_register WHERE name='autonomy_card'`), 'a dated register row for the card');

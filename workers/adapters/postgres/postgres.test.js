@@ -147,13 +147,13 @@ test('createPgStore retries once after a dropped connection and rethrows every o
 });
 
 test('US-14-R14: the dispatch statement, which holds a template expression, translates in both of its forms and keeps its five parameters', () => {
-  const m = /`(SELECT id FROM items WHERE status='ready' AND \(owner_role=\? OR owner_role=\?\)\s+AND \(project IS NULL OR project = \? OR \? IS NULL\))\$\{ctx\.config\.executor_takes_targeted \? ` AND done_check NOT LIKE '%target:%'` : ''\}(\s+AND id NOT IN \(SELECT item_id FROM claims\) ORDER BY \(owner_role=\?\) DESC, priority, created_at LIMIT 1)`/.exec(TICK_SRC);
+  const m = /`(SELECT id FROM items WHERE status='ready' AND \(owner_role=\? OR owner_role=\?\)\s+AND \(project IS NULL OR project = \? OR \? IS NULL\))\$\{ctx\.config\.executor_takes_targeted \? ` AND done_check NOT LIKE '%target:%'` : ''\}(\s+AND \(trigger_on IS NULL OR trigger_on LIKE '%,%' OR trigger_on LIKE 'gate:%' OR trigger_on IN \(SELECT id FROM items WHERE status='done' AND disposition IS NOT NULL AND disposition <> ''\)\)\s+AND id NOT IN \(SELECT item_id FROM claims\) ORDER BY \(owner_role=\?\) DESC, priority, created_at LIMIT 1)`/.exec(TICK_SRC);
   assert.ok(m, 'the dispatch statement was found in core/src/tick.js');
   for (const extra of ['', ` AND done_check NOT LIKE '%target:%'`]) {
     const sql = m[1] + extra + m[2];
     const t = translate(sql);
     assert.equal(t.params, 5); assert.ok(!/\?/.test(t.text.replace(/'[^']*'/g, '')));
-    assert.match(t.text, /project = \$3 OR \$4 IS NULL\)/); assert.match(t.text, /ORDER BY \(owner_role=\$5\) DESC/);
+    assert.match(t.text, /project = \$3 OR \$4 IS NULL\)/); assert.match(t.text, /trigger_on IN \(SELECT id FROM items WHERE status='done' AND disposition IS NOT NULL/); assert.match(t.text, /ORDER BY \(owner_role=\$5\) DESC/);
     assert.equal(/target:/.test(t.text), !!extra);
   }
 });

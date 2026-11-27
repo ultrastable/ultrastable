@@ -160,3 +160,14 @@ test('US-27-R43: a gap is worth one plus its PageRank share of the graph, a disa
   const dis = d.insights.find(i => i.type === 'disagree'), p = d.central.find(c => c.id === 'topic').pagerank;
   assert.ok(Math.abs(dis.score - (2 + p * 3)) < 1e-3, String(dis.score));
 });
+
+test('US-27-R43: two rules that find the same node, or the same pair, give two insights with two ids, so the ledger tracks them apart', () => {
+  const snap = { nodes: [n('a3', 'author'), n('p1', 'paper'), n('p2', 'paper'), n('p3', 'paper'), n('t', 'topic')], edges: [e('p1', 'on', 't'), e('p2', 'on', 't'), e('p3', 'on', 't')] };
+  const gaps = I.analyze(snap, { gaps: [{ id: 'g1', kind: 'author', lacks: { rel: 'by', dir: 'in' } }, { id: 'g2', kind: 'author', lacks: { rel: 'by', dir: 'in' } }] }).insights.filter(i => i.type === 'gap');
+  assert.equal(gaps.length, 2); assert.notEqual(gaps[0].id, gaps[1].id);
+  const links = I.analyze(snap, { links: [{ id: 'one', kinds: ['paper', 'paper'] }, { id: 'two', kinds: ['paper', 'paper'] }] }).insights.filter(i => i.type === 'link');
+  assert.equal(new Set(links.map(i => i.id)).size, links.length, 'every link insight has its own id');
+  assert.equal(links.length, 6, 'three pairs for each of the two rules');
+  const ledger = I.track({}, gaps, Date.UTC(2026, 10, 20));
+  assert.deepEqual([ledger.moved.new.length, Object.keys(ledger.state).length], [2, 2], 'the ledger holds one entry for each rule, not one for both');
+});

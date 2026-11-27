@@ -11,7 +11,7 @@ export const PERIODS = { daily: 24, weekly: 24 * 7, monthly: 24 * 30 };
 
 // A merge that only records state (a ledger row, a regenerated file, a deploy record) happened, and is listed, but it is not what a
 // returning reader came for: it never counts toward cadence and digests list it after the substantive changes.
-const BOOKKEEPING = /^(lane|host-sync|hostsync|loop-evidence|regen|ledger|evidence|record|write-?back|branchsweep|sessions?|spinoff: portfolio tick|deploy-workers: record|chore\(deps\)|merge )\b|\[skip ci\]/i;
+const BOOKKEEPING = /^(?:(?:lane|host-sync|hostsync|loop-evidence|regen|ledger|evidence|record|write-?back|branchsweep|sessions?|spinoff: portfolio tick|deploy-workers: record|merge )\b|chore\(deps\))|\[skip ci\]/i;
 // SUBSTANCE-1 (Rowan, 2026-11-21): a change whose diff was classified (workers/core/substance) counts only when it altered executable behaviour, so a
 // bumped number, a hash, an unused import or a ledger merge is never progress whatever its title says; an unclassified change falls back to the title.
 export const substantive = e => e.kind !== 'change' || (e.substance && e.substance !== 'unknown' ? e.substance === 'substantive' : !BOOKKEEPING.test(String(e.title || '')));

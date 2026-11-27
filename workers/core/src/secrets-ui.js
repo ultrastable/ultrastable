@@ -3,10 +3,9 @@
 // The console's Connect screen back end (issue #88, epic #84): paste a provider key or token once, it is stored through the
 // vault (a Worker-side secret store), and the screen only ever shows presence. A value is never returned, echoed or logged.
 
-/** Connections always offered. Names must also be on the vault allowlist. */
+/** Connections always offered by paste. Names must also be on the vault allowlist. A credential a consent flow can issue (GitHub access: core/githubapp, /console/github/connect) is never offered as a paste: US-30-R55. */
 export const CONNECTIONS = [
   { name: 'ANTHROPIC_API_KEY', label: 'Add a model key', help: 'This lets the system ask a language model to write and review work. You get the key from the account page of your model provider, under API keys. Paste it here once; it is kept private and never shown again.' },
-  { name: 'VCS_TOKEN', label: 'Add GitHub access', help: 'This lets the system open draft pull requests on your code host. Create a fine-grained access token limited to your repositories, with permission to read and write contents and pull requests, then paste it here once. It is never shown again.' },
 ];
 
 /** Extra connections implied by the router configuration: every paid provider names the secret it needs (key_env). */

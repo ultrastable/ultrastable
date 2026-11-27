@@ -26,7 +26,7 @@ Each directory here is one module of the Ultrastable core, written to the specif
 | `docgate` | documents traced to work | BUILT |
 | `intent` | request intake | BUILT |
 | `observe` | self-observation | BUILT |
-| `runner` | doer/reviewer runner: draft pull requests, US-SPEC-11 | BUILT (see its README) |
+| `runner` | doer/reviewer runner: draft pull requests, US-SPEC-10 | BUILT (see its README) |
 | `describe` | self-description and the claims registry, US-SPEC-22 | BUILT (see its README) |
 | `packs` | capability packs and the outbound guard, US-SPEC-21 | BUILT (see its README) |
 | `packs/email` | email list pack, class B, US-SPEC-21 | BUILT (see its README) |
@@ -35,6 +35,9 @@ Each directory here is one module of the Ultrastable core, written to the specif
 | `doors` | console doors: first-run key shown once, Cloudflare Access sign-in, paste-a-secret (Connect screen), US-SPEC-18/19 | BUILT (see `doors/doors.test.js`) |
 | `elicit` | needs register, Ask cards, defaults with assumption log, read-back, readiness score, four-sweep ignorance audit, US-SPEC-16 | BUILT as a module (see `elicit/elicit.test.js`); wired into core/org as an opt-in tick step and token-guarded routes (`config.elicit.enabled`) |
 | `console-l3` | operator console L3: fleet state, health, digest from one state, report cards with evidence and limits, objective-function guard, step budgets, US-SPEC-13 (L3 requirements R01-R06, R11) | BUILT as a module and served at `/api/console/fleet/*`; R12, R13 and the L2 service-level rows are NOT COVERED |
+| `fleet` | fleet runtime: schedulers, executor, run ledger and a dead-man check for a scheduled slot with no record, US-SPEC-11 | BUILT as a module; its tick step runs in the composition root (`core/org/buildout.js`), nothing is RUNNING in production (see its README) |
+| `signals` | signal pipeline: every output re-enters as a weighted signal, a boundary table decides which worker reads which source, US-SPEC-12 Part A | BUILT as a module; its tick step runs in the composition root (see its README) |
+| `graph` (wiring) | wiring graph: the declared edges between loops, ports and tables, checked against the code, US-SPEC-12 Part B (`graph/wiring.js`) | BUILT; its tick step runs in the composition root when the host gives it a metadata port (see its README) |
 | `org` | composition root: one tick runs every loop, one handle serves every route; the Worker and Cloud Run call it | BUILT (see its README) |
 | `connect` | the connection engine: a knowledge graph (`kgraph`) plus vectors (Workers AI bge, GitHub Models, or a lexical route needing no credential) finds novel connections, close in meaning and far in the graph, ranks them and learns from downstream outcomes (CONNECT-1) | BUILT (see its README) |
 | `ask`, `i18n` | grounded natural-language questions over a tenant's pages (retrieval, verified answers, rate limit and budget); serving a server-rendered site in many languages (segments, hreflang, sitemaps, checked machine translation) | BUILT (see their READMEs) |

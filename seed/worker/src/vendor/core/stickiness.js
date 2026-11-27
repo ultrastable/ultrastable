@@ -96,6 +96,7 @@ export function whatsNew({ title, link, items, graceMin = 30, key = 'us-last-vis
 // Social queue in the shape the core social module drains ({ posts: [{ id, date, text, texts, kind, arm }] }). Entries not yet promoted (not in `posted`)
 // and newer than `since_days` become at most `max_per_day` posts a day, in plain words: the entry's own title and a line from its own summary, a link,
 // and the tenant's `reveal` line. No hashtags, no emoji, no claim the entry does not make. `voice` is the tenant's: an array of openers.
+const MENTION = /(^|\s)@[a-z0-9_]/i;
 export function queue(entries, { now = Date.now(), posted = [], max_per_day = 2, since_days = 14, reveal = '', voice = ['New:', 'Just added:', 'Worth a read:', 'Fresh this week:'], arm = 'sticky', limit = 300 } = {}) {
   const done = new Set(posted), h = s => { let x = 0; for (const ch of String(s)) x = (x * 31 + ch.charCodeAt(0)) >>> 0; return x; };
   const due = normalize(entries).filter(e => !done.has(e.id) && e.url && now - Date.parse(e.at) <= since_days * D).reverse(), posts = [], skipped = [];
@@ -105,7 +106,7 @@ export function queue(entries, { now = Date.now(), posted = [], max_per_day = 2,
     const room = limit - tail.length - 1, full = `${open} ${e.title}${line && line !== e.title ? '. ' + line : ''}`, bare = `${open} ${e.title}`;
     // A post is never cut: it uses the title and one whole sentence if they fit, the title alone if not, and is left out (and counted) if even that does not fit.
     const body = full.length <= room ? full : bare.length <= room ? bare : null;
-    if (body == null) { skipped.push(e.id); return; }
+    if (body == null || MENTION.test(`${e.title} ${e.summary || ''}`)) { skipped.push(e.id); return; }  // TENANT-PROMO-1: a queue entry never carries an @-mention (US-29-R83)
     posts.push({ id: `${arm}:${e.id}`, date: day, kind: 'entry', arm, text: body + '\n' + tail, entry: e.id, ...(e.grade ? { grade: e.grade } : {}) });  // the entry's evidence grade travels with the post so the social quality gate (POST-QUALITY-1) can hold an overclaim
   });
   return { posts, skipped };

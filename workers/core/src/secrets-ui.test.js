@@ -20,15 +20,14 @@ test('routerConnections names paid providers only; the keyless Workers AI provid
   assert.deepEqual(routerConnections({}), []);
 });
 
-test('listConnections: presence and source only, router keys added, names off the allowlist dropped', async () => {
+test('listConnections: presence and source only, router keys added, names off the allowlist dropped, GitHub access never offered as a paste', async () => {
   const { vault } = setup();
-  await saveSecret(vault, { name: 'VCS_TOKEN', value: SECRET });
+  await saveSecret(vault, { name: 'OPENAI_API_KEY', value: SECRET });
   const list = await listConnections(vault, { ANTHROPIC_API_KEY: true, VCS_TOKEN: true }, { router });
   const by = Object.fromEntries(list.map(c => [c.name, c]));
-  assert.deepEqual(Object.keys(by).sort(), ['ANTHROPIC_API_KEY', 'OPENAI_API_KEY', 'VCS_TOKEN']);
-  assert.equal(by.VCS_TOKEN.source, 'console'); assert.ok(by.VCS_TOKEN.set_at);
+  assert.deepEqual(Object.keys(by).sort(), ['ANTHROPIC_API_KEY', 'OPENAI_API_KEY'], 'US-30-R55: no VCS_TOKEN paste entry, even when the environment holds one');
+  assert.equal(by.OPENAI_API_KEY.source, 'console'); assert.ok(by.OPENAI_API_KEY.set_at); assert.equal(by.OPENAI_API_KEY.present, true);
   assert.equal(by.ANTHROPIC_API_KEY.source, 'environment'); assert.equal(by.ANTHROPIC_API_KEY.set_at, null);
-  assert.equal(by.OPENAI_API_KEY.present, false); assert.equal(by.OPENAI_API_KEY.source, null);
   assert.ok(!JSON.stringify(list).includes(SECRET));
   assert.deepEqual(await listConnections(null), []);
 });
@@ -61,6 +60,9 @@ test('console routes: save, show presence, remove; cross-origin and signed-out a
   const view = await (await handleConsole(new Request(U + '/api/console', { headers: { cookie } }), env, o)).text();
   assert.ok(!view.includes(SECRET));
   assert.equal(JSON.parse(view).connections.find(c => c.name === 'OPENAI_API_KEY').present, true);
+  const gh = JSON.parse(view).connections.find(c => c.name === 'github');
+  assert.deepEqual([gh.href, gh.present, gh.label], ['/console/github/connect', false, 'Connect GitHub'], 'US-30-R55: GitHub access is one link, never a token field');
+  assert.ok(!JSON.parse(view).connections.some(c => c.name === 'VCS_TOKEN'));
   const gone = await handleConsole(post('/api/console/secret/remove', { name: 'OPENAI_API_KEY' }), env, o);
   assert.equal(gone.status, 200);
   const view2 = JSON.parse(await (await handleConsole(new Request(U + '/api/console', { headers: { cookie } }), env, o)).text());

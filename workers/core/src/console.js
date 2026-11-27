@@ -6,6 +6,7 @@ import { CONSOLE_HTML } from './console-ui.js';
 import { sha256Hex, verifyAccessJwt } from '../doors/index.js';
 import { verifyIapJwt } from '../doors/proxy.js';
 import { listConnections, saveSecret, removeSecret } from './secrets-ui.js';
+import { githubConnection } from '../githubapp/index.js';
 import { firstRunDoor, doorStatus, page, SETUP } from './first-run.js';
 import { HELP_SECTIONS } from './help-data.js';
 import { readSession, canWrite } from '../auth/index.js';
@@ -13,12 +14,13 @@ import { SESSION_COOKIE } from '../githubapp/signin.js';
 import { publicViewEnabled, renderPublicView, loadMeasures } from '../org/public-view.js';
 import { plain } from '../walkthrough/plain.js';
 
-// Request categories that SCOPE.md puts outside the default product (opt-in Capability Packs only).
+// Request categories that SCOPE.md puts outside the default product (opt-in Capability Packs only). Each row is [pattern, what it is, the shipped pack that covers it]: the
+// decline names that pack (US-00-T04), and says that no add-on covers it when the third field is null (the drafts pack drafts documents but never files one; no pack gives advice).
 export const OUT_OF_SCOPE = [
-  [/business plan|financial model|pitch deck|fundrais|investor|funding (application|round)/i, 'a business plan or funding material'],
-  [/patent|trademark|copyright (filing|registration)/i, 'a patent or trademark filing'],
-  [/legal advice|tax advice|investment advice|medical advice/i, 'legal, tax, investment or medical advice'],
-  [/marketing campaign|social media (post|account)|cold (email|outreach)|ad campaign/i, 'marketing or outreach'],
+  [/business plan|financial model|pitch deck|fundrais|investor|funding (application|round)/i, 'a business plan or funding material', 'drafts'],
+  [/patent|trademark|copyright (filing|registration)/i, 'a patent or trademark filing', null],
+  [/legal advice|tax advice|investment advice|medical advice/i, 'legal, tax, investment or medical advice', null],
+  [/marketing campaign|social media (post|account)|cold (email|outreach)|ad campaign/i, 'marketing or outreach', 'social'],
 ];
 
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
@@ -107,7 +109,7 @@ export async function resolveCard(db, id, choice) {
 
 function explainCard(c) {
   const probe = c.closing_probe.startsWith('env:')
-    ? `This needs a value only you can add in your cloud account (${c.closing_probe.slice(4)}). The card closes by itself once it is there. You can paste it on the Connect screen.`
+    ? 'This needs a value only you can add in your cloud account. The card closes by itself once it is there. You can connect it on the Connect screen.'
     : c.closing_probe.startsWith('elicit_answered:')
       ? 'This is a question only you can answer. Pick one of the answers when it appears; the card closes when you do.'
       : 'Press "I did it" when it is done, or "Use the default" to let the work carry on as described.';
@@ -159,9 +161,9 @@ export async function recordAsk(db, text) {
   if (hit) {
     await run(db, `INSERT INTO items (id, title, kind, project, owner_role, done_check, closing_probe, priority, status, blocker)
       VALUES (?, ?, 'work', 'scope-gate', 'portfolio-manager', 'decision recorded on whether to enable a Capability Pack', 'manual', 30, 'blocked', ?)`,
-      id, `Out of scope by default: ${t.slice(0, 120)}`, `Out of scope by default (SCOPE.md): ${hit[1]}. Held until a pack is enabled.`);
+      id, `Out of scope by default: ${t.slice(0, 120)}`, `Out of scope by default (SCOPE.md): ${hit[1]}. ${hit[2] ? `Held until the ${hit[2]} add-on is enabled.` : 'No add-on covers this.'}`);
     await run(db, `INSERT INTO console_actions (kind, ref, text) VALUES ('ask', ?, ?)`, id, t);
-    return { status: 200, body: { id, held: true, message: `That is ${hit[1]}, which Ultrastable does not do by default. I have noted it. It stays on hold until you choose to enable an add-on for it.` } };
+    return { status: 200, body: { id, held: true, pack: hit[2] ?? null, message: `That is ${hit[1]}, which Ultrastable does not do by default. I have noted it. ${hit[2] ? `It stays on hold until you choose to enable the ${hit[2]} add-on for it.` : 'No add-on covers it, so it stays on hold.'}` } };
   }
   await run(db, `INSERT INTO items (id, title, kind, project, owner_role, done_check, closing_probe, priority, status)
     VALUES (?, ?, 'work', 'requests', 'portfolio-manager', 'request understood, scoped, and answered or broken into items', 'manual', 20, 'open')`, id, `Request: ${t.slice(0, 160)}`);
@@ -189,7 +191,7 @@ const LOGIN = (msg = '') => `<!doctype html><meta charset=utf-8><meta name=viewp
 export async function handleConsole(request, env, { org, vault, doors, config, l3, mounts = [], decorate = null, fetch: fetchFn, now = () => Date.now(), envNames = {} } = {}) {
   const url = new URL(request.url);
   const p = url.pathname;
-  if (!(p === '/console' || p.startsWith('/console/') || p.startsWith('/api/console'))) return null;
+  if (!(p === '/console' || p.startsWith('/console/') || p.startsWith('/api/console') || p === '/api/staff' || p.startsWith('/api/staff/'))) return null;
   const api = p.startsWith('/api/');
   const isPost = request.method === 'POST';
   const clock = typeof now === 'function' ? now : () => now;
@@ -241,8 +243,10 @@ export async function handleConsole(request, env, { org, vault, doors, config, l
   return ownerRoutes(request, env, { org, vault, doors, config, l3, mounts, decorate, fetch: fetchFn, now: clock, envNames, confirm: false, actor: null });
 }
 
-/** The owner-write routes a mount serves (the walkthrough, the read-back and the profile; core/walkthrough). */
+/** The owner-write routes a mount serves (the walkthrough, the read-back and the profile; core/walkthrough), and the person's screen for a role (core/staff: act and reverse). */
 export const MOUNTED_WRITES = ['/api/console/walkthrough/idea', '/api/console/walkthrough/answer', '/api/console/readback', '/api/console/profile'];
+const STAFF_WRITE = /^\/api\/staff\/[^/]+\/(?:act|reverse)$/;
+export const isMountedWrite = p => MOUNTED_WRITES.includes(p) || STAFF_WRITE.test(p);
 
 /** The signed-in surface: the console page, its data and its write actions. With `confirm` (session mode) every write needs a
  *  second step, body.confirm === true (the page asks "are you sure"), and each success is recorded with who did it. */
@@ -253,7 +257,7 @@ async function ownerRoutes(request, env, { org, vault, doors, config, l3, mounts
   // Owner-only mounted surfaces (issue #201). Reaching this function means the caller is signed in; a mount never runs for a viewer.
   // US-18-R15: in session mode the owner writes the walkthrough, the read-back and the profile mount are as much owner writes as a card press: they carry the same
   // origin and confirm checks and each success is recorded as signed_action with the login. (The dashboard's own POST /api/refresh is a recompute, not an owner write.)
-  const mountedWrite = isPost && MOUNTED_WRITES.includes(p.replace(/\/+$/, ''));
+  const mountedWrite = isPost && isMountedWrite(p.replace(/\/+$/, ''));
   if (mountedWrite) {
     const origin = request.headers.get('origin');
     if (!origin || origin !== url.origin) return Response.json({ error: 'cross-origin request refused' }, { status: 403 });
@@ -267,7 +271,7 @@ async function ownerRoutes(request, env, { org, vault, doors, config, l3, mounts
     if (!r) continue;
     if (mountedWrite && confirm && r.status === 200) {
       const said = await r.clone().json().catch(() => ({})); // a "Tell me more" press only explains and writes nothing to sign
-      if (!said.explain) await run(env.DB, `INSERT INTO console_actions (kind, ref, text) VALUES ('signed_action', ?, ?)`, p.replace(/\/+$/, '').replace('/api/console/', ''), actor);
+      if (!said.explain) await run(env.DB, `INSERT INTO console_actions (kind, ref, text) VALUES ('signed_action', ?, ?)`, p.replace(/\/+$/, '').replace(/^\/api\/(?:console\/)?/, ''), actor);
     }
     return r;
   }
@@ -280,6 +284,8 @@ async function ownerRoutes(request, env, { org, vault, doors, config, l3, mounts
   if (request.method === 'GET' && p === '/api/console') {
     const body = await buildConsole(env.DB, { org });
     body.connections = await listConnections(vault, envNames, { router: config?.router });
+    // GitHub access is one click (US-30-R55): a link entry, never a field to paste a token into.
+    if (vault) { try { const g = await githubConnection(vault); body.connections.push({ ...g, help: 'This lets the system open draft pull requests on your code host. Choose Connect GitHub and approve on the GitHub page; nothing is copied or pasted.' }); } catch { /* a missing connection entry never breaks the console */ } }
     body.doors = await doorStatus(env, { doors, now: clock() });
     body.help = HELP_SECTIONS; // generated from docs/help.md
     if (decorate) { try { Object.assign(body, await decorate(body, { actor })); } catch { /* a decorator never breaks the console */ } }

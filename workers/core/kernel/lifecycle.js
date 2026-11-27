@@ -31,7 +31,7 @@ export const gateExtraNames = (gate) => GATE_EXTRAS.filter(e => e.gate === gate)
 // not let a gate pass without them either: a database that holds the module's content store while this process has not loaded the module is
 // refused with one reason per missing condition, so a caller that imports only core/kernel/lifecycle.js cannot enter a phase on the artifact
 // conditions alone (US-15-R20). A database with no such store has no module state to enforce, and the artifact conditions are all there are.
-const MODULE_CONDITIONS = { G1: ['charter-probe', 'readiness'], G2: ['requirement-map'], G3: ['deliverable-probes', 'retrospective'] };
+const MODULE_CONDITIONS = { G1: ['charter-probe', 'readiness'], G2: ['requirement-map', 'readiness-g2'], G3: ['deliverable-probes', 'retrospective'] };
 async function unloadedConditions(db, gate) {
   const have = gateExtraNames(gate), want = (MODULE_CONDITIONS[gate] || []).filter(n => !have.includes(n));
   if (!want.length) return [];

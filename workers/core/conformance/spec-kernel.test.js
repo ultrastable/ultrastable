@@ -95,10 +95,16 @@ test('US-00-T04 and US-00-R09: a request for a business plan with no pack enable
   assert.equal(OUT_OF_SCOPE.length >= 4, true);
 });
 
-test('US-00-T04 (todo): the decline names the pack that would cover the request', { todo: 'needs a `pack` field on OUT_OF_SCOPE in core/src/console.js (integration request): drafts covers plans and documents, social covers posts' }, async () => {
+test('US-00-T04: the decline names the pack that would cover the request, and says so when no pack covers it', async () => {
   const db = makeDb();
-  const r = await recordAsk(db, 'Please write me a business plan for the bakery');
-  assert.match(r.body.message, /drafts/);
+  const plan = await recordAsk(db, 'Please write me a business plan for the bakery');
+  assert.match(plan.body.message, /the drafts add-on/); assert.equal(plan.body.pack, 'drafts');
+  assert.match(db.raw.prepare(`SELECT blocker FROM items WHERE id = ?`).get(plan.body.id).blocker, /Held until the drafts add-on is enabled/);
+  const post = await recordAsk(db, 'Run a marketing campaign for the launch');
+  assert.match(post.body.message, /the social add-on/);
+  const advice = await recordAsk(db, 'I need legal advice about my lease');
+  assert.equal(advice.body.pack, null); assert.match(advice.body.message, /No add-on covers it/);
+  assert.match(db.raw.prepare(`SELECT blocker FROM items WHERE id = ?`).get(advice.body.id).blocker, /No add-on covers this/);
 });
 
 test('US-01-R10: a decision is stored with its prediction, authority and revert path before it runs, and one without any of the three is refused', async () => {

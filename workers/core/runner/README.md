@@ -3,7 +3,7 @@
 
 # core/runner: the doer/reviewer runner
 
-Lets the system write its own pull requests (`US-SPEC-11`, with 02, 05, 08, 09 and 15 s5.3). A Worker cannot run a test suite, so verification is the repository's CI, an independent system. A run is a state machine stored in `runner_runs`, advanced a little each tick (I/O only, so it fits a free-plan CPU budget):
+Lets the system write its own pull requests (`US-SPEC-10`, the model-calling executor, with 02, 05, 08, 09 and 15 s5.3). A Worker cannot run a test suite, so verification is the repository's CI, an independent system. A run is a state machine stored in `runner_runs`, advanced a little each tick (I/O only, so it fits a free-plan CPU budget):
 
 `planned -> patched -> checks_pending -> checks_passed | checks_failed -> reviewing -> approved -> pr_opened` (a DRAFT pull request, never merged by the runner), or `rework` (max 2, then a decision card and the run stops), or `refused` (budget, protected path, kill switch, invalid output, repeated errors).
 
@@ -63,6 +63,6 @@ Default protected paths: `SCOPE.md`, `LICENSE`, `COMMERCIAL-TERMS.md`, `autonomy
 
 Hidden failure is recorded when the reviewer rejects a change whose checks were green and the rework limit is then reached.
 
-## Owner-step watch and probe cadence (`ownerwatch.js`, US-SPEC-11)
+## Owner-step watch and probe cadence (`ownerwatch.js`, US-SPEC-10)
 
 `watchOwnerSteps` re-probes open gate cards on a cadence (`probe_every_minutes`), closes a card when its closing probe passes (`env:`, `item_done:`, `http:`, or a `ctx.probe` port), files one escalation item after `owner_step_hours` and raises it to priority 95 after twice that. `runCadence` runs named probes when due and files `OPS-PROBE-<name>` after a fail streak. Status: BUILT (`ownerwatch.test.js`).

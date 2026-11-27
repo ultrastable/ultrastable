@@ -81,6 +81,10 @@
     {
      "file": "core/conformance/spec-kernel.test.js",
      "name": "US-00-T04 and US-00-R09: a request for a business plan with no pack enabled is declined with its reason and held, not dispatched"
+    },
+    {
+     "file": "core/conformance/spec-kernel.test.js",
+     "name": "US-00-T04: the decline names the pack that would cover the request, and says so when no pack covers it"
     }
    ]
   },
@@ -1075,6 +1079,10 @@
     {
      "file": "core/sla/sla.test.js",
      "name": "US-13-T04 and R11: step runs are timed from the table; 5 h of a 4 h budget files an item, 9 h exactly one blocking question"
+    },
+    {
+     "file": "core/sla/wiring.test.js",
+     "name": "US-13-R11 and US-13-T04 and US-13-R19 in the wired org: a step 9 h into a 4 h budget files one item and one question"
     }
    ]
   },
@@ -1110,6 +1118,10 @@
    "id": "US-13-T07",
    "spec": "US-SPEC-13",
    "tests": [
+    {
+     "file": "core/sla/wiring.test.js",
+     "name": "US-13-T07 and US-13-R19: the wired org computes the autonomy card and the stored objective on its first tick"
+    },
     {
      "file": "core/sla/wiring.test.js",
      "name": "US-13-T07 and US-13-R19: through buildoutSteps with l3 supplied: the card, F and the step-budget sweep run on a tick (the behaviour the wiring must reach)"
@@ -1349,6 +1361,10 @@
     {
      "file": "core/elicit/elicit.test.js",
      "name": "T16-7 and R15: readiness is computed; the planning gate refuses while a non-reversible need is unanswered"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-16-R15, T16-7: with the readiness port wired the reading decides both gates: G1 takes the elicit module's own g1, and G2 refuses while a non-reversible need is unanswered or the reading cannot be taken"
     }
    ]
   },
@@ -2001,6 +2017,10 @@
     {
      "file": "core/ghcost/tools-bridge.test.js",
      "name": "US-24-T06 US-24-R34: the settings script prints the commands and runs nothing without --apply"
+    },
+    {
+     "file": "tests/test_github_settings.py",
+     "name": "test US-24-T06 US-24-R34 dry run is default and prints commands"
     }
    ]
   },
@@ -2382,11 +2402,11 @@
    "tagged": true,
    "must": true,
    "status": "met",
-   "proof": "test file cites it",
+   "proof": "named test",
    "tests": [
     {
-     "file": "core/conformance/scan-python.test.js",
-     "name": null
+     "file": "tests/test_seed.py",
+     "name": "test idempotent - US-01-R05: running the seed twice changes nothing."
     }
    ]
   },
@@ -3233,6 +3253,10 @@
     {
      "file": "../seed/worker/test/spec-03-tick.test.js",
      "name": "US-03-R20 and US-03-T09: health judges the newest finished tick, so a tick in flight does not fail it, and an unfinished tick older than five minutes does"
+    },
+    {
+     "file": "core/org/wiring.test.js",
+     "name": "US-11-R01, US-03-R20, US-13-R21: /health carries the fleet contract, judges the newest finished tick, and reads a stopped clock as unhealthy"
     }
    ]
   },
@@ -3275,6 +3299,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/org/wiring.test.js",
+     "name": "US-04-R01, R05: the plus loop reserves its share of the slots before the programs are allocated, and a plus switched off reserves none"
+    },
     {
      "file": "core/plus/plus.test.js",
      "name": "US-04-R01, US-04-R05: the reserved share is configuration, is lowered only by a row with an expiry, and risk cannot take it"
@@ -3364,6 +3392,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/org/wiring.test.js",
+     "name": "US-04-R01, R05: the plus loop reserves its share of the slots before the programs are allocated, and a plus switched off reserves none"
+    },
+    {
      "file": "core/plus/plus.test.js",
      "name": "US-04-R01, US-04-R05: the reserved share is configuration, is lowered only by a row with an expiry, and risk cannot take it"
     },
@@ -3452,6 +3484,10 @@
      "name": "a missing or stale reading is unmeasured (null), never 0 and never a pass (US-04-R09)"
     },
     {
+     "file": "core/org/wiring.test.js",
+     "name": "US-04-R09: a registered product is read through the first-party usage reader on the tick"
+    },
+    {
      "file": "core/plus/plus.test.js",
      "name": "US-04-R20, US-04-T08, US-04-R09: a plus that moved nothing from a baseline of 0 is not kept, a strict move off 0 is, and a negative baseline is measured by its magnitude"
     },
@@ -3462,10 +3498,6 @@
     {
      "file": "core/plus/plus.test.js",
      "name": "US-04-R14, R09: usage comes through a reader port; machine requests counted with human ones are labelled; a failing reader stores null"
-    },
-    {
-     "file": "core/plus/plus.test.js",
-     "name": "US-04-R09, US-04-R13: plusProbe reports the plus loop from its own tables, read-only, with unmeasured products counted as unmeasured, not as zero"
     }
    ]
   },
@@ -4143,6 +4175,10 @@
     {
      "file": "core/trust/trust.test.js",
      "name": "US-06-R12, mirror rule: the shipped policy against the harness settings file reports no problem; a missing pattern, or a shell-reachable gated action with no harness_deny, is reported"
+    },
+    {
+     "file": "tests/test_seed.py",
+     "name": "test US-06-R12 the validator refuses an execute ceiling on money legal outreach and secrets"
     }
    ]
   },
@@ -4500,9 +4536,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/runner/runner.test.js",
+     "name": "US-07-R09: doer output on a protected path is refused: decision card, nothing pushed"
+    },
+    {
+     "file": "core/runner/runner.test.js",
+     "name": "US-07-R09: an item whose target is protected never reaches the doer; config can add protected paths but not remove them"
+    },
+    {
+     "file": "core/runner/runner.test.js",
+     "name": "US-07-R09 (no claim, no change): an item already claimed by someone else is not taken; priority order is respected"
+    }
+   ]
   },
   {
    "id": "US-07-R10",
@@ -4864,6 +4913,10 @@
     {
      "file": "core/claims/triggers.test.js",
      "name": "US-08-R03: a single-id trigger behaves as before: not done refuses, done admits, a claimed item is never demoted"
+    },
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-08-R03: a ready item whose trigger item is not done is not dispatched; one whose trigger is done with its disposition is; list and gate triggers are left to core/claims"
     }
    ]
   },
@@ -5224,12 +5277,12 @@
      "name": "US-09-R01: a switched-off loop leaves its beat (measurement) and its body does not run"
     },
     {
-     "file": "core/router/caps/caps.test.js",
-     "name": "US-09-T01 US-09-R01: with a loop switch on no action row is written and measurement rows continue"
+     "file": "core/org/wiring.test.js",
+     "name": "US-09-R01: the caps kill switch reaches the routers the organization builds"
     },
     {
      "file": "core/router/caps/caps.test.js",
-     "name": "US-09-R01: the global switch stops every guarded loop actions and not its measurement"
+     "name": "US-09-T01 US-09-R01: with a loop switch on no action row is written and measurement rows continue"
     }
    ]
   },
@@ -6104,6 +6157,14 @@
     {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R01 and US-11-R02: reconcile compares the registered crons and reads the deployed {ok} health shape as a status"
+    },
+    {
+     "file": "core/org/wiring.test.js",
+     "name": "US-11-R01, US-03-R20, US-13-R21: /health carries the fleet contract, judges the newest finished tick, and reads a stopped clock as unhealthy"
+    },
+    {
+     "file": "core/org/wiring.test.js",
+     "name": "US-11-R01, R06: the fleet routes take the console token; without it they answer 401"
     }
    ]
   },
@@ -6219,6 +6280,10 @@
     {
      "file": "core/fleet/fleet.test.js",
      "name": "US-11-R06: envelopes are validated before writing; rejects are stored with their error"
+    },
+    {
+     "file": "core/org/wiring.test.js",
+     "name": "US-11-R01, R06: the fleet routes take the console token; without it they answer 401"
     }
    ]
   },
@@ -7949,6 +8014,10 @@
     {
      "file": "core/elicit/elicit.test.js",
      "name": "US-16-R10 and US-16-R20: expireAll defaults every project's overdue Ask once and reviewAll reports a stored card with undefined jargon across projects"
+    },
+    {
+     "file": "core/org/wiring.test.js",
+     "name": "US-16-R10, R24: an Ask nobody answers falls to its default and the ignorance audit runs, on the tick, with nobody opening the walkthrough"
     }
    ]
   },
@@ -8040,6 +8109,10 @@
     {
      "file": "core/elicit/elicit.test.js",
      "name": "T16-7 and R15: readiness is computed; the planning gate refuses while a non-reversible need is unanswered"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-16-R15, T16-7: with the readiness port wired the reading decides both gates: G1 takes the elicit module's own g1, and G2 refuses while a non-reversible need is unanswered or the reading cannot be taken"
     }
    ]
   },
@@ -8849,16 +8922,16 @@
      "name": "US-18-R09: steps a person must do are decision cards that close when the step is observed done, never by the console setting anything"
     },
     {
+     "file": "core/org/surfaces.test.js",
+     "name": "T18-9 and US-18-R09: Google IAP: a request through the configured proxy with a valid signed header signs in; no header, wrong audience or a bad signature do not"
+    },
+    {
      "file": "core/test/console-ui.test.js",
      "name": "US-18-R09: an explain press asks no confirmation, a change does; a card with an owner link offers one button for it and an unsafe link is not drawn"
     },
     {
      "file": "core/test/console.test.js",
      "name": "T18-4 and US-18-R09: a manual card closes by button and the press is recorded; a secret card cannot be closed by button"
-    },
-    {
-     "file": "core/test/console.test.js",
-     "name": "T18-1, T18-2, US-18-R09 and US-18-R13: console is off without a token, refuses a wrong key, and refuses cross-origin writes"
     }
    ]
   },
@@ -9725,6 +9798,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/org/wiring.test.js",
+     "name": "US-20-R10 to R13: the stage step computes the self-hosting stage when the deployment names its evidence, and says why it did not otherwise"
+    },
+    {
      "file": "core/steward/selfhost-contract.test.js",
      "name": "T20-6 and US-20-R10: the published stage matches the highest stage whose evidence exists; a higher claim is reported"
     },
@@ -9797,6 +9874,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/org/wiring.test.js",
+     "name": "US-20-R10 to R13: the stage step computes the self-hosting stage when the deployment names its evidence, and says why it did not otherwise"
+    },
     {
      "file": "core/steward/selfhost-contract.test.js",
      "name": "US-20-R13: the project publishes its current stage and may not describe itself as higher"
@@ -10435,6 +10516,10 @@
     {
      "file": "core/describe/describe.test.js",
      "name": "T22-6 and US-22-R11: the feed omits non-public and withdrawn claims and its claim ids equal /describe.json"
+    },
+    {
+     "file": "core/org/wiring.test.js",
+     "name": "US-22-R11, R12: the claims feed, the statement and the re-probe are served; the re-probe has the host ports and answers 429 inside its interval"
     }
    ]
   },
@@ -10454,6 +10539,10 @@
     {
      "file": "core/describe/describe.test.js",
      "name": "US-22-R12: the claims page escapes claim text and evidence, carries no script, and offers the re-probe only when ports exist"
+    },
+    {
+     "file": "core/org/wiring.test.js",
+     "name": "US-22-R11, R12: the claims feed, the statement and the re-probe are served; the re-probe has the host ports and answers 429 inside its interval"
     }
    ]
   },
@@ -11249,6 +11338,10 @@
     {
      "file": "core/ghcost/ghcost-ext.test.js",
      "name": "US-24-R30 the settings probe rides the watchdog step on its interval and adds no tick step"
+    },
+    {
+     "file": "tests/test_github_settings.py",
+     "name": "test US-24-R30 R31 R32 apply runs every command covering token fork and merge settings"
     }
    ]
   },
@@ -11264,6 +11357,10 @@
     {
      "file": "core/ghcost/ghcost-ext.test.js",
      "name": "US-24-R31 the probe reads the fork approval policy"
+    },
+    {
+     "file": "tests/test_github_settings.py",
+     "name": "test US-24-R30 R31 R32 apply runs every command covering token fork and merge settings"
     }
    ]
   },
@@ -11279,6 +11376,10 @@
     {
      "file": "core/ghcost/ghcost-ext.test.js",
      "name": "US-24-R32 the probe fails on a repository that allows merge commits and names the fields"
+    },
+    {
+     "file": "tests/test_github_settings.py",
+     "name": "test US-24-R30 R31 R32 apply runs every command covering token fork and merge settings"
     }
    ]
   },
@@ -11298,6 +11399,10 @@
     {
      "file": "core/ghcost/tools-bridge.test.js",
      "name": "US-24-R33: Discussions are off unless asked: the default commands do not set has_discussions and --discussions does"
+    },
+    {
+     "file": "tests/test_github_settings.py",
+     "name": "test US-24-R33 discussions are enabled only when asked"
     }
    ]
   },
@@ -11317,6 +11422,10 @@
     {
      "file": "core/ghcost/tools-bridge.test.js",
      "name": "US-24-T06 US-24-R34: the settings script prints the commands and runs nothing without --apply"
+    },
+    {
+     "file": "tests/test_github_settings.py",
+     "name": "test US-24-T06 US-24-R34 dry run is default and prints commands"
     }
    ]
   },

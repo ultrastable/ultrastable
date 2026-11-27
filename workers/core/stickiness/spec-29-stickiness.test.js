@@ -138,12 +138,12 @@ test('US-29-R47: the social queue holds entries not yet promoted, oldest first, 
   assert.deepEqual(fit.skipped, ['m'], 'an entry that cannot fit even as a title is counted, not cut');
   assert.equal(queue([e('g', 1, { grade: 'D' })], { now: NOW }).posts[0].grade, 'D');
   for (const p of q.posts) assert.ok(!/#|@|[\u{1F300}-\u{1FAFF}]/u.test(p.text), 'the words the module adds (opener, joining text, link layout) hold no hashtag, mention or emoji');
-  const hostile = queue([{ id: 'h', at: new Date(NOW - 3600e3).toISOString(), title: 'Launch #big with @bob \u{1F680}', url: 'https://x/h', summary: 'A line. Two.' }], { now: NOW, voice: ['Look:'], reveal: 'Runs on Ultrastable' });
-  assert.equal(hostile.posts[0].text, 'Look: Launch #big with @bob \u{1F680}. A line.\nhttps://x/h\nRuns on Ultrastable', 'a character already in an entry\'s own title is passed through unchanged: the module does not filter or strip entry text');
+  const hostile = queue([{ id: 'h', at: new Date(NOW - 3600e3).toISOString(), title: 'Launch #big with Bob \u{1F680}', url: 'https://x/h', summary: 'A line. Two.' }], { now: NOW, voice: ['Look:'], reveal: 'Runs on Ultrastable' });
+  assert.equal(hostile.posts[0].text, 'Look: Launch #big with Bob \u{1F680}. A line.\nhttps://x/h\nRuns on Ultrastable', 'a hashtag or emoji already in an entry\'s own title is passed through unchanged: the module does not strip entry text (an @-mention is different: the entry is left out, US-29-R83)');
   assert.deepEqual(normalize([e('z', 1), e('z', 2)]).length, 1);
 });
 
-test('US-29-R83: an entry whose title or summary holds an @-mention is left out of the social queue and listed in skipped (TENANT-PROMO-1: no @-mentions)', { todo: 'core/stickiness/index.js queue() passes entry text through unchanged; the vendored copy seed/worker/src/vendor/core/stickiness.js must change with it' }, () => {
+test('US-29-R83: an entry whose title or summary holds an @-mention is left out of the social queue and listed in skipped (TENANT-PROMO-1: no @-mentions)', () => {
   const q = queue([e('ok', 2), e('m', 3, { title: 'Thanks @bob for the tip' }), e('s', 4, { summary: 'Via @alice. More.' })], { now: NOW });
   assert.deepEqual(q.posts.map(p => p.entry), ['ok']);
   assert.deepEqual(q.skipped.sort(), ['m', 's']);

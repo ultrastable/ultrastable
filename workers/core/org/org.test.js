@@ -22,7 +22,7 @@ const one = (db, sql, ...a) => db.raw.prepare(sql).get(...a);
 
 const baseConfig = (over = {}) => ({
   org_slug: 'test-org', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2,
-  policy: { trust: policy.trust, ladder: policy.ladder, surfaces: policy.surfaces },
+  policy,   // the whole autonomy/policy.json, as a deployment gives it: the trust step validates the real thing
   runner: { enabled: true }, router: routerConfig, vcs: { repo: 'owner/name', base: 'main' },
   packs: { step_timeout_ms: 500, packs: { example: { recipients: ['person@example.com'] } } },
   ...over,
@@ -88,7 +88,7 @@ test('end to end: every loop runs on one tick, a run reaches a draft PR, nothing
   last = await tick();
 
   const names = org.extraSteps().map(s => s.name);
-  assert.deepEqual(names, ['l2', 'claims_reap', 'claims_release_terminal', 'describe', 'yield', 'packs', 'criticality_specify', 'specloop', 'runner_needs_close', 'runner', 'codeloop_merge', ...BUILDOUT_STEPS, 'stage2', 'proxy_guide', 'criticality']);
+  assert.deepEqual(names, ['l2', 'claims_reap', 'claims_release_terminal', 'claims_pr_reap', 'claims_prune', 'describe', 'yield', 'packs', 'criticality_specify', 'specloop', 'runner_needs_close', 'runner', 'codeloop_merge', ...BUILDOUT_STEPS, 'stage2', 'stage', 'proxy_guide', 'criticality']);
 
   // L2 kernel step recorded its snapshot, every tick
   assert.ok(one(db, `SELECT COUNT(*) n FROM kernel_step_evidence WHERE step='risk_snapshot' AND ok=1`).n >= 3);
@@ -206,7 +206,8 @@ function cycle({ rung, codeloop = {} } = {}) {
   if (rung) b.db.raw.prepare(`INSERT INTO trust_ledger (surface, action_class, rung, reliability, outcomes) VALUES ('repo','merge',?,0.9,12)`).run(rung);
   return { ...b, vcs, merges };
 }
-const itemOf = db => one(db, `SELECT id, status, disposition FROM items WHERE id = (SELECT item_id FROM runner_runs LIMIT 1)`);
+// The seeded item, not whichever item a run was opened for first: the wired report-card writer files its own monthly items, and the runner may take those too.
+const itemOf = db => one(db, `SELECT id, status, disposition FROM items WHERE id = 'US-SPEC-11-1'`);
 
 test('issue #183: a cycle opens an issue and a PR and merges it when the trust ledger is at the merge rung', async () => {
   const { db, tick, vcs, merges } = cycle({ rung: 'autonomous' });
@@ -280,4 +281,18 @@ test('issue #201: every build-out step is in extraSteps, runs on by default, and
   const o = await offTick();
   assert.equal(o.completed, o.total, JSON.stringify(o.errors));
   assert.ok(off.extraSteps().some(s => s.name === 'fleet'), 'the step is still listed; its switch is read when it runs');
+});
+
+test('the trust and ladder steps run on the real policy and are switched off only by their own config keys', async () => {
+  const on = boot();
+  const r = await on.tick();
+  assert.ok(!/trust: skipped/.test(r.report), 'the whole autonomy/policy.json is accepted by the trust step: ' + (r.report.match(/trust: [^;]*/) || [''])[0]);
+  assert.match(r.report, /trust: \{"pairs":\d+/);
+  assert.match(r.report, /ladder: \{"demoted":0/);
+  const off = boot({ config: baseConfig({ ladder: { enabled: false }, trust: { enabled: false } }) });
+  const r2 = await off.tick();
+  assert.match(r2.report, /ladder: off/); assert.match(r2.report, /trust: off/);
+  assert.ok(!/ladder: \{/.test(r2.report) && !/trust: \{/.test(r2.report));
+  const bad = boot({ config: baseConfig({ policy: { trust: 1 } }) });
+  assert.match((await bad.tick()).report, /trust: skipped, config\.policy is invalid/);
 });
