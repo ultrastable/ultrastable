@@ -73,37 +73,37 @@
     }
   },
   "run_loop": {
-    "what": "One heartbeat on a server-side clock. Each tick: reconcile state, read every metric, score predictions, accrue trust, audit failure modes against their detectors, dispatch work, execute it, measure criticality, record. A failed step is logged and becomes an item; the remaining steps still run.",
+    "what": "One heartbeat on a server-side clock. Each tick: apply pending migrations, reconcile state, score predictions, read every metric, repair a breached guard before pursuing its goal, accrue trust, audit failure modes against their detectors, question what it does not know, turn goal knobs, plan, dispatch work, execute it, publish the pulse, measure criticality, read its own stage. A failed step is logged and becomes an item; the remaining steps still run.",
     "cron": {
       "file": "ultrastable.json",
       "has": "tick_cron"
     },
     "tick_steps": {
+      "migrate": "pending schema migrations apply in order, once, before the tick writes its heartbeat row",
       "reconcile": "every item that left the active set has a disposition (no silent drop)",
       "reap_claims": "claims with no heartbeat are released so work never stalls",
       "connector_health": "every credential is read; a failing refresh becomes one reconnect link, never an instruction",
       "probe_gates": "an identity-bound card closes when its probe passes, and its default stays in effect meanwhile",
-      "measure": "every metric is read; a breach files BREACH-<metric> with a closing probe",
       "score_predictions": "each logged prediction is graded against the measured outcome",
+      "measure": "every metric is read; a breach files BREACH-<metric> with a closing probe",
+      "second_goal": "an objective measured only by its own target is filed; a breached guard under a healthy target is repaired first",
       "accrue_trust": "trust per (surface, action class) moves with verified outcomes",
       "selfaudit": "every failure mode in autonomy/failure-modes.json is probed; red files FM-<id>",
-      "migrate": "schema migrations apply in order, once",
+      "unknowns": "the system asks itself what it does not know and files the answer as work",
       "goals": "goals are measured and at most one knob moves one step per cooldown",
       "plan": "the goal furthest out of bounds is broken into small items (audit, implement, verify, fix, integrate, gate) and read again after review_h",
-      "unknowns": "the system asks itself what it does not know and files the answer as work",
       "dispatch": "ready items go to the role that owns them",
       "execute": "claimed items are worked, opened as pull requests and merged by the server",
       "check_plus_share": "a share of capacity goes to improvements",
       "age_sla": "an item past its SLA is escalated, never ignored",
       "cost_probe": "spend is sampled against the budget",
-      "second_goal": "an objective measured only by its own target is filed; a breached guard under a healthy target is repaired first",
-      "criticality": "k_eff is computed from verified deploys over cost and human touches",
       "pulse": "the system publishes what it did, from its own tables",
+      "criticality": "k_eff is computed from verified deploys and loop-originated items over spend and human touches",
       "ignition": "the system reads its own stage from bootstrap to self-sustaining"
     },
     "tick_code": {
       "file": "worker/src/tick.js",
-      "has": "export const STEPS"
+      "has": "export const STEP_ORDER"
     },
     "detectors": {
       "register": {
@@ -136,7 +136,7 @@
     }
   },
   "bootstrap": {
-    "what": "From a bare idea (IDEA.md) to a running, measured, self-improving organization, with no step a person must perform. The boot never dies: a blocked stage is logged, becomes a backlog item with a closing probe, and the next stage runs degraded.",
+    "what": "From a bare idea (IDEA.md) to a running, measured, self-improving organization, with no step a person must perform. The boot never dies: a blocked stage is logged, becomes a backlog item with a closing probe, and the next stage runs degraded. Right after read, a copy of the template adopts its own identity (stage adopt) before anything is decided from its manifest.",
     "stages": [
       "read",
       "constitute",
@@ -1059,34 +1059,6 @@
         {
           "file": "worker/src/sweeper.js",
           "has": "safeClose"
-        }
-      ]
-    },
-    {
-      "id": "short-agent-entry",
-      "rule": "An agent loads one short entry file before its first step, inside a byte and line budget, and fetches the standing rules that govern the paths it will change. The rules stay enforced by their checks; nothing depends on an agent having read all of them.",
-      "source": "Rowan, 2026-11-27",
-      "covers": [
-        "AGENT-ENTRY-1"
-      ],
-      "detector": [
-        {
-          "file": "scripts/agentrules.py",
-          "has": "def check("
-        },
-        {
-          "file": "autonomy/agent-entry.json",
-          "has": "max_closure_bytes"
-        }
-      ],
-      "remediation": [
-        {
-          "file": "scripts/agentrules.py",
-          "has": "def for_paths("
-        },
-        {
-          "file": "AGENTS.md",
-          "has": "agentrules.py --for"
         }
       ]
     },

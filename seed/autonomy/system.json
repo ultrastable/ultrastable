@@ -1,7 +1,7 @@
 {
   "$schema": "../../schemas/doctrine.schema.json",
   "$schema_version": "0.1.0",
-  "doc": "SYSTEM-SPEC-1 (Rowan, 2026-11-25: \"something's missing in the core ultra-stable template that's not saying, hey, this is what an ultra-stable system is. This is how ultra-stable runs. This is how ultra-stable bootstraps. This is how ultra-stable becomes autonomous and achieves criticality.\"). The definition of an Ultrastable system, as data. scripts/system.py renders SYSTEM.md from it and from the code of record (bootstrap stages from bootstrap/bootstrap.py, tick steps from worker/src/tick.js, ignition stages from worker/src/ignition.js, the criticality formula from autonomy/criticality.json, standing rules from agents/AGENTS.md), and `scripts/system.py --check` fails when SYSTEM.md is stale, a clause's probe fails in this kit, or a standing rule has no enforcement here that is not on the shrink-only not_in_kit list. Every probe is a path inside this kit: grep:<path>::<regex> or file:<path>.",
+  "doc": "SYSTEM-SPEC-1 (Rowan, 2026-11-25: \"something's missing in the core ultra-stable template that's not saying, hey, this is what an ultra-stable system is. This is how ultra-stable runs. This is how ultra-stable bootstraps. This is how ultra-stable becomes autonomous and achieves criticality.\"). The definition of an Ultrastable system, as data. scripts/system.py renders SYSTEM.md from it and from the code of record (bootstrap stages from bootstrap/bootstrap.py, tick steps from worker/src/tick.js, ignition stages from worker/src/ignition.js, the criticality formula from autonomy/criticality.json, standing rules from agents/AGENTS.md), and `scripts/system.py --check` fails when SYSTEM.md is stale, a clause's probe fails in this kit, or a standing rule has no enforcement here that is not on the shrink-only not_in_kit list. Every probe is a path inside this kit: grep:<path>::<regex> or file:<path> (presence), or test:<path>::<test name>, a named kit test that `scripts/system.py --run-tests` runs. A clause off presence_only must carry a test: probe.",
   "sections": [
     {
       "id": "identity",
@@ -68,7 +68,8 @@
           "text": "The heartbeat is one tick every 10 minutes from the Worker's cron. A second producer, POST /pulse/watch, runs a tick when the newest one is older than two intervals, so one silent trigger never stops the clock.",
           "probe": [
             "grep:worker/src/index.js::async scheduled\\(",
-            "grep:worker/src/index.js::/pulse/watch"
+            "grep:worker/src/index.js::/pulse/watch",
+            "test:worker/test/pulse.test.js::watchdog: a stale heartbeat is restarted by the second producer"
           ]
         },
         {
@@ -76,35 +77,110 @@
           "text": "A tick runs every step listed below, and the same cron runs the loops listed after them. A failing step is recorded and filed as work, and the other steps still run. Each tick writes its report to tick_runs and /health.",
           "probe": [
             "grep:worker/src/tick.js::export const STEPS",
-            "grep:worker/src/index.js::/health"
+            "grep:worker/src/index.js::/health",
+            "test:worker/test/tick.test.js::a failing step never kills the tick and becomes a backlog item"
           ]
         },
         {
           "id": "RUN-3",
           "text": "Work is items with a claim, a prediction logged before the change and a closing probe after it. An item leaves the active set only with a disposition; reconcile reopens any that left without one.",
           "probe": [
-            "grep:worker/src/tick.js::silent_drop"
+            "grep:worker/src/tick.js::silent_drop",
+            "test:worker/test/tick.test.js::items that left the active set without a disposition are reopened"
           ]
         },
         {
           "id": "RUN-4",
           "text": "The only pause is the interrupt gate: a step that is irreversible and identity-bound with no reversible path. It becomes one gate card with a default in effect and a closing probe; the system works on in the meantime.",
           "probe": [
-            "grep:autonomy/policy.json::interrupt"
+            "grep:autonomy/policy.json::interrupt",
+            "test:worker/test/tick.test.js::gate cards close when their probe shows the owner step is done"
           ]
         },
         {
           "id": "RUN-5",
           "text": "One halt stops every recurring path: the Worker variable HALT=1 stops the cron, the watch route and the webhooks. Pages keep serving.",
           "probe": [
-            "grep:worker/src/budget.js::export function halted"
+            "grep:worker/src/budget.js::export function halted",
+            "test:worker/test/budget.test.js::HALT-1: the worker variable wins over the committed file"
           ]
         },
         {
           "id": "RUN-6",
           "text": "Every model call is paid from the owner's monthly budget through one governor; the budget is a number in the repository, never a promise.",
           "probe": [
-            "grep:worker/src/budget.js::governedAI"
+            "grep:worker/src/budget.js::governedAI",
+            "test:worker/test/budget.test.js::every call is metered in the ledger"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "develop",
+      "title": "What an autonomous development system does",
+      "clauses": [
+        {
+          "id": "DEV-1",
+          "text": "Work enters as items. A person's idea becomes IDEA.md through the repository's own issue form, taken only from the people who run the project; after that the tick files every need it finds (a breach, a failed step, a goal out of bounds, a question about what it does not know) as an item with an owner role, a done check and a closing probe.",
+          "probe": [
+            "test:tests/test_happy_path.py::test_2_the_idea_typed_in_a_form_becomes_a_planned_system_with_one_link",
+            "test:tests/test_happy_path.py::test_4_only_the_people_who_run_the_project_can_give_it_its_idea",
+            "test:worker/test/measure.test.js::OBJECTIVES-1: a metric outside its healthy condition files its own remedy and closes it on recovery"
+          ]
+        },
+        {
+          "id": "DEV-2",
+          "text": "Large work is planned before it is built. The plan step turns the goal furthest out of bounds into a task tree of small items (audit, implement, verify, fix, integrate, gate), and an item the single-shot executor failed is split into steps that each name the files they write and the steps they wait for; a plan that could stall or overwrite is refused.",
+          "probe": [
+            "test:worker/test/planner.test.js::decompose builds audit > implement > verify > integrate > gate with roles",
+            "test:worker/test/orchestrate.test.js::a plan is refused when it could stall or overwrite"
+          ]
+        },
+        {
+          "id": "DEV-3",
+          "text": "The Worker's own executors write code on a branch and open one pull request. The backlog lane (runDbQueue) and the orchestrator put a Handoff block in it, so the handoff loop deploys and verifies the change after the merge; the repository-queue lane opens its pull request without one and leaves the item to its own closing probe. Every lane refuses a change that shrinks a file or leaves a stub, and the orchestrator also refuses a step that writes outside its own files.",
+          "probe": [
+            "test:worker/test/nativeexec.test.js::the D1 lane opens a PR for a needs-code item and marks it in-pr with the model",
+            "test:worker/test/nativeexec.test.js::shrink guard refuses gutted files, dropped JSON keys and dropped exports",
+            "test:worker/test/nativeexec.test.js::NATIVE-STUB-1: a new file of placeholder bodies, or outside the directories the repository runs, is refused",
+            "test:worker/test/orchestrate.test.js::a failed single-shot item is planned, worked in parallel, reviewed and opened as one PR",
+            "test:worker/test/orchestrate.test.js::a step that writes outside its own files, shrinks a file or leaves a stub is refused"
+          ]
+        },
+        {
+          "id": "DEV-4",
+          "text": "A different agent verifies. An evidence reviewer and an adversarial reviewer read the change, never a model that wrote a step while another model is available, and a review that did not run is recorded as not run, never as passed. No server-side merge happens while a check is running, queued or red, or before a fresh commit has reported any check.",
+          "probe": [
+            "test:worker/test/orchestrate.test.js::the reviewer is never a model that wrote a step while another exists",
+            "test:worker/test/orchestrate.test.js::when no reviewer answers the PR says the review did not run",
+            "test:worker/test/greenguard.test.js::NO-RUNS-NOT-GREEN-1: no runs yet is not green"
+          ]
+        },
+        {
+          "id": "DEV-5",
+          "text": "The server ships. The lane merges a clean, green pull request and holds the rest, and the handoff loop deploys the workers a merged pull request names from its merge commit; with no deploy route bound it reports that and fakes nothing.",
+          "probe": [
+            "test:worker/test/lane.test.js::merges a clean PR, holds a HOLD one",
+            "test:worker/test/handoff.test.js::no deployer is reported, not faked"
+          ]
+        },
+        {
+          "id": "DEV-6",
+          "text": "Done means proven live. The boot is accepted only when the deployed /health answers 200. A handoff whose pull request carries a verify line closes its item only when that line passes against production and, where the host reports versions, only after the live version changed; a probe still red after its retries, or an unchanged version, rolls the deploy back and puts the item back in the queue.",
+          "probe": [
+            "grep:bootstrap/bootstrap.py::def verify_live\\(",
+            "test:worker/test/handoff.test.js::open PR -> registered -> merged -> deployed -> verified closes the item",
+            "test:worker/test/handoff.test.js::a red probe rolls the deploy back and puts the item back to ready",
+            "test:worker/test/handoff.test.js::a deploy whose live deployment did not change is rolled back"
+          ]
+        },
+        {
+          "id": "DEV-7",
+          "text": "It learns from what happened. Each prediction is graded against the metric it named when it falls due, and the goals step moves at most one bounded knob one step toward its target, reviews the move after review_h and reverts it when the goal did not move.",
+          "probe": [
+            "test:worker/test/tick.test.js::predictions are scored against built-in metrics",
+            "test:worker/test/goals.test.js::an off-target goal moves its knob one step in the right direction",
+            "test:worker/test/goals.test.js::a change that did not help is reverted at review"
           ]
         }
       ]
@@ -118,14 +194,17 @@
           "id": "BOOT-1",
           "text": "bootstrap/bootstrap.py runs the stages below in order. It is idempotent: running it again changes nothing that is already true.",
           "probe": [
-            "grep:bootstrap/bootstrap.py::for name in \\(\"read\", \"constitute\", \"qualify\""
+            "grep:bootstrap/bootstrap.py::for name in \\(\"read\", \"constitute\", \"qualify\"",
+            "test:tests/test_seed.py::test_idempotent"
           ]
         },
         {
           "id": "BOOT-2",
           "text": "A stage that cannot finish is recorded as blocked with its reason and becomes a backlog item with a closing probe; the boot continues with the next stage. A missing credential never stops the boot.",
           "probe": [
-            "grep:bootstrap/bootstrap.py::def guard\\("
+            "grep:bootstrap/bootstrap.py::def guard\\(",
+            "test:tests/test_seed.py::test_missing_idea_degrades_not_dies",
+            "test:tests/test_seed.py::test_apply_without_credentials_is_blocked_item_not_crash"
           ]
         },
         {
@@ -133,7 +212,9 @@
           "text": "The boot is accepted only when the system's own drills show at least a year unattended (year_gate) and its /health answers live (verify_live).",
           "probe": [
             "grep:bootstrap/bootstrap.py::def year_gate\\(",
-            "grep:bootstrap/bootstrap.py::def verify_live\\("
+            "grep:bootstrap/bootstrap.py::def verify_live\\(",
+            "test:tests/test_seed.py::test_year_gate_refuses_a_fault_with_no_exercised_drill",
+            "test:tests/test_system.py::test_verify_live_accepts_the_boot_only_on_a_200_from_health"
           ]
         },
         {
@@ -142,7 +223,10 @@
           "probe": [
             "grep:worker/src/visibility.js::PUBLIC_READS",
             "grep:worker/src/discover.js::export function manifest",
-            "grep:worker/src/datagraph.js::export async function readGraph"
+            "grep:worker/src/datagraph.js::export async function readGraph",
+            "test:worker/test/discover.test.js::footer links back to Ultrastable and the directory",
+            "test:worker/test/discover.test.js::heartbeat posts the public URL once a day and respects opt-out",
+            "test:worker/test/datagraph.test.js::the read side answers: summary, insights, a node with its neighbourhood, search, and the page"
           ]
         },
         {
@@ -150,7 +234,62 @@
           "text": "A system needs no key from its owner when it is hosted: the platform deploys it through its own OIDC route and gives it its repository from the seed.",
           "probe": [
             "grep:IDEA.md::hosted_by|owner_contact",
-            "grep:worker/src/apprepos.js::."
+            "grep:worker/src/apprepos.js::.",
+            "test:tests/test_seed.py::test_hosted_system_asks_its_owner_for_no_secret_and_no_budget_approval",
+            "test:worker/test/apprepos.test.js::a hosted app asks its host for its token and holds no App key of its own"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "deploy",
+      "title": "How it deploys",
+      "clauses": [
+        {
+          "id": "DEP-1",
+          "text": "Hosted: the platform deploys the system on its own account through its OIDC route. An IDEA.md that names its host (hosted_by) has the bootstrap record the runtime and models as the host's, so no secret and no budget approval is asked of the owner.",
+          "probe": [
+            "grep:bootstrap/bootstrap.py::HOSTED-1",
+            "test:tests/test_seed.py::test_hosted_system_asks_its_owner_for_no_secret_and_no_budget_approval"
+          ]
+        },
+        {
+          "id": "DEP-2",
+          "text": "Own account: the Deploy to Cloudflare button reads the root wrangler.jsonc, which holds no placeholder and no database id. The person signs in to Cloudflare and authorizes GitHub on those services' own pages; the deploy script in package.json runs wrangler deploy, which creates the D1 database, and then applies the migrations by binding. A tick whose config carries the migrations applies them itself before it writes its first heartbeat row.",
+          "probe": [
+            "file:wrangler.jsonc",
+            "grep:package.json::wrangler deploy && wrangler d1 migrations apply DB --remote",
+            "grep:scripts/surfaces.py::deploy.workers.cloudflare.com/button",
+            "test:worker/test/deploy-config.test.js::the root wrangler.jsonc parses, holds no placeholder and needs nothing a person fills in",
+            "test:worker/test/deploy-config.test.js::the root package.json pins wrangler, deploys before it migrates by binding, and describes every binding",
+            "test:worker/test/deploy-config.test.js::MIGRATE-FIRST-1: an empty database reaches a complete first tick"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "readable",
+      "title": "Machine-readable by birth",
+      "clauses": [
+        {
+          "id": "MR-1",
+          "text": "Every repository is held to the files agents and tools read before the code, each on an open standard and listed with the validator it must pass in autonomy/repo-conformance.json (AGENTS.md, llms.txt, LICENSE, REUSE.toml, README.md, SECURITY.md, CONTRIBUTING.md, CHANGELOG.md, CITATION.cff, publiccode.yml, catalog-info.yaml, ultrastable.json, .editorconfig, Dependabot and the dev container). scripts/repoconform.py reads each against its own standard, and a file or repository it cannot read is unmeasured, never passing.",
+          "probe": [
+            "grep:scripts/repoconform.py::VALIDATORS = \\{",
+            "test:tests/test_repoconform.py::test_seed_conforms",
+            "test:tests/test_repoconform.py::test_junk_repo_fails_every_row",
+            "test:tests/test_repoconform.py::test_unreadable_repository_and_file_are_unmeasured"
+          ]
+        },
+        {
+          "id": "MR-2",
+          "text": "scripts/surfaces.py renders the identity files from ultrastable.json (the README blocks, CITATION.cff, publiccode.yml, catalog-info.yaml, codemeta.json, llms.txt, REUSE.toml and the licence copy under LICENSES/) and creates CHANGELOG.md, CONTRIBUTING.md and SECURITY.md only when they are missing. A rendered file that differs from its render fails scripts/repoconform.py, and a copy of the template adopts its own identity at boot before anything is decided from the manifest.",
+          "probe": [
+            "grep:scripts/surfaces.py::def codemeta\\(",
+            "grep:bootstrap/bootstrap.py::IDENTITY-AT-BIRTH-1",
+            "test:tests/test_repoconform.py::test_generated_files_must_equal_their_render",
+            "test:tests/test_surfaces.py::test_reuse_toml_licenses_and_codemeta",
+            "test:tests/test_surfaces.py::test_scaffold_files_are_written_once_and_never_overwritten"
           ]
         }
       ]
@@ -165,29 +304,34 @@
           "text": "The system reads its own stage every tick from evidence it recorded itself; nothing is declared. A stage is reached when the reading holds for it and every stage below, and lost when it stops holding. The first unmet stage is filed as IGNITE-<stage> with the numbers that block it, and only the same reading closes it.",
           "probe": [
             "grep:worker/src/ignition.js::export function judge",
-            "grep:worker/src/ignition.js::IGNITE-"
+            "grep:worker/src/ignition.js::IGNITE-",
+            "test:worker/test/pulse.test.js::ignition step: the system records each stage it reaches or loses"
           ]
         },
         {
           "id": "AUT-2",
           "text": "Bootstrapped means instrumented or above: the system stands, runs and measures itself. Critical and self-sustaining are the two stages above that.",
           "probe": [
-            "grep:worker/src/ignition.js::BOOTSTRAPPED_AT = 'instrumented'"
+            "grep:worker/src/ignition.js::BOOTSTRAPPED_AT = 'instrumented'",
+            "test:worker/test/pulse.test.js::ignition ladder: the stage is the highest whose condition and every one below it hold"
           ]
         },
         {
           "id": "AUT-3",
-          "text": "Criticality is a number. k_eff = (credited verified deploys + credited loop-originated items) / (spend units + human touches) over the window. The system is critical when k_eff stays at or above k_min, and self-sustaining when it stays critical with no open ignition gaps and no human touches.",
+          "text": "Criticality is a number. k_eff = (credited verified deploys + credited loop-originated items) / (spend units + human touches) over the window, and the credit for loop-originated items is capped so filing noise cannot raise it. The ignition stage critical is reached when k_eff stays at or above k_min, and the stage self-sustaining when it stays critical for sustained_ticks with no open ignition gaps and no human touches.",
           "probe": [
             "file:autonomy/criticality.json",
-            "grep:worker/src/criticality.js::k_eff"
+            "grep:worker/src/criticality.js::k_eff",
+            "test:worker/test/criticality.test.js::k_eff is credited work over spend plus human touches",
+            "test:worker/test/criticality.test.js::originated credit is capped so filing noise cannot inflate k_eff"
           ]
         },
         {
           "id": "AUT-4",
-          "text": "Self-reference is the multiplier: k_self counts only deploys the system originated and shipped on itself. A deploy an outside session drove raises k_eff, never k_self.",
+          "text": "Self-reference is the multiplier: k_self counts only the verified deploys whose recorded origin is one the system ships on itself. A deploy an outside session drove raises k_eff, never k_self, and the reading self_regime says which source keeps the system critical: subcritical (k_eff under k_min), driven (critical on outside work) or self-sustaining (k_self at or above k_min).",
           "probe": [
-            "grep:autonomy/criticality.json::\"self\""
+            "grep:autonomy/criticality.json::\"self\"",
+            "test:worker/test/criticality.test.js::SELF-REFERENCE-1: an outside-origin deploy raises k_eff but not k_self"
           ]
         },
         {
@@ -196,14 +340,16 @@
           "probe": [
             "grep:autonomy/goals.json::core.year.unattended",
             "file:autonomy/yearsim.json",
-            "file:scripts/yearsim.py"
+            "file:scripts/yearsim.py",
+            "test:tests/test_yearsim.py::test_undrilled_fault_is_not_a_pass"
           ]
         },
         {
           "id": "AUT-6",
           "text": "Trust is computed per surface and action class from recorded outcomes, and widens scope only through a reviewed change to autonomy/policy.json. Trust never reaches the interrupt gate, secrets or harness permissions.",
           "probe": [
-            "grep:worker/src/tick.js::accrue_trust"
+            "grep:worker/src/tick.js::accrue_trust",
+            "test:worker/test/tick.test.js::trust promotes only inside the surface ceiling and only by opening a PR item"
           ]
         }
       ]
@@ -214,6 +360,15 @@
       "generated": "rules",
       "clauses": []
     }
+  ],
+  "presence_only_doc": "Clauses that are bare definitions read from the code's names, so a presence probe is their proof. Shrink-only: scripts/system.py PRESENCE_BASELINE holds the most this list may name, and every other clause, and any new one, is bound to a named kit test (test:<path>::<name>) that a seeded system can run whole.",
+  "presence_only": [
+    "ID-1",
+    "ID-2",
+    "ID-3",
+    "ID-4",
+    "ID-5",
+    "ID-6"
   ],
   "not_in_kit_doc": "Rule ids whose enforcement lives only in the platform repository (foundation/, site/, deploy/, doctrine/ outside this kit). A seeded system inherits the rule as an instruction; the platform checks it for every system it hosts. Shrink-only: a new rule must ship its check into the kit or the check fails.",
   "not_in_kit": [
