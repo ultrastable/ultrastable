@@ -323,7 +323,7 @@ export default {
    "total": 17306
   }
  ],
- "at": "2026-11-27T03:34:33Z",
+ "at": "2026-11-27T03:47:29Z",
  "days": 30,
  "findings": [
   {
@@ -395,16 +395,16 @@ export default {
    0,
    0,
    0,
-   32
+   33
   ],
-  "closed": 1346,
-  "opened": 1378
+  "closed": 1347,
+  "opened": 1380
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 21336,
+   "rows": 21374,
    "series": [
     0,
     0,
@@ -435,7 +435,7 @@ export default {
     2312,
     2535,
     5558,
-    805
+    843
    ]
   },
   {
@@ -552,7 +552,7 @@ export default {
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 557,
+   "rows": 558,
    "series": [
     0,
     0,
@@ -583,13 +583,13 @@ export default {
     55,
     62,
     154,
-    20
+    21
    ]
   },
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 556,
+   "rows": 558,
    "series": [
     0,
     0,
@@ -620,13 +620,13 @@ export default {
     55,
     88,
     189,
-    27
+    29
    ]
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 481,
+   "rows": 482,
    "series": [
     0,
     0,
@@ -657,13 +657,13 @@ export default {
     55,
     62,
     143,
-    20
+    21
    ]
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 480,
+   "rows": 481,
    "series": [
     0,
     0,
@@ -694,7 +694,7 @@ export default {
     55,
     62,
     143,
-    20
+    21
    ]
   }
  ],
