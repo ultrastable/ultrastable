@@ -34,6 +34,8 @@ def oidc_route(env) -> bool:
 
 def available(a: dict, env=None) -> bool:
     env = os.environ if env is None else env
+    if a.get("retired"):  # ROUTE-RETIRED-1: a provider that shut down is never asked, whatever it still answers
+        return False
     if a["route"] == "workers-ai" and not all(env.get(s) for s in a["secrets"]):
         return oidc_route(env)
     return a["route"] != "session" and all(env.get(s) for s in a["secrets"])

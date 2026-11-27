@@ -564,6 +564,14 @@ def saydo_gap(files) -> str | None:
     return None
 
 
+def trailers(n, row: dict) -> str:
+    """ZHC-R7: provenance trailers written by the harness, never by the model, so every executor commit names its agent, model, item and run."""
+    models = row.get("models") or ["none"]
+    run_id = os.environ.get("GITHUB_RUN_ID", "local")
+    return "\n".join([f"Agent: ultrastable-agent/executor", f"Model: {models[-1]}", f"Work-Item: {n}", f"Run-Id: {run_id}",
+                      f"Assisted-by: executor:{models[-1]}"])
+
+
 def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=None, checks=None, remote: bool = False) -> dict:
     """Returns the provenance row. Never raises for a failed step; the failure is the row (and an `executor-failed` label)."""
     root = Path(root)
@@ -701,7 +709,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 if gc:
                     raise RuntimeError("generator failed: " + " ".join(g) + ": " + go[-300:])
         sh(["git", "add", "-A", "--", ".", f":!{LOG}"], root)
-        sh(["git", "-c", "user.name=ultrastable-executor", "-c", "user.email=executor@users.noreply.github.com", "commit", "-m", f"{out.get('summary', issue['title'])} (#{n})"], root)
+        sh(["git", "-c", "user.name=ultrastable-executor", "-c", "user.email=executor@users.noreply.github.com", "commit", "-m", f"{out.get('summary', issue['title'])} (#{n})", "-m", trailers(n, row)], root)
         code, o = sh(["git", "push", "-u", "origin", branch], root)
         if repair:  # the pull request already exists: the push is the repair. Never force a branch another actor opened; a rejected push is this run's failure.
             if code:
