@@ -25,3 +25,21 @@ class DeployDrift(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Redeploy(unittest.TestCase):
+    def test_dispatches_only_drifted(self):
+        calls = []
+
+        class P:
+            returncode = 0
+            stderr = ""
+
+        def run(cmd, **k):
+            calls.append(cmd)
+            return P()
+        rows = [{"worker": "a", "status": "drift"}, {"worker": "b", "status": "current"}]
+        self.assertEqual(d.redeploy(rows, run=run), 0)
+        self.assertIn("workers=a", calls[0])
+        self.assertEqual(d.redeploy([{"worker": "b", "status": "current"}], run=run), 0)
+        self.assertEqual(len(calls), 1)
