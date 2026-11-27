@@ -34,16 +34,7 @@
   "plugins/",
   "docs/PROJECT-MEMORY.md",
   "IDEA.md",
-  "README.md",
-  "ultrastable.json",
-  "CITATION.cff",
-  "publiccode.yml",
-  "catalog-info.yaml",
-  "llms.txt",
-  "REUSE.toml",
-  "codemeta.json",
-  "CHANGELOG.md",
-  ".ultrastable/"
+  "README.md"
  ],
  "required_instance_files": [
   "instance.json",
