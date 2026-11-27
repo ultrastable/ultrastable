@@ -8,7 +8,7 @@ const API = 'https://api.github.com';
 export const OIDC_ISSUER = 'https://token.actions.githubusercontent.com', OIDC_AUDIENCE = 'ultrastable-main';
 export const MAX_DATA_PRS = 3;
 export const MAX_FILES = 20;  // one commit costs files + 4 subrequests; the Free plan allows 50 per invocation
-const PROTECTED = [/^\.github\//, /^autonomy\//, /^agents\//, /^github\/org-settings\.json$/, /(^|\/)(AGENTS|CLAUDE|CONTRIBUTING)\.md$/, /^(LICENSE|SCOPE\.md)/, /^doctrine\/(directive|standing-order|closed-loop|server-side)\.json$/];
+const PROTECTED = [/^\.github\//, /^autonomy\//, /^agents\//, /^github\/org-settings\.json$/, /(^|\/)(AGENTS|CLAUDE|CONTRIBUTING)\.md$/, /^(LICENSE|SCOPE\.md)/, /^actions-budget\.json$/, /^ops\/halt\.json$/, /^doctrine\/(directive|standing-order|closed-loop|server-side)\.json$/];
 export const isProtected = (p) => PROTECTED.some(r => r.test(p));
 export const safePath = (p) => typeof p === 'string' && p.length > 0 && p.length < 300 && !p.startsWith('/') && !p.split('/').some(s => s === '..' || s === '' || s === '.git');
 
