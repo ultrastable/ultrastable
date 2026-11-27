@@ -63,3 +63,13 @@ class Generators(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Trailers(unittest.TestCase):
+    def test_executor_merge_without_trailers_is_a_gap(self):
+        from foundation import commitlint as C
+        good = "a1\x1ffix: x (#5)\n\nExecutor run t.\n\nAgent: ultrastable-agent/executor\nModel: m\nWork-Item: 5\nRun-Id: 9\x1e"
+        bad = "b2\x1ffix: y (#6)\n\nExecutor run t.\x1e"
+        human = "c3\x1ffeat: z\x1e"
+        gaps = C.trailer_gaps(log=good + bad + human)
+        self.assertEqual(len(gaps), 1); self.assertTrue(gaps[0].startswith("b2"))

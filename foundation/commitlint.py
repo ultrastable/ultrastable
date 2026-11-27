@@ -39,6 +39,29 @@ def titles(root=REPO, cfg=None) -> list[tuple[str, str]]:
     return out
 
 
+TRAILERS_SINCE = "2026-11-27T10:00:00Z"  # ZHC-R7: executor merges after this carry the harness trailers (executor.trailers in the PR body)
+TRAILERS = ("Agent:", "Model:", "Work-Item:", "Run-Id:")
+
+
+def trailer_gaps(root=REPO, log=None) -> list[str]:
+    """ZHC-R7: every executor merge on main since TRAILERS_SINCE names its agent, model, work item and run. An executor merge is a commit whose body
+    says 'Executor run'. Read from git log; no git history (a shallow or bare copy) is reported as unmeasured, never a pass."""
+    if log is None:
+        import subprocess
+        r = subprocess.run(["git", "-C", str(root), "log", f"--since={TRAILERS_SINCE}", "--format=%h%x1f%B%x1e"], capture_output=True, text=True)
+        if r.returncode != 0:
+            return ["commit trailers unmeasured: git log failed"]
+        log = r.stdout
+    out = []
+    for rec in filter(None, (x.strip() for x in log.split("\x1e"))):
+        sha, _, body = rec.partition("\x1f")
+        if "Executor run" in body:
+            miss = [t for t in TRAILERS if not re.search(rf"^{re.escape(t)} \S", body, re.M)]
+            if miss:
+                out.append(f"{sha}: executor merge lacks trailers {', '.join(miss)} (ZHC-R7, foundation/executor.py trailers)")
+    return out
+
+
 def check(root=REPO) -> list[str]:
     root = Path(root)
     cfg = json.loads((root / PATH).read_text(encoding="utf-8"))
@@ -58,4 +81,4 @@ def check(root=REPO) -> list[str]:
             bad.append(f"{PATH}: baseline names {key!r}, which no generator writes any more; remove it")
         elif parse(key.split(": ", 1)[1]):
             bad.append(f"{PATH}: {key!r} conforms now; remove it from the baseline")
-    return bad
+    return bad + [g for g in trailer_gaps(root) if "unmeasured" not in g]
