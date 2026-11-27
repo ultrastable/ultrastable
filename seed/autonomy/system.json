@@ -125,7 +125,7 @@
           "probe": [
             "test:tests/test_happy_path.py::test_2_the_idea_typed_in_a_form_becomes_a_planned_system_with_one_link",
             "test:tests/test_happy_path.py::test_4_only_the_people_who_run_the_project_can_give_it_its_idea",
-            "test:worker/test/measure.test.js::OBJECTIVES-1: a metric outside its healthy condition files its own remedy and closes it on recovery"
+            "test:worker/test/measure.test.js::OBJECTIVES-1 (US-05-R16, US-05-T05): a metric outside its healthy condition files its own remedy and closes it on recovery"
           ]
         },
         {
@@ -153,7 +153,7 @@
           "probe": [
             "test:worker/test/orchestrate.test.js::the reviewer is never a model that wrote a step while another exists",
             "test:worker/test/orchestrate.test.js::when no reviewer answers the PR says the review did not run",
-            "test:worker/test/greenguard.test.js::NO-RUNS-NOT-GREEN-1: no runs yet is not green"
+            "test:worker/test/greenguard.test.js::NO-RUNS-NOT-GREEN-1 (US-07-R18, US-07-T07): no runs yet is not green"
           ]
         },
         {

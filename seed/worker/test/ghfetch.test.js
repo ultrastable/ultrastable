@@ -10,20 +10,20 @@ import { mergeForLane } from '../src/lanemerge.js';
 const res = (status, body = {}) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 const nowait = { wait: async () => {} };
 
-test('a 502 then 200 is retried to success; a 404 is not retried', async () => {
+test('US-24-R63: a 502 then 200 is retried to success; a 404 is not retried', async () => {
   let n = 0; const f = async () => (++n === 1 ? res(502) : res(200, { ok: 1 }));
   assert.equal((await ghFetch(f, 'u', {}, nowait)).status, 200); assert.equal(n, 2);
   let m = 0; const g = async () => { m++; return res(404); };
   assert.equal((await ghFetch(g, 'u', {}, nowait)).status, 404); assert.equal(m, 1);
 });
 
-test('three 503s return the last 503; a network error is retried', async () => {
+test('US-24-R63: three 503s return the last 503; a network error is retried', async () => {
   let n = 0; assert.equal((await ghFetch(async () => { n++; return res(503); }, 'u', {}, nowait)).status, 503); assert.equal(n, 3);
   let k = 0; const f = async () => { if (++k < 3) throw new Error('reset'); return res(200); };
   assert.equal((await ghFetch(f, 'u', {}, nowait)).status, 200);
 });
 
-test('a merge that answered 5xx is read back and counts when GitHub says merged', async () => {
+test('US-24-R63: a merge that answered 5xx is read back and counts when GitHub says merged', async () => {
   const gh = async () => ({ ok: true, json: { merged: true } });
   assert.equal(await mergedAnyway(gh, 'o/r', 1, 502), true);
   assert.equal(await mergedAnyway(gh, 'o/r', 1, 422), false);

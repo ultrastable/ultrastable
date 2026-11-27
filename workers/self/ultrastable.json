@@ -5,11 +5,8 @@
     "worker_name": "ultrastable-self",
     "d1_database": "ultrastable-self",
     "tick_cron": "*/30 * * * *",
-    "other_runtimes_supported_later": [
-      "gcp-cloud-run",
-      "aws-lambda",
-      "self-hosted"
-    ],
+    "supported": ["cloudflare-workers"],
+    "portability_proofs_only": ["gcp-cloud-run"],
     "plan": "workers-free"
   },
   "roles": [

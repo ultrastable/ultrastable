@@ -39,7 +39,7 @@ test('US-09-R01: only acting steps can be switched off in the tick; a row for a 
   assert.doesNotMatch(r.report, /measure skipped/);
 });
 
-test('the global row and the worker variable cover every loop; an expired row no longer counts; off needs a reason', async () => {
+test('US-09-R17: the global row and the worker variable cover every loop; an expired row no longer counts; off needs a reason', async () => {
   const db = makeDb();
   assert.equal(offReason(await readSwitches(db, { now: T0 }), 'lane'), null);
   await setSwitch(db, ALL, true, { reason: 'stop', by: 'owner', until: T0 + 60e3, now: T0 });
@@ -59,7 +59,7 @@ test('US-09-R01: a switched-off loop leaves its beat (measurement) and its body 
   assert.equal(row.ok, 1); assert.match(row.detail, /switched_off/);
 });
 
-test('US-09-R03: the drill proves refusal, turns the switch off, proves resumption and records the test', async () => {
+test('US-09-R03 US-09-T07: the drill proves refusal, turns the switch off, proves resumption and records the test', async () => {
   const db = makeDb(); let t = T0;
   assert.equal((await lastDrill(db, T0)).due, true, 'no drill yet: due');
   const r = await drill(db, { now: () => (t += 5) });
@@ -73,7 +73,7 @@ test('US-09-R03: the drill proves refusal, turns the switch off, proves resumpti
   assert.equal((await lastDrill(db, T0 + 25 * 3600e3)).due, true);
 });
 
-test('US-09-R03: the switch is turned off in every case, including an error inside the drill, and the failed drill is recorded', async () => {
+test('US-09-R03 US-09-T07: the switch is turned off in every case, including an error inside the drill, and the failed drill is recorded', async () => {
   const db = makeDb(); await readSwitches(db, { now: T0 });
   let n = 0;
   // the third clock read (taken while the switch is on) throws: the check fails mid-drill
@@ -85,7 +85,7 @@ test('US-09-R03: the switch is turned off in every case, including an error insi
   assert.equal((await lastDrill(db, T0 + 60e3)).last_pass_age_h, null, 'a failed drill is not a passing drill');
 });
 
-test('US-09-R03: if the row cannot be deleted it still ends by itself inside the bound', async () => {
+test('US-09-R03 US-09-R17: if the row cannot be deleted it still ends by itself inside the bound', async () => {
   const db = makeDb(); await readSwitches(db, { now: T0 });
   const real = db.prepare.bind(db);
   const flaky = { ...db, prepare(sql) { if (/^DELETE FROM loop_switches/.test(sql)) throw new Error('db down'); return real(sql); } };
@@ -95,7 +95,7 @@ test('US-09-R03: if the row cannot be deleted it still ends by itself inside the
   assert.equal(offReason(await readSwitches(db, { now: T0 + DRILL_MAX_MS + 1 }), 'lane'), null, 'and over after it');
 });
 
-test('a drill never touches a global switch the owner set', async () => {
+test('US-09-R03 US-09-R17: a drill never touches a global switch the owner set', async () => {
   const db = makeDb();
   await setSwitch(db, ALL, true, { reason: 'real stop', by: 'owner', now: T0 });
   const r = await drill(db, { now: () => T0 + 1 });

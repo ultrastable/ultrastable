@@ -7,7 +7,7 @@ import { makeDb } from './d1shim.js';
 import { recordRoute, recordGovernor, readDecisions, logDecision, safely, stats } from '../src/decisions.js';
 
 const H = 3600e3, t0 = Date.parse('2026-11-18T00:00:00Z');
-test('a route decision logs its prediction and is scored at once', async () => {
+test('US-05-R19: a route decision logs its prediction and is scored at once', async () => {
   const db = makeDb(); await ensureRouter(db);
   await db.prepare('INSERT INTO airouter_stats (kind,model,calls,passes,usd) VALUES (?1,?2,11,9,0)').bind('k', 'm').run();
   await recordRoute(db, { kind: 'k', model: 'm', ok: true, now: t0 });
@@ -25,7 +25,7 @@ test('the governor logs a level, keeps it, then scores it an hour later', async 
   assert.equal(p.decisions, 2); assert.equal(p.scored, 1); assert.equal(p.hits, 1);
   assert.equal((await recordGovernor(db, { level: 'ok', resources: {} }, t0)).status, 'unmeasured');
 });
-test('an unregistered point is refused and a logging failure is counted, never silent', async () => {
+test('US-05-R19, US-05-T08: an unregistered point is refused and a logging failure is counted, never silent', async () => {
   await assert.rejects(() => logDecision(makeDb(), { point: 'nope', chosen: 'x' }));
   const before = stats.errors;
   assert.equal(await safely(async () => { throw new Error('boom'); }), null);

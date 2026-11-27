@@ -37,7 +37,7 @@ test("POST without x-us-ui header is refused", async () => {
 test("code request is rate limited to 5 per 10 minutes", async () => {
   const e = env(); let last; for (let i = 0; i < 6; i++) last = await call(e, "/api/owner/code", {}); assert.equal(last.status, 429);
 });
-test("login, one-tap done, undo, delegate, step-up expiry", async () => {
+test("US-13-R17: login, one-tap done, undo, delegate, step-up expiry", async () => {
   const e = env(); const ck = await login(e);
   const st = await (await call(e, "/api/owner/state", null, ck)).json(); assert.ok(st.owner.length >= 4);
   let r = await (await call(e, "/api/owner/run", { cmd: "done gh-22" }, ck)).json(); assert.equal(r.ok, true);
@@ -145,7 +145,7 @@ test("OWNER-DASH-2: at the D1 free read cap the page still answers from the bund
   const s = await r.json(); assert.match(s.degraded, /free allowance/); assert.ok(Array.isArray(s.needs) && s.options.length);
 });
 
-test("OWNER-DASH-3: overview needs no database or session; a dead database gives plain words, never a 500", async () => {
+test("US-13-R18 and OWNER-DASH-3: overview needs no database or session; a dead database gives plain words, never a 500", async () => {
   const e = env(); const real = e.DB.prepare;
   e.DB.prepare = () => { throw new Error("D1 free tier daily row read limit exceeded (7500)"); };
   const o = await call(e, "/api/owner/overview"); assert.equal(o.status, 200);
@@ -226,7 +226,7 @@ test("SELF-FIX-1: a failing check is queued as a fleet task and logged, never ma
   assert.equal((await e.DB.prepare("SELECT COUNT(*) c FROM provenance WHERE kind='incident'").first()).c, 1);
 });
 
-test("GATE-SETTLE-2: the owner page drops a gate whose measured dependencies are all closed, and keeps one that is still open", async () => {
+test("US-13-R18 and GATE-SETTLE-2: the owner page drops a gate whose measured dependencies are all closed, and keeps one that is still open", async () => {
   const { openNeeds } = await import("../worker.js");
   const needs = { items: [{ id: "a" }, { id: "b" }, { id: "c" }] };
   const deps = [{ needs_you: "a", status: "closed" }, { needs_you: "b", status: "closed" }, { needs_you: "b", status: "open" }];

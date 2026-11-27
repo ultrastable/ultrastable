@@ -31,7 +31,7 @@ test('the Worker DDL equals the migration', () => {
   for (const d of DATAGRAPH_DDL) assert.ok(sql.includes(d), d.slice(0, 50));
 });
 
-test('a pass builds the graph from every table with no configuration, never reads secrets, and files one orphan item', async () => {
+test('US-12-R17: a pass builds the graph from every table with no configuration, never reads secrets, and files one orphan item', async () => {
   _reset(); const db = makeDb(); seedTenant(db);
   const r = await datagraphStep({ db, config: cfg, ensureItem, now: NOW });
   assert.ok(r.nodes > 20, 'rows of every table, platform tables included');
@@ -47,7 +47,7 @@ test('a pass builds the graph from every table with no configuration, never read
   assert.equal((await datagraphStep({ db, config: cfg, ensureItem, now: NOW + 60e3 })).status, 'not-due');
 });
 
-test('a quiet second pass writes nothing; a changed row is rewritten; a removed row is closed, not deleted; the item closes when the kind connects', async () => {
+test('US-12-R17: a quiet second pass writes nothing; a changed row is rewritten; a removed row is closed, not deleted; the item closes when the kind connects', async () => {
   _reset(); const db = makeDb(); seedTenant(db);
   await datagraphStep({ db, config: cfg, ensureItem, now: NOW });
   let r = await datagraphStep({ db, config: cfg, ensureItem, now: NOW + 3600e3 });

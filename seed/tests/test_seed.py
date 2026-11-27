@@ -108,7 +108,8 @@ class BootTests(unittest.TestCase):
             self.assertEqual(len([r for r in roles if r["role"] == "project-manager"]), 3)
             items = json.loads((Path(d) / "org/backlog.json").read_text())
             self.assertTrue(all(i["done_check"] for i in items))
-            self.assertTrue(any(i["id"] == "KIT-6" for i in items))  # "nothing public" constraint
+            self.assertTrue(any(i["id"] == "KIT-9" and i["priority"] == 5 for i in items))  # "nothing public" constraint (KIT-6 is the clock proof here)
+            self.assertEqual(len({i["id"] for i in items}), len(items), "every backlog id once (US-10-R34)")
             self.assertTrue(any(i["id"] == "KIT-7" for i in items))  # analytics are standard issue
 
     def test_idempotent(self):

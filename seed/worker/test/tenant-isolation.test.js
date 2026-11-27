@@ -76,7 +76,7 @@ test('reap_claims: a stale claim of another tenant is neither released nor delet
   assert.equal(get(db, "SELECT item_id FROM claims WHERE item_id='O'"), undefined, 'own claim released');
 });
 
-test('probe_gates: a card of another tenant is not closed by this runtime\'s probe and is not counted open; an own card is closed', async () => {
+test('US-06-R21: probe_gates: a card of another tenant is not closed by this runtime\'s probe and is not counted open; an own card is closed', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO gate_cards (id,what,why_gated,default_in_effect,closing_probe,tenant_id) VALUES
     ('G-F','f','w','d','env:KEY','${FOREIGN}'), ('G-O','o','w','d','env:KEY',NULL), ('G-F2','f','w','d','manual','${FOREIGN}');`);
@@ -122,7 +122,7 @@ test('execute: a claimed item of another tenant is not settled by the doer; the 
   assert.equal(get(db, "SELECT COUNT(*) AS n FROM outcomes WHERE item_id LIKE 'TICKFAIL-migrate-2026-11-09T00'").n, 0);
 });
 
-test('accrue_trust: a trust row of another tenant is neither read nor overwritten; an own row accrues and carries no tenant', async () => {
+test('US-06-R21: accrue_trust: a trust row of another tenant is neither read nor overwritten; an own row accrues and carries no tenant', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO trust_ledger (surface,action_class,rung,reliability,outcomes,tenant_id) VALUES ('work_tracker','create_update_close','observed',0.123,7,'${FOREIGN}');
     INSERT INTO outcomes (item_id,surface,action_class,result,evidence) VALUES ('I1','work_tracker','create_update_close','verified','e'), ('I2','selfaudit','probe','verified','e');`);

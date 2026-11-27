@@ -7,10 +7,10 @@ import { readMetric } from '../src/tick.js';
 
 const bind = (body, status = 200) => ({ fetch: async () => new Response(JSON.stringify(body), { status }) });
 const m = { source: 'service', spec: 'TENANTS /health' };
-test('pass is 1', async () => assert.equal(await readMetric(null, m, { env: { TENANTS: bind({ ok: true, selftest: { result: 'pass' } }) } }), 1));
-test('failed self-test is 0', async () => assert.equal(await readMetric(null, m, { env: { TENANTS: bind({ ok: false, selftest: { result: 'fail:vector' } }) } }), 0));
-test('missing binding is 0', async () => assert.equal(await readMetric(null, m, { env: {} }), 0));
-test('error is 0', async () => assert.equal(await readMetric(null, m, { env: { TENANTS: { fetch: async () => { throw new Error('x'); } } } }), 0));
+test('US-25-R19: the service metric over TENANTS /health is 1 on ok with a passing self-test', async () => assert.equal(await readMetric(null, m, { env: { TENANTS: bind({ ok: true, selftest: { result: 'pass' } }) } }), 1));
+test('US-25-R19: a failed self-test is 0', async () => assert.equal(await readMetric(null, m, { env: { TENANTS: bind({ ok: false, selftest: { result: 'fail:vector' } }) } }), 0));
+test('US-25-R19: a missing TENANTS binding is 0, never a pass', async () => assert.equal(await readMetric(null, m, { env: {} }), 0));
+test('US-25-R19: an error reading /health is 0', async () => assert.equal(await readMetric(null, m, { env: { TENANTS: { fetch: async () => { throw new Error('x'); } } } }), 0));
 
 import { STEPS } from '../src/tick.js';
 import { makeDb } from './d1shim.js';

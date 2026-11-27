@@ -25,7 +25,7 @@ test('Q-LESSON-METRIC-FRESH: every seeded metric row names a producer that exist
   }
 });
 
-test('Q-LESSON-METRIC-FRESH: a reading older than twice the cadence files STALE-<id>; a fresh reading closes it', async () => {
+test('US-17-R17, US-05-R17, US-05-T07, Q-LESSON-METRIC-FRESH: a reading older than twice the cadence files STALE-<id>; a fresh reading closes it', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO metrics (id,name,kind,source,spec,op,threshold,owner_role,remedy)
     VALUES ('M-x','x','target','sql','SELECT 0','<=',0,'operations','r');`);
@@ -40,7 +40,7 @@ test('Q-LESSON-METRIC-FRESH: a reading older than twice the cadence files STALE-
   assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='STALE-M-x'").get().status, 'done', 'closed once the reading is fresh');
 });
 
-test('Q-LESSON-METRIC-FRESH: a probe that keeps failing keeps its old reading time and goes stale', async () => {
+test('US-17-R17, US-05-R17, Q-LESSON-METRIC-FRESH: a probe that keeps failing keeps its old reading time and goes stale', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO metrics (id,name,kind,source,spec,op,threshold,owner_role,remedy)
     VALUES ('M-y','y','target','sql','SELECT 0','<=',0,'operations','r');`);

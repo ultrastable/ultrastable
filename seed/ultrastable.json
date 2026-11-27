@@ -26,11 +26,8 @@
     "worker_name": "{slug}-ultrastable",
     "d1_database": "{slug}-ultrastable",
     "tick_cron": "*/10 * * * *",
-    "other_runtimes_supported_later": [
-      "gcp-cloud-run",
-      "aws-lambda",
-      "self-hosted"
-    ]
+    "supported": ["cloudflare-workers"],
+    "portability_proofs_only": ["gcp-cloud-run"]
   },
   "roles": [
     {

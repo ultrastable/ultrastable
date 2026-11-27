@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
-// US-22-R16 (US-SPEC-22): a system declares each public statement once, with the page that shows it and the endpoint that backs it, and verifies
+// US-22-R13 and US-22-R16 (US-SPEC-22): a system declares each public statement once, with the page that shows it and the endpoint that backs it, and verifies
 // in its own tests that every sentence's endpoint answers and every public endpoint is named by a statement or listed as internal with a reason.
 // The engine is seed/worker/src/contract.js; the wider contract suite is seed/worker/test/contract.test.js.
 import test from 'node:test';
@@ -21,7 +21,7 @@ const site = (over = {}) => {
   return async path => contractRoute(path, spec) || (routes[path] ? routes[path]() : new Response('nope', { status: 404 }));
 };
 
-test('US-22-R16: front to back, a sentence whose endpoint stops answering fails; back to front, an endpoint no statement names fails unless it is internal with a reason', async () => {
+test('T22-9, US-22-R13 and US-22-R16: front to back, a sentence whose endpoint stops answering fails; back to front, an endpoint no statement names fails unless it is internal with a reason', async () => {
   assert.deepEqual((await verify(site(), spec, { apis: ['/api/entries', '/api/graph', '/api/guess'] })).failures, []);
   const gone = await verify(site({ '/api/entries': undefined }), spec, { apis: ['/api/graph'] });
   assert.ok(gone.failures.some(f => f.direction === 'front-to-back' && f.id === 'entries'), JSON.stringify(gone.failures));
@@ -29,7 +29,7 @@ test('US-22-R16: front to back, a sentence whose endpoint stops answering fails;
   assert.deepEqual(hidden.failures.filter(f => f.direction === 'back-to-front').map(f => f.id), ['/api/secret']);
 });
 
-test('US-22-R16: the sentence a page shows is the string the claims feed serves, so deleting it from the page fails the check', async () => {
+test('US-22-R13 and US-22-R16: the sentence a page shows is the string the claims feed serves, so deleting it from the page fails the check', async () => {
   const bare = await verify(site({ '/': () => H(`<a href="${PLATFORM}/">Ultrastable</a> <a href="/api/entries">data</a>`) }), spec, { apis: ['/api/entries'] });
   assert.ok(bare.failures.some(f => f.id === 'entries'), 'a statement missing from its page is named');
 });

@@ -207,9 +207,8 @@ test('US-30-R62: the owner page shows each connection with a link per service, m
   assert.equal((await dcall(route, denv({ TICK }), '/api/owner/connectors')).status, 401, 'the panel needs a session');
 });
 
-// connectorsPanel tests the status against 'active', which the seed never writes, so a healthy 'ok' connection is flagged for reconnect (dashboard/worker.js).
-// Closing probe of the PLANNED part of the specification; it stays a todo until the comparison uses the seed's own status values. It names no requirement id.
-test('a healthy connection (status ok, no error) is not marked as needing a reconnect, a pending one is (closing probe of the PLANNED part of the specification)', { ...opts, todo: opts.skip ? undefined : 'connectorsPanel flags every status other than "active"' }, async () => {
+// connectorsPanel compares the status with the seed's own values ('ok', 'pending', 'failed'; seed/worker/src/auth/store.js): only 'ok' with no error is connected.
+test('US-30-R62: a healthy connection (status ok, no error) is not marked as needing a reconnect, a pending one is', opts, async () => {
   const { connectorsPanel } = await load('dashboard/worker.js');
   const TICK = { fetch: async () => Response.json({ linked: [{ provider: 'github-app', status: 'ok', last_error: null }, { provider: 'oauth:slack', status: 'pending', last_error: null }], available: [] }) };
   const p = await connectorsPanel({ TICK }, 'https://ultrastable.io');

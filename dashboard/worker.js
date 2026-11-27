@@ -333,7 +333,7 @@ export async function connectorsPanel(env, origin) {
   try { if (!env.TICK) throw new Error("no TICK binding"); const r = await env.TICK.fetch(new Request("https://ultrastable.io/auth/connectors")); if (!r.ok) throw new Error("HTTP " + r.status); j = await r.json(); }
   catch (e) { error = "Connection status is not reachable right now. The system retries by itself."; console.error("connectors", e && e.message); }
   return { error,
-    linked: (j && j.linked || []).map(l => ({ provider: l.provider, status: l.status, expires_at: l.expires_at || null, reconnect: !!l.last_error || l.status !== "active" })),
+    linked: (j && j.linked || []).map(l => ({ provider: l.provider, status: l.status, expires_at: l.expires_at || null, reconnect: !!l.last_error || l.status !== "ok" /* the seed writes ok, pending and failed (seed/worker/src/auth/store.js): only ok with no error is connected */ })),
     available: (j && j.available || []).map(a => ({ id: a.id, title: a.title, linked: !!a.linked, ready: !!a.ready, connect: origin + (a.connect || "/connect/" + a.id) })) };
 }
 

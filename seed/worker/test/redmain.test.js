@@ -20,13 +20,13 @@ function fake(s) {
   };
   return { f, calls };
 }
-test('a gate red past the limit opens one revert PR that restores the parent tree', async () => {
+test('US-07-R21, US-07-T09: a gate red past the limit opens one revert PR that restores the parent tree', async () => {
   const { f, calls } = fake({});
   const r = await revertRedMain({ token: 't', repo: 'o/r', fetch: f, now: NOW });
   assert.equal(r.status, 'reverted'); assert.equal(r.pr, 77); assert.equal(r.branch, 'agent/revert-abc1234');
   assert.ok(calls.includes('POST /repos/o/r/git/commits') && calls.includes('POST /repos/o/r/git/refs'));
 });
-test('green, running, missing gate, fresh red, a revert head and an open revert PR all do nothing', async () => {
+test('US-07-R21, US-07-T09: green, running, missing gate, fresh red, a revert head and an open revert PR all do nothing', async () => {
   const run = (s) => revertRedMain({ token: 't', repo: 'o/r', fetch: fake(s).f, now: NOW });
   assert.equal((await run({ runs: [{ name: 'checks', status: 'completed', conclusion: 'success' }] })).status, 'green');
   assert.equal((await run({ runs: [{ name: 'checks', status: 'in_progress', conclusion: null }] })).status, 'pending');

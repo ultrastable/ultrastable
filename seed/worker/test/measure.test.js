@@ -9,7 +9,7 @@ const config = { org_slug: 't', claim_ttl_minutes: 120, max_wip_per_role: 3, plu
 const T0 = Date.parse('2026-11-10T00:00:00Z');
 const H = 3600e3;
 
-test('OBJECTIVES-1: a metric outside its healthy condition files its own remedy and closes it on recovery', async () => {
+test('OBJECTIVES-1 (US-05-R16, US-05-T05): a metric outside its healthy condition files its own remedy and closes it on recovery', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('op-1','operations',1,'m');
     INSERT INTO metrics (id,name,kind,source,spec,op,threshold,grace_hours,owner_role,remedy)
@@ -25,7 +25,7 @@ test('OBJECTIVES-1: a metric outside its healthy condition files its own remedy 
   assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='BREACH-M-x'").get().status, 'done');
 });
 
-test('OBJECTIVES-1: liveness gets grace, then a silent clock breaches; a declared measure with no probe always breaches', async () => {
+test('OBJECTIVES-1 (US-05-R15, US-05-R16, US-05-T06): liveness gets grace, then a silent clock breaches; a declared measure with no probe always breaches', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO objectives (id,statement,owner_role) VALUES ('OBJ-1','Keep controls current','product-manager-1');
     INSERT INTO metrics (id,objective_id,name,kind,source,spec,op,threshold,grace_hours,owner_role,remedy)
@@ -43,7 +43,7 @@ test('OBJECTIVES-1: liveness gets grace, then a silent clock breaches; a declare
   assert.equal(db.raw.prepare("SELECT breached FROM metrics WHERE id='M-inst'").get().breached, 0, 'a probe-backed target instruments the objective');
 });
 
-test('OBJECTIVES-1: an sql probe that is not one SELECT is refused and counts as a breach', async () => {
+test('OBJECTIVES-1 (US-05-R15, US-05-R18, US-05-T06): an sql probe that is not one SELECT is refused and counts as a breach', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO metrics (id,name,kind,source,spec,op,threshold,owner_role,remedy)
     VALUES ('M-bad','bad','target','sql','DELETE FROM items','>=',0,'operations','r');`);

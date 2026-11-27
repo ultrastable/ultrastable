@@ -67,7 +67,7 @@ test('US-10-R33 / US-19-R24 a repository outside the app naming rule is refused 
   assert.deepEqual(again.files, [{ path: 'IDEA.md', unchanged: true }]);
 });
 
-test('US-19-R24 when the code host refuses a step the answer names what is waited on and the repository that exists stays', async () => {
+test('US-19-R24 / US-19-R25 when the code host refuses a step the answer names what is waited on and the repository that exists stays', async () => {
   const w = await world({ admin: false });
   const r = await ensureAppRepo(w.db, w.env, T, spec(), { fetch: w.f });
   assert.equal(r.ok, false);

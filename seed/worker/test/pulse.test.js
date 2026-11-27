@@ -24,7 +24,7 @@ test('SCHEMA-SELF-1: the DDL the Worker carries equals the migration, and the Wo
   assert.equal(r.completed, STEP_ORDER.length, JSON.stringify(r.errors));
 });
 
-test('beat leaves the proof: a good run, a thrown error and a returned error are all rows, and nothing throws', async () => {
+test('US-17-R18: beat leaves the proof: a good run, a thrown error and a returned error are all rows, and nothing throws', async () => {
   const db = makeDb(); let t = T0;
   assert.deepEqual(await beat(db, 'a', async () => ({ status: 'ok', n: 2 }), { now: () => t }), { status: 'ok', n: 2 });
   const out = await beat(db, 'b', async () => { throw new Error('boom'); }, { now: () => t });
@@ -36,7 +36,7 @@ test('beat leaves the proof: a good run, a thrown error and a returned error are
   assert.ok(rows.every(r => r.finished_at));
 });
 
-test('IDLE-IS-NOT-OK-1: a loop that returns without doing its work is a failed beat, and one working route of several is a good one', async () => {
+test('US-17-R19, IDLE-IS-NOT-OK-1: a loop that returns without doing its work is a failed beat, and one working route of several is a good one', async () => {
   assert.equal(failed({ status: 'ok', merged: [] }), null);
   assert.equal(failed(undefined), null);
   assert.equal(failed({ status: 'no-token', merged: [] }), 'no-token');
@@ -83,7 +83,7 @@ async function drive(db, n, { skip = () => false, start = T0, lane = LANE_LOOPS,
   return last;
 }
 
-test('pulse: every loop that runs every slot is ticking; a loop that stops is found, filed as MISSED-<loop>, and closed when it runs again', async () => {
+test('US-17-R18, US-17-T08: pulse: every loop that runs every slot is ticking; a loop that stops is found, filed as MISSED-<loop>, and closed when it runs again', async () => {
   const db = makeDb();
   await drive(db, 8, { lane: [] });  // the tick and its watchdog run before the lane exists: no false alarm in the first slots
   await drive(db, 8, { start: T0 + 80 * MIN });
