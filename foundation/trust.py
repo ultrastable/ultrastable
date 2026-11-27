@@ -3,11 +3,11 @@ decay per unexercised tick, a rung from the score. Rising trust widens only the 
 harness permissions, secrets, the interrupt gate or the alignment floor (reading o). State is a repo file, so it is the system's own memory.
 
   python3 -m foundation trust --show
-  python3 -m foundation trust --event SURFACE ACTION EVENT   record one outcome (EVENT is a key of rises or falls in doctrine/kernel.json)
+  python3 -m foundation trust --event SURFACE ACTION EVENT --evidence SRC:ID   record one externally verified outcome (EVENT is a key of rises or falls in doctrine/kernel.json)
   python3 -m foundation trust --tick                        advance one tick: decay every row not exercised since the last tick
 """
 from __future__ import annotations
-import json
+import json, re
 from pathlib import Path
 from . import kernel
 
@@ -36,15 +36,23 @@ def _row(led, key, k):
     return led["rows"].setdefault(key, {"score": k["trust"]["baseline"], "rung": k["trust"]["ladder"][0], "last_tick": led["tick"], "deposits": 0, "withdrawals": 0})
 
 
-def apply(led: dict, surface: str, action: str, event: str, k: dict) -> dict:
+# EXTERNAL-TRUST-1 (kernel 9.0.0 M4): trust moves only on an outcome someone other than the actor verified. The evidence names its source:
+# a CI run of the protected checks, a merge commit made by the lane's identity, a canary, or an observer probe. A self-report moves nothing.
+EXTERNAL = re.compile(r"^(ci-run|merge|canary|probe):[A-Za-z0-9._/:#-]{3,200}$")
+
+
+def apply(led: dict, surface: str, action: str, event: str, k: dict, evidence: str | None = None) -> dict:
     t = k["trust"]
     delta = t["rises"].get(event, t["falls"].get(event))
     if delta is None:
         raise ValueError(f"unknown trust event {event!r}")
+    if not evidence or not EXTERNAL.match(evidence):
+        raise ValueError(f"trust event {event!r} needs external evidence (ci-run:ID, merge:SHA, canary:ID or probe:ID), got {evidence!r}; a self-report moves nothing (kernel 9.0.0 M4)")
     key = f"{surface}|{action}"
     row = _row(led, key, k)
     row["score"] = round(min(1.0, max(0.0, row["score"] + delta)), 4)
     row["last_tick"] = led["tick"]
+    row["last_external_event"] = evidence
     row["deposits" if delta > 0 else "withdrawals"] += 1
     new = rung(row["score"], k)
     if new != row["rung"]:

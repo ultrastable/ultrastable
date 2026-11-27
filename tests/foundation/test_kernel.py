@@ -52,19 +52,28 @@ class Kernel(unittest.TestCase):
     def test_trust_event_moves_score_and_rung(self):
         k, led = kernel.load(ROOT), {"version": 1, "tick": 0, "rows": {}, "transitions": []}
         for _ in range(5):
-            row = trust.apply(led, "repo", "merge", "friction_signal_closed", k)
+            row = trust.apply(led, "repo", "merge", "friction_signal_closed", k, evidence="merge:55a4210")
         self.assertGreater(row["score"], 0.75)
         self.assertEqual(row["rung"], trust.rung(row["score"], k))
         self.assertTrue(led["transitions"])
         top = row["score"]
-        trust.apply(led, "repo", "merge", "hidden_failure", k)
+        trust.apply(led, "repo", "merge", "hidden_failure", k, evidence="ci-run:45998651595")
         self.assertLess(led["rows"]["repo|merge"]["score"], top)
         with self.assertRaises(ValueError):
-            trust.apply(led, "repo", "merge", "not_an_event", k)
+            trust.apply(led, "repo", "merge", "not_an_event", k, evidence="merge:55a4210")
+
+    def test_trust_refuses_a_self_report(self):
+        k, led = kernel.load(ROOT), {"version": 1, "tick": 0, "rows": {}, "transitions": []}
+        for ev in (None, "", "self:I did it", "merge:"):
+            with self.assertRaises(ValueError):
+                trust.apply(led, "repo", "merge", "verified_autonomous_action", k, evidence=ev)
+        self.assertEqual(led["rows"], {})
+        row = trust.apply(led, "repo", "merge", "verified_autonomous_action", k, evidence="ci-run:123456")
+        self.assertEqual(row["last_external_event"], "ci-run:123456")
 
     def test_trust_decays_when_idle(self):
         k, led = kernel.load(ROOT), {"version": 1, "tick": 0, "rows": {}, "transitions": []}
-        trust.apply(led, "a", "x", "verified_autonomous_action", k)
+        trust.apply(led, "a", "x", "verified_autonomous_action", k, evidence="probe:observer-1")
         trust.tick(led, k)
         before = led["rows"]["a|x"]["score"]
         trust.tick(led, k); trust.tick(led, k)

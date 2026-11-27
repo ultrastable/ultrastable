@@ -18,8 +18,25 @@ concurrency:
   group: issues
   cancel-in-progress: false
 jobs:
+  # RULE-OF-TWO-1 (kernel 9.0.0 X1): anyone can open an issue, so the job that the `issues` event starts holds no secret: it triages with the
+  # built-in token only. The scheduled sweep, which no outsider can start, keeps the lane token.
+  triage-opened:
+    if: ${{ vars.HALT != '1' && github.event_name == 'issues' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+      - name: Budget kill switch
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: python3 scripts/actions_guard.py issues
+      - name: Triage
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/triage.sh
   sweep:
-    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
+    if: ${{ vars.HALT != '1' && github.event_name != 'issues' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:

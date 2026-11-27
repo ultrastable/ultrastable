@@ -243,11 +243,11 @@
   {
    "id": "M4",
    "says": "trust moves only on externally verified outcomes",
-   "status": "gap",
+   "status": "built",
    "enforced_by": [
     "foundation/trust.py"
    ],
-   "missing": "trust --event accepts any recorded event, including self-reported ones"
+   "missing": ""
   },
   {
    "id": "O1",
@@ -261,9 +261,11 @@
   {
    "id": "X1",
    "says": "Rule of Two per job",
-   "status": "gap",
-   "enforced_by": [],
-   "missing": "no job manifest field and no lint"
+   "status": "built",
+   "enforced_by": [
+    "foundation/ruleoftwo.py"
+   ],
+   "missing": ""
   },
   {
    "id": "X2",

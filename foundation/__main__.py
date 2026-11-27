@@ -37,6 +37,7 @@
   python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
   python3 -m foundation disposition [--check|--summary]   DISPOSITION-1: every executor run ends in one of five dispositions; done names its verifier
+  python3 -m foundation ruleoftwo [--check|--report]   RULE-OF-TWO-1: no workflow job holds untrusted input, a secret and state change together
   python3 -m foundation kernel9 [--check|--gaps]   KERNEL-9-1: kernel 9.0.0 pinned by sha256, each clause mapped to its enforcer
   python3 -m foundation constitution [--check|--fresh|--render]   CONSTITUTION-1: the seed states what an ultrastable system is; every rule has a detector and a remediation in code
   python3 -m foundation systemspec [--check|--write|--gaps|--rule ID]   SYSTEM-SPEC-1: seed/SYSTEM.md, the definition every system carries, generated from code and probed
@@ -532,6 +533,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["disposition"]:  # DISPOSITION-1: foundation/disposition.py
         from . import disposition
         return disposition.main(_av[1:])
+    if _av[:1] == ["ruleoftwo"]:  # RULE-OF-TWO-1: foundation/ruleoftwo.py
+        from . import ruleoftwo
+        return ruleoftwo.main(_av[1:])
     if _av[:1] == ["kernel9"]:  # KERNEL-9-1: foundation/kernel9.py
         from . import kernel9
         return kernel9.main(_av[1:])
@@ -660,7 +664,7 @@ def main(argv=None) -> int:
     kn = sub.add_parser("kernel"); kn.add_argument("--check", action="store_true"); kn.add_argument("--lint", nargs="+"); kn.add_argument("--metrics", nargs="+")
     cl = sub.add_parser("closedloop"); cl.add_argument("rest", nargs="*")
     dv = sub.add_parser("directive"); dv.add_argument("--check", action="store_true"); dv.add_argument("--lint", nargs="+"); dv.add_argument("--ledger", action="store_true"); dv.add_argument("--probe", action="store_true"); dv.add_argument("--bootstrap", action="store_true")
-    tr = sub.add_parser("trust"); tr.add_argument("--show", action="store_true"); tr.add_argument("--event", nargs=3, metavar=("SURFACE", "ACTION", "EVENT")); tr.add_argument("--tick", action="store_true")
+    tr = sub.add_parser("trust"); tr.add_argument("--show", action="store_true"); tr.add_argument("--event", nargs=3, metavar=("SURFACE", "ACTION", "EVENT")); tr.add_argument("--tick", action="store_true"); tr.add_argument("--evidence")
     da = sub.add_parser("docs_audit"); da.add_argument("--check", action="store_true"); da.add_argument("--report", action="store_true"); da.add_argument("--orphans", action="store_true"); da.add_argument("--humans", action="store_true")
     ny = sub.add_parser("needsyou"); ny.add_argument("--check", action="store_true")
     ex = sub.add_parser("executor"); ex.add_argument("--apply", action="store_true"); ex.add_argument("--fold", action="store_true"); ex.add_argument("--issue", type=int); ex.add_argument("--repo"); ex.add_argument("--pick", action="store_true"); ex.add_argument("--record", action="store_true"); ex.add_argument("--result"); ex.add_argument("--pr"); ex.add_argument("--detail"); ex.add_argument("--host")
@@ -781,7 +785,10 @@ def main(argv=None) -> int:
     if a.cmd == "trust":
         k, led = kernel.load(), trust.load()
         if a.event:
-            print(json.dumps(trust.apply(led, *a.event, k))); trust.save(led)
+            try:
+                print(json.dumps(trust.apply(led, *a.event, k, evidence=a.evidence))); trust.save(led)
+            except ValueError as e:
+                print(f"trust: {e}"); return 1
         if a.tick:
             print("decayed:", trust.tick(led, k)); trust.save(led)
         print(json.dumps({"tick": led["tick"], "rows": led["rows"], "compounding_rate": trust.compounding_rate(led)}, indent=1)); return 0

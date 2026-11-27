@@ -83,6 +83,8 @@ def check(root=REPO) -> list[str]:
     if root == REPO:  # DISPOSITION-1 reads the executor ledger of this repository (and its evidence branch), not a test copy
         from . import disposition
         bad += disposition.check(root)
+        from . import ruleoftwo  # RULE-OF-TWO-1 (X1)
+        bad += ruleoftwo.check(root)
     return bad
 
 
