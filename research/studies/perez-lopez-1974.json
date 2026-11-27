@@ -2,6 +2,7 @@
   "schema": "research-study/1",
   "id": "perez-lopez-1974",
   "order": 6,
+  "source_id": "canon:perez-lopez-1974",
   "paper_title": "Effective is not enough: Pérez López's freely-adaptive system and the two kinds of learning an autonomous system needs",
   "paper_frame": "Pérez López took Ashby's ultrastable system from the organism to the organization. He shows that every action has to be judged twice, on whether it reached its goal and on what it did to everything else the system needs, and that an organization survives only while it is effective, attractive and consistent at once. We state each of his points as a property this system can fail, measure it from the system's own ledgers, and built the reading that was missing: a second verdict on every settled action and the three survival levels.",
   "title": "Organizational Theory: A Cybernetic Approach",
