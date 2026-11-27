@@ -21,6 +21,7 @@ import { migrateStep } from './migrate.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep, tickCadenceMin } from './pulse.js';
 import { ignitionStep } from './ignition.js';
+import { ashbyStep } from './ashby.js';  // ASHBY-KERNEL-1
 import { ensureSchema as ensureCredentialSchema } from './auth/store.js';  // CONNECTOR-HEALTH-1
 import { hireStep, isOff } from './managers.js';  // MANAGERS-1: the register hires; an off manager is not dispatched
 import { OWN_SQL, tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: a runtime acts only on rows with tenant_id NULL (own) or its own slug
@@ -481,6 +482,9 @@ export const STEPS = {
     if (r.breaches.length || r.advisory.length) ctx.notes.push(`cost-probe: ${r.breaches.length + r.advisory.length} breach item(s)`);
   },
 
+  // ASHBY-KERNEL-1: the second goal. An objective measured only by its own target files ASHBY-EV-COVERAGE; a breached guard under a healthy target is repaired first.
+  async ashby(db, ctx) { await ashbyStep(db, ctx, ensureItem); },
+
   // CRITICALITY-1: k_eff over the rolling window; a tick may not end idle or under k_min without originating the highest-value item at the head.
   async criticality(db, ctx) {
     if (!ctx.config.criticality) { ctx.notes.push('criticality: no thresholds configured'); return; }
@@ -494,7 +498,7 @@ export const STEPS = {
   async ignition(db, ctx) { await ignitionStep(db, ctx, ensureItem); },
 };
 
-export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'plan', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
+export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'score_predictions', 'measure', 'ashby', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'plan', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
 
 // Q-LESSON-COST-SAMPLE-ACT: while the latest hourly cost sample of any budgeted D1 database is over its max_rows_read_per_hour, the tick runs
 // only these steps. reconcile keeps every item's disposition honest (no silent drops), measure keeps the liveness metrics and the breach visible,
@@ -502,7 +506,7 @@ export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_hea
 // other step either reads wide (probe_gates, score_predictions, accrue_trust, selfaudit, pulse, ignition, check_plus_share) or starts new work
 // that reads more (reap_claims feeds dispatch, dispatch, execute), so it waits for the hour to pass. A skipped step counts as completed: it is
 // a decision, not a failure, so the health probe and the ignition streak stay green.
-export const FREE_TIER_WIDE_STEPS = ['probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share', 'goals', 'plan', 'age_sla', 'cost_probe'];  // FREE-TIER-1
+export const FREE_TIER_WIDE_STEPS = ['ashby', 'probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share', 'goals', 'plan', 'age_sla', 'cost_probe'];  // FREE-TIER-1
 export const COST_ESSENTIAL_STEPS = ['migrate', 'reconcile', 'measure', 'criticality'];
 // SPEND-SOFT-1 (Rowan, 2026-11-21: "systems should never have hard stops"): no step is skipped for good. Under lean (a cost breach or the free
 // tier at shed) or spend crawl the other steps still run on the first tick of every few hours; under degrade or spend throttle the wide readers

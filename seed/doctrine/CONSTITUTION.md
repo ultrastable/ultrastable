@@ -43,9 +43,10 @@ Tick steps, in order:
 15. `check_plus_share`: a share of capacity goes to improvements
 16. `age_sla`: an item past its SLA is escalated, never ignored
 17. `cost_probe`: spend is sampled against the budget
-18. `criticality`: k_eff is computed from verified deploys over cost and human touches
-19. `pulse`: the system publishes what it did, from its own tables
-20. `ignition`: the system reads its own stage from bootstrap to self-sustaining
+18. `ashby`: an objective measured only by its own target is filed; a breached guard under a healthy target is repaired first
+19. `criticality`: k_eff is computed from verified deploys over cost and human touches
+20. `pulse`: the system publishes what it did, from its own tables
+21. `ignition`: the system reads its own stage from bootstrap to self-sustaining
 
 Detectors: every failure mode has a read-only probe (1 = healthy); a red probe files FM-<id> that closes only when the probe is green.
 Executor: work is taken in driver order, built on a branch, opened as a pull request and merged by the server when its checks are green; a client session only produces.
@@ -152,3 +153,6 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **phased-large-change** (Rowan, 2026-11-26): Any change too large for one author runs one phased shape: audit, coverage, implement, verify by an evidence and an adversarial reader who did not write it, fix only what was found, integrate, and a final gate on the whole change. The shape is data a session, a workflow or the Worker all follow.
   - detector: `autonomy/phases.json`, `worker/src/orchestrate.js`
   - remediation: `scripts/phasework.py`, `worker/src/orchestrate.js`
+- **second-goal-in-code** (Rowan, 2026-11-27): The explicit goal is subordinate to the essential variables. Every objective with a target carries a guard its target does not move; a breached guard under a healthy target is repaired before the goal is pursued; a step is drawn only from untried, reversible candidates and kept only when the variables held; a task that harms the one who does it is not prescribed, and past failures are always recalled.
+  - detector: `worker/src/ashby.js`, `autonomy/ashby.json`
+  - remediation: `worker/src/ashby.js`, `worker/src/organization.js`

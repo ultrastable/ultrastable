@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261127-3",
+  "title": "OL-20261127-3: Q-ASHBY-org-live: controlSystem, prescribe and horizon run only on rows passed in tests; no tick reads contribution, spend and side effects per role",
+  "body": "**Owner:** product-manager\n**Trigger:** ASHBY-KERNEL-1 merged\n**Done check:** grep:seed/worker/src/tick.js::controlSystem\n**Status:** open\n\nProblem: controlSystem, prescribe and horizon run only on rows passed in tests; no tick reads contribution, spend and side effects per role. Done check: a tick read that builds task rows per role from outcomes and budget_ledger and writes org.organisation. Out of scope: copying any text or image from ashby.info; blind random search. Prediction: research_findings_met_share >= 0.5 within 336 h.",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

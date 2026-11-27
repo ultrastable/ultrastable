@@ -10,7 +10,8 @@
       "summary": "A few variables must stay inside limits for the system to survive; everything else serves that.",
       "mechanisms": [
         "doctrine/ultrastability.json::\"variables\"",
-        "foundation/ultrastability.py::def in_bounds"
+        "foundation/ultrastability.py::def in_bounds",
+        "seed/worker/src/ashby.js::export function breached"
       ],
       "reading": "bounded_share",
       "status": "implemented"
@@ -32,7 +33,9 @@
       "summary": "A parameter that holds still, then jumps to a new value when a limit is crossed, rather than drifting continuously.",
       "mechanisms": [
         "foundation/ultrastability.py::def _param",
-        "foundation/ultrastability.py::def _search"
+        "foundation/ultrastability.py::def _search",
+        "seed/worker/src/ashby.js::export function selectStep",
+        "seed/worker/src/ashby.js::export function settle"
       ],
       "reading": "step_function_share",
       "status": "implemented"
@@ -43,7 +46,8 @@
       "summary": "Many loosely coupled parts, each adapting on its own, so a fix in one part does not undo the adaptation of another. Measured as the share of second-loop steps after which a different variable that was in bounds fell out of bounds.",
       "mechanisms": [
         "foundation/ashbymap.py::def interference",
-        "doctrine/ultrastability.json::\"tenant\""
+        "doctrine/ultrastability.json::\"tenant\"",
+        "seed/worker/src/ashby.js::export function gate"
       ],
       "reading": "interference_share",
       "status": "implemented"
@@ -73,7 +77,8 @@
       "url": "https://ashby.info/journal/index/index.html#homeostat",
       "summary": "Ashby's machine that found a stable setting by random step changes until its needles settled. The second loop's search draws untried values the same way.",
       "mechanisms": [
-        "foundation/ultrastability.py::def _search"
+        "foundation/ultrastability.py::def _search",
+        "seed/worker/src/ashby.js::export function homeostat"
       ],
       "status": "implemented"
     },
@@ -84,7 +89,8 @@
       "mechanisms": [
         "seed/worker/src/selfaudit.js::FM-",
         "seed/worker/src/unknowns.js::export",
-        "foundation/blindspots.py::def "
+        "foundation/blindspots.py::def ",
+        "seed/worker/src/ashby.js::export function varietyLedger"
       ],
       "status": "implemented"
     },
@@ -94,7 +100,8 @@
       "summary": "The tick reads every metric and a breach files its own remedy, closed only by the same reading.",
       "mechanisms": [
         "seed/worker/src/tick.js::export const STEPS",
-        "seed/worker/src/tick.js::silent_drop"
+        "seed/worker/src/tick.js::silent_drop",
+        "seed/worker/src/ashby.js::export async function ashbyStep"
       ],
       "status": "implemented"
     },
@@ -141,7 +148,9 @@
       "url": "https://ashby.info/journal/index/index.html#organisation",
       "summary": "Organisation is the set of constraints between parts. The knowledge graph reads those links from the system's own data.",
       "mechanisms": [
-        "seed/worker/src/vendor/core/datagraph.js::export"
+        "seed/worker/src/vendor/core/datagraph.js::export",
+        "seed/worker/src/organization.js::export function controlSystem",
+        "seed/worker/src/ashby.js::export function couplingGuard"
       ],
       "status": "implemented"
     },
@@ -160,7 +169,8 @@
       "url": "https://ashby.info/journal/index/index.html#speed_%28of",
       "summary": "How fast a system finds a stable field. Patience and settle ticks set how long the second loop waits before stepping again.",
       "mechanisms": [
-        "foundation/ultrastability.py::patience_ticks"
+        "foundation/ultrastability.py::patience_ticks",
+        "seed/worker/src/ashby.js::mode 'joint'"
       ],
       "reading": "patience_ticks",
       "status": "implemented"
@@ -180,7 +190,8 @@
       "summary": "Adaptation needs memory that later events do not wipe. The ledgers are append-only and each settled step stays on record.",
       "mechanisms": [
         "foundation/provenance.py::def ",
-        "foundation/ultrastability.py::def _append"
+        "foundation/ultrastability.py::def _append",
+        "seed/worker/src/organization.js::export function evoke"
       ],
       "status": "implemented"
     }

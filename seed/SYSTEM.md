@@ -37,19 +37,20 @@ Tick steps, in order (from `worker/src/tick.js`):
 5. `probe_gates`: Gate cards close themselves when their probe shows the owner's step is done.
 6. `score_predictions`: Predictions due now are graded against built-in metrics.
 7. `measure`: OBJECTIVES-1: read every metric through its probe. Outside its healthy condition it files its own remedy item (owner, done check, closing probe) and closes that item when the probe passes again. A new system gets grace_hours before liveness
-8. `accrue_trust`: Trust per (surface, action_class) from recorded outcomes; a crossed threshold opens a ladder PR item.
-9. `selfaudit`: SELFAUDIT-1: probe the failure-mode register; red files or reopens FM-<id>, green closes it with evidence.
-10. `unknowns`
-11. `goals`: UNKNOWNS-1: question what the system does not know; the questions are plus items. GOALS-1: read every goal, sample it, move at most one knob per goal toward its target, review earlier moves, propose stretch goals, retire stale ones.
-12. `plan`: PLAN-1: turn the goal furthest out of bounds into a task tree (audit > implement > verify > fix > integrate > gate), advance live plans, turn knobs itself, and gate each plan on a fresh reading of its goal. "Better" means a measured goal mo
-13. `dispatch`: Roles whose tick is due pull the top ready item for their role and get a dispatch row.
-14. `execute`: DOER-1: every claimed item ends done, parked with a reason, or waiting with its claim kept; nothing is left for the reaper to release unworked.
-15. `check_plus_share`: Plus share over the last 20 closed items; below target opens a rebalance item for the portfolio manager.
-16. `age_sla`: Q-PARITY-4 (SLA-120M): an item open past 120 minutes is raised to the top, and the cause is filed once a day; nothing ages silently. One indexed COUNT-first read (status, created_at); the per-item work only runs when the count is above zero
-17. `cost_probe`: Q-COST-PROOF-2 (cost-probe): once a day, only while the free tier is ok, turn each breached cost sample into a queue item. It adds one indexed read per budget and nothing when the account is degraded (FREE_TIER_WIDE_STEPS), so it can never 
-18. `pulse`: LOOPPROOF-1: every loop's expected slots against the slots it ran in; a loop that did not run files MISSED-<loop>.
-19. `criticality`: CRITICALITY-1: k_eff over the rolling window; a tick may not end idle or under k_min without originating the highest-value item at the head.
-20. `ignition`: BOOT-KNOWS-1: the stage from bootstrap to criticality, read from the system's own tables; the first unmet stage is IGNITE-<stage>.
+8. `ashby`: ASHBY-KERNEL-1: the second goal. An objective measured only by its own target files ASHBY-EV-COVERAGE; a breached guard under a healthy target is repaired first.
+9. `accrue_trust`: Trust per (surface, action_class) from recorded outcomes; a crossed threshold opens a ladder PR item.
+10. `selfaudit`: SELFAUDIT-1: probe the failure-mode register; red files or reopens FM-<id>, green closes it with evidence.
+11. `unknowns`
+12. `goals`: UNKNOWNS-1: question what the system does not know; the questions are plus items. GOALS-1: read every goal, sample it, move at most one knob per goal toward its target, review earlier moves, propose stretch goals, retire stale ones.
+13. `plan`: PLAN-1: turn the goal furthest out of bounds into a task tree (audit > implement > verify > fix > integrate > gate), advance live plans, turn knobs itself, and gate each plan on a fresh reading of its goal. "Better" means a measured goal mo
+14. `dispatch`: Roles whose tick is due pull the top ready item for their role and get a dispatch row.
+15. `execute`: DOER-1: every claimed item ends done, parked with a reason, or waiting with its claim kept; nothing is left for the reaper to release unworked.
+16. `check_plus_share`: Plus share over the last 20 closed items; below target opens a rebalance item for the portfolio manager.
+17. `age_sla`: Q-PARITY-4 (SLA-120M): an item open past 120 minutes is raised to the top, and the cause is filed once a day; nothing ages silently. One indexed COUNT-first read (status, created_at); the per-item work only runs when the count is above zero
+18. `cost_probe`: Q-COST-PROOF-2 (cost-probe): once a day, only while the free tier is ok, turn each breached cost sample into a queue item. It adds one indexed read per budget and nothing when the account is degraded (FREE_TIER_WIDE_STEPS), so it can never 
+19. `pulse`: LOOPPROOF-1: every loop's expected slots against the slots it ran in; a loop that did not run files MISSED-<loop>.
+20. `criticality`: CRITICALITY-1: k_eff over the rolling window; a tick may not end idle or under k_min without originating the highest-value item at the head.
+21. `ignition`: BOOT-KNOWS-1: the stage from bootstrap to criticality, read from the system's own tables; the first unmet stage is IGNITE-<stage>.
 
 Loops the same cron runs beside the tick (from `worker/src/index.js`):
 
@@ -119,7 +120,7 @@ Criticality numbers (from `autonomy/criticality.json`): window 14 days, k_min 1,
 
 ## Standing rules
 
-98 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
+99 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
 a rule enforced only by the platform is marked so, and the platform checks it for every system it hosts.
 
 - **USER-BACKEND-1**: The user does the idea; the system does the backend; one fix improves every system. In this kit: `doctrine/user-backend.json`, `worker/src/errors.js`, `worker/test/errors.test.js`.
@@ -176,6 +177,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **CONNECT-1**: A vector space and a knowledge graph in every system; novel connections are generated, not waited for. In this kit: checked by the platform.
 - **DATAGRAPH-1**: Every system keeps a knowledge graph of all its data, built and maintained automatically. In this kit: `worker/src/datagraph.js`, `worker/src/knowledge.js`, `worker/src/vendor/core/datagraph.js`, `worker/test/datagraph.test.js`.
 - **RESEARCH-1**: Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code. In this kit: checked by the platform.
+- **ASHBY-KERNEL-1**: Ashby's concepts and the organisation built on them are kernel code. In this kit: `autonomy/ashby.json`, `worker/src/ashby.js`, `worker/src/organization.js`, `worker/test/ashby.test.js`.
 - **THOUGHT-1**: Thought leadership is a loop: every paper becomes posts that carry the hook. In this kit: `worker/src/social.js`, `worker/test/social-connect.test.js`.
 - **SOCIAL-MODULE-1**: The social module is how a system faces humans. In this kit: `worker/src/auth/social.js`, `worker/src/humans.js`, `worker/src/social.js`, `worker/test/social-connect.test.js`.
 - **YEAR-SIM-1**: A year unattended is simulated, not asserted; the system does what it says. In this kit: `autonomy/goals.json`, `autonomy/yearsim.json`, `scripts/trajectory.py`, `scripts/yearsim.py`.

@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261127-4",
+  "title": "OL-20261127-4: Q-ASHBY-index: The journal's keyword index and Other Index are not ingested as metadata; the two DAMS categories and the archive's copyright page were not read",
+  "body": "**Owner:** product-manager\n**Trigger:** ASHBY-KERNEL-1 merged\n**Done check:** file:seed/autonomy/ashby-index.json\n**Status:** open\n\nProblem: The journal's keyword index and Other Index are not ingested as metadata; the two DAMS categories and the archive's copyright page were not read. Done check: a metadata-only crawler (page numbers and addresses, one request per two seconds, nothing stored verbatim) writing seed/autonomy/ashby-index.json. Out of scope: copying any text or image from ashby.info; blind random search. Prediction: research_findings_met_share >= 0.5 within 336 h.",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

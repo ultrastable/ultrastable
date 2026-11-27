@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261127-5",
+  "title": "OL-20261127-5: Q-ASHBY-dispersion: Disturbances are not routed to parts by kind (journal 3851)",
+  "body": "**Owner:** product-manager\n**Trigger:** ASHBY-KERNEL-1 merged\n**Done check:** grep:seed/worker/src/ashby.js::disturbance_class\n**Status:** open\n\nProblem: Disturbances are not routed to parts by kind (journal 3851). Done check: disturbance classes recorded per breach and passed to varietyLedger in the ashby step. Out of scope: copying any text or image from ashby.info; blind random search. Prediction: research_findings_met_share >= 0.5 within 336 h.",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
