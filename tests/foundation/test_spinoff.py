@@ -17,7 +17,14 @@ def sandbox():
     shutil.copy(REPO / "doctrine/blindspots.json", d / "doctrine/blindspots.json")
     (d / "spinoffs").mkdir()
     (d / "ops").mkdir()
-    shutil.copy(REPO / "ops/free-tier.json", d / "ops/free-tier.json")
+    # The launch tests state their own spare room, stamped now: copying the committed ops/free-tier.json made them depend on the live
+    # account's usage today (over its D1 read limit the level read shed, so nothing launched).
+    snap = {"at": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "resources": {
+        "d1_rows_read": {"used": 100_000, "limit": 5_000_000, "basis": "measured"},
+        "d1_rows_written": {"used": 1_000, "limit": 100_000, "basis": "measured"},
+        "workers_requests": {"used": 1_000, "limit": 100_000, "basis": "measured"},
+        "ai_neurons": {"used": 100, "limit": 10_000, "basis": "measured"}}}
+    (d / "ops/free-tier.json").write_text(json.dumps(snap))
     ic = json.loads((REPO / "doctrine/spinoff-ideas.json").read_text())
     ic.pop("depth", None)  # launch mechanics only; DEPTH-1 refusal of these shallow candidates is tested in test_ideas.py
     ic["bank"] = []  # these tests are about the blind-spot candidates; the idea bank has its own tests in test_ideas.py
