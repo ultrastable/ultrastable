@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-workflow-tokens-no-new-top-level-write-identities-registered",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "Workflow tokens: no new top-level write, identities registered",
+  "body": "IDENTITIES-1 (ZHC-R4 #2669): 52 workflows grant write at the top today and are listed; the list only shrinks, a new one fails checks. Merge, agent and administration identities with scopes and never-lists are in doctrine/identities.json.",
+  "probe": "grep:.github/workflows/checks.yml::foundation identities --check",
+  "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+ },
+ "kind": "decision",
+ "title": "Workflow tokens: no new top-level write, identities registered",
+ "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+}
