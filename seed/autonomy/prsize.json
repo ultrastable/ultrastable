@@ -2,7 +2,7 @@
   "rule": "SMALL-CHANGE-1 (Rowan, 2026-11-26): \"Changing 3,000 plus files is almost unbelievable and totally unsustainable ... you have to be able to maintain everything that you create.\" A change is small enough to verify and revert alone. Session scratch never enters a repository.",
   "max_files": 60,
   "max_lines": 3000,
-  "ignore": ["**/package-lock.json", "**/*.lock", "ops/**/*.jsonl", "**/generated/**"],
+  "ignore": ["**/package-lock.json", "**/*.lock", "ops/**/*.jsonl", "**/generated/**", "**/LICENSES/**"],
   "banned": ["wip/**", "**/scratch/**", "**/.tmp/**"],
   "split_hint": "Split by module: one PR per package, adapter, tenant or spec section. Keep the whole on an archive/ branch if it must be preserved."
 }

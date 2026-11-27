@@ -10,12 +10,15 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: feat(executor): refuse a model reply of the wrong shape (R12) (#2708)
+- 2026-11-27: feat(deploy): read live Workers against main (R6) (#2706)
 - 2026-11-27: feat(deploy): roll back drifted Worker deploys (R6) (#2701)
 - 2026-11-27: fix(lane): a pull request carries no generator-owned files, so main moving under it cannot kill it (PR-NO-GENERATED-1) (#2694)
 - 2026-11-27: feat(checks): workflow tokens read-only at the top, identities registered (ZHC-R4) (#2697)
 - 2026-11-27: fix(site): growth hits window in milliseconds and cached (READ-BUDGET-12) (#2696)
 - 2026-11-27: fix(executor): take only the org's own issues and fence issue text as data (ZHC-R12) (#2695)
 - 2026-11-27: feat(checks): refuse executor PRs that only undo main's last day (ZHC-R13) (#2690)
+- 2026-11-27: REPO-CONFORM-2 stage 1 of 3, the kit's identity renderer and its deploy button (Rowan: "Deploying Ultrastable shall be effortless and automatic."). `seed/scripts/surfaces.py` renders every identity file from `ultrastable.json` (README blocks, `CITATION.cff`, `publiccode.yml`, `catalog-info.yaml`, `llms.txt`, `REUSE.toml`, `codemeta.json`, `LICENSES/<id>.txt`; `CHANGELOG.md`, `CONTRIBUTING.md` and `SECURITY.md` only when missing) and `adopt` gives a copy of the template its own identity; the boot's new `adopt` stage (`seed/bootstrap/bootstrap.py`, IDENTITY-AT-BIRTH-1) calls it, the bootstrap workflow commits what it adopted, and `foundation/upstream.py` OWNED and `doctrine/fleet-map.json` leave those files to the system. `seed/wrangler.jsonc` and `seed/package.json` let the Deploy to Cloudflare button build from the kit root (`wrangler deploy` creates the D1 database, then `wrangler d1 migrations apply DB --remote`), and `runTick` runs the migrate step before the heartbeat row (MIGRATE-FIRST-1, `seed/worker/test/deploy-config.test.js`). The change is too large for one pull request (`seed/autonomy/prsize.json`), so it lands as three: this one, then the conformance reader with the agent files and the core's root files, then the system definition and the tenant standard. Stage 2 must reconcile with #2663, which landed the core's root `llms.txt`, `REUSE.toml` and `publiccode.yml` and the quoted-YAML reader while stage 1 was built.
 - 2026-11-27: feat(checks): tests-protected guard (ZHC-R11) (#2689)
 - 2026-11-27: fix(executor): carry the trailers into the squash merge (ZHC-R7) (#2688)
 - 2026-11-27: fix(executor): a model-level failure no longer downs the provider route; retire GitHub Models rungs (LADDER-1) (#2680)
@@ -1002,6 +1005,15 @@ Rowan uploaded J. A. Pérez López, "Organizational Theory: A Cybernetic Approac
 - First reading (2026-11-27): 199 settled actions; 169 incorrect, 15 incomplete, 11 sound, 4 unmeasured. Of the 26 actions that reached their own target, 15 had another essential variable leave its limits while they were open (co-occurrence, an upper bound). Three decision classes are inconsistent (idea-loop, work-queue-priority, spinoff-launch) and carry Q-FAS items. Survival levels 3 of 3. Paper: 2 of 7 findings met; P1 (spec_quality 0.318), P2 (essential_measured_share 0.717), P4 (0.842), P6 (lessons 0.692), P7 (owner interventions 72 in 7 days) are Q-RES items.
 - Root cause fixed on the way: `research.file_items` wrote Q-RES items with no out-of-scope line and no closing-probe line, so every research item failed SPEC-GATE-1 and lowered spec_quality, the very metric P1 reads.
 
+## 2026-11-27: every pure generator runs at pull-request time (REGEN-PARITY-1) (Session: session_0156nqDsPJ1YLdic5NVSU9iG)
+
+- Measured: `scripts/regen_generated.sh` (pull-request time) ran 18 generators and `scripts/regen_generated.py` (after merge) 24; six pure ones were only in the second (`ultrastability --data`, `admit`, `owndb`, `tenantcontrols`, `upstream contract`, `plugins self`). After PR-NO-GENERATED-1 a pull request no longer carries generated files, so one that added an essential variable (#2615) failed on a stale `site/ultrastability-data.js` that nothing in its run rebuilt.
+- Now: `POST_MERGE_ONLY` in `scripts/regen_generated.py` names the eight generators that record an event or read the network, each with its reason; every other generator is in the shell list, and `tests/foundation/test_regen_generated.py` fails one that is in neither. `regen_generated.py --pr-list` prints the pull-request-time set. A full pull-request-time regenerate measured 13 seconds here.
+## 2026-11-27: the pull request closer times a condition from when it began (PR-BOUND-3) (Session: session_0156nqDsPJ1YLdic5NVSU9iG)
+
+- Measured: #2686 was closed by `prbound --apply` 17 seconds after main moved under it, with the reason "unresolved for 90 min". PR-BOUND-2 counted minutes since the pull request opened, so any pull request open past 30 minutes was closed on the first lane pass that saw a conflict, and past 60 minutes on the first failed check. #2664 and #2615 were closed the same way.
+- Now: `foundation/prbound.py` reads when the `conflict` or `ci-failed` label was last put on (issue events) and bounds that. The lane adds the label once per episode and removes it when the condition clears, so its own comments cannot refresh the clock. A label time that cannot be read is reported as unmeasured and closes nothing. `max_open_h` still reports any pull request open past two hours.
+- With PR-NO-GENERATED-1 (#2694, merged the same day) the two causes of session pull requests dying are both removed: main no longer conflicts with generated files a pull request carries, and a conflict that does appear gets its full 30 minutes.
 ## 2026-11-27: agents load one short entry; rules are fetched by path (AGENT-ENTRY-1) (Session: session_0156nqDsPJ1YLdic5NVSU9iG)
 
 - Measured before the change: `CLAUDE.md` imported about 224 KB of instructions (`agents/AGENTS.md` alone 155 KB), and a session with several repositories open loaded one copy per repository. Codex stops reading project instructions at 32 KiB; Claude Code's guidance is under 200 lines per file; an `@import` loads the whole imported file. A small server-side model could not read the rules at all.

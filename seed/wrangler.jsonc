@@ -1,0 +1,21 @@
+// DEPLOY-BUTTON-1: the kit's own deploy config, committed with no placeholder, so a fresh copy deploys as it stands: the Deploy to Cloudflare
+// button, Workers Builds and `npm run deploy` all read this file. No database_id is written here: `wrangler deploy` (4.45 or later, pinned in
+// package.json) creates the D1 database named below on the first deploy, or links the one of that name that already exists, and the deploy
+// script then applies worker/migrations by binding (`wrangler deploy && wrangler d1 migrations apply DB --remote`), so on every route the
+// database exists before its migrations are applied, also on a copy that was never deployed. The bootstrap route renders the same settings
+// from worker/wrangler.template.jsonc; worker/test/deploy-config.test.js fails when the two disagree.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "seed-ultrastable",
+  "main": "worker/src/index.js",
+  "compatibility_date": "2026-11-12",
+  "workers_dev": true,
+  "triggers": { "crons": ["*/10 * * * *"] },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "seed-ultrastable", "migrations_dir": "worker/migrations" }
+  ],
+  // The account's own models: the system needs no model key from anyone (POINT-AND-CLICK-1).
+  "ai": { "binding": "AI" },
+  "vars": { "PUBLIC_HEALTH_ONLY": "0" },
+  "observability": { "enabled": true }
+}
