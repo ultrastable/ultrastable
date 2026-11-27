@@ -7070,6 +7070,51 @@
    "body": "The round-3 landing changed three protected paths together (the requirement-id check, the protected-path gate and the record check). A stack that spread them over several slices would need a Protected-change line on each pull request and would gate each partial guard alone; they were kept in the first slice of the stack with the tests that read them (test_spec_ids, test_protected_paths, test_selfhost) and the workflow budget file those tests and the lint read, so one Protected-change line covers them and every later slice touches no protected path.",
    "probe": "grep:scripts/protected_paths.py::def reason_problem",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-27-hold-comment-1-one-hold-comment-reader-for-every-worker-merg",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "HOLD-COMMENT-1: one HOLD comment reader for every Worker merge route",
+   "body": "mergeNow, runLane, the sweeper and mergeForLane ask seed/worker/src/holds.js whether a HOLD: comment stops a pull request, so the four merge routes read the same comments and treat an unreadable list the same way. Proven by node --test seed/worker/test/spec-33-lane-rulings.test.js.",
+   "probe": "grep:seed/worker/src/holds.js::HOLD-COMMENT-1",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-27-kernel-9-2-0-recognitions-run-as-a-lint-checked-against-the-",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Kernel 9.2.0 recognitions run as a lint checked against the pinned text",
+   "body": "kernel --check now fails if any quoted signature in the pinned kernel's RECOGNITIONS section is not caught by the recognition lint in doctrine/kernel.json. All 38 signatures in 9.2.0 are caught today.",
+   "probe": "grep:foundation/kernel.py::def check_recognitions",
+   "session": "session_0156nqDvPawiALe47iATg79o"
+  },
+  {
+   "id": "decision-2026-11-27-the-actions-dispatch-is-the-fallback-of-the-worker-native-ex",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "The Actions dispatch is the fallback of the worker-native executor",
+   "body": "The executor dispatch list tries worker-native first (no Actions minutes); the github-actions provider runs only when worker-native did not answer ok, and the skip is recorded. Proven by node --test seed/worker/test/spec-33-executors.test.js.",
+   "probe": "grep:seed/worker/src/executor.js::fallbackFor: 'worker-native'",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-27-the-criticality-snapshot-carries-the-branching-ratio",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "The criticality snapshot carries the branching ratio",
+   "body": "Each criticality snapshot records branching_ratio (successor items over done items in the window) beside k_eff, and a page burn of a core goal files GOAL-BURN-<id>. Proven by node --test seed/worker/test/criticality.test.js and seed/worker/test/goals.test.js.",
+   "probe": "grep:seed/worker/src/criticality.js::branching_ratio: br.branching_ratio",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-27-the-seed-health-carries-the-five-fleet-fields-us-11-r01",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "The seed health carries the five fleet fields (US-11-R01)",
+   "body": "seed/worker/src/index.js GET /health answers status, worker, version, enabled and bindings_ok beside its own fields, as core/org/index.js does. Proven by node --test seed/worker/test/spec-11-fleet-runtime.test.js.",
+   "probe": "grep:seed/worker/src/index.js::bindings_ok: true",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
