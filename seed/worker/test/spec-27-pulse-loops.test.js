@@ -2,9 +2,8 @@
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // US-SPEC-27: the loops `knowledge-graph` and `graph-ai` are recorded as beats beside the tick (R14), and the pulse step (seed/worker/src/pulse.js) judges
 // a loop that is not in its declared list from its own beats. The three R14 tests declare their list in config.pulse.loops (the lane loops without the two
-// graph loops), so they hold whether or not LANE_LOOPS lists the two loops. Defect 3 of section 7 (LANE_LOOPS does not list them, so under the default list
-// a loop that never ran is not judged) has one test that pins it as it stands and one `todo` test that passes once the two loops are added to LANE_LOOPS;
-// that change deletes the first and removes the `todo` option of the second.
+// graph loops), so they hold whether or not LANE_LOOPS lists the two loops. Defect 3 of section 7 is fixed: LANE_LOOPS lists both, so under the default
+// list a graph loop that never ran files MISSED-<loop>; the last test proves it.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -69,19 +68,9 @@ test('US-27-R14: an undeclared loop first seen more than eight days ago and sile
   assert.equal((await clock(db, 'knowledge-graph')).checked_at, before, 'two later ticks did not judge it at all');
 });
 
-// Defect 3 as it stands. Delete this test in the change that adds the two loops to LANE_LOOPS.
-test('US-SPEC-27 defect 3 as it stands: LANE_LOOPS does not list the graph loops, so under the default list they are undeclared and one that never ran is not filed', async () => {
-  assert.ok(!LANE_LOOPS.includes('knowledge-graph') && !LANE_LOOPS.includes('graph-ai'));
-  let db = makeDb();
-  await drive(db, 6, { cfg: config });
-  for (const l of KG) assert.equal((await clock(db, l)).declared, 0, `${l} is judged as an undeclared loop`);
-  db = makeDb();
-  await drive(db, 14, { which: [], cfg: config });
-  assert.equal(await item(db, 'MISSED-knowledge-graph'), null); assert.equal(await item(db, 'MISSED-graph-ai'), null);
-});
-
-// The closing probe of defect 3: it fails today and passes once `knowledge-graph` and `graph-ai` are in LANE_LOOPS. Remove the `todo` option then.
-test('US-SPEC-27 defect 3: under the default list the graph loops are declared, so a loop that never ran files MISSED-<loop>', { todo: 'defect 3: LANE_LOOPS does not list knowledge-graph and graph-ai' }, async () => {
+// The closing probe of defect 3, now an ordinary test: `knowledge-graph` and `graph-ai` are in LANE_LOOPS.
+test('US-SPEC-27 defect 3: under the default list the graph loops are declared, so a loop that never ran files MISSED-<loop>', async () => {
+  assert.ok(LANE_LOOPS.includes('knowledge-graph') && LANE_LOOPS.includes('graph-ai'));
   let db = makeDb();
   await drive(db, 6, { cfg: config });
   for (const l of KG) assert.equal((await clock(db, l)).declared, 1, `${l} is judged as a declared loop`);

@@ -88,6 +88,8 @@ test('READ-BUDGET-9: the changed queries are answered by an index, with no sort 
   const { ensureSchema } = await import('../src/auth/store.js'); await ensureSchema(db);
   const conn = plan(db, `SELECT event, at FROM credential_events WHERE tenant = ? AND provider = ? ORDER BY id DESC LIMIT 5`, 't', 'p');
   assert.match(conn, /USING (COVERING )?INDEX credential_events_tenant_provider/); assert.doesNotMatch(conn, /TEMP B-TREE/);
+  const refusal = plan(db, `SELECT 1 AS x FROM (SELECT at, event, detail FROM credential_events WHERE tenant = ? AND provider = ? ORDER BY id DESC LIMIT 20) WHERE event = 'failed' AND substr(detail, 1, ?) = ? LIMIT 1`, 't', 'p', 3, 'cal');
+  assert.match(refusal, /INDEX credential_events_tenant_provider/); assert.doesNotMatch(refusal, /TEMP B-TREE/);  // store.refusal (US-30-R41)
   for (const sql of [`SELECT 1 AS x FROM credential_events WHERE tenant = ? AND provider = 'github-admin' AND event = 'archived' LIMIT 1`,
     `SELECT detail FROM credential_events WHERE tenant = ? AND provider = 'github-admin' AND event = 'rulesets' ORDER BY at DESC, rowid DESC LIMIT 1`,
     `SELECT at FROM credential_events WHERE tenant = ? AND event = 'app-audit' ORDER BY id DESC LIMIT 1`]) {

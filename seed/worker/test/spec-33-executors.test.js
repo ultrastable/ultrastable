@@ -47,11 +47,19 @@ test('US-33-R63: the executor chain tries worker-native, then the Actions dispat
   assert.equal((await noteExecutor(makeDb(), [{ provider: 'worker-native', ok: true, detail: 'x' }])).filed, false, 'a working dispatcher files nothing');
 });
 
-test('US-33-R75: the shipped provider list stops after the first dispatcher that answers ok (the closing probe of the executor-chain deviation in US-SPEC-33 section 7)', { todo: 'runExecutor keeps dispatching later non-observer providers while an observer follows in the list, so a worker-native success also dispatches the Actions executor' }, async () => {
-  const dispatched = [];
-  const stub = (p, ok) => ({ ...p, available: () => true, async dispatch() { dispatched.push(p.id); return { ok, detail: p.id }; } });
-  await runExecutor({}, { providers: [stub(PROVIDERS[0], true), stub(PROVIDERS[1], true), stub(PROVIDERS[2], true)] });
-  assert.deepEqual(dispatched, ['worker-native', 'workers-ai-agent'], 'the Actions dispatch is the fallback, not a second route taken every tick');
+test('US-33-R75: in the shipped provider list the Actions dispatch is the fallback of worker-native: not dispatched after a native success, dispatched after a native failure; the orchestrator and the observer run either way', async () => {
+  const run = async nativeOk => {
+    const dispatched = [];
+    const stub = p => ({ ...p, available: () => true, async dispatch() { dispatched.push(p.id); return { ok: p.id === 'worker-native' ? nativeOk : true, detail: p.id }; } });
+    const results = await runExecutor({}, { providers: PROVIDERS.map(stub) });
+    return { dispatched, results };
+  };
+  let { dispatched, results } = await run(true);
+  assert.deepEqual(dispatched, ['worker-native', 'worker-orchestrator', 'workers-ai-agent'], 'the Actions dispatch is the fallback, not a second route taken every tick');
+  assert.deepEqual(results.find(r => r.provider === 'github-actions'), { provider: 'github-actions', ok: null, skipped: true, detail: 'fallback not dispatched: worker-native answered ok' }, 'the skip is recorded, never silent');
+  assert.equal((await noteExecutor(makeDb(), results)).filed, false);
+  ({ dispatched } = await run(false));
+  assert.deepEqual(dispatched, ['worker-native', 'worker-orchestrator', 'github-actions', 'workers-ai-agent'], 'a native failure falls back to the Actions dispatch');
 });
 
 test('US-33-R60: the Worker pull-request executor takes the open issue with the lowest p-label and then the lowest number, and never a pull request or an issue labelled for a person, a gate or a failure', () => {

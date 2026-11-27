@@ -14,9 +14,11 @@
 import { record } from './auditchain.js';
 import { beatStats24h } from './beatstats.js';  // READ-BUDGET-9
 import { goalSamples14d } from './goalsamples.js';  // READ-BUDGET-11
-import { dampedCooldown, errorBudget } from './control.js';  // CONTROL-1: knob damping, goal error budgets
+import { dampedCooldown, errorBudget, BURN_RULES } from './control.js';  // CONTROL-1: knob damping, goal error budgets
 import { nextTrial, upsets, accessibility, reducibility, searchBudget, jointRest, cylindrance, protocol, variety, transmission } from './ashby.js';  // ASHBY-KERNEL-1
 import { varietyReading, OWN_ITEM } from './regulation.js';  // ASHBY-KERNEL-1: requisite variety read from the work queue
+// A write the step can live without is still never swallowed: its failure is logged with what it was doing (never swallow an error).
+const failed = what => e => console.error(`goals: ${what} failed:`, e && e.message ? e.message : e);
 export const DDL = [
   `CREATE TABLE IF NOT EXISTS goals (id TEXT PRIMARY KEY, tenant TEXT NOT NULL DEFAULT 'core', parent_id TEXT, level TEXT NOT NULL, statement TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'none', spec TEXT, unit TEXT, op TEXT, target REAL, deadline TEXT, status TEXT NOT NULL DEFAULT 'active', origin TEXT NOT NULL DEFAULT 'seed', last_value REAL, last_at INTEGER, met INTEGER NOT NULL DEFAULT 0, streak INTEGER NOT NULL DEFAULT 0, achieved_at INTEGER, stretch_id TEXT, missed_at INTEGER, retired_reason TEXT, created_at INTEGER NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS goals_tenant ON goals (tenant, status)`,
@@ -45,6 +47,9 @@ export const DEFAULTS = { stale_days: 14, achieve_after: 12, max_adjust_per_run:
   forget_days: 30 };  // a value that failed is not tried again for this long, or until a change is kept
 const cfgOf0 = c => ({ ...DEFAULTS, ...((c && c.control) || {}) });
 const cfgOf = c => { const o = cfgOf0(c); return { ...o, veto: { ...DEFAULTS.veto, ...(o.veto || {}) } }; };
+// US-26-R78: the burn alert reads the page rules of CONTROL-1 over the /goals view's period and objective.
+const BURN_PERIOD_D = 14, BURN_SLO = 0.9, BURN_MIN_READINGS = 6, PAGE_RULES = BURN_RULES.filter(r => r.severity === 'page');  // 6 readings: one hour of 10-minute ticks
+const PAGE_WINDOW_MS = Math.max(...PAGE_RULES.map(r => r.long_h)) * (BURN_PERIOD_D / 30) * 3600e3 + 60e3;
 const ID = /^[a-z0-9][a-z0-9._+-]{1,60}$/;
 const needOf = op => (op === '>=' || op === '>') ? 1 : (op === '<=' || op === '<') ? -1 : 0;
 const num = v => (v === null || v === undefined || v === '' || !Number.isFinite(Number(v))) ? null : Number(v);
@@ -253,7 +258,22 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
     }
     // item that closes itself
     const itemId = `GOAL-${g.id}`.slice(0, 80);
-    if (met) { await run(db, `UPDATE items SET status='done', disposition=?, updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, `fixed: goal ${g.id} met (${v} ${g.op} ${g.target})`, ctx.nowIso || new Date(now).toISOString(), itemId).catch(() => {}); }
+    if (met) { await run(db, `UPDATE items SET status='done', disposition=?, updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, `fixed: goal ${g.id} met (${v} ${g.op} ${g.target})`, ctx.nowIso || new Date(now).toISOString(), itemId).catch(failed(`close ${itemId}`)); }
+    // US-26-R78: when a page rule of a core goal's error budget fires, GOAL-BURN-<id> (priority 2) is filed, and it closes with the goal met. The period
+    // and objective are the ones /goals shows (14 days, 0.9); only the samples of the longest page window are read, never the whole period.
+    const burnId = `GOAL-BURN-${g.id}`.slice(0, 80);
+    if (met) { await run(db, `UPDATE items SET status='done', disposition=?, updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, `fixed: goal ${g.id} met (${v} ${g.op} ${g.target})`, ctx.nowIso || new Date(now).toISOString(), burnId).catch(failed(`close ${burnId}`)); }
+    else if (ensureItem && g.tenant === 'core' && OPS[g.op]) {
+      const recent = await all(db, `SELECT at, value FROM goal_samples WHERE goal_id=? AND at >= ? ORDER BY at`, g.id, now - PAGE_WINDOW_MS);
+      const eb = errorBudget(recent.map(s => ({ at: s.at, ok: OPS[g.op](s.value, g.target) })), c.slo ?? BURN_SLO, { now, period_d: BURN_PERIOD_D, rules: PAGE_RULES });
+      // a page needs a run of readings behind it: at least BURN_MIN_READINGS in the firing rule's long window, so a goal's first misses (a window of
+      // one or two readings reads as 100 percent missed) are left to its own GOAL- item and never page on their own
+      const page = eb.alerts.find(a => a.severity === 'page' && recent.filter(s => s.at >= now - a.long_h * 3600e3).length >= BURN_MIN_READINGS);
+      if (page) {
+        const f = await ensureItem(db, { id: burnId, kind: 'fix', priority: 2, owner_role: 'product-manager', title: `Goal ${g.id} is burning its error budget fast (${page.burn}x the allowed miss rate over ${+page.long_h.toFixed(2)} h; reads ${v}, target ${g.op} ${g.target}). Find why it stopped holding and restore it: ${g.statement}`.slice(0, 400), done_check: `goal ${g.id} reads ${g.op} ${g.target}`, closing_probe: `SELECT COUNT(*) FROM goals WHERE id='${g.id}' AND met=1`, surface: 'goals' });
+        if (f) out.filed.push(burnId);
+      }
+    }
     const knobs = await all(db, 'SELECT * FROM goal_knobs WHERE goal_id=?', g.id);
     if (!met && need !== 0) {
       let moved = false, searching = false;
@@ -312,7 +332,7 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
           await run(db, `INSERT INTO goals (id, tenant, parent_id, level, statement, source, spec, unit, op, target, deadline, origin, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,'system',?)`,
             sid, g.tenant, g.parent_id, 'target', `Stretch: ${g.statement} (set by the system after ${streak} readings at or past ${g.target})`.slice(0, 300), g.source, g.spec, g.unit, g.op, nt, null, now);
           await run(db, 'UPDATE goals SET achieved_at=?, stretch_id=? WHERE id=?', now, sid, g.id);
-          for (const k of knobs) await run(db, `UPDATE goal_knobs SET goal_id=? WHERE id=? AND goal_id=?`, sid, k.id, g.id).catch(() => {});
+          for (const k of knobs) await run(db, `UPDATE goal_knobs SET goal_id=? WHERE id=? AND goal_id=?`, sid, k.id, g.id).catch(failed(`move knob ${k.id} to ${sid}`));
           await record(db, { kind: 'goal.propose', actor: 'goals', ref: sid, summary: `proposed ${sid}: ${g.op} ${nt} after ${g.id} stayed met for ${streak} readings`, data: { from: g.id } }, { now });
           out.stretch.push(sid);
         }

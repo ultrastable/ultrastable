@@ -2,7 +2,7 @@
 // Copyright (c) Ultrastable
 // APP-INVENTORY-1: the live truth about the org's GitHub Apps, read by the Worker with each app's own key. For every stored app (one per role) it asks GitHub
 // who the app is and where it is installed, removes any installation of that app other than the stored one, and records one credential_events row (event
-// 'app-audit', detail JSON). An app whose key is gone cannot be asked and is reported as unreachable. Runs at most once a day. No person clicks anything.
+// 'app-audit', detail JSON, cut like every event) and keeps the whole report in org ('app_audit:<tenant>', readAppAudit). An app whose key is gone cannot be asked and is reported as unreachable. Runs at most once a day. No person clicks anything.
 import { appJwt } from './auth/github-app.js';
 import * as store from './auth/store.js';
 const API = 'https://api.github.com', ROLES = ['github-app', 'github-admin'], DAY = 20 * 3600 * 1000;
@@ -32,5 +32,15 @@ export async function auditApps(db, env, tenant, { fetch: f = fetch, now = Date.
   }
   const report = { at: new Date(now).toISOString(), apps, active: apps.filter(a => a.reachable).length, expected: ROLES.length };
   await store.event(db, tenant, 'github-app', 'app-audit', JSON.stringify(report));
+  // US-30-R36: the event detail is cut to 300 characters (R20), so the whole report is also kept in one org row per tenant, as repo_access is kept
+  try { await db.prepare(`INSERT INTO org (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(AUDIT_KEY(tenant), JSON.stringify(report)).run(); }
+  catch (e) { report.kept = false; report.keep_error = String((e && e.message) || e); }  // SILENT-CATCH: the caller (the cron step's report) reads why the whole report was not kept
   return report;
+}
+
+const AUDIT_KEY = tenant => 'app_audit:' + tenant;
+// The newest app inventory report of a tenant, whole, or null when none was kept.
+export async function readAppAudit(db, tenant) {
+  const r = await db.prepare('SELECT value FROM org WHERE key = ?').bind(AUDIT_KEY(tenant)).first();
+  return r ? JSON.parse(r.value) : null;
 }

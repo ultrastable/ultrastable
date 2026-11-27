@@ -4,6 +4,7 @@
 // For each open PR on a client branch: refresh a stale branch, merge when green, and once it is older than maxAgeH file one tracked item (Q-OPENLOOP-<repo>-<n>) with owner, trigger and probe.
 // For each issue still labelled claimed/dispatched past maxAgeH: release the claim so the executor re-takes it. Returns open_loop_age_hours, the probe value (target 0).
 import { notGreen } from './greenguard.js';
+import { heldByComment } from './holds.js';  // HOLD-COMMENT-1
 import { ghFetch, mergedAnyway } from './ghfetch.js';  // GH-RETRY-1
 import { reconcile, makeGh, latency } from './mergenow.js';
 import { prTier, portItemId } from './sla.js';  // SLA-1
@@ -77,7 +78,8 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
         }
         // HOLD-LABEL-1 (US-33-R13): a pull request labelled `hold` is never merged here; it keeps its clock and its open-loop item below
         const labelled = [...((d && d.labels) || []), ...(p.labels || [])].some(l => l && l.name === 'hold');
-        const hold = labelled ? 'hold' : d.mergeable_state === 'clean' ? await notGreen(f, token, repo, d.head && d.head.sha, (ff, t, m, path) => gh(ff, t, m, path)) : null;  // GREEN-GUARD-1
+        // HOLD-COMMENT-1 (US-33-R103): a HOLD: comment holds a pull request the sweeper would merge, read before the green guard is asked
+        const hold = labelled ? 'hold' : d.mergeable_state === 'clean' ? ((await heldByComment((m, path) => gh(f, token, m, path), repo, p.number)) || await notGreen(f, token, repo, d.head && d.head.sha, (ff, t, m, path) => gh(ff, t, m, path))) : null;  // GREEN-GUARD-1
         if (hold) out.held = [...(out.held || []), `${tag} ${hold}`];
         if (d.mergeable_state === 'clean' && !hold) {
           const m = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${p.number}/merge`, { merge_method: 'squash' });

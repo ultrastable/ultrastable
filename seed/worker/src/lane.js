@@ -57,6 +57,7 @@ async function appendEvidence(f, token, repo, row, budget = null) {
 // (#433 merged 20 s after `checks` failed on an orphan document). A failed Actions job with a failed step really ran: it holds the PR. A failed job
 // with no steps never started (minutes exhausted), and only then does the Worker's diff gate decide. An unreadable answer holds: unknown is not green.
 import { notGreen } from './greenguard.js';  // GREEN-GUARD-1
+import { heldByComment } from './holds.js';  // HOLD-COMMENT-1
 import { ghFetch, mergedAnyway } from './ghfetch.js';  // GH-RETRY-1
 export async function realRed(f, token, repo, sha, budget = null) {
   const runs = await gh(f, token, 'GET', `/repos/${repo}/actions/runs?head_sha=${sha}&per_page=30`, undefined, budget);
@@ -71,6 +72,22 @@ export async function realRed(f, token, repo, sha, budget = null) {
     if (!jobs.ok) return `jobs ${jobs.status}`;
     const bad = (jobs.json.jobs || []).find(j => j.conclusion === 'failure' && (j.steps || []).some(s => s.conclusion === 'failure'));
     if (bad) return `${run.name || 'run'}/${bad.name} failed`;
+  }
+  return null;
+}
+
+// US-33-R06: on the zero-minutes path the head's check runs are read too. Runs from apps other than GitHub Actions are judged like the green guard
+// judges them (unfinished, or finished as anything but success, neutral or skipped, holds), an answer not read whole holds, and Actions runs are left
+// to realRed, which lets an Actions run that never started through.
+export async function otherAppRed(f, token, repo, sha, budget = null) {
+  const r = await gh(f, token, 'GET', `/repos/${repo}/commits/${sha}/check-runs?per_page=100`, undefined, budget);
+  const runs = r.ok && r.json && Array.isArray(r.json.check_runs) ? r.json.check_runs : null;
+  if (!runs) return `check runs ${r.status || 'unreadable'}`;
+  if (Number(r.json.total_count) > runs.length) return `check runs ${runs.length} of ${r.json.total_count} read`;
+  for (const c of runs) {
+    if (c.app && c.app.slug === 'github-actions') continue;
+    if (c.status !== 'completed') return `${c.name || 'check'} ${c.status || 'pending'}`;
+    if (!['success', 'neutral', 'skipped'].includes(c.conclusion)) return `${c.name || 'check'} ${c.conclusion}`;
   }
   return null;
 }
@@ -94,12 +111,12 @@ export async function runLane({ token, repos = [], fetch: f = fetch, issueWorkfl
         }
         // HOLD-LABEL-1 (US-33-R13): the label `hold` holds here as on every other merge route; it is read from what is in hand, so it costs no call
         if ([...(pr.labels || []), ...((d && d.labels) || [])].some(l => l && l.name === 'hold')) { out.held.push(`${repo}#${pr.number} hold`); continue; }
-        const comments = (await gh(f, token, 'GET', `/repos/${repo}/issues/${pr.number}/comments?per_page=30`, undefined, budget)).json || [];
-        if (comments.some(c => /^HOLD:/.test(c.body || ''))) { out.held.push(`${repo}#${pr.number} HOLD`); continue; }
+        const commentHold = await heldByComment((m, p) => gh(f, token, m, p, undefined, budget), repo, pr.number);  // HOLD-COMMENT-1 (US-33-R103): every page
+        if (commentHold) { out.held.push(`${repo}#${pr.number} ${commentHold}`); continue; }
         let ready = d && d.mergeable_state === 'clean';
         if (!ready && d && zeroActions && ['unstable', 'blocked'].includes(d.mergeable_state)) { // ZERO-MINUTES-1: Actions minutes are exhausted, so the Worker's own diff gate decides
           const st = await gh(f, token, 'GET', `/repos/${repo}/commits/${d.head.sha}/status`, undefined, budget);
-          ready = Boolean(st.ok && (st.json.statuses || []).some(s => s.context === 'worker-gate' && s.state === 'success'));          if (ready) { const red = await realRed(f, token, repo, d.head.sha, budget); if (red) { out.held.push(`${repo}#${pr.number} red: ${red}`); continue; } }
+          ready = Boolean(st.ok && (st.json.statuses || []).some(s => s.context === 'worker-gate' && s.state === 'success'));          if (ready) { const red = await realRed(f, token, repo, d.head.sha, budget) || await otherAppRed(f, token, repo, d.head.sha, budget); if (red) { out.held.push(`${repo}#${pr.number} red: ${red}`); continue; } }  // US-33-R06
         }
         if (ready && d.mergeable_state === 'clean') { const hold = await notGreen(f, token, repo, d.head.sha, (ff, t, m, path) => gh(ff, t, m, path, undefined, budget)); if (hold) { out.held.push(`${repo}#${pr.number} ${hold}`); continue; } }  // GREEN-GUARD-1
         if (!ready) { out.held.push(`${repo}#${pr.number} ${d && d.mergeable_state}`); continue; }

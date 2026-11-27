@@ -57,6 +57,7 @@ test('US-33-R03: with Actions minutes gone the Worker gate decides, a run that r
     (m, p) => m === 'GET' && p === '/repos/a/b/commits/abc1234/status' ? [200, { statuses: extra.noStatus ? [] : [{ context: 'worker-gate', state: 'success' }] }] : null,
     (m, p) => m === 'GET' && p.startsWith('/repos/a/b/actions/runs?head_sha=abc1234') ? [200, { workflow_runs: extra.runs || [] }] : null,
     (m, p) => m === 'GET' && p.startsWith('/repos/a/b/actions/runs/9/jobs') ? [200, { jobs: extra.jobs || [] }] : null,
+    (m, p) => m === 'GET' && p.startsWith('/repos/a/b/commits/abc1234/check-runs') ? [200, { total_count: 0, check_runs: [] }] : null,  // US-33-R06: read on the zero-minutes path
     (m, p) => m === 'PUT' && p === '/repos/a/b/pulls/1/merge' ? [200, { sha: 'm1' }] : null);
   const lane = (g, zero = true) => runLane({ token: 't', repos: ['a/b'], fetch: g.f, issueWorkflow: null, zeroActions: zero });
   let g = pr(); let r = await lane(g);

@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-the-actions-dispatch-is-the-fallback-of-the-worker-native-ex",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "The Actions dispatch is the fallback of the worker-native executor",
+  "body": "The executor dispatch list tries worker-native first (no Actions minutes); the github-actions provider runs only when worker-native did not answer ok, and the skip is recorded. Proven by node --test seed/worker/test/spec-33-executors.test.js.",
+  "probe": "grep:seed/worker/src/executor.js::fallbackFor: 'worker-native'",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "decision",
+ "title": "The Actions dispatch is the fallback of the worker-native executor",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}

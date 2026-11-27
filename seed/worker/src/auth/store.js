@@ -18,6 +18,19 @@ export async function put(db, env, tenant, provider, { secret, meta, access, exp
 export async function event(db, tenant, provider, ev, detail = '') {
   await db.prepare('INSERT INTO credential_events (tenant, provider, event, detail) VALUES (?,?,?,?)').bind(tenant, provider, ev, String(detail).slice(0, 300)).run();
 }
+// A refused connector callback (a bad state, a replayed approval) arrives on an unauthenticated route, so each one is recorded at most once per
+// (tenant, provider, reason kind) per hour: the owner still sees that someone probed, and an anonymous caller cannot grow credential_events
+// (kept 180 days) without bound. `kind` is the fixed part of the reason, so varying the rest of the text does not get past the limit. The
+// newest REFUSAL_LOOKBACK rows of the pair are read through credential_events_tenant_provider. Returns true when a row was written.
+export const REFUSAL_LOOKBACK = 20;
+export async function refusal(db, tenant, provider, kind, detail = kind) {
+  const prefix = 'callback: ' + kind;
+  const seen = await db.prepare(`SELECT 1 AS x FROM (SELECT at, event, detail FROM credential_events WHERE tenant = ? AND provider = ? ORDER BY id DESC LIMIT ${REFUSAL_LOOKBACK})
+    WHERE event = 'failed' AND substr(detail, 1, ?) = ? AND at >= strftime('%Y-%m-%dT%H:%M:%SZ','now','-1 hour') LIMIT 1`).bind(tenant, provider, prefix.length, prefix).first();
+  if (seen) return false;
+  await event(db, tenant, provider, 'failed', 'callback: ' + detail);
+  return true;
+}
 export async function material(db, env, tenant, provider) {
   const r = await get(db, tenant, provider);
   if (!r) return null;

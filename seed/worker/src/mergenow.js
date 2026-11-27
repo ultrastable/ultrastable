@@ -10,6 +10,7 @@
 //   clean and green (GREEN-GUARD-1) -> squash-merged on the exact head commit.
 // Every call is counted against the invocation's subrequest budget (Workers Free: 50 per invocation).
 import { notGreen } from './greenguard.js';
+import { heldByComment } from './holds.js';  // HOLD-COMMENT-1
 import { GENERATED, isGenerated } from './generated.js';
 import { ghFetch, mergedAnyway } from './ghfetch.js';  // GH-RETRY-1
 
@@ -103,6 +104,8 @@ export async function mergeNow({ token, repo, numbers = null, fetch: f = fetch, 
     let d = (await gh('GET', `/repos/${repo}/pulls/${n}`)).json;
     if (!d || d.state !== 'open' || d.base?.ref !== 'main') continue;
     if ((d.labels || []).some(l => l.name === 'hold')) { out.held.push(`${tag} hold`); continue; }
+    const commentHold = await heldByComment(gh, repo, n);  // HOLD-COMMENT-1 (US-33-R103): a HOLD: comment holds as the label does
+    if (commentHold) { out.held.push(`${tag} ${commentHold}`); continue; }
     if (d.draft) {
       const r = await gh('POST', `/repos/${repo}/pulls/${n}/ready_for_review`);
       if (r.ok) out.readied.push(tag);

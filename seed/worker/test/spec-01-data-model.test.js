@@ -177,3 +177,34 @@ test('US-01-R18: history tables are pruned a bounded number of rows a day, oldes
   const fail = await pruneAll(bad, { rules: { max_rows_per_run: 3, tables: { arch: { column: 'at', keep_days: 30, archive: true } } }, now: NOW, archive: async () => { throw new Error('no place to seal'); } });
   assert.ok(fail.tables[0].error); assert.equal(get(bad, 'SELECT COUNT(*) AS n FROM arch').n, 1, 'a row that could not be sealed is not deleted');
 });
+
+test('US-01-T05 and US-01-R13: a file that creates a table and then drops items with no copy is refused before any statement runs; the rows of items stay and a work item names the file', async () => {
+  const db = makeDb(); const c = ctx();
+  db.raw.exec(`INSERT INTO items (id, title, owner_role, done_check) VALUES ('KEEP-T05', 'kept', 'staff', 'x')`);
+  const r = await migrateStep(db, c, [m('9997_t05.sql', `CREATE TABLE IF NOT EXISTS t05_first (a);\nDROP TABLE items;`)], ensureItem);
+  assert.deepEqual(r.failed, ['9997_t05.sql']); assert.deepEqual(r.applied, []);
+  assert.equal(get(db, "SELECT name FROM sqlite_master WHERE name='t05_first'"), undefined, 'the statement before the drop did not run either');
+  assert.equal(get(db, "SELECT COUNT(*) AS n FROM items WHERE id='KEEP-T05'").n, 1, 'the rows of items remain');
+  assert.equal(get(db, "SELECT file FROM _migrations WHERE file='9997_t05.sql'"), undefined, 'a refused file is not ledgered');
+  assert.match(get(db, "SELECT title FROM items WHERE id='MIGRATION-9997_t05'").title, /9997_t05\.sql/, 'the work item names the file');
+});
+
+test('US-01-T06 and US-01-R12: a ready item, a stale claim and an open gate card of another tenant are not dispatched, released, closed or counted by a tick', async () => {
+  const db = makeDb(); const OTHER = 'other-tenant';
+  db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('staff-1','staff',1,'m');
+    INSERT INTO items (id,title,owner_role,done_check,priority,status,tenant_id) VALUES ('T06-READY','r','staff','x',1,'ready','${OTHER}'), ('T06-HELD','h','staff','x',1,'claimed','${OTHER}');
+    INSERT INTO claims (item_id,agent,claimed_at,heartbeat_at,tenant_id) VALUES ('T06-HELD','staff-1','2026-11-01 00:00:00','2026-11-01 00:00:00','${OTHER}');
+    INSERT INTO gate_cards (id,what,why_gated,default_in_effect,closing_probe,tenant_id) VALUES ('T06-GATE','g','w','d','env:KEY','${OTHER}');`);
+  const r = await runTick(db, { config, now: T0, env: { KEY: true } });
+  assert.equal(r.completed, r.total, JSON.stringify(r.errors));
+  assert.equal(get(db, "SELECT status FROM items WHERE id='T06-READY'").status, 'ready', 'not dispatched');
+  assert.equal(get(db, "SELECT COUNT(*) AS n FROM dispatches WHERE item_id LIKE 'T06-%'").n, 0);
+  assert.ok(get(db, "SELECT item_id FROM claims WHERE item_id='T06-HELD'"), 'the stale claim is not released');
+  assert.equal(get(db, "SELECT status FROM items WHERE id='T06-HELD'").status, 'claimed');
+  assert.equal(get(db, "SELECT status FROM gate_cards WHERE id='T06-GATE'").status, 'open', 'the card is not closed by this runtime');
+  const twin = makeDb(); twin.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('staff-1','staff',1,'m');`);
+  const base = await runTick(twin, { config, now: T0, env: { KEY: true } });
+  const open = rep => /Open: .*/.exec(rep)[0];
+  assert.equal(open(r.report), open(base.report), 'the counts are those of a store with no rows of the other tenant');
+  assert.match(open(r.report), /0 gate card\(s\)/);
+});

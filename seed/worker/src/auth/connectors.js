@@ -156,10 +156,14 @@ export async function handleConnector(request, env, { tenant = 'default', fetch:
     }
     // callback
     const st = await checkConnectorState(env, url.searchParams.get('state'), now);
-    if (!st || st.t !== tenant) return failScreen('Connect ' + def.title, 'That approval link expired.', retry);
+    // A bad state and a replayed approval are recorded in the owner-only event log, as social.js `refused` does for Mastodon and Bluesky, so a probing
+    // caller is not invisible; the person still sees only the plain screen. The route is unauthenticated, so store.refusal writes each reason at most
+    // once per tenant, provider and hour.
+    const refused = async (provider, why, say) => { try { await store.refusal(env.DB, tenant, provider, why); } catch (e) { console.error('connect: refusal not recorded:', e && e.message); } return failScreen('Connect ' + def.title, say, retry); };
+    if (!st || st.t !== tenant) return refused(id === 'mcp' ? 'oauth:mcp' : providerKey(id), 'state expired or for another tenant', 'That approval link expired.');
     if (url.searchParams.get('error')) { await store.event(env.DB, tenant, st.p, 'failed', 'provider said ' + url.searchParams.get('error')); return failScreen('Connect ' + def.title, 'The approval was not completed.', retry); }
     const cur = await store.material(env.DB, env, tenant, st.p);
-    if (!cur || !cur.secret || !cur.secret.pending || cur.secret.pending.nonce !== st.n) return failScreen('Connect ' + def.title, 'That approval link was already used.', retry);  // one-time nonce
+    if (!cur || !cur.secret || !cur.secret.pending || cur.secret.pending.nonce !== st.n) return refused(st.p, 'approval does not match the sign-in under way', 'That approval link was already used.');  // one-time nonce
     const body = { grant_type: 'authorization_code', code: url.searchParams.get('code') || '', redirect_uri: `${origin}/connect/${id}/callback`, client_id: cur.meta.client_id, code_verifier: cur.secret.pending.verifier };
     if (cur.secret.client_secret) body.client_secret = cur.secret.client_secret;
     if (cur.meta.resource) body.resource = cur.meta.resource;

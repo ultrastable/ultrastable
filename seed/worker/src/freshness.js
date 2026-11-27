@@ -11,7 +11,9 @@ export async function watchFreshness({ token, repo, siteUrl = 'https://ultrastab
   const stale = ['snapshot', 'changes', 'pages'].filter(k => f && f[k] && f[k].stale);
   const out = { status: 'stale', stale, snapshot_age_s: f && f.snapshot ? f.snapshot.age_s : null };
   if (!stale.includes('snapshot')) return out;  // the changes cache is refreshed by this tick itself, the pages by every deploy
-  if (!token || !repo) return { ...out, repair: 'no-token' };
+  // US-29-R74: with no token, or a dispatch that was refused or not sent, the answer carries `error`, which pulse.js failed() reads as a red beat.
+  const unrepaired = repair => ({ ...out, repair, error: `snapshot stale and not repaired: ${repair}` });
+  if (!token || !repo) return unrepaired('no-token');
   const h = { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-freshness', 'x-github-api-version': '2022-11-28' };
   const base = `https://api.github.com/repos/${repo}/actions/workflows/${workflow}`;
   try {
@@ -19,6 +21,6 @@ export async function watchFreshness({ token, repo, siteUrl = 'https://ultrastab
     const last = r.status === 200 ? (((await r.json()) || {}).workflow_runs || [])[0] : null;
     if (last && now() - Date.parse(last.created_at) < cooldownMs) return { ...out, repair: 'cooldown' };
     const d = await fetchImpl(`${base}/dispatches`, { method: 'POST', headers: { ...h, 'content-type': 'application/json' }, body: JSON.stringify({ ref }) });
-    return { ...out, repair: d.status === 204 ? 'dispatched' : 'error HTTP ' + d.status };
-  } catch (e) { return { ...out, repair: 'error ' + String(e && e.message).slice(0, 120) }; }
+    return d.status === 204 ? { ...out, repair: 'dispatched' } : unrepaired('error HTTP ' + d.status);
+  } catch (e) { return unrepaired('error ' + String(e && e.message).slice(0, 120)); }
 }

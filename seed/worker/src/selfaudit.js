@@ -45,6 +45,9 @@ export async function selfAuditStep(db, ctx, register, ensureItem) {
         const fid = `FIX-${fx.id}`;
         const row = await first(db, `SELECT status FROM items WHERE id=?`, fid);
         if (row && ['done', 'superseded', 'cancelled'].includes(row.status)) continue;
+        // A fix closed while the probe stayed red was tried: the gate below reopens it (it may not stay closed on a red probe) and records that,
+        // so the ladder moves past it to the next fix, and to ESCALATE when every fix has been tried, instead of filing the same fix for ever.
+        if (row && await first(db, `SELECT 1 AS x FROM outcomes WHERE item_id=? AND action_class='probe' AND result='failed' AND evidence LIKE 'reopened: probe %'`, fid)) continue;
         await ensureItem(db, { id: fid, kind: 'fix', owner_role: m.owner_role, priority: -1, title: fx.title.slice(0, 400), done_check: `probe selfaudit:${m.id} returns green`, closing_probe: `selfaudit:${m.id}` });
         filed = fid; break;
       }

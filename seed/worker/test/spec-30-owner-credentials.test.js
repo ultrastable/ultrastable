@@ -20,7 +20,7 @@ import { safeUrl, discoverMcp, pkce, cimdDocument } from '../src/auth/connectors
 import { newDpopKey } from '../src/auth/atproto.js';
 import { checkRepoAccess } from '../src/auth/access.js';
 import { archiveRetired, archiveDue, RETIRED } from '../src/auth/archive.js';
-import { auditApps } from '../src/appaudit.js';
+import { auditApps, readAppAudit } from '../src/appaudit.js';
 import { STEPS, reconnectLink } from '../src/tick.js';
 
 const NOW = Date.parse('2026-11-26T12:00:00Z');
@@ -89,10 +89,21 @@ test('an owner act for a remote MCP server links to its consent page with the se
   assert.equal((await ownerActs(db))[0].connect, '/connect/mcp?server=' + encodeURIComponent('https://ex.com/mcp'));
 });
 
-// The generic connector callback records an event for a provider's refusal and a failed token exchange but not for a bad or expired state or a replayed
-// approval (seed/worker/src/auth/connectors.js, the callback section); only the Mastodon and Bluesky callbacks (social.js `refused`) record those. This is the
-// closing probe of the PLANNED part of the specification and stays a todo until the generic callback records both. It deliberately names no requirement id.
-test('the generic connector callback records a failed event for a bad state and for a replayed approval (closing probe of the PLANNED part of the specification)', { todo: 'connectors.js returns failScreen for a bad state and a replay with no store.event' }, async () => {
+test('US-30-R06: an owner act for Mastodon links to the start page on the instance its row names, and to the default instance when the row names none', async () => {
+  const db = mk().DB; await store.ensureSchema(db);
+  db.raw.prepare("INSERT INTO credentials (tenant, provider, status, last_error, meta) VALUES ('t', 'oauth:mastodon', 'failed', 'refresh HTTP 401', ?)").run(JSON.stringify({ kind: 'oauth', provider: 'mastodon', instance: 'fosstodon.org' }));
+  db.raw.prepare("INSERT INTO credentials (tenant, provider, status, last_error, meta) VALUES ('u', 'oauth:mastodon', 'failed', 'refresh HTTP 401', ?)").run(JSON.stringify({ kind: 'oauth', provider: 'mastodon' }));
+  db.raw.prepare("INSERT INTO credentials (tenant, provider, status, last_error, meta) VALUES ('v', 'oauth:mastodon', 'failed', 'refresh HTTP 401', ?)").run(JSON.stringify({ kind: 'oauth', provider: 'mastodon', instance: 'evil.example/?x=<script>' }));
+  const by = Object.fromEntries((await ownerActs(db)).map(a => [a.tenant, a.connect]));
+  assert.equal(by.t, '/connect/mastodon/start?instance=fosstodon.org');
+  assert.equal(by.u, '/connect/mastodon/start?instance=mstdn.science', 'a row with no instance keeps the default link');
+  assert.equal(by.v, '/connect/mastodon/start?instance=mstdn.science', 'a value that is not a host name is never put into the link');
+});
+
+// The generic connector callback records a failed event for a bad or expired state and for a replayed approval, as the Mastodon and Bluesky callbacks
+// (social.js `refused`) do. This was the closing probe of the PLANNED part of the specification; it deliberately names no requirement id, since the
+// specification states the recording outside its numbered requirements.
+test('the generic connector callback records a failed event for a bad state and for a replayed approval', async () => {
   const env = mk({ OAUTH_GOOGLE_CLIENT_ID: 'gid', OAUTH_GOOGLE_CLIENT_SECRET: 'gsec' });
   const f = async u => String(u) === 'https://oauth2.googleapis.com/token' ? J({ access_token: 'at', refresh_token: 'rt', expires_in: 3600 }) : NF;
   const loc = new URL((await get(env, '/connect/google/start', f)).headers.get('location')), state = loc.searchParams.get('state');
@@ -447,10 +458,10 @@ test('US-30-R36: the live inventory of the organization\'s GitHub Apps removes e
   assert.equal((await auditApps(db, env, 't', { fetch: f, now: NOW + 21 * 3600e3 })).skipped, undefined);
 });
 
-// The app inventory report is recorded as one credential event, and the store cuts every event detail to 300 characters (R20), so a report of two apps is
-// recorded cut and cannot be parsed back. This is the closing probe of the PLANNED part of the specification (the last sentence of R36, which is a SHOULD)
-// and stays a todo until the whole report is kept where it can be read back. It deliberately names no requirement id.
-test('the app inventory report is recorded whole and parses back (closing probe of the PLANNED part of the specification)', { todo: 'store.event cuts the app-audit report to 300 characters' }, async () => {
+// The app inventory report is recorded as one credential event, and the store cuts every event detail to 300 characters (R20), so the event alone holds a
+// report of two apps cut. This was the closing probe of the PLANNED part of the specification (the last sentence of R36): the whole report is now also kept
+// in one org row (readAppAudit), which parses back. The event itself stays as R20 says.
+test('US-30-R36: the app inventory report is recorded whole and parses back', async () => {
   const env = mk(), db = env.DB, { pkcs8 } = await appKey();
   for (const role of ['github-app', 'github-admin']) await store.put(db, env, 't', role, { secret: { pem: toPem(pkcs8, 'PRIVATE KEY') }, meta: { app_id: role === 'github-app' ? 7 : 8, installation_id: 9 }, status: 'ok' });
   const f = async (u, o = {}) => { u = String(u);
@@ -459,7 +470,24 @@ test('the app inventory report is recorded whole and parses back (closing probe 
   const report = await auditApps(db, env, 't', { fetch: f, now: NOW });
   assert.ok(JSON.stringify(report).length > 300, 'the report of two apps is longer than one event detail');
   const ev = events(db, 'github-app').filter(e => e.event === 'app-audit').pop();
-  assert.deepEqual(JSON.parse(ev.detail), report, 'the recorded report reads back whole');
+  assert.equal(ev.detail, JSON.stringify(report).slice(0, 300), 'the event detail is the report cut to 300 characters (R20)');
+  assert.deepEqual(await readAppAudit(db, 't'), report, 'the recorded report reads back whole');
+  assert.equal(await readAppAudit(db, 'other'), null, 'another tenant has no report');
+});
+
+test('US-30-R36: a whole report that could not be kept is reported as not kept on the returned report, with the reason', async () => {
+  const env = mk(), db = env.DB, { pkcs8 } = await appKey();
+  await store.put(db, env, 't', 'github-app', { secret: { pem: toPem(pkcs8, 'PRIVATE KEY') }, meta: { app_id: 7, installation_id: 9 }, status: 'ok' });
+  const f = async (u) => { u = String(u); if (u.endsWith('/app')) return J({ id: 7, slug: 'org-app' }); if (u.includes('/app/installations?')) return J([{ id: 9, account: { login: 'acme' } }]); return J({}, 204); };
+  const refusing = Object.create(db);
+  refusing.prepare = (sql) => /^INSERT INTO org\b/.test(sql) ? { bind: () => ({ run: async () => { throw new Error('org write refused'); } }) } : db.prepare(sql);
+  const r = await auditApps(refusing, env, 't', { fetch: f, now: NOW });
+  assert.equal(r.kept, false, 'a failed keep is on the report the caller reads');
+  assert.equal(r.keep_error, 'org write refused');
+  assert.equal(await readAppAudit(db, 't'), null, 'nothing was kept');
+  assert.equal(events(db, 'github-app').filter(e => e.event === 'app-audit').length, 1, 'the cut event is still recorded');
+  const ok = await auditApps(db, env, 'u', { fetch: f, now: NOW });
+  assert.equal(ok.kept, undefined, 'a kept report carries no failure field');
 });
 
 test('US-30-R37: any other service is linked by one consent click, a PKCE redirect with a signed one-time state, a sealed result and a revoking disconnect; a provider with no registered app points at the single owner card, never at a token', async () => {
@@ -595,6 +623,23 @@ test('US-30-R41: a working sign-in is never started again, a start that arrives 
   assert.equal((await get(env, '/connect/mastodon/callback?code=c&state=' + encodeURIComponent(fresh), f, { now: NOW + 30 * 60e3 })).status, 200);
   const again = await get(env, '/connect/mastodon/start', f); assert.match(await again.text(), /Nothing to do. The connection is working/);
   assert.equal(apps, 3);
+});
+
+test('US-30-R41: a refused callback on the unauthenticated route is recorded once per tenant, provider and reason kind an hour, however often it arrives', async () => {
+  const env = mk();
+  for (let i = 0; i < 5; i++) assert.match(await (await get(env, '/connect/mastodon/callback?code=c&state=not-a-state', null)).text(), /That approval link expired/);
+  for (let i = 0; i < 3; i++) await get(env, '/connect/google/callback?code=c&state=nope-' + i, null);
+  const rows = events(env.DB, 'oauth:mastodon').filter(r => r.event === 'failed');
+  assert.deepEqual(rows.map(r => r.detail), ['callback: state expired or for another tenant'], 'five refusals, one row');
+  assert.equal(events(env.DB, 'oauth:google').filter(r => r.event === 'failed').length, 1, 'the generic connector route is limited the same way');
+  // a different reason kind is its own row; varying the part a caller chose does not get past the limit
+  assert.equal(await store.refusal(env.DB, 't', 'oauth:mastodon', 'provider answered', 'provider answered access_denied'), true);
+  assert.equal(await store.refusal(env.DB, 't', 'oauth:mastodon', 'provider answered', 'provider answered other_text'), false);
+  assert.equal(events(env.DB, 'oauth:mastodon').filter(r => r.event === 'failed').length, 2);
+  // an hour later the same reason is recorded again
+  env.DB.raw.prepare("UPDATE credential_events SET at = strftime('%Y-%m-%dT%H:%M:%SZ','now','-61 minutes')").run();
+  await get(env, '/connect/mastodon/callback?code=c&state=not-a-state', null);
+  assert.equal(events(env.DB, 'oauth:mastodon').filter(r => r.detail === 'callback: state expired or for another tenant').length, 2);
 });
 
 test('US-30-R42: with the internal key bound a provider connect page is the owner\'s alone: without the site Worker\'s key it sends to sign in with the destination, and the key is compared as a whole', async () => {

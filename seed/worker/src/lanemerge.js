@@ -6,6 +6,7 @@
 // LANE_PAT or lane app secret is bound. The tick Worker already holds the org GitHub App (workflows: write), so the lane asks the Worker to merge: the run's
 // OIDC token proves the caller, the Worker re-checks every gate on the exact head commit and merges with the installation token. Nothing is minted by a person.
 import { notGreen } from './greenguard.js';
+import { heldByComment } from './holds.js';  // HOLD-COMMENT-1
 import { ghFetch, mergedAnyway } from './ghfetch.js';  // GH-RETRY-1
 const API = 'https://api.github.com';
 async function gh(f, token, method, path, body) {
@@ -23,6 +24,8 @@ export async function mergeForLane({ token, repo, pr, sha, fetch: f = fetch }) {
   if (!p.head || p.head.sha !== sha) return { ok: false, status: 409, error: 'head moved' };
   if (!p.head.repo || p.head.repo.full_name !== repo) return { ok: false, status: 409, error: 'fork PR' };
   if ((p.labels || []).some(l => l && l.name === 'hold')) return { ok: false, status: 409, error: 'hold' };  // HOLD-LABEL-1 (US-33-R13)
+  const commentHold = await heldByComment((m, path) => gh(f, token, m, path), repo, pr);  // HOLD-COMMENT-1 (US-33-R103)
+  if (commentHold) return { ok: false, status: 409, error: commentHold };
   if (p.mergeable_state !== 'clean') return { ok: false, status: 409, error: `mergeable_state ${p.mergeable_state}` };
   const hold = await notGreen(f, token, repo, sha, (ff, t, m, path) => gh(ff, t, m, path));  // GREEN-GUARD-1
   if (hold) return { ok: false, status: 409, error: hold };

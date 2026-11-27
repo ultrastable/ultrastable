@@ -155,11 +155,13 @@ test('US-29-T03: a system whose content has gone stale is read as stale, files i
   assert.equal((await readStickiness(db, { now: NOW })).systems.find(x => x.system === 'a').series.length, 1, 'both readings were of one day');
 });
 
-// The closing probe of a known defect, PLANNED in section 7 (a todo test is recorded as planned, never as proof): the declared minimum depth and rhythm are
-// read with `||`, so a declared 0 is read as the default.
-test('US-29-R75: a declared min_depth of 0 is honoured', { todo: 'seed/worker/src/stickiness.js reads st.min_depth || 3, so 0 becomes 3' }, async () => {
+// The closing probe of a former defect: the declared minimum depth was read with `||`, so a declared 0 was read as 3. It is now used as declared.
+test('US-29-R75: a declared min_depth of 0 is honoured', async () => {
   _reset(); const db = makeDb();
   const cfg = { progress: { systems: [sysA({ min_depth: 0, domains: [] })] } };
   const r = await stickinessStep({ db, config: cfg, ensureItem, fetchImpl: fetchOf([ent('a1', 1, { depth: 1 }), ent('a2', 2, { depth: 1 })]), now: NOW });
   assert.equal(r.systems.a, 'fresh');
+  _reset(); const db2 = makeDb();  // with no declaration the default of 3 still holds, so the same shallow entries read thin
+  const r2 = await stickinessStep({ db: db2, config: { progress: { systems: [sysA({ domains: [] })] } }, ensureItem, fetchImpl: fetchOf([ent('a1', 1, { depth: 1 }), ent('a2', 2, { depth: 1 })]), now: NOW });
+  assert.equal(r2.systems.a, 'thin', 'an undeclared min_depth stays 3');
 });

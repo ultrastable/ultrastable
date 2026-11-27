@@ -62,7 +62,7 @@ export async function stickinessStep({ db, config, ensureItem, fetchImpl = fetch
       await run(db, `INSERT INTO stickiness_state (system, name, state, error, checked_at) VALUES (?,?,?,?,?) ON CONFLICT(system) DO UPDATE SET state=excluded.state, error=excluded.error, checked_at=excluded.checked_at`, sys.id, sys.name, 'unreadable', error, nowIso);
       out.systems[sys.id] = 'unreadable'; continue;
     }
-    const mc = { now, audience: await audienceOf(db, st, fetchImpl, now), domains: st.domains || [], expect_days: st.expect_days || 2, min_depth: st.min_depth || 3 };
+    const mc = { now, audience: await audienceOf(db, st, fetchImpl, now), domains: st.domains || [], expect_days: st.expect_days || 2, min_depth: Number.isFinite(st.min_depth) ? st.min_depth : 3 };  // US-29-R75: any declared number stands (0 too); only a missing one falls back to 3
     const m = measure(entries, mc), acts = plan(m, mc), q = queue(entries, { now, posted: done, reveal: st.reveal || '', max_per_day: st.max_per_day || 2, since_days: st.since_days || 14, arm: 'sticky' });
     const series = record([], m, { now })[0];
     await run(db, `INSERT INTO stickiness_series (system, day, row) VALUES (?,?,?) ON CONFLICT(system, day) DO UPDATE SET row=excluded.row`, sys.id, series.day, JSON.stringify(series));
