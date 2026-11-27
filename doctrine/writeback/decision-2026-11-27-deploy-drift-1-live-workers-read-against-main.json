@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-deploy-drift-1-live-workers-read-against-main",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "DEPLOY-DRIFT-1: live Workers read against main",
+  "body": "foundation/deploydrift.py compares each live Worker's last verified deploy sha with commits to its code since; unmeasured counts as drift. The deploy-workers.yml header no longer claims a daily probe that nothing runs.",
+  "probe": "grep:foundation/deploydrift.py::DEPLOY-DRIFT-1",
+  "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+ },
+ "kind": "decision",
+ "title": "DEPLOY-DRIFT-1: live Workers read against main",
+ "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+}
