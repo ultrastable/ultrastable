@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { mergeNow, prsForEvent, adoptClaims, latency, reconcile, makeGh } from '../src/mergenow.js';
-import { GENERATED } from '../src/generated.js';
+import { GENERATED, isGenerated } from '../src/generated.js';
 
 const enc = (t) => Buffer.from(t).toString('base64');
 function fake(st) {
@@ -99,4 +99,25 @@ test('the generated list matches the files the post-merge generators write', { s
   const py = readFileSync(new URL('../../../scripts/regen_generated.py', import.meta.url), 'utf8');
   const outs = JSON.parse(py.match(/^OUTPUTS = (\[[\s\S]*?\])$/m)[1]).filter(p => !/README\.md$/.test(p) && p !== 'social/calendar.json');  // the calendar also holds hand-queued posts, so a PR's copy can matter
   assert.deepEqual([...GENERATED].sort(), outs.sort());
+});
+
+test('GENERATED-BY-PATTERN-1: a class of generator-owned files is reconciled, a file a person or agent writes is not', async () => {
+  // the conflicts that shut #2664 and #2615: a paper newer than the list, and a ledger a generator appends to
+  for (const p of ['research/papers/second-loop-2026.md', 'research/papers/perez-lopez-1974.md', 'ops/improvements.jsonl', 'ops/research/x/ledger.jsonl', 'site/research-data.js', 'site/yearsim-data.js', 'ops/trajectory.json', 'seed/SYSTEM.md']) assert.equal(isGenerated(p), true, p);
+  // hand-written, or a switch a change must be able to set: never taken from main silently
+  for (const p of ['ops/halt.json', 'actions-budget.json', 'site/research.js', 'site/worker.js', 'research/studies/perez-lopez-1974.json', 'foundation/research.py', 'docs/research/knowledge-graph.md', 'README.md', 'seed/worker/src/mergenow.js']) assert.equal(isGenerated(p), false, p);
+  const seen = [];
+  const gh = async (method, path, body) => {
+    seen.push(`${method} ${path}`);
+    if (path.includes('/files')) return { ok: true, status: 200, json: [{ filename: 'research/papers/second-loop-2026.md', status: 'modified' }, { filename: 'foundation/x.py', status: 'modified' }] };
+    if (path.includes('/contents/')) return { ok: true, status: 200, json: { encoding: 'base64', content: btoa('main copy'), sha: 'mainsha' } };
+    if (path.includes('/git/commits/')) return { ok: true, status: 200, json: { tree: { sha: 'headtree' } } };
+    if (path.endsWith('/git/trees')) { assert.deepEqual(body.tree, [{ path: 'research/papers/second-loop-2026.md', mode: '100644', type: 'blob', sha: 'mainsha' }]); return { ok: true, status: 201, json: { sha: 'newtree' } }; }
+    if (path.endsWith('/git/commits')) return { ok: true, status: 201, json: { sha: 'c1' } };
+    return { ok: true, status: 200, json: {} };
+  };
+  const { reconcile } = await import('../src/mergenow.js');
+  const r = await reconcile(gh, 'o/r', { number: 7, head: { sha: 'h', ref: 'b' } });
+  assert.deepEqual(r, { result: 'resolved', stripped: 1 });
+  assert.ok(seen.some(x => x === 'POST /repos/o/r/merges'), 'main is merged into the branch after the paper takes main\'s copy');
 });
