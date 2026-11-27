@@ -77,6 +77,9 @@ def check(root=REPO) -> list[str]:
             bad.append(f"directive {d['id']}: enforcement probe fails ({d['probe']})")
     if "PROACTIVE-PROGRAMS-1" not in dtxt:
         bad.append("proactive programs missing")
+    from . import kernel9  # KERNEL-9-1: the successor text is pinned and mapped; runs wherever `kernel --check` runs
+    if (root / kernel9.PATH).exists():
+        bad += kernel9.check(root)
     return bad
 
 

@@ -515,6 +515,14 @@
       "url": "intent-yield.schema.json"
     },
     {
+      "name": "kernel-9.json",
+      "description": "Contract for doctrine/kernel-9.json",
+      "fileMatch": [
+        "doctrine/kernel-9.json"
+      ],
+      "url": "kernel-9.schema.json"
+    },
+    {
       "name": "kernel.json",
       "description": "Contract for doctrine/kernel.json",
       "fileMatch": [
