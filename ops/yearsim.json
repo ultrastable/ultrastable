@@ -1,5 +1,5 @@
 {
- "at": "2026-11-27T07:55:55Z",
+ "at": "2026-11-27T08:25:40Z",
  "days": 730,
  "drills": {
   "actions-billing": {
@@ -71,7 +71,7 @@
   },
   "model-retirement": {
    "capacity": 0.9,
-   "evidence": "8 vendor-wide retirements through agents.complete: 8 still produced a change, 1 on a healed rung; modelwatch.observed turned 1 recorded 410s into catalog retirements; watchdog runs it: True",
+   "evidence": "6 vendor-wide retirements through agents.complete: 6 still produced a change, 2 on a healed rung; modelwatch.observed turned 1 recorded 410s into catalog retirements; watchdog runs it: True",
    "exercised": true,
    "mode": "recovers",
    "recover": true
