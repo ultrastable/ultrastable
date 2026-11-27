@@ -6720,6 +6720,24 @@
    "body": "check_reply_shape in foundation/executor.py runs before any path is read: string path, string content or find/replace edits, no unknown keys.",
    "probe": "grep:foundation/executor.py::REPLY-SCHEMA-1",
    "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-canon-1-cybernetics-research-program",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "CANON-1 cybernetics research program",
+   "body": "Ten primary sources (Ashby, Conant-Ashby, Wiener, McCulloch, Beer, Bateson, von Foerster, Pask, Perez Lopez) in doctrine/research.json canon; research --intake files the next one weekly as Q-RES-CANON; two papers ingested now.",
+   "probe": "grep:foundation/research.py::def canon\\(",
+   "session": "session_0156nqDsUQq8R5at568VZC1L"
+  },
+  {
+   "id": "lesson-2026-11-27-regen-parity-1-every-pure-generator-runs-at-pull-request-tim",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "REGEN-PARITY-1: every pure generator runs at pull-request time, because a pull request carries no generated file",
+   "body": "PR-NO-GENERATED-1 stopped pull requests carrying generated files. The PR-time list (scripts/regen_generated.sh) lacked six pure generators that the post-merge list runs: ultrastability data, admit, owndb, tenantcontrols, upstream contract, plugins self. A pull request that changed one of their sources failed its freshness check and had no way to pass: #2615 added an essential variable and failed on site/ultrastability-data.js. Now the six run at PR time, the eight generators that record an event or read the network are named in POST_MERGE_ONLY with a reason each, and a test fails any generator that is in neither place. Two lists of the same thing need a test that compares them.",
+   "probe": "grep:scripts/regen_generated.py::POST_MERGE_ONLY",
+   "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
   }
  ]
 }

@@ -1,0 +1,12 @@
+{
+  "id": "Q-SAYDO-rules-DOC-CONSUMED-1",
+  "title": "Q-SAYDO-rules-DOC-CONSUMED-1: says DOC-CONSUMED-1, does not do it",
+  "body": "**Owner:** executor\n**Trigger:** say-do check (SAY-DO-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation saydo --probe rules:DOC-CONSUMED-1\n**Status:** open\n\nThe system states `DOC-CONSUMED-1` (rules) and its code does not do it: python3 -m foundation docs_audit --check: research/papers/conant-ashby-1970.md: tells a person to act (1 lines, baseline 0): 'Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of \n\nChange the code to do what the statement says, or change the statement to what the code does; never weaken the probe.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation saydo --probe rules:DOC-CONSUMED-1` exits 0.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "say-do"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
