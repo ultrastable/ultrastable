@@ -18,7 +18,7 @@ concurrency:
   group: issues
   cancel-in-progress: false
 jobs:
-  # RULE-OF-TWO-1 (kernel 9.0.0 X1): anyone can open an issue, so the job that the `issues` event starts holds no secret: it triages with the
+  # RULE-OF-TWO-2 (kernel 9.0.0 X1): anyone can open an issue, so the job that the `issues` event starts holds no secret: it triages with the
   # built-in token only. The scheduled sweep, which no outsider can start, keeps the lane token.
   triage-opened:
     if: ${{ vars.HALT != '1' && github.event_name == 'issues' }}

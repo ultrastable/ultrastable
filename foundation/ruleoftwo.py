@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-"""RULE-OF-TWO-1 (kernel 9.0.0 §9 X1; Meta, "Agents Rule of Two", 2025): a job holds at most two of untrusted input, sensitive data or secrets,
+"""RULE-OF-TWO-2 (kernel 9.0.0 §9 X1; Meta, "Agents Rule of Two", 2025): a job holds at most two of untrusted input, sensitive data or secrets,
 and external state change.
 
   python3 -m foundation ruleoftwo --check   every job in .github/workflows/*.yml read from its own text; a job with all three fails
@@ -71,7 +71,7 @@ def main(argv) -> int:
     for b in bad:
         print("ruleoftwo:", b)
     if not bad:
-        print(f"ruleoftwo ok: {len(jobs())} jobs, none holds all three of untrusted input, a secret and state change (RULE-OF-TWO-1)")
+        print(f"ruleoftwo ok: {len(jobs())} jobs, none holds all three of untrusted input, a secret and state change (RULE-OF-TWO-2)")
     return 1 if bad else 0
 
 

@@ -86,7 +86,7 @@ def check(root=REPO) -> list[str]:
         rate = disposition.recall_rate(disposition.rows(root))  # M1 failure_recall probe
         if rate is not None and rate < 0.9:
             bad.append(f"failure_recall {rate} < 0.9: failed items whose failures the next prompt would not carry (kernel 9.0.0 M1)")
-        from . import ruleoftwo  # RULE-OF-TWO-1 (X1)
+        from . import ruleoftwo  # RULE-OF-TWO-2 (X1)
         bad += ruleoftwo.check(root)
     return bad
 
