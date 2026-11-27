@@ -1,6 +1,6 @@
 {
  "rule": "FLEET-MAP-1",
- "at": "2026-11-27T14:41:14Z",
+ "at": "2026-11-27T14:59:02Z",
  "repos": {
   "ultrastable/ultrastable": {
    "status": "not-a-copy",
@@ -13,8 +13,8 @@
   "ultrastable/seed": {
    "status": "drifted",
    "how": "github",
-   "differ": 40,
-   "missing": 5,
+   "differ": 1,
+   "missing": 0,
    "extra": 0,
    "notes": []
   },
