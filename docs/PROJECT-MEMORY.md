@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: feat(executor): refuse a model reply of the wrong shape (R12) (#2708)
+- 2026-11-27: feat(deploy): read live Workers against main (R6) (#2706)
 - 2026-11-27: feat(deploy): roll back drifted Worker deploys (R6) (#2701)
 - 2026-11-27: fix(lane): a pull request carries no generator-owned files, so main moving under it cannot kill it (PR-NO-GENERATED-1) (#2694)
 - 2026-11-27: feat(checks): workflow tokens read-only at the top, identities registered (ZHC-R4) (#2697)
