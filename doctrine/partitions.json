@@ -1,0 +1,14 @@
+{
+ "_doc": "P1/P2: one ultrastable subsystem per irreducible good, one writer each, joins declared. Connectance is joins/(n*(n-1)); the 0.10 ceiling is meaningless below n=10, so a join is added only where a variable refuses to stabilize (Ashby journal 1905). Owner-owned.",
+ "version": "1.0.0",
+ "connectance_max": 0.10,
+ "min_partitions_for_connectance": 10,
+ "partitions": {
+  "platform": {"writer": "agent", "paths": ["foundation/", "seed/", "workers/core/"], "max_active_vars": 8},
+  "site": {"writer": "agent", "paths": ["site/", "dashboard/"], "max_active_vars": 8},
+  "owner_coupling": {"writer": "none", "paths": [], "read_only": true}
+ },
+ "joins": [
+  {"from": "platform", "to": "site", "via": "workers/core vendored modules", "why": "site consumes shared modules"}
+ ]
+}

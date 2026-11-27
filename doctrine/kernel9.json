@@ -1,0 +1,131 @@
+{
+ "_doc": "Machine form of doctrine/kernel-9.0.0.md. Every clause names the file that enforces it and the metric that reads it. `python3 -m foundation kernel9 --check` fails when a clause is missing from the text, an enforcer path is gone, or a byte budget is exceeded. Changed only by a reviewed PR. The kernel text is unitary: it embeds its registries, procedures, ledger and hook and refers to no other file; kernel9 --check fails on a URL or repo path in it and on drift from the JSON registries.",
+ "id": "kernel9",
+ "version": "9.0.0",
+ "supersedes": "doctrine/kernel-8.2.1.md",
+ "text": "doctrine/kernel-9.0.0.md",
+ "budgets": {
+  "doctrine/kernel-9.0.0.md": 24576,
+  "AGENTS.md": 8192,
+  "CLAUDE.md": 2048,
+  "agents/AGENTS.md.nested": 4096,
+  "skill_max_lines": 499
+ },
+ "clauses": [
+  {
+   "id": "R4",
+   "source": "Ashby Society 2829: systems should not control their own parameters",
+   "enforcer": ".claude/hooks/guard.sh",
+   "metric": "unauthorized EV edits = 0"
+  },
+  {
+   "id": "E1",
+   "source": "Ashby 4015 (EVs multiple for progressive adaptation)",
+   "enforcer": "seed/autonomy/essential-variables.json",
+   "metric": "stale-reading rate"
+  },
+  {
+   "id": "E3",
+   "source": "Perez Lopez WP5: operational subordinated to non-operational",
+   "enforcer": "seed/scripts/perezlopez.py",
+   "metric": "admitted actions that breached an EV"
+  },
+  {
+   "id": "E4",
+   "source": "Ashby Society 3140; Perez Lopez p.15",
+   "enforcer": "foundation/kernel9.py",
+   "metric": "scalar score fields = 0"
+  },
+  {
+   "id": "F2",
+   "source": "ImpossibleBench arXiv 2510.20270 s5.3",
+   "enforcer": "foundation/kernel9.py",
+   "metric": "flag rate"
+  },
+  {
+   "id": "F3",
+   "source": "ImpossibleBench s5.2",
+   "enforcer": ".claude/hooks/guard.sh",
+   "metric": "test deletions/skips = 0"
+  },
+  {
+   "id": "G1",
+   "source": "Ashby 3531 (hardly accessible step-functions)",
+   "enforcer": "doctrine/step-repertoire.json",
+   "metric": "vetoed classes selected = 0"
+  },
+  {
+   "id": "S1",
+   "source": "Design for a Brain: second feedback slow and intermittent",
+   "enforcer": "agents/skills/ev-breach-step/SKILL.md",
+   "metric": "steps per 24h"
+  },
+  {
+   "id": "S2",
+   "source": "Ashby 0995 step-function; 3436 versatility lost",
+   "enforcer": "doctrine/step-repertoire.json",
+   "metric": "commit/rollback ratio"
+  },
+  {
+   "id": "S3",
+   "source": "ACE arXiv 2510.04618; Ashby 3016",
+   "enforcer": "agents/skills/slow-loop-delta/SKILL.md",
+   "metric": "replay delta vs prediction"
+  },
+  {
+   "id": "P1",
+   "source": "Ashby 5436",
+   "enforcer": "doctrine/partitions.json",
+   "metric": "partitions with >=3 EVs"
+  },
+  {
+   "id": "P2",
+   "source": "Ashby 1905, 4178",
+   "enforcer": "doctrine/partitions.json",
+   "metric": "connectance"
+  },
+  {
+   "id": "M1",
+   "source": "Perez Lopez footnote p.11 (pride)",
+   "enforcer": "agents/skills/negative-learning-audit/SKILL.md",
+   "metric": "failure recall >= 0.9"
+  },
+  {
+   "id": "M2",
+   "source": "Perez Lopez WP5 ch. III-V",
+   "enforcer": "seed/scripts/perezlopez.py",
+   "metric": "falling-window count"
+  },
+  {
+   "id": "M4",
+   "source": "Ashby Epistemology 4301",
+   "enforcer": "foundation/trust.py",
+   "metric": "trust moves without external event = 0"
+  },
+  {
+   "id": "O1",
+   "source": "Ashby 4160",
+   "enforcer": "agents/skills/observer-probe/SKILL.md",
+   "metric": "partitions probed in 7 days"
+  },
+  {
+   "id": "X1",
+   "source": "Meta Agents Rule of Two (2025-10-31)",
+   "enforcer": "agents/AGENTS.md",
+   "metric": "violations = 0"
+  }
+ ],
+ "dispositions": [
+  "done",
+  "flagged",
+  "blocked_by_gate",
+  "deferred_budget",
+  "failed"
+ ],
+ "forbidden_keys": [
+  "fleet_score",
+  "global_score",
+  "overall_score",
+  "score_total"
+ ]
+}

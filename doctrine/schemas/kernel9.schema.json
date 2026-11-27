@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/kernel9.schema.json",
+  "title": "kernel9 (doctrine/kernel9.json)",
+  "description": "Contract for doctrine/kernel9.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "supersedes": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "budgets": {
+      "type": "object",
+      "properties": {
+        "doctrine/kernel-9.0.0.md": {
+          "type": "number"
+        },
+        "AGENTS.md": {
+          "type": "number"
+        },
+        "CLAUDE.md": {
+          "type": "number"
+        },
+        "agents/AGENTS.md.nested": {
+          "type": "number"
+        },
+        "skill_max_lines": {
+          "type": "number"
+        }
+      }
+    },
+    "clauses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "enforcer": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dispositions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "forbidden_keys": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "budgets",
+    "clauses",
+    "dispositions",
+    "forbidden_keys",
+    "id",
+    "supersedes",
+    "text",
+    "version"
+  ]
+}

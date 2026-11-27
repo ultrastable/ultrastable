@@ -515,6 +515,14 @@
       "url": "kernel.schema.json"
     },
     {
+      "name": "kernel9.json",
+      "description": "Contract for doctrine/kernel9.json",
+      "fileMatch": [
+        "doctrine/kernel9.json"
+      ],
+      "url": "kernel9.schema.json"
+    },
+    {
       "name": "knobs.json",
       "description": "Contract for doctrine/knobs.json",
       "fileMatch": [
@@ -657,6 +665,14 @@
         "doctrine/orphans.json"
       ],
       "url": "orphans.schema.json"
+    },
+    {
+      "name": "partitions.json",
+      "description": "Contract for doctrine/partitions.json",
+      "fileMatch": [
+        "doctrine/partitions.json"
+      ],
+      "url": "partitions.schema.json"
     },
     {
       "name": "pathfinder.json",
@@ -1049,6 +1065,14 @@
         "doctrine/static-content.json"
       ],
       "url": "static-content.schema.json"
+    },
+    {
+      "name": "step-repertoire.json",
+      "description": "Contract for doctrine/step-repertoire.json",
+      "fileMatch": [
+        "doctrine/step-repertoire.json"
+      ],
+      "url": "step-repertoire.schema.json"
     },
     {
       "name": "strays.json",
