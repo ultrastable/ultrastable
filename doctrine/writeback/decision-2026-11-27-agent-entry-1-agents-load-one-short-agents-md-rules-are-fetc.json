@@ -5,7 +5,7 @@
   "date": "2026-11-27",
   "title": "AGENT-ENTRY-1: agents load one short AGENTS.md; rules are fetched by path",
   "body": "CLAUDE.md imported about 224 KB of instructions (agents/AGENTS.md alone 155 KB). Codex stops reading project instructions at 32 KiB, Claude Code's guidance is under 200 lines per file, and an @import loads the whole imported file, so small server-side models could not read the rules at all. The owner approved changing the load order on 2026-11-27. CLAUDE.md is now the single line @AGENTS.md; AGENTS.md at the root holds commands, how a change moves, limits, where code is written and which document to read for which work. The standing rules stay word for word in agents/AGENTS.md, enforced by the checks they name, and are fetched with python3 -m foundation agentrules --for PATH. The budget is data in doctrine/agent-entry.json and seed/autonomy/agent-entry.json and coldstart --check fails an entry that grows past it.",
-  "probe": "grep:CLAUDE.md::^@AGENTS",
+  "probe": "grep:seed/scripts/agentrules.py::max_closure_bytes",
   "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
  },
  "kind": "decision",
