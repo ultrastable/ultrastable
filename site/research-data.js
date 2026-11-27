@@ -1555,7 +1555,7 @@ export default {
      "Limits on everything that matters. Put in place: the check fails a variable with no limits. Check it with one number, share of declared essential variables that have limits (doctrine/ultrastability.json), and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 73 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.0 (n = 164; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.4 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 73 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.0 (n = 164; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.444 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Source. Own R&D question set, regenerated from this system's records, version 2026-11-25."
@@ -1677,7 +1677,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 72 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.4,
+     "measured": 0.444,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
@@ -1822,7 +1822,7 @@ export default {
      "The member knowing better than the organization. Put in place: what the owner does not know is computed (known minus told), never asked. Check it with one number, owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl), and set a limit for it (<= 0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 2 of 7 of these checks pass today. Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.4 (n = None; source: foundation/specgate.py over docs/issues). Share of essential variables (platform and tenant) whose latest reading in the last 7 days has a value (ops/ultrastability.jsonl) reads 0.717 (n = 46; source: ops/ultrastability.jsonl, latest reading per variable in the last 7 days). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.874 (n = 199; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 2 of 7 of these checks pass today. Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.444 (n = None; source: foundation/specgate.py over docs/issues). Share of essential variables (platform and tenant) whose latest reading in the last 7 days has a value (ops/ultrastability.jsonl) reads 0.717 (n = 46; source: ops/ultrastability.jsonl, latest reading per variable in the last 7 days). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.874 (n = 199; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. The whole working paper was read from the IESE PDF the owner supplied; the passages quoted in the findings are verbatim.",
@@ -1913,7 +1913,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 336 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.4,
+     "measured": 0.444,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
