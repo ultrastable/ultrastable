@@ -132,8 +132,11 @@ class NoMadeUpNumbers(unittest.TestCase):
         st = R.studies()[0]
         p = R.paper(R.REPO, st, ms, {})
         self.assertEqual(R.gate(p, st), [])
-        p["sections"]["summary"].append("This cut costs by 47%.")
-        self.assertTrue(any("47%" in b for b in R.gate(p, st)))
+        ok = R.sourced_numbers(p, st)
+        # an invented figure must be one no measurement or cited source carries (a fixed 47 became a measured value once the ledgers grew)
+        n = next(str(k) for k in range(61, 99) if str(k) not in ok and str(float(k)).rstrip("0").rstrip(".") not in ok)
+        p["sections"]["summary"].append(f"This cut costs by {n}%.")
+        self.assertTrue(any(f"{n}%" in b for b in R.gate(p, st)))
 
 
 class CyberneticsProgram(unittest.TestCase):
