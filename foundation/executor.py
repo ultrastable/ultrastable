@@ -150,6 +150,28 @@ def elision_gap(files: list[str], root=REPO) -> str | None:
     return None
 
 
+def contract_gap(files: list[str], root=REPO) -> str | None:
+    """SCHEMA-KEEP-1 (incident 2026-11-27): executor commit 54d6e57e7 replaced actions-budget.json, the workflow kill-switch config, with an unrelated
+    document; every consumer then raised KeyError and main stayed red. A changed JSON object that already exists in HEAD must keep each top-level key it
+    had (`_doc` aside): code reads those keys, so a change that drops them is refused and the reason is fed back to the model."""
+    for f in files:
+        path = Path(root) / f
+        if not path.is_file() or not f.endswith(".json"):
+            continue
+        r = subprocess.run(["git", "show", f"HEAD:{f}"], cwd=root, capture_output=True, text=True)
+        if r.returncode != 0:
+            continue
+        try:
+            before, after = json.loads(r.stdout), json.loads(path.read_text(encoding="utf-8"))
+        except (ValueError, OSError, UnicodeDecodeError):
+            continue
+        if isinstance(before, dict) and isinstance(after, dict):
+            lost = sorted(k for k in before if k != "_doc" and k not in after)
+            if lost:
+                return f"{f} would lose the top-level key(s) {', '.join(lost[:6])} that code reads (SCHEMA-KEEP-1); keep every existing key and add yours beside them, or put the new data in a new file with its own reader"
+    return None
+
+
 def priority(issue: dict) -> tuple:
     """Driver order: items with executable effect first (EFFECT-1), then p0..p9 label (lower first), then oldest number."""
     if "score" in issue:  # PRIORITIZE-1: the ranker's score (goal weight, dependency centrality, size, age) replaces label-then-age order
@@ -542,6 +564,14 @@ def saydo_gap(files) -> str | None:
     return None
 
 
+def trailers(n, row: dict) -> str:
+    """ZHC-R7: provenance trailers written by the harness, never by the model, so every executor commit names its agent, model, item and run."""
+    models = row.get("models") or ["none"]
+    run_id = os.environ.get("GITHUB_RUN_ID", "local")
+    return "\n".join([f"Agent: ultrastable-agent/executor", f"Model: {models[-1]}", f"Work-Item: {n}", f"Run-Id: {run_id}",
+                      f"Assisted-by: executor:{models[-1]}"])
+
+
 def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=None, checks=None, remote: bool = False) -> dict:
     """Returns the provenance row. Never raises for a failed step; the failure is the row (and an `executor-failed` label)."""
     root = Path(root)
@@ -625,7 +655,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 if attempt < REPAIRS:
                     prompt = base_prompt() + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED (" + failed[0] + "). Do NOT reply with JSON this time. Reply in exactly this format instead:" + chr(10) + agents_block_format()
                 continue
-            gap = (consumer_gap(files, root) if checks is None and not port else None) or elision_gap(files, root) or saydo_gap(files)
+            gap = (consumer_gap(files, root) if checks is None and not port else None) or elision_gap(files, root) or contract_gap(files, root) or saydo_gap(files)
             if gap:
                 failed.append(gap)
             if checks is None and not gap:
@@ -679,7 +709,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 if gc:
                     raise RuntimeError("generator failed: " + " ".join(g) + ": " + go[-300:])
         sh(["git", "add", "-A", "--", ".", f":!{LOG}"], root)
-        sh(["git", "-c", "user.name=ultrastable-executor", "-c", "user.email=executor@users.noreply.github.com", "commit", "-m", f"{out.get('summary', issue['title'])} (#{n})"], root)
+        sh(["git", "-c", "user.name=ultrastable-executor", "-c", "user.email=executor@users.noreply.github.com", "commit", "-m", f"{out.get('summary', issue['title'])} (#{n})", "-m", trailers(n, row)], root)
         code, o = sh(["git", "push", "-u", "origin", branch], root)
         if repair:  # the pull request already exists: the push is the repair. Never force a branch another actor opened; a rejected push is this run's failure.
             if code:

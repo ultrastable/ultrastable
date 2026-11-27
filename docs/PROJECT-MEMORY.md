@@ -10,6 +10,12 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: fix(sweeper): refresh behind PRs only where the base requires it (ZHC-R3) (#2681)
+- 2026-11-27: feat(repos): core reads 15/15 standard files; design questions answered with probes (#2663)
+- 2026-11-27: fix(ci): restore actions-budget.json and refuse executor changes that drop a config key (SCHEMA-KEEP-1) (#2682)
+- 2026-11-27: Implement active hard-limit regulation in free-tier meter config to automatically divert spend on breach and ensure the closing probe fails while out of bounds. (#Q-ULTRA-free-tier-meter-spend-REDESIGN) (#2661)
+- 2026-11-27: redmain: repair a red deploy gate (#2646)
+- 2026-11-27: feat(seed): essential-variable registry, connectance, world model, observer (#2620) (#2653)
 - 2026-11-27: feat(kernel): second-loop mechanisms and Perez Lopez's organisation as seed code, with tick step second_goal (SECOND-LOOP-KERNEL-1, ORG-THEORY-1) (#2629)
 - 2026-11-27: ZERO-MINUTES-1: worker merged #2644
 - 2026-11-27: queue: closing-probe verdicts for 3 item(s) (QUEUE-PERSIST-1) [skip ci] (#2644)
