@@ -150,6 +150,28 @@ def elision_gap(files: list[str], root=REPO) -> str | None:
     return None
 
 
+def contract_gap(files: list[str], root=REPO) -> str | None:
+    """SCHEMA-KEEP-1 (incident 2026-11-27): executor commit 54d6e57e7 replaced actions-budget.json, the workflow kill-switch config, with an unrelated
+    document; every consumer then raised KeyError and main stayed red. A changed JSON object that already exists in HEAD must keep each top-level key it
+    had (`_doc` aside): code reads those keys, so a change that drops them is refused and the reason is fed back to the model."""
+    for f in files:
+        path = Path(root) / f
+        if not path.is_file() or not f.endswith(".json"):
+            continue
+        r = subprocess.run(["git", "show", f"HEAD:{f}"], cwd=root, capture_output=True, text=True)
+        if r.returncode != 0:
+            continue
+        try:
+            before, after = json.loads(r.stdout), json.loads(path.read_text(encoding="utf-8"))
+        except (ValueError, OSError, UnicodeDecodeError):
+            continue
+        if isinstance(before, dict) and isinstance(after, dict):
+            lost = sorted(k for k in before if k != "_doc" and k not in after)
+            if lost:
+                return f"{f} would lose the top-level key(s) {', '.join(lost[:6])} that code reads (SCHEMA-KEEP-1); keep every existing key and add yours beside them, or put the new data in a new file with its own reader"
+    return None
+
+
 def priority(issue: dict) -> tuple:
     """Driver order: items with executable effect first (EFFECT-1), then p0..p9 label (lower first), then oldest number."""
     if "score" in issue:  # PRIORITIZE-1: the ranker's score (goal weight, dependency centrality, size, age) replaces label-then-age order
@@ -633,7 +655,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 if attempt < REPAIRS:
                     prompt = base_prompt() + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED (" + failed[0] + "). Do NOT reply with JSON this time. Reply in exactly this format instead:" + chr(10) + agents_block_format()
                 continue
-            gap = (consumer_gap(files, root) if checks is None and not port else None) or elision_gap(files, root) or saydo_gap(files)
+            gap = (consumer_gap(files, root) if checks is None and not port else None) or elision_gap(files, root) or contract_gap(files, root) or saydo_gap(files)
             if gap:
                 failed.append(gap)
             if checks is None and not gap:
