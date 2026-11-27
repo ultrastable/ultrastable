@@ -1,7 +1,7 @@
 ---
 name: ev-breach-step
 description: Use when an essential variable has been out of limits for persist_ticks or more. Selects, trials and commits or rolls back one vetted step-function.
-metadata: {kernel: "9.1.0"}
+metadata: {kernel: "9.2.0"}
 ---
 1. Confirm the breach from the reading ledger, not from memory; a missing reading counts as breach.
 2. Check budget and cooldown in doctrine/step-repertoire.json against recorded steps; exhausted means disposition `deferred_budget`.

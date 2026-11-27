@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-"""KERNEL-9-1. Kernel 9.1.0 as code: every clause in doctrine/kernel-9.1.0.md has an enforcer that exists and a metric; budgets hold;
+"""KERNEL-9-1. Kernel 9.2.0 as code: every clause in doctrine/kernel-9.2.0.md has an enforcer that exists and a metric; budgets hold;
 the step repertoire vetoes irreversible classes; partitions meet the minimum-organization shape; no scalar fleet score field exists.
 
   python3 -m foundation kernel9 --check [--json]
@@ -34,7 +34,7 @@ def check(root=REPO) -> list[str]:
     k = _load(root, PATH)
     text = (root / k["text"]).read_text(encoding="utf-8")
     for c in k["clauses"]:
-        if not re.search(rf"^{c['id']} ", text, re.M):
+        if not re.search(rf"^{c['id']}[ :]", text, re.M):
             problems.append(f"clause {c['id']} is in {PATH} but not in {k['text']}")
         if not (root / c["enforcer"]).exists():
             problems.append(f"clause {c['id']}: enforcer {c['enforcer']} does not exist")
@@ -45,6 +45,10 @@ def check(root=REPO) -> list[str]:
         m = re.search(pat, text)
         if m:
             problems.append(f"kernel text is not self-contained: references {m.group(0)!r}")
+    for pat in k.get("forbidden_text", []):
+        m = re.search(pat, text)
+        if m:
+            problems.append(f"kernel text is not self-contained: mentions {m.group(0)!r}")
     blocks = [json.loads(b) for b in re.findall(r"```json\n(.*?)\n```", text, re.S)]
     for rel, key in (("doctrine/step-repertoire.json", "steps"), ("doctrine/partitions.json", "joins")):
         ref = {a: b for a, b in _load(root, rel).items() if a != "_doc"}
@@ -54,7 +58,7 @@ def check(root=REPO) -> list[str]:
         if d not in text:
             problems.append(f"disposition {d} missing from the kernel text")
     b = k["budgets"]
-    for rel in ("doctrine/kernel-9.1.0.md", "AGENTS.md", "CLAUDE.md"):
+    for rel in (k["text"], "AGENTS.md", "CLAUDE.md"):
         n = len((root / rel).read_bytes())
         if n > b[rel]:
             problems.append(f"{rel} is {n} bytes, over its {b[rel]} budget: move detail to a skill or docs")

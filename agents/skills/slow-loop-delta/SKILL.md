@@ -1,7 +1,7 @@
 ---
 name: slow-loop-delta
 description: Use on the daily slow tick to change doctrine, prompts, skills or memory. Produces one delta edit with prediction and rollback, gated by replay.
-metadata: {kernel: "9.1.0"}
+metadata: {kernel: "9.2.0"}
 ---
 1. Inputs: the last 24 h of flags, rollbacks, owner friction and action-class trends. Never the current turn's signal alone.
 2. Write ONE delta (add, modify or remove a bullet). No full rewrites: iterative rewriting erodes detail (context collapse).

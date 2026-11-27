@@ -23,7 +23,7 @@
     "budgets": {
       "type": "object",
       "properties": {
-        "doctrine/kernel-9.1.0.md": {
+        "doctrine/kernel-9.2.0.md": {
           "type": "number"
         },
         "AGENTS.md": {
@@ -74,6 +74,12 @@
     },
     "$schema": {
       "type": "string"
+    },
+    "forbidden_text": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": [
@@ -83,7 +89,6 @@
     "dispositions",
     "forbidden_keys",
     "id",
-    "supersedes",
     "text",
     "version"
   ]
