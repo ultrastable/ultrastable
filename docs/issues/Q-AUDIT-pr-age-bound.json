@@ -1,0 +1,14 @@
+{
+  "id": "Q-AUDIT-pr-age-bound",
+  "title": "Q-AUDIT-pr-age-bound: fm-pr-stale failing (fail): The lane runs prbound --apply each pass (closes past the bound, branch kept) and resolve_generated merges additive conflicts model-free; never raise the bound to clear a breach.",
+  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe pr-age-bound\n**Status:** open\n\nFailure mode `fm-pr-stale` detected by `pr-age-bound`, failing since 2026-11-27T15:54:05Z.\nEvidence: {\"open\": 5, \"closable\": [], \"stale\": [[2799, 3.0], [2788, 3.5], [2711, 5.6], [2624, 12.4], [2514, 25.2]], \"unmeasured\": []}\n\nSignature: e96dcc8a42e0 (disposition: fix).\nSuspected root cause: the lane labelled a conflicted or failed session PR and handed it to the executor, whose model calls were failing; no age bound existed\nChanged since the last passing commit e7bac14e9f: `.claude/hooks/guard.sh`, `.claude/settings.json`, `.github/dependabot.yml`, `.github/workflows/checks.yml`, `.github/workflows/deploy-workers.yml`, `.github/workflows/executor.yml`, `.github/workflows/regen-generated.yml`, `.github/workflows/scout.yml`, `.github/workflows/spinoff.yml`, `.github/workflows/supply-chain.yml`, `.github/workflows/watchdog.yml`, `.gitignore` (and 956 more)\nRemedy: The lane runs prbound --apply each pass (closes past the bound, branch kept) and resolve_generated merges additive conflicts model-free; never raise the bound to clear a breach.\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe pr-age-bound\n",
+  "labels": [
+    "role:operations",
+    "audit",
+    "fix",
+    "agent-ready",
+    "p1"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}
