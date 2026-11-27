@@ -982,6 +982,34 @@
       ]
     },
     {
+      "id": "every-essential-variable-holds-a-veto",
+      "rule": "A change the second loop makes is judged by every essential variable, not only the one it was made for: a step that knocks a variable that was holding out of its limits is undone, and the undo is read as a trial. The search for a value that holds goes on past a knob's declared direction, and the regulator reads its own variety and structure from its own tables. The mechanisms are taken from W. Ross Ashby's journal and cite its pages.",
+      "source": "Rowan, 2026-11-27",
+      "covers": [
+        "ASHBY-KERNEL-1"
+      ],
+      "detector": [
+        {
+          "file": "worker/src/ashby.js",
+          "has": "export function upsets"
+        },
+        {
+          "file": "worker/src/regulation.js",
+          "has": "export async function varietyReading"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "worker/src/goals.js",
+          "has": "async function vetoers"
+        },
+        {
+          "file": "worker/src/ashby.js",
+          "has": "export function nextTrial"
+        }
+      ]
+    },
+    {
       "id": "second-goal-in-code",
       "rule": "The explicit goal is subordinate to the essential variables. Every objective with a target carries a guard its target does not move; a breached guard under a healthy target is repaired before the goal is pursued; a step is drawn only from untried, reversible candidates and kept only when the variables held; a task that harms the one who does it is not prescribed, and past failures are always recalled.",
       "source": "Rowan, 2026-11-27",

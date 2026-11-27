@@ -1714,6 +1714,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a problem that code is discarded and not",
+   "detail": "",
+   "how": "file:foundation/prsafe.py + file:foundation/prbound.py + file:seed/worker/src/prsafe.js + file:seed/worker/src/sweeper.js + file:seed/worker/src/sla.js + file:scripts/branch_cleanup.py",
+   "id": "cited-16a27cbb2c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Strange loops: every loop closes itself and improves itself; no zombie sessions (STRANGE-LOOP-1, Rowan 2026-11-12).** The system closes",
    "detail": "",
    "how": "file:scripts/completion_sweep.sh + file:instances/ultrastable/loop-registry.json",
@@ -2069,6 +2078,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/orchestrate.js + file:seed/worker/src/executor.js + file:seed/worker/test/orchestrate.test.js",
    "id": "cited-ff82585547",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Ashby's journal runs as kernel mechanisms (ASHBY-KERNEL-1, Rowan 2026-11-27).** \"Implement Ashby's journal and concept index into",
+   "detail": "",
+   "how": "file:seed/worker/src/ashby.js + file:seed/worker/src/goals.js + file:seed/worker/src/regulation.js + file:doctrine/ashby-concepts.json + file:seed/worker/test/ashby.test.js + file:seed/worker/test/ashby-loop.test.js",
+   "id": "cited-4c3ff11885",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2605,6 +2623,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a problem that code is discarded and not",
+   "detail": "",
+   "how": "file:foundation/prsafe.py + file:foundation/prbound.py + file:seed/worker/src/prsafe.js + file:seed/worker/src/sweeper.js + file:seed/worker/src/sla.js + file:scripts/branch_cleanup.py",
+   "id": "mirror-d5953d01d5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Strange loops: every loop closes itself and improves itself; no zombie sessions (STRANGE-LOOP-1, Rowan 2026-11-12).** The system closes",
    "detail": "",
    "how": "file:scripts/completion_sweep.sh + file:instances/ultrastable/loop-registry.json",
@@ -2960,6 +2987,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/orchestrate.js + file:seed/worker/src/executor.js + file:seed/worker/test/orchestrate.test.js",
    "id": "mirror-434e16496c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Ashby's journal runs as kernel mechanisms (ASHBY-KERNEL-1, Rowan 2026-11-27).** \"Implement Ashby's journal and concept index into",
+   "detail": "",
+   "how": "file:seed/worker/src/ashby.js + file:seed/worker/src/goals.js + file:seed/worker/src/regulation.js + file:doctrine/ashby-concepts.json + file:seed/worker/test/ashby.test.js + file:seed/worker/test/ashby-loop.test.js",
+   "id": "mirror-a5eb80dc6b",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3649,7 +3685,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 129 Python and 1078 Worker tests",
+   "claim": "seed-tests: 129 Python and 1099 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3658,7 +3694,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 1078 Worker tests",
+   "claim": "seed-worker-tests: 1099 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3917,7 +3953,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 432,
-  "total": 432
+  "pass": 436,
+  "total": 436
  }
 };
