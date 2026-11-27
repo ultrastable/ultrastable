@@ -27,6 +27,10 @@ def main(argv=None):
     ap.add_argument("--budget", type=int, default=1024)
     a = ap.parse_args(argv)
 
+    if a.cmd == "schema":  # no ledger needed: do not create the default database file as a side effect
+        from .store import schema_sql
+        print(schema_sql(), end="")
+        return 0
     s = Store(a.db)
     model = RepoModel(s, a.repo)
     if a.cmd == "index":
@@ -50,9 +54,6 @@ def main(argv=None):
         import sys
         from .ledger_hook import record
         record(s, json.loads(sys.stdin.read() or "{}"))
-    elif a.cmd == "schema":
-        from .store import schema_sql
-        print(schema_sql(), end="")
     elif a.cmd == "tokens":
         print(json.dumps({"share_by_kind": s.token_share_by_kind(),
                           "cache_read_share": s.cache_read_share()}))
