@@ -4,82 +4,81 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": false,
-   "value": 0.91
+   "value": 0.907
   },
   "happy_paths": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": false,
    "value": 75
   },
   "research_in_code": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": false,
    "value": 0.621
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": false,
    "value": 0.033
   },
   "self_shipping": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": false,
    "value": 0.786
   },
   "spec_quality": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": false,
-   "value": 0.522
+   "value": 0.571
   },
   "spend": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": false,
    "value": 8.491
   },
   "stalled_clocks": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": false,
    "value": 3
   },
-  "survival_levels": null,
   "ui_findings": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-27T06:45:33Z",
+   "at": "2026-11-27T07:50:54Z",
    "ok": true,
-   "value": 34.507
+   "value": 33.329
   }
  },
  "readiness": {
-  "bounds": 0.333,
+  "bounds": 0.357,
   "horizon": 1.0,
   "learning": 0.516,
-  "score": 17
+  "score": 18
  },
  "scopes": {
   "platform": {
@@ -305,21 +304,6 @@ export default {
      ],
      "unit": "share of lessons in doctrine/lessons.json bound to a check, variable, detector or test",
      "why": "LESSONS-1 (Rowan, 2026-11-25): a lesson that lives in chat is learned again the hard way. Each one is bound to code, or carried by an open item until it is."
-    },
-    {
-     "first_order": [
-      "executor",
-      "criticality-loop"
-     ],
-     "id": "survival_levels",
-     "max": null,
-     "min": 3,
-     "name": "Survival levels held",
-     "steps": [
-      "build: run `python3 -m foundation freeadapt --levels`, take the level that fails (k under its floor, the executor's attempts mostly discarded, or that share falling) and change the loop that feeds it until the reading holds 3"
-     ],
-     "unit": "levels of three (effective, attractive, consistent) that hold now",
-     "why": "FREELY-ADAPTIVE-1 (P\u00e9rez L\u00f3pez, Organizational Theory: A Cybernetic Approach, IESE WP 5, 1974): an organization survives only if it is effective, attractive and consistent at once; one level alone buys time until it needs more to motivate its members than it obtains. Read by foundation/freeadapt.py."
     }
    ],
    "what": "Ultrastable running on itself (tenant 0)"
