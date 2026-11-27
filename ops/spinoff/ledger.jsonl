@@ -63,4 +63,4 @@
 {"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "loop-ledger", "status": 202}
 {"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "numbers-board", "status": 200}
 {"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "portfolio-board", "status": 200}
-{"at": "2026-11-27T11:56:34Z", "error": "ValueError: [{\"message\": \"not authorized for that account\", \"path\": [\"viewer\", \"accounts\", \"0\", \"d1\"], \"extensions\": {\"code\": \"authz\", \"timestamp\": \"2026-11-27T11", "event": "headroom-failed"}
+{"at": "2026-11-27T12:20:36Z", "error": "ValueError: [{\"message\": \"not authorized for that account\", \"path\": [\"viewer\", \"accounts\", \"0\", \"d1\"], \"extensions\": {\"code\": \"authz\", \"timestamp\": \"2026-11-27T12", "event": "headroom-failed"}
