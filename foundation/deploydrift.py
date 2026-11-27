@@ -53,14 +53,28 @@ def read(topo: dict, deploys: dict, behind=None) -> list:
     return rows
 
 
+def redeploy(rows: list, run=subprocess.run) -> int:
+    """Dispatch deploy-ultrastable for the Workers that drifted. A dispatch that fails is returned as exit 1 and printed, never ignored."""
+    ids = [r["worker"] for r in rows if r["status"] == "drift"]
+    if not ids:
+        return 0
+    p = run(["gh", "workflow", "run", "deploy-ultrastable.yml", "-f", "workers=" + ",".join(ids)], cwd=ROOT, capture_output=True, text=True)
+    print(("dispatched deploy-ultrastable for " + ",".join(ids)) if p.returncode == 0 else "dispatch failed: " + (p.stderr or "")[:200])
+    return 0 if p.returncode == 0 else 1
+
+
 def main(argv: list) -> int:
     topo = json.load(open(os.path.join(ROOT, "doctrine/topology.json"), encoding="utf8"))
     rows = read(topo, last_deploys())
+    if "--redeploy" in argv:
+        bad = redeploy(rows)
     if "--json" in argv:
         print(json.dumps(rows, indent=1))
     else:
         for r in rows:
             print(f"{r['status']:10} {r['worker']} behind={r['behind']}")
+    if "--redeploy" in argv:
+        return bad
     return 1 if any(r["status"] in ("drift", "unmeasured") for r in rows) else 0
 
 

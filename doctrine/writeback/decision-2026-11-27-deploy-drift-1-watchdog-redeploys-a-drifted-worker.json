@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-deploy-drift-1-watchdog-redeploys-a-drifted-worker",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "DEPLOY-DRIFT-1: watchdog redeploys a drifted Worker",
+  "body": "deploydrift --redeploy dispatches deploy-ultrastable for Workers behind main; runs in the daily watchdog.",
+  "probe": "grep:.github/workflows/watchdog.yml::deploydrift --redeploy",
+  "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+ },
+ "kind": "decision",
+ "title": "DEPLOY-DRIFT-1: watchdog redeploys a drifted Worker",
+ "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+}
