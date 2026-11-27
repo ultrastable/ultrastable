@@ -44,7 +44,7 @@
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 46698,
+   "recent7": 46734,
    "series": [
     0,
     0,
@@ -75,17 +75,17 @@
     0,
     0,
     0,
-    46698
+    46734
    ],
    "share_recent": 0.111,
    "share_trend": 0.111,
-   "slope": 301.2774,
-   "total": 46698
+   "slope": 301.5097,
+   "total": 46734
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 45989,
+   "recent7": 46082,
    "series": [
     0,
     0,
@@ -116,12 +116,12 @@
     0,
     0,
     0,
-    45989
+    46082
    ],
    "share_recent": 0.109,
    "share_trend": 0.109,
-   "slope": 296.7032,
-   "total": 45989
+   "slope": 297.3032,
+   "total": 46082
   },
   {
    "area": "seed/worker",
@@ -167,7 +167,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 30221,
+   "recent7": 30185,
    "series": [
     0,
     0,
@@ -198,17 +198,17 @@
     0,
     0,
     0,
-    30221
+    30185
    ],
    "share_recent": 0.072,
    "share_trend": 0.072,
-   "slope": 194.9742,
-   "total": 30221
+   "slope": 194.7419,
+   "total": 30185
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 28077,
+   "recent7": 28108,
    "series": [
     0,
     0,
@@ -239,17 +239,17 @@
     0,
     0,
     0,
-    28077
+    28108
    ],
    "share_recent": 0.067,
    "share_trend": 0.067,
-   "slope": 181.1419,
-   "total": 28077
+   "slope": 181.3419,
+   "total": 28108
   },
   {
    "area": "doctrine/schemas",
    "quiet_days": 0,
-   "recent7": 18129,
+   "recent7": 18186,
    "series": [
     0,
     0,
@@ -280,12 +280,12 @@
     0,
     0,
     0,
-    18129
+    18186
    ],
    "share_recent": 0.043,
    "share_trend": 0.043,
-   "slope": 116.9613,
-   "total": 18129
+   "slope": 117.329,
+   "total": 18186
   },
   {
    "area": "instances",
@@ -905,7 +905,7 @@
   {
    "area": "docs",
    "quiet_days": 0,
-   "recent7": 2096,
+   "recent7": 2098,
    "series": [
     0,
     0,
@@ -936,12 +936,12 @@
     0,
     0,
     0,
-    2096
+    2098
    ],
    "share_recent": 0.005,
    "share_trend": 0.005,
-   "slope": 13.5226,
-   "total": 2096
+   "slope": 13.5355,
+   "total": 2098
   },
   {
    "area": "agents",
@@ -1026,7 +1026,7 @@
    "total": 1697
   }
  ],
- "at": "2026-11-27T14:49:37Z",
+ "at": "2026-11-27T14:58:50Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1099,9 +1099,9 @@
    0,
    0,
    0,
-   69
+   61
   ],
-  "closed": 1408,
+  "closed": 1416,
   "opened": 1477
  },
  "loops": [
@@ -1678,7 +1678,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 410,
+   "rows": 412,
    "series": [
     0,
     0,
@@ -1709,9 +1709,9 @@
     1,
     153,
     109,
-    77
+    79
    ],
-   "slope": 2.2928
+   "slope": 2.3057
   },
   {
    "loop": "resilience",
@@ -1868,7 +1868,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 667,
+   "rows": 668,
    "series": [
     0,
     0,
@@ -1899,9 +1899,9 @@
     55,
     88,
     189,
-    138
+    139
    ],
-   "slope": 3.6625
+   "slope": 3.669
   },
   {
    "loop": "ultrastability",

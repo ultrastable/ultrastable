@@ -7124,6 +7124,24 @@
    "body": "Chosen over CODEOWNERS review because project rules allow no human review. The EV registry, step repertoire, partitions, kernel9 map and kernel pin now fail the protected-path gate unless a PR carries a Protected-change line. The fast loop and executor cannot edit them; the slow-loop identity gated by replay and rollback is the only other writer (to build).",
    "probe": "grep:scripts/protected_paths.py::OWNER_OWNED",
    "session": "session_0156nqDvPawiALe47iATg79o"
+  },
+  {
+   "id": "decision-2026-11-27-kernel-lock-1-canary-first-pin-bump",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "KERNEL-LOCK-1 canary-first pin bump",
+   "body": "kernellock --bump moves the canary pin to the current seed tree hash first; the rest follow only when the canary is on it and their repository exists.",
+   "probe": "grep:foundation/kernellock.py::def bump",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-kernel-lock-1-per-tenant-kernel-pins",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "KERNEL-LOCK-1 per-tenant kernel pins",
+   "body": "doctrine/kernel-lock.json holds a pin row per live tenant and a canary; fleetmap --check fails a live tenant without a row.",
+   "probe": "grep:foundation/kernellock.py::KERNEL-LOCK-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
   }
  ]
 }
