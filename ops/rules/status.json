@@ -1,5 +1,5 @@
 {
- "at": "2026-11-27T10:57:35Z",
+ "at": "2026-11-27T16:58:46Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -33,7 +33,7 @@
   },
   "front-end-matches-back-end/claims": {
    "status": "ok",
-   "detail": "claims: 436 verified of 436; 0 drift",
+   "detail": "claims: 434 verified of 434; 0 drift",
    "fixed": false,
    "item": null
   },

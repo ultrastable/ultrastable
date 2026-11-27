@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: feat(foundation): hits window, owner-action wording and spec tests (#2843)
+- 2026-11-27: feat(core): ladder, kernel, predict, trust and the other modules cite their requirements (#2839)
 - 2026-11-27: feat(core): claims, elicit, vault, sla and walkthrough reconciled with their requirements (#2838)
 - 2026-11-27: feat(runtime): console and tick routes, launcher bundle and platform adapters (#2830)
 - 2026-11-27: feat(tools): text-form vendoring, install, self-start and release verification (#2829)
