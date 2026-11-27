@@ -1,0 +1,27 @@
+{
+ "@context": "https://w3id.org/codemeta/3.0",
+ "@type": "SoftwareSourceCode",
+ "name": "Ultrastable",
+ "description": "The platform: all code, rules, doctrine, the website, the dashboard and the seed/ kernel are written here and nowhere else.",
+ "codeRepository": "https://github.com/ultrastable/ultrastable",
+ "url": "https://ultrastable.io",
+ "license": "https://github.com/ultrastable/ultrastable/blob/main/LICENSE",
+ "author": [
+  {
+   "@type": "Person",
+   "@id": "https://orcid.org/0009-0002-4317-5604",
+   "name": "Rowan Brad Quni-Gudzinas"
+  }
+ ],
+ "keywords": [
+  "agent-orchestration",
+  "ai-agents",
+  "automation",
+  "autonomous-agents",
+  "bootstrapping",
+  "cloudflare-workers",
+  "developer-tools",
+  "self-hosting",
+  "ultrastable"
+ ]
+}

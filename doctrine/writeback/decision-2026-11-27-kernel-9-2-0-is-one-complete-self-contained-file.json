@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-kernel-9-2-0-is-one-complete-self-contained-file",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "Kernel 9.2.0 is one complete self-contained file",
+  "body": "doctrine/kernel-9.2.0.md carries commitments, recognitions, tick, trust, readings, EVs, slow loop, partitions, procedures, ledger and hook, and cites no file, URL or earlier version; kernel9 --check fails on any. A new top-level directory (.claude) needs a repo-shape area and a strays code root in the same change.",
+  "probe": "grep:doctrine/kernel9.json::forbidden_text",
+  "session": "session_0156nqDv2LkwoVhTQKXeix15"
+ },
+ "kind": "decision",
+ "title": "Kernel 9.2.0 is one complete self-contained file",
+ "session": "session_0156nqDv2LkwoVhTQKXeix15"
+}

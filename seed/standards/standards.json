@@ -346,7 +346,8 @@
         "seed/AGENTS.md",
         "seed/scripts/agentrules.py",
         "seed/agents/AGENTS.md",
-        "seed/worker/src/agentic/acl/discovery.js"
+        "seed/worker/src/agentic/acl/discovery.js",
+        "seed/scripts/repoconform.py"
       ],
       "acl": "seed/worker/src/agentic/acl/discovery.js",
       "tests": [
@@ -394,7 +395,9 @@
         "grep:seed/CLAUDE.md::^@AGENTS\\.md$",
         "file:doctrine/agent-entry.json",
         "file:seed/autonomy/agent-entry.json",
-        "grep:seed/scripts/agentrules.py::max_closure_bytes"
+        "grep:seed/scripts/agentrules.py::max_closure_bytes",
+        "conform:.::AGENTS.md",
+        "conform:seed::AGENTS.md"
       ],
       "audited": "2026-11-27"
     },
@@ -407,7 +410,11 @@
       "why": "A cheap plain-language index models can read without crawling the whole site.",
       "support": "supported",
       "how": [
-        "seed/worker/src/agentic/acl/discovery.js"
+        "seed/worker/src/agentic/acl/discovery.js",
+        "llms.txt",
+        "seed/llms.txt",
+        "seed/scripts/surfaces.py",
+        "seed/scripts/repoconform.py"
       ],
       "acl": "seed/worker/src/agentic/acl/discovery.js",
       "tests": [
@@ -429,7 +436,9 @@
       "conformance": "Nothing.",
       "cost": "none",
       "probes": [
-        "grep:seed/standards/surfaces.json::/llms.txt"
+        "grep:seed/standards/surfaces.json::/llms.txt",
+        "conform:.::llms.txt",
+        "conform:seed::llms.txt"
       ],
       "live": [
         {
@@ -1273,7 +1282,8 @@
         "catalog-info.yaml",
         "foundation/stdgen.py",
         "seed/scripts/surfaces.py",
-        "seed/catalog-info.yaml"
+        "seed/catalog-info.yaml",
+        "seed/scripts/repoconform.py"
       ],
       "acl": "foundation/stdgen.py",
       "tests": [
@@ -1305,7 +1315,9 @@
       "probes": [
         "file:catalog-info.yaml",
         "grep:seed/catalog-info.yaml::kind: Component",
-        "grep:seed/scripts/surfaces.py::\\(\"catalog-info.yaml\", None if plat else lambda: catalog\\(i, st\\)\\)"
+        "grep:seed/scripts/surfaces.py::\\(\"catalog-info.yaml\", None if plat else lambda: catalog\\(i, st\\)\\)",
+        "conform:.::catalog-info.yaml",
+        "conform:seed::catalog-info.yaml"
       ],
       "audited": "2026-11-25"
     },
@@ -1360,7 +1372,8 @@
       "why": "Any cloud agent or Codespace gets the same Python 3.12 and Node 24 the checks run on, from one standard file, with no setup steps.",
       "support": "supported",
       "how": [
-        ".devcontainer/devcontainer.json"
+        ".devcontainer/devcontainer.json",
+        "seed/scripts/repoconform.py"
       ],
       "tests": [
         {
@@ -1381,7 +1394,9 @@
       "conformance": "Nothing.",
       "cost": "none",
       "probes": [
-        "file:.devcontainer/devcontainer.json"
+        "file:.devcontainer/devcontainer.json",
+        "conform:.::.devcontainer/devcontainer.json",
+        "conform:seed::.devcontainer/devcontainer.json"
       ],
       "audited": "2026-11-25"
     },
@@ -1765,7 +1780,9 @@
       "support": "partial",
       "how": [
         "seed/scripts/surfaces.py",
-        "seed/publiccode.yml"
+        "seed/publiccode.yml",
+        "publiccode.yml",
+        "seed/scripts/repoconform.py"
       ],
       "tests": [
         {
@@ -1773,7 +1790,7 @@
           "name": "test_publiccode_citation_and_plans_carry_the_manifest"
         }
       ],
-      "gap": "Rendered for the seed template by the manifest reconciler (SYSTEM-MANIFEST-1); the platform repository and the tenants get theirs when the reconciler renders there (Q-FLEETMAP items).",
+      "gap": "Rendered from ultrastable.json by seed/scripts/surfaces.py for the seed template and the platform repository, and validated against the v0 mandatory keys by seed/scripts/repoconform.py; the tenants get theirs when their own pull request renders it (Q-CONFORM-<tenant> items).",
       "sources": [
         {
           "title": "publiccode.yml standard",
@@ -1788,7 +1805,8 @@
       "conformance": "Nothing more in the emitter; the remaining repositories render it.",
       "cost": "none (already rendered by code)",
       "probes": [
-        "grep:seed/publiccode.yml::publiccodeYmlVersion",
+        "conform:.::publiccode.yml",
+        "conform:seed::publiccode.yml",
         "grep:seed/scripts/surfaces.py::def publiccode"
       ],
       "watch": "publiccode-spec",
@@ -1805,7 +1823,8 @@
       "how": [
         "CITATION.cff",
         "seed/CITATION.cff",
-        "seed/scripts/surfaces.py"
+        "seed/scripts/surfaces.py",
+        "seed/scripts/repoconform.py"
       ],
       "tests": [
         {
@@ -1827,8 +1846,8 @@
       "conformance": "Nothing.",
       "cost": "none",
       "probes": [
-        "grep:CITATION.cff::cff-version: 1\\.2\\.0",
-        "grep:seed/CITATION.cff::cff-version"
+        "conform:.::CITATION.cff",
+        "conform:seed::CITATION.cff"
       ],
       "watch": "cff-spec",
       "audited": "2026-11-25"
@@ -1843,7 +1862,10 @@
       "support": "partial",
       "how": [
         ".github/dependabot.yml",
-        "seed/worker/src/sweeper.js"
+        "seed/worker/src/sweeper.js",
+        "seed/.github/dependabot.yml",
+        "seed/scripts/deprot.py",
+        "seed/scripts/repoconform.py"
       ],
       "tests": [
         {
@@ -1851,7 +1873,7 @@
           "name": "test_dependabot_covers_actions_and_every_package_manifest_directory"
         }
       ],
-      "gap": "Measured on 2026-11-25: the platform repository has .github/dependabot.yml (GitHub Actions weekly, each npm directory monthly); the other 10 repositories (seed, ops, second-tenant, practical-solutions, unlearn, what-works, replication-ledger, base-rates, did-it-work, open-questions) have none, and neither the seed template nor scaffold/tenant carries one, so a new system starts without it. Their workflows pin actions by commit, which then never move. Q-STD-dependabot adds the file to the seed and the tenant scaffold. Renovate is not added: one updater per repository.",
+      "gap": "Measured on 2026-11-25: the platform repository has .github/dependabot.yml (GitHub Actions weekly, each npm directory monthly); the other 10 repositories (seed, ops, second-tenant, practical-solutions, unlearn, what-works, replication-ledger, base-rates, did-it-work, open-questions) have none, and their workflows pin actions by commit, which then never move. The seed template and scaffold/tenant now carry one, and seed/scripts/repoconform.py reads it against every manifest directory (seed/scripts/deprot.py); each existing repository gets its own in its pull request (Q-STD-dependabot). Renovate is not added: one updater per repository.",
       "tracked_by": "Q-STD-dependabot",
       "sources": [
         {
@@ -1867,8 +1889,8 @@
       "conformance": "Every repository carries dependabot.yml for the ecosystems it has (at least github-actions).",
       "cost": "S (one templated file in seed/ and scaffold/tenant/, required by the repository standard)",
       "probes": [
-        "grep:.github/dependabot.yml::package-ecosystem: github-actions",
-        "grep:.github/dependabot.yml::package-ecosystem: npm"
+        "conform:.::.github/dependabot.yml",
+        "conform:seed::.github/dependabot.yml"
       ],
       "audited": "2026-11-25"
     },
@@ -1926,7 +1948,11 @@
       "support": "partial",
       "how": [
         "LICENSE",
-        "seed/worker/src/contract.js"
+        "seed/worker/src/contract.js",
+        "REUSE.toml",
+        "seed/REUSE.toml",
+        "seed/scripts/surfaces.py",
+        "seed/scripts/repoconform.py"
       ],
       "tests": [
         {
@@ -1934,7 +1960,7 @@
           "name": "test_shared_modules_carry_an_spdx_identifier"
         }
       ],
-      "gap": "SPDX-License-Identifier headers are on 1006 of 1408 code files (measured 2026-11-25) and the manifest's `license` is an SPDX expression. Full REUSE compliance (a LICENSES/ directory holding the LicenseRef text and a header or REUSE.toml entry for every file) is not met and its checker is a third-party tool the build does not install.",
+      "gap": "SPDX-License-Identifier headers are on 1006 of 1408 code files (measured 2026-11-25) and the manifest's `license` is an SPDX expression. REUSE.toml (one annotation covering every file, its holder read from LICENSE) and LICENSES/ holding the LicenseRef text are rendered by seed/scripts/surfaces.py at the platform and seed roots and validated by seed/scripts/repoconform.py; the REUSE project's own `reuse lint` is a third-party tool the build does not install, so full compliance is not measured by it.",
       "sources": [
         {
           "title": "REUSE specification 3.3",
@@ -1952,12 +1978,16 @@
       "decision": "adopt-now",
       "adoption": "partial",
       "homegrown": [],
-      "conformance": "Headers on the remaining files and a LICENSES/ directory; worth doing when the licence changes to an open one and outside reuse begins.",
+      "conformance": "Headers on the remaining files and a `reuse lint` run; worth doing when the licence changes to an open one and outside reuse begins.",
       "cost": "S",
       "probes": [
         "grep:seed/worker/src/errors.js::SPDX-License-Identifier",
         "grep:foundation/schemas.py::SPDX-License-Identifier",
-        "file:LICENSE"
+        "file:LICENSE",
+        "conform:.::REUSE.toml",
+        "conform:seed::REUSE.toml",
+        "conform:.::LICENSE",
+        "conform:seed::LICENSE"
       ],
       "audited": "2026-11-25"
     },
@@ -2403,6 +2433,104 @@
         "file:seed/.editorconfig"
       ],
       "audited": "2026-11-25"
+    },
+    {
+      "id": "keep-a-changelog",
+      "name": "Keep a Changelog",
+      "body": "keepachangelog.com",
+      "status": "de-facto",
+      "tracked": "1.1.0",
+      "why": "Release notes a person, a package index or an agent reads the same way: newest first, an Unreleased section on top, one heading per version.",
+      "support": "supported",
+      "how": [
+        "CHANGELOG.md",
+        "foundation/semrel.py",
+        "seed/scripts/surfaces.py",
+        "seed/scripts/repoconform.py"
+      ],
+      "acl": "foundation/semrel.py",
+      "tests": [
+        {
+          "file": "tests/foundation/test_semrel.py",
+          "name": "test_apply_keeps_unreleased_first_and_never_lists_a_version_twice"
+        },
+        {
+          "file": "seed/tests/test_repoconform.py",
+          "name": "test_contributing_needs_the_link_or_an_example_and_changelog_one_unreleased"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Keep a Changelog 1.1.0",
+          "url": "https://keepachangelog.com/en/1.1.0/",
+          "published": null,
+          "accessed": "2026-11-27"
+        },
+        {
+          "title": "Semantic Versioning 2.0.0",
+          "url": "https://semver.org/spec/v2.0.0.html",
+          "published": null,
+          "accessed": "2026-11-27"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "homegrown": [],
+      "conformance": "Nothing: semrel writes each release below `## [Unreleased]` and refuses a version already listed; a new system's scaffold starts the file.",
+      "cost": "none",
+      "probes": [
+        "conform:.::CHANGELOG.md",
+        "conform:seed::CHANGELOG.md"
+      ],
+      "audited": "2026-11-27"
+    },
+    {
+      "id": "community-health",
+      "name": "GitHub community health files",
+      "body": "GitHub",
+      "status": "de-facto",
+      "tracked": "CONTRIBUTING.md, SECURITY.md",
+      "why": "How to contribute and how to report a vulnerability, in the files GitHub, scanners and agents look for.",
+      "support": "supported",
+      "how": [
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        "seed/scripts/surfaces.py",
+        "seed/scripts/repoconform.py"
+      ],
+      "acl": "seed/scripts/surfaces.py",
+      "tests": [
+        {
+          "file": "seed/tests/test_repoconform.py",
+          "name": "test_contributing_needs_the_link_or_an_example_and_changelog_one_unreleased"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Creating a default community health file",
+          "url": "https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file",
+          "published": null,
+          "accessed": "2026-11-27"
+        },
+        {
+          "title": "Conventional Commits 1.0.0",
+          "url": "https://www.conventionalcommits.org/en/v1.0.0/",
+          "published": null,
+          "accessed": "2026-11-27"
+        }
+      ],
+      "decision": "adopt-now",
+      "adoption": "adopted",
+      "homegrown": [],
+      "conformance": "Nothing: CONTRIBUTING.md names Conventional Commits and SECURITY.md names a way to report; a new system's scaffold writes both when missing.",
+      "cost": "none",
+      "probes": [
+        "conform:.::CONTRIBUTING.md",
+        "conform:seed::CONTRIBUTING.md",
+        "conform:.::SECURITY.md",
+        "conform:seed::SECURITY.md"
+      ],
+      "audited": "2026-11-27"
     },
     {
       "id": "spdx-sbom",

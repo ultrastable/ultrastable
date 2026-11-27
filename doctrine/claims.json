@@ -2368,9 +2368,9 @@
         "file:doctrine/fleet-map.json",
         "file:ultrastable.json",
         "file:seed/standards/system.schema.json",
+        "file:publiccode.yml",
         "file:seed/scripts/surfaces.py",
-        "file:doctrine/tenant-repos.json",
-        "file:tests/foundation/test_fleetmap.py"
+        "file:doctrine/tenant-repos.json"
       ],
       "bound_by": "cited"
     },
@@ -3041,29 +3041,9 @@
       "bound_by": "cited"
     },
     {
-      "id": "cited-b4d6cc4189",
+      "id": "cited-bce1597ca0",
       "surface": "seed/doctrine/SYSTEM.md",
-      "text": "`doctrine/coldstart.json` (JSON Schema `doctrine/schemas/coldstart.schema.json`) or the code they name drift apart. The owner never",
-      "probe": [
-        "file:doctrine/coldstart.json",
-        "file:doctrine/schemas/coldstart.schema.json"
-      ],
-      "bound_by": "cited"
-    },
-    {
-      "id": "cited-94e4bb2cbb",
-      "surface": "seed/doctrine/SYSTEM.md",
-      "text": "default in effect, never a task in prose (`doctrine/open-loops.json`, `foundation/data/needs-you.json`). Anything else handed to a person",
-      "probe": [
-        "file:doctrine/open-loops.json",
-        "file:foundation/data/needs-you.json"
-      ],
-      "bound_by": "cited"
-    },
-    {
-      "id": "cited-a191183c3c",
-      "surface": "seed/doctrine/SYSTEM.md",
-      "text": "`python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability, when this",
+      "text": "Platform: `python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability,",
       "probe": [
         "file:foundation/coldstart.py",
         "grep:.github/workflows/checks.yml::foundation[ .]coldstart\\b"
@@ -3577,9 +3557,9 @@
         "file:doctrine/fleet-map.json",
         "file:ultrastable.json",
         "file:seed/standards/system.schema.json",
+        "file:publiccode.yml",
         "file:seed/scripts/surfaces.py",
-        "file:doctrine/tenant-repos.json",
-        "file:tests/foundation/test_fleetmap.py"
+        "file:doctrine/tenant-repos.json"
       ],
       "bound_by": "mirror",
       "of": "cited-f35cd86e2e"

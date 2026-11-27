@@ -17,3 +17,6 @@ dashboard/cockpit/dist/
 deploy/wrangler/
 seed/worker/src/config.js
 .cache/
+
+# CODE-REGULATOR-1 local ledger (WAL creates -wal and -shm beside it)
+.regulator.sqlite*

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from foundation import sampleaudit as sa
 
-CFG = {"base": 0.2, "floor": 0.1, "ceiling": 1.0, "step_up": 2.0, "window": 20}
+CFG = {"base": 0.2, "floor": 0.1, "ceiling": 1.0, "step_up": 2.0, "window": 20, "max_open": 2, "max_per_day": 5}
 
 
 def _root(d: Path, verdicts=()):
@@ -31,6 +31,24 @@ class SampleAuditTest(unittest.TestCase):
         self.assertEqual(len(sa.pick(prs, 1.0, "2026-11-27", files.get)), 2)
         self.assertEqual(sa.draw(2, "2026-11-27"), sa.draw(2, "2026-11-27"))
 
+    def test_backlog_cap_and_protected_first(self):
+        import datetime as dt
+        with tempfile.TemporaryDirectory() as t:
+            d = Path(t); _root(d)
+            (d / "docs/issues/Q-AUDIT-1.json").write_text(json.dumps({"merged_at": "x"}))  # one unaudited item already open
+            now = dt.datetime(2026, 11, 27, 12, tzinfo=dt.timezone.utc)
+            prs = [{"n": 10, "title": "t", "merged_at": "2026-11-27T10:00:00Z", "sha": "a"}, {"n": 11, "title": "t", "merged_at": "2026-11-27T11:00:00Z", "sha": "b"}]
+            files = {10: ["foundation/x.py"], 11: ["AGENTS.md"]}
+            real = sa.mergeaudit.merged
+            sa.mergeaudit.merged = lambda *a, **k: prs
+            orig = sa.files
+            sa.files = lambda n, run=None: files[n]
+            try:
+                rows = sa.scan(d, apply=True, now=now)
+            finally:
+                sa.mergeaudit.merged, sa.files = real, orig
+            self.assertEqual([r["pr"] for r in rows], [11])  # room for one; the protected PR wins
+
     def test_probe_needs_verdict(self):
         with tempfile.TemporaryDirectory() as t:
             d = Path(t); _root(d)
@@ -38,6 +56,13 @@ class SampleAuditTest(unittest.TestCase):
             self.assertFalse(sa.probe(9, d))
             f = d / "docs/issues/Q-AUDIT-9.json"; j = json.loads(f.read_text()); j["verdict"] = "clean"; f.write_text(json.dumps(j))
             self.assertTrue(sa.probe(9, d))
+
+
+class FiledItemsMeetTheSpec(unittest.TestCase):
+    def test_an_audit_item_carries_every_part_specgate_requires(self):
+        from foundation import specgate
+        body = sa.item({"n": 7, "title": "t", "merged_at": "2026-11-01T00:00:00Z", "why": "sampled"})["body"]
+        self.assertEqual(specgate.missing(body), [])
 
 
 if __name__ == "__main__":

@@ -32,7 +32,19 @@ class Store:
     def __init__(self, path=":memory:"):
         self.db = sqlite3.connect(path)
         self.db.row_factory = sqlite3.Row
+        self.db.execute("PRAGMA busy_timeout=5000")  # a second writer waits up to 5 s instead of failing with "database is locked"
+        if path != ":memory:":
+            self.db.execute("PRAGMA journal_mode=WAL")  # readers do not block the single writer
         self.db.executescript(SCHEMA)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
+
+    def close(self):
+        self.db.close()
 
     def log_tokens(self, task_id, module, kind, input_tokens, output_tokens, cache_read=0):
         self.db.execute(
@@ -56,3 +68,8 @@ class Store:
         r = self.db.execute(
             "SELECT SUM(cache_read_tokens) c, SUM(input_tokens) i FROM token_log").fetchone()
         return (r["c"] or 0) / (r["i"] or 1)
+
+
+def schema_sql():
+    """The ledger contract as plain SQL, for a D1 mirror (`wrangler d1 execute --file`)."""
+    return SCHEMA.strip() + "\n"

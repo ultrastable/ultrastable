@@ -1896,7 +1896,7 @@ export default {
   {
    "claim": "- **One map, one manifest, no hand-copied mirrors (FLEET-MAP-1, SYSTEM-MANIFEST-1, Rowan 2026-11-25).** \"What really needs to be in the",
    "detail": "",
-   "how": "file:doctrine/fleet-map.json + file:ultrastable.json + file:seed/standards/system.schema.json + file:seed/scripts/surfaces.py + file:doctrine/tenant-repos.json + file:tests/foundation/test_fleetmap.py",
+   "how": "file:doctrine/fleet-map.json + file:ultrastable.json + file:seed/standards/system.schema.json + file:publiccode.yml + file:seed/scripts/surfaces.py + file:doctrine/tenant-repos.json",
    "id": "cited-f35cd86e2e",
    "kind": "claim",
    "pass": true,
@@ -2407,28 +2407,10 @@ export default {
    "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
   },
   {
-   "claim": "`doctrine/coldstart.json` (JSON Schema `doctrine/schemas/coldstart.schema.json`) or the code they name drift apart. The owner never",
-   "detail": "",
-   "how": "file:doctrine/coldstart.json + file:doctrine/schemas/coldstart.schema.json",
-   "id": "cited-b4d6cc4189",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/doctrine/SYSTEM.md"
-  },
-  {
-   "claim": "default in effect, never a task in prose (`doctrine/open-loops.json`, `foundation/data/needs-you.json`). Anything else handed to a person",
-   "detail": "",
-   "how": "file:doctrine/open-loops.json + file:foundation/data/needs-you.json",
-   "id": "cited-94e4bb2cbb",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/doctrine/SYSTEM.md"
-  },
-  {
-   "claim": "`python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability, when this",
+   "claim": "Platform: `python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability,",
    "detail": "",
    "how": "file:foundation/coldstart.py + grep:.github/workflows/checks.yml::foundation[ .]coldstart\\b",
-   "id": "cited-a191183c3c",
+   "id": "cited-bce1597ca0",
    "kind": "claim",
    "pass": true,
    "surface": "seed/doctrine/SYSTEM.md"
@@ -2796,7 +2778,7 @@ export default {
   {
    "claim": "- **One map, one manifest, no hand-copied mirrors (FLEET-MAP-1, SYSTEM-MANIFEST-1, Rowan 2026-11-25).** \"What really needs to be in the",
    "detail": "",
-   "how": "file:doctrine/fleet-map.json + file:ultrastable.json + file:seed/standards/system.schema.json + file:seed/scripts/surfaces.py + file:doctrine/tenant-repos.json + file:tests/foundation/test_fleetmap.py",
+   "how": "file:doctrine/fleet-map.json + file:ultrastable.json + file:seed/standards/system.schema.json + file:publiccode.yml + file:seed/scripts/surfaces.py + file:doctrine/tenant-repos.json",
    "id": "mirror-fa789cdb47",
    "kind": "claim",
    "pass": true,
@@ -3685,7 +3667,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 156 Python and 1118 Worker tests",
+   "claim": "seed-tests: 185 Python and 1118 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3730,7 +3712,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1571",
+   "claim": "live-deploys: 1595",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3953,7 +3935,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 436,
-  "total": 436
+  "pass": 434,
+  "total": 434
  }
 };

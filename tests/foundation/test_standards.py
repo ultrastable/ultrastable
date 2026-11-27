@@ -33,6 +33,14 @@ class Standards(unittest.TestCase):
     def test_repo_clean(self):
         self.assertEqual(standards.check(ROOT), [])
 
+    def test_conform_probe_reads_the_file_with_its_validator(self):
+        """REPO-CONFORM-2: a conform: probe passes only when the named validator accepts the file; a substring is not enough."""
+        self.assertEqual(standards.probe(ROOT, "conform:seed::CITATION.cff"), "")
+        td = Path(scratch())
+        (td / "CITATION.cff").write_text("cff-version: 1.2.0\nlicense: LicenseRef-x\n")
+        self.assertIn("CITATION.cff", standards.probe(td, "conform:.::CITATION.cff"))
+        self.assertIn("not in the conformance register", standards.probe(ROOT, "conform:.::nothing.txt"))
+
     def test_declared_standard_without_support_fails(self):
         td = copy()
         edit(td, standards.SURF, lambda d: d["surfaces"][0]["standards"].append("x402-pay-per-crawl"))

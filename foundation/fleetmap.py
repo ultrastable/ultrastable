@@ -133,7 +133,7 @@ def check(root=REPO) -> list[str]:
         if not (r.get("manifest") or {}).get("found"):
             errs.append(f"{repo}: no ultrastable.json manifest was found for it (SYSTEM-MANIFEST-1); add one with an identity object, then python3 -m foundation fleetmap --gen --apply")
         i, where = manifest_of(root, repo, r, None, lambda url: None)
-        if i is not None and {k: v for k, v in row_from_identity(r, normalize(i)[0]).items() if k != "manifest"} != {k: v for k, v in r.items() if k != "manifest"}:
+        if i is not None and {k: v for k, v in row_from_identity(r, normalize(i, root)[0]).items() if k != "manifest"} != {k: v for k, v in r.items() if k != "manifest"}:
             errs.append(f"{repo}: the row differs from its manifest in this checkout; run python3 -m foundation fleetmap --gen --apply")
     readme = root / "seed/README.md"
     if readme.is_file() and example_block(root) not in readme.read_text(encoding="utf-8"):
@@ -329,15 +329,21 @@ def drift_one(root, repo: str, row: dict, clones=None, fetch=None, template_keep
     if "ultrastable.json" not in tree:
         out["missing"].append("ultrastable.json")
         out["notes"].append("no ultrastable.json manifest: nothing says what this repository is or renders its surfaces (SYSTEM-MANIFEST-1)")
-    elif how == "clone":
-        try:
-            i = json.loads((Path(clones) / repo.split("/", 1)[1] / "ultrastable.json").read_text(encoding="utf-8")).get("identity")
-        except ValueError:
-            i = None
-        if not isinstance(i, dict):
+    else:  # the manifest is read on both paths: a clone's file, or the same branch through GitHub (raw.githubusercontent.com serves the JSON)
+        if how == "clone":
+            try:
+                cfg = json.loads((Path(clones) / repo.split("/", 1)[1] / "ultrastable.json").read_text(encoding="utf-8"))
+            except ValueError:
+                cfg = None
+        else:
+            cfg = (fetch or _fetch)(f"https://raw.githubusercontent.com/{repo}/HEAD/ultrastable.json")
+        i = cfg.get("identity") if isinstance(cfg, dict) else None
+        if how != "clone" and (not isinstance(cfg, dict) or ("error" in cfg and i is None)):
+            out["notes"].append("ultrastable.json could not be read from GitHub, so its shape is unmeasured (never read as in shape)")
+        elif not isinstance(i, dict):
             out["notes"].append("ultrastable.json has no identity object (SYSTEM-MANIFEST-1)")
         else:
-            ni, converted = normalize(i)
+            ni, converted = normalize(i, root)
             if row.get("layer") != "template" and all(k in ni for k in ("summary", "layer")) and row_from_identity(row, ni) != row:
                 out["notes"].append("the manifest's identity differs from the map's row; run fleetmap --gen --apply")
             if converted:
@@ -485,28 +491,23 @@ def _fetch_text(url):
         return None
 
 
-def normalize(i: dict) -> tuple[dict, bool]:
+def normalize(i: dict, root=REPO) -> tuple[dict, bool]:
     """(identity in the schema's shape, whether it had to be converted). The tenant standard wrote runs_as as one object and no visibility
-    before the schema existed; the map reads both so no repository is unreadable while its manifest converges on the schema."""
-    if isinstance(i.get("runs_as"), list) and "visibility" in i:
-        return i, False
-    ra = i.get("runs_as")
-    out = {k: v for k, v in i.items() if k not in ("runs_as", "planned_url")}
-    if isinstance(ra, dict):
-        out["runs_as"] = [{"provider": "cloudflare", "kind": "worker", "name": ra["worker"]}] if ra.get("worker") else []
-        out.setdefault("status", "live" if ra.get("deployed") else "planned")
-    else:
-        out["runs_as"] = ra if isinstance(ra, list) else []
-    out.setdefault("visibility", "public")
-    out.setdefault("visibility_reason", "DISCOVER-1: public by default")
-    return out, True
+    before the schema existed; the map reads both so no repository is unreadable while its manifest converges on the schema. One converter for
+    the fleet: foundation/tenantstd.py normalize_identity (the scaffold and `tenantstd --normalize` use the same), with where it runs read from
+    doctrine/topology.json and visibility from github/repo-standard.json."""
+    from . import tenantstd
+    root = Path(root)
+    reg = lambda rel: json.loads((root / rel).read_text(encoding="utf-8")) if (root / rel).is_file() else None  # noqa: E731
+    out = tenantstd.normalize_identity(i, reg("doctrine/topology.json"), reg("github/repo-standard.json"), (reg(tenantstd.STD_CORE) or {}).get("core_repo"))
+    return out, out != i
 
 
 def row_from_identity(row: dict, i: dict) -> dict:
-    """The fields of a row that come from the manifest, and only those."""
+    """The fields of a row that come from the manifest, and only those. deploys names the Workers it runs as (a Pages or Actions route is not one)."""
     out = dict(row)
     out.update({"purpose": i["summary"], "layer": i["layer"], "state": i.get("status", "live"), "live": i.get("public_url"),
-                "visibility": i["visibility"], "visibility_reason": i["visibility_reason"], "deploys": [r["name"] for r in i.get("runs_as") or [] if r.get("kind") != "actions"]})
+                "visibility": i["visibility"], "visibility_reason": i["visibility_reason"], "deploys": [r["name"] for r in i.get("runs_as") or [] if r.get("kind", "worker") == "worker"]})
     return out
 
 
@@ -522,7 +523,7 @@ def gen(root=REPO, clones=None, fetch_text=None, apply=False) -> dict:
             row["manifest"] = {"found": False}
             rep["no_manifest"].append(repo)
             continue
-        i, converted = normalize(i)
+        i, converted = normalize(i, root)
         errs = _surfaces().validate({"identity": i}, sch)
         if errs or i.get("repo") != repo:
             rep["invalid"].append(f"{repo}: " + "; ".join(errs or [f"identity.repo is {i.get('repo')}"]))
@@ -537,42 +538,17 @@ def gen(root=REPO, clones=None, fetch_text=None, apply=False) -> dict:
 
 
 def adopt(root, target, sid: str) -> list[str]:
-    """Give a repository just filled from seed/ its own identity: the manifest's identity object from this system's row, then every surface rendered
-    from it (README with its own name and Live block, publiccode.yml, CITATION.cff, the repository metadata). The template's are not copied."""
+    """Give a repository just filled from seed/ its own identity from this system's row of the map, then render every surface from it, with the
+    kit's one implementation (seed/scripts/surfaces.py adopt, which the seed's own boot calls too). Returns the files that changed."""
     root, target = Path(root), Path(target)
     m = load(root)
     repo = next((r for r in m["repos"] if r.split("/", 1)[1] == sid), f"{m['org']}/{sid}")
     row = m["repos"].get(repo) or {}
-    seed_i = json.loads((root / "seed/ultrastable.json").read_text(encoding="utf-8"))["identity"]
-    live = row.get("live")
     worker = (row.get("deploys") or [None])[0]
-    i = {"name": sid, "slug": sid, "summary": row.get("purpose") or f"{sid}: an autonomous system started from the Ultrastable seed and run by its own managers.",
-         "repo": repo, "public_url": live, "license": seed_i["license"], "topics": ["autonomous-agents", "built-on-ultrastable", "cloudflare-workers", "ultrastable"],
-         "layer": "seeded-system", "parent": "ultrastable/ultrastable", "visibility": row.get("visibility", "public"), "visibility_reason": row.get("visibility_reason", "DISCOVER-1: public by default"),
-         "status": "live", "loop": seed_i.get("loop", ""),
-         "runs_as": [{"provider": "cloudflare", "kind": "worker", "name": worker, "how": "built from the Ultrastable seed and deployed by the platform's seed deploy"}] if worker else []}
-    p = target / "ultrastable.json"
-    cfg = json.loads(p.read_text(encoding="utf-8")) if p.is_file() else {}
-    old = cfg.get("identity") or {}
-    if old.get("repo") == repo:  # the system has its own identity already: only where it runs follows the registry
-        i = {**old, "public_url": live or old.get("public_url")}
-    cfg = {**{k: v for k, v in cfg.items() if k == "$schema_version"}, "identity": i, **{k: v for k, v in cfg.items() if k not in ("$schema_version", "identity")}}
-    p.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
-    rd = target / "README.md"
-    before = rd.read_text(encoding="utf-8") if rd.is_file() else ""
-    text = EX_BLOCK.sub("", before, count=1)
-    intro = ("A system started from the [Ultrastable seed](https://github.com/ultrastable/seed) and run by its own managers. "
-             "The text below the Live block is the seed's own description of what every such system carries.\n")
-    for name in ("identity", "how"):
-        text = re.sub(rf"<!-- {name}:start[^>]*-->.*?<!-- {name}:end -->\n?", "", text, count=1, flags=re.S)
-    h = re.search(r"^# .*\n", text, re.M)
-    rest = (text[h.end():] if h else text).lstrip("\n")
-    rd.write_text(f"# {sid}\n\n" + (rest if intro in rest else intro + "\n" + rest), encoding="utf-8")
-    cit = target / "CITATION.cff"
-    if cit.is_file() and "ultrastable/seed" in cit.read_text(encoding="utf-8"):
-        cit.unlink()  # the template's citation is not this system's; the render writes its own
-    wrote = _surfaces().render(target)
-    return [w for w in wrote if w != "README.md" or rd.read_text(encoding="utf-8") != before]
+    runs = [{"provider": "cloudflare", "kind": "worker", "name": worker, "how": "built from the Ultrastable seed and deployed by the platform's seed deploy"}] if worker else None
+    return _surfaces().adopt(target, repo, summary=row.get("purpose"), public_url=row.get("live"), runs_as=runs,
+                             visibility=row.get("visibility", "public"), visibility_reason=row.get("visibility_reason", "DISCOVER-1: public by default"),
+                             parent="ultrastable/ultrastable")
 
 
 def instructions_text(root, repo: str) -> str:

@@ -60,6 +60,9 @@ class Registry:
         for v, val, why in self.breaches():
             tried = self._tried(v.scope, v.name)
             action = next((a for a in self.menu if a not in tried), self.menu[-1])
+            if action == self.menu[-1] and action in {r["action"] for r in self.s.db.execute(
+                    "SELECT action FROM step_change WHERE scope=? AND ev=? AND outcome IS NULL", (v.scope, v.name))}:
+                continue  # menu exhausted and the last step is still pending: one open escalation, not one per tick
             pred = f"{v.name} returns within [{v.lo},{v.hi}] after {action}"
             self.s.db.execute(
                 "INSERT INTO step_change(ts,scope,ev,action,prediction,outcome) VALUES(?,?,?,?,?,NULL)",

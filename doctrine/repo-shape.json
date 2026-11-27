@@ -33,6 +33,7 @@
   {"path": "evals", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "core-manifest", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "licensing", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
+  {"path": "LICENSES", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "metrics", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "uptime", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "social", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
@@ -47,6 +48,7 @@
   {"path": "brand", "class": "assets", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "assets", "class": "assets", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "video", "class": "assets", "home": "ultrastable/ultrastable", "mode": "here"},
+  {"path": ".claude", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "docs/issues", "class": "state", "home": "D1 items (ultrastable-org) with an export on the evidence branch", "mode": "moving"},
   {"path": "ops", "class": "state", "home": "evidence branches and R2 (AUDIT bucket)", "mode": "moving"},
   {"path": "outreach/packets", "class": "state", "home": "evidence branches and R2 (AUDIT bucket)", "mode": "moving"}

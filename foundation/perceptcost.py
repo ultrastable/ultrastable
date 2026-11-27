@@ -5,7 +5,8 @@
                                                                  --due skips unless the last row is older than interval_days
   python3 -m foundation perceptcost --check                     the replay set parses and every answer file exists
 
-Each question names keywords and the file that holds the answer. Without the map an agent greps the keywords and reads every
+Each question names keywords and the file that holds the answer.
+The map is the REPO-MAP-1 model (paths and symbols), so a keyword has to appear in a file path or an exported name to find it. Without the map an agent greps the keywords and reads every
 matching file: cost = tokens of all files containing a keyword. With the map it looks the keywords up in the REPO-MAP-1 cards
 and reads the cards plus the answer file; if the answer file is not among the cards the map missed and the cost is the without-map
 cost plus the cards. Tokens are characters / 4. This is a PROXY for perception cost, not an agent run: it says nothing about
@@ -17,7 +18,7 @@ from __future__ import annotations
 import datetime as dt, json, statistics, subprocess, sys
 from pathlib import Path
 
-from . import repomap
+from . import cloudevents, repomap
 
 REPO = Path(__file__).resolve().parents[1]
 SET = "doctrine/replay-set.json"
@@ -48,19 +49,25 @@ def grep_cost(root, kws, paths) -> int:
     return total
 
 
-def map_hits(cards: dict, kws) -> dict:
-    return {p: c for p, c in cards.items() if any(k.lower() in (p + " " + c["purpose"] + " " + " ".join(c["defs"])).lower() for k in kws)}
+def map_hits(rows, kws) -> dict:
+    """path -> map line, for files whose path or symbols contain a keyword."""
+    out = {}
+    for r in rows:
+        line = f"{r['path']} {r['symbols'].replace(chr(10), ' ')}"
+        if any(k.lower() in line.lower() for k in kws):
+            out[r["path"]] = line
+    return out
 
 
 def score(root=REPO, paths=None) -> dict:
     spec = json.loads((root / SET).read_text())
-    cards, _ = repomap.build(root)
+    files = repomap.model(root, ":memory:").files()
     paths = paths if paths is not None else tracked(root)
     rows = []
     for q in spec["questions"]:
         base = grep_cost(root, q["keywords"], paths)
-        hits = map_hits(cards, q["keywords"])
-        card_tok = sum(tok(len(f"{p} {c['purpose']} {' '.join(c['defs'][:8])}")) for p, c in hits.items())
+        hits = map_hits(files, q["keywords"])
+        card_tok = sum(tok(len(line)) for line in hits.values())
         ans = root / q["answer"]
         ans_tok = tok(len(ans.read_text(errors="replace"))) if ans.is_file() else 0
         hit = q["answer"] in hits
@@ -73,11 +80,21 @@ def score(root=REPO, paths=None) -> dict:
             "min_saving": spec["min_saving"], "kill": saving is not None and saving < spec["min_saving"], "rows": rows}
 
 
+def envelope(result: dict) -> dict:
+    """The ledger row: a CloudEvents 1.0 envelope (OPEN-STANDARDS-1) around the reading. Refuses to build a row the standard rejects."""
+    e = cloudevents.event("perceptcost", "reading", "foundation/perceptcost", result, subject=result["date"], id=f"perceptcost-{result['date']}",
+                          time=result["date"] + "T00:00:00Z")
+    bad = cloudevents.conforms(e)
+    if bad:
+        raise ValueError("perception-cost row is not a conformant CloudEvent: " + "; ".join(bad))
+    return e
+
+
 def due(root=REPO, now=None) -> bool:
     p = root / LOG
     if not p.exists() or not p.read_text().strip():
         return True
-    last = json.loads(p.read_text().strip().splitlines()[-1])["date"]
+    last = cloudevents.unwrap(json.loads(p.read_text().strip().splitlines()[-1]))["date"]
     days = json.loads((root / SET).read_text())["interval_days"]
     return ((now or dt.date.today()) - dt.date.fromisoformat(last)).days >= days
 
@@ -102,7 +119,7 @@ def main(argv) -> int:
         if "--apply" in argv:
             (REPO / LOG).parent.mkdir(exist_ok=True)
             with open(REPO / LOG, "a") as f:
-                f.write(json.dumps(r, sort_keys=True) + "\n")
+                f.write(json.dumps(envelope(r), sort_keys=True) + "\n")  # checked before it is written
         return 0
     print(__doc__); return 2
 
