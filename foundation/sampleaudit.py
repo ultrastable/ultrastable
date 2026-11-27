@@ -37,6 +37,10 @@ def verdicts(root=REPO) -> list[tuple[str, str]]:
     return sorted(out)
 
 
+def open_items(root=REPO) -> int:
+    return sum(1 for f in (root / ISSUES).glob("Q-AUDIT-*.json") if json.loads(f.read_text()).get("verdict") not in ("clean", "defect"))
+
+
 def rate(root=REPO) -> tuple[float, str]:
     c = config(root)
     recent = [v for _, v in verdicts(root)][-c["window"]:]
@@ -74,7 +78,8 @@ def pick(prs: list[dict], r: float, day: str, filesof) -> list[dict]:
 
 def item(p: dict) -> dict:
     n = p["n"]
-    body = (f"**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation sampleaudit --probe {n}\n**Status:** open\n\n"
+    body = (f"**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation sampleaudit --probe {n}\n**Closing probe:** python3 -m foundation sampleaudit --probe {n}\n"
+            f"**Prediction:** spec_quality >= 0 within 72 h\n**Out of scope:** re-auditing other pull requests; fixing a defect inside this item (a defect gets its own fix item)\n**Status:** open\n\n"
             f"SAMPLE-AUDIT-1: PR #{n} ({p['title']}) merged at {p['merged_at']} was picked for audit ({p['why']}).\n\n"
             f"Read the merged diff with a clean context; the reviewer is not the author. Write `\"verdict\": \"clean\"` or `\"verdict\": \"defect\"` "
             f"and a `\"reason\"` into this file. A defect also gets its own fix item.")
@@ -86,6 +91,10 @@ def scan(root=REPO, apply=False, run=mergeaudit.gh, now=None) -> list[dict]:
     now = now or dt.datetime.now(dt.timezone.utc)
     r, _ = rate(root)
     picked = pick(mergeaudit.merged(run, now, window_h=24), r, now.date().isoformat(), lambda n: files(n, run))
+    picked = [p for p in picked if not (root / ISSUES / f"Q-AUDIT-{p['n']}.json").exists()]
+    c = config(root)
+    room = max(0, min(c["max_per_day"], c["max_open"] - open_items(root)))
+    picked = sorted(picked, key=lambda p: p["why"] != "protected path")[:room]  # a backlog the reviewer cannot clear gets no new work
     rows = []
     for p in picked:
         f = root / ISSUES / f"Q-AUDIT-{p['n']}.json"

@@ -10,6 +10,11 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: Fix red main from the spinoff snapshot, and gate spinoff data (#2790)
+- 2026-11-27: ZERO-MINUTES-1: worker merged #2765
+- 2026-11-27: spinoff: portfolio tick (#2765)
+- 2026-11-27: foundation: CODE-REGULATOR-1 algedonic preempt, stable-prefix check, PostToolUse token feed (stacked on #2742) (#2745)
+- 2026-11-27: Treat spinoffs/registry.js as generated so spinoff PRs pass SUBSTANCE-1 (#2756)
 - 2026-11-27: Add repo map, conclusion cache, impact tests and sampled audit (#2746)
 - 2026-11-27: foundation: add CODE-REGULATOR-1 (repo model, conclusion cache, essential-variable step-changes, impact selection) (#2742)
 - 2026-11-27: feat(research): server-side probes for the paper pipeline (CANON-2) (#2751)
