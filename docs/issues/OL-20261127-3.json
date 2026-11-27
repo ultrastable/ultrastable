@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261127-3",
+  "title": "OL-20261127-3: Essential-variable registry, connectance, world model and observer drills (#2620 steps 2, 7, 8, 11)",
+  "body": "**Owner:** product-manager\n**Trigger:** issue 2620 steps 2, 7, 8 and 11 unticked\n**Done check:** cmd:cd seed && python3 scripts/evregistry.py --check && python3 scripts/coupling.py --check && python3 scripts/worldmodel.py --check && python3 scripts/observer.py --check\n**Closing probe:** `python3 seed/scripts/evregistry.py --check` exits 0\n**Prediction:** essential_variables_registered >= 4 within 24 h\n**Out of scope:** knob snapshot and rollback (step 3), the VSM mapping (PR 2624)\n**Status:** done\n\nFour kit scripts: the essential-variable registry checked against goals.json, connectance with an admit limit of 0.10, a Laplace-calibrated world model with epsilon selection, and an observer drill that disturbs each homeostat part and measures re-settling. Session: session_0156nqDredxRjgVfePwXUrAp\n\n**Evidence:** seed/tests/test_evregistry.py, test_coupling.py, test_worldmodel.py and test_observer.py pass; each script's --check exits 0. Session: session_0156nqDredxRjgVfePwXUrAp",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
