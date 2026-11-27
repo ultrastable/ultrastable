@@ -1,8 +1,8 @@
 [
  {
-  "id": "Q-TEMPORAL-3477ae4eee",
-  "title": "Q-TEMPORAL-3477ae4eee: stale entry: entries:briefs",
-  "body": "Temporal loop finding (stale_entry) in ledger: 4 of 4 briefs untouched for 7+ days; oldest ledger/briefs/child-survival-SLB.md (7.2 d). Seen in 1 runs since 2026-11-26T16:51:39Z. Advocate: research-publisher.\n\nReview the named entries: update each from its source, or close it with a recorded disposition (superseded, fixed, backlogged with owner and trigger). Never leave it silent.\n\nFiles: ledger/briefs/child-survival-SLB.md, ledger/briefs/child-survival-STP.md, ledger/briefs/child-survival-SYR.md.\n\nPrediction: untouched briefs fall below 1 within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 3477ae4eee` recomputes it from the repository's own history).",
+  "id": "Q-TEMPORAL-932e9c4a09",
+  "title": "Q-TEMPORAL-932e9c4a09: stale entry: entries:candidate-problems",
+  "body": "Temporal loop finding (stale_entry) in ledger: 1 of 1 candidate-problems untouched for 7+ days; oldest ledger/problem-bank.json (7.1 d). Seen in 1 runs since 2026-11-27T16:37:30Z. Advocate: research-publisher.\n\nReview the named entries: update each from its source, or close it with a recorded disposition (superseded, fixed, backlogged with owner and trigger). Never leave it silent.\n\nFiles: ledger/problem-bank.json.\n\nPrediction: untouched candidate-problems fall below 0 within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 932e9c4a09` recomputes it from the repository's own history).",
   "labels": [
    "temporal",
    "agent-task"

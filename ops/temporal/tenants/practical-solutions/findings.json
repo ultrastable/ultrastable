@@ -173,7 +173,7 @@
    "area": "ledger",
    "advocate": "research-publisher",
    "severity": "act",
-   "evidence": "4 of 4 briefs untouched for 7+ days; oldest ledger/briefs/child-survival-SLB.md (7.2 d)",
+   "evidence": "4 of 4 briefs untouched for 7+ days; oldest ledger/briefs/child-survival-SLB.md (8.2 d)",
    "prediction": "untouched briefs fall below 1 within 7 days",
    "files": [
     "ledger/briefs/child-survival-SLB.md",
@@ -183,8 +183,8 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-26T16:51:39Z",
-   "last_seen": "2026-11-26T16:51:39Z",
-   "runs": 1,
+   "last_seen": "2026-11-27T16:37:30Z",
+   "runs": 2,
    "item": "Q-TEMPORAL-3477ae4eee",
    "reopened": 0
   },
@@ -195,7 +195,7 @@
    "area": "ledger",
    "advocate": "research-publisher",
    "severity": "watch",
-   "evidence": "ledger/grow.json edited 18 times in 3 days (outside generated and ledger paths)",
+   "evidence": "ledger/grow.json edited 21 times in 3 days (outside generated and ledger paths)",
    "prediction": "ledger/grow.json is edited at most 5 times in 3 days within 7 days",
    "files": [
     "ledger/grow.json"
@@ -203,8 +203,8 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-26T16:51:39Z",
-   "last_seen": "2026-11-26T16:51:39Z",
-   "runs": 1,
+   "last_seen": "2026-11-27T16:37:30Z",
+   "runs": 2,
    "item": null,
    "reopened": 0
   },
@@ -215,7 +215,7 @@
    "area": "ledger",
    "advocate": "research-publisher",
    "severity": "watch",
-   "evidence": "ledger/impact.json edited 13 times in 3 days (outside generated and ledger paths)",
+   "evidence": "ledger/impact.json edited 16 times in 3 days (outside generated and ledger paths)",
    "prediction": "ledger/impact.json is edited at most 5 times in 3 days within 7 days",
    "files": [
     "ledger/impact.json"
@@ -223,8 +223,8 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-26T16:51:39Z",
-   "last_seen": "2026-11-26T16:51:39Z",
-   "runs": 1,
+   "last_seen": "2026-11-27T16:37:30Z",
+   "runs": 2,
    "item": null,
    "reopened": 0
   },
@@ -235,7 +235,7 @@
    "area": "ledger",
    "advocate": "research-publisher",
    "severity": "watch",
-   "evidence": "ledger/impl-evidence.json edited 14 times in 3 days (outside generated and ledger paths)",
+   "evidence": "ledger/impl-evidence.json edited 17 times in 3 days (outside generated and ledger paths)",
    "prediction": "ledger/impl-evidence.json is edited at most 5 times in 3 days within 7 days",
    "files": [
     "ledger/impl-evidence.json"
@@ -243,8 +243,8 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-26T16:51:39Z",
-   "last_seen": "2026-11-26T16:51:39Z",
-   "runs": 1,
+   "last_seen": "2026-11-27T16:37:30Z",
+   "runs": 2,
    "item": null,
    "reopened": 0
   },
@@ -263,9 +263,29 @@
    "last_good": null,
    "status": "open",
    "first_seen": "2026-11-26T16:51:39Z",
-   "last_seen": "2026-11-26T16:51:39Z",
-   "runs": 1,
+   "last_seen": "2026-11-27T16:37:30Z",
+   "runs": 2,
    "item": null,
+   "reopened": 0
+  },
+  "932e9c4a09": {
+   "id": "932e9c4a09",
+   "kind": "stale_entry",
+   "subject": "entries:candidate-problems",
+   "area": "ledger",
+   "advocate": "research-publisher",
+   "severity": "act",
+   "evidence": "1 of 1 candidate-problems untouched for 7+ days; oldest ledger/problem-bank.json (7.1 d)",
+   "prediction": "untouched candidate-problems fall below 0 within 7 days",
+   "files": [
+    "ledger/problem-bank.json"
+   ],
+   "last_good": null,
+   "status": "open",
+   "first_seen": "2026-11-27T16:37:30Z",
+   "last_seen": "2026-11-27T16:37:30Z",
+   "runs": 1,
+   "item": "Q-TEMPORAL-932e9c4a09",
    "reopened": 0
   }
  },
