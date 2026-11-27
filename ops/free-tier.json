@@ -1,12 +1,28 @@
 {
  "_doc": "SPINOFF-IDEAS-1: the free-plan headroom snapshot the idea loop plans against. Refreshed by `python3 -m foundation ideas --headroom --apply` from Cloudflare's GraphQL analytics when CF_ANALYTICS_TOKEN is bound (same query as seed/worker/src/freetier.js); with no token the snapshot is kept and marked stale after 48 h, which holds cadence at the degrade level. Day figures below are measured 2026-11-17 (D1 reads: ultrastable-org ~2.7M/day + ultrastable-ops ~0.3M/day; AI: 8,068 neurons in 7 days) and are labelled estimates where no daily sample exists.",
- "at": "2026-11-17T21:00:00Z",
- "basis": "measured-2026-11-17",
- "level": "ok",
+ "at": "2026-11-27T11:56:34Z",
+ "basis": "tick-free-tier-samples",
+ "level": "shed",
  "resources": {
-  "d1_rows_read": {"used": 3000000, "limit": 5000000, "basis": "measured"},
-  "d1_rows_written": {"used": 20000, "limit": 100000, "basis": "estimate"},
-  "workers_requests": {"used": 30000, "limit": 100000, "basis": "estimate"},
-  "ai_neurons": {"used": 1150, "limit": 10000, "basis": "measured"}
+  "d1_rows_read": {
+   "used": 32174740,
+   "limit": 5000000,
+   "basis": "measured"
+  },
+  "d1_rows_written": {
+   "used": 254787,
+   "limit": 100000,
+   "basis": "measured"
+  },
+  "workers_requests": {
+   "used": 91383,
+   "limit": 100000,
+   "basis": "measured"
+  },
+  "ai_neurons": {
+   "used": 1150,
+   "limit": 10000,
+   "basis": "measured"
+  }
  }
 }
