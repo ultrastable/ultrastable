@@ -1,0 +1,12 @@
+{
+  "id": "Q-CLEANROOM-definition",
+  "title": "Q-CLEANROOM-definition: a new system does not bring up definition on its own",
+  "body": "**Owner:** executor\n**Trigger:** cleanroom run, daily\n**Done check:** cmd:python3 -m foundation cleanroom --probe definition\n**Status:** open\n\nCLEANROOM-1: a sandbox built from nothing but seed/ and an idea did not bring up `definition` (the booted seed still meets its own definition (SYSTEM-SPEC-1: scripts/system.py --check against autonomy/system.json): SYSTEM.md is current, every clause's probe passes and every standing rule has its enforcement) with zero human steps.\n\nEvidence (2026-11-27T03:58:09Z): SYSTEM.md is stale: run python3 scripts/system.py --write \n\nPaths: seed/, doctrine/cleanroom.json, foundation/cleanroom.py.\n\nsize: M\n\n**Closing probe:** python3 -m foundation cleanroom --probe definition passes",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

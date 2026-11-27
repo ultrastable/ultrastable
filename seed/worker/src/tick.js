@@ -15,7 +15,8 @@ import { criticalityStep } from './criticality.js';
 import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
 import { unknownsStep } from './unknowns.js';
-import { goalsStep, seedGoals } from './goals.js';  // GOALS-1
+import { goalsStep, seedGoals, largestJoint } from './goals.js';  // GOALS-1
+import { varietyReading } from './regulation.js';  // ASHBY-KERNEL-1
 import { planStep } from './planner.js';  // PLAN-1
 import { migrateStep } from './migrate.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
@@ -75,6 +76,11 @@ export const METRICS = {
   db_size_share: (db) => dbSizeBytes(db).then(b => (Number.isFinite(b) && b > 0 ? Math.round(1000 * b / DB_LIMIT_BYTES) / 1000 : NaN)),
   metrics_in_breach: (db) => first(db, `SELECT COUNT(*) AS n FROM metrics WHERE breached = 1 AND tenant_id IS NULL`).then(r => r.n),
   claims_released_unworked_24h: claimsReleasedUnworked24h,  // DOER-1 (workers#173): target 0
+  // ASHBY-KERNEL-1 (W. Ross Ashby's journal, law of requisite variety): the disturbance classes of the last 14 days that no response held (a fix
+  // item open past 72 h). NaN when the queue cannot be read, which the measure step counts as a breach, never as a healthy 0.
+  unregulated_disturbances_14d: (db, now, tenant) => varietyReading(db, now, tenant).then(v => v.uncovered_n, () => NaN),
+  // The largest set of step-functions that can only be judged together (declared links plus confirmed upsets); above 8 a whole adapts too slowly.
+  largest_joint_component: (db, now) => largestJoint(db, now).catch(() => NaN),
   silent_drops_7d: (db, now) => first(db,
     `SELECT COUNT(*) AS n FROM outcomes WHERE result='silent_drop' AND at >= ?`,
     iso(new Date(now - 7 * 86400e3))).then(r => r.n),

@@ -1,0 +1,14 @@
+{
+  "id": "Q-ASHBY-markov",
+  "title": "Q-ASHBY-markov: read the work queue as a Markov chain and find the states items cannot leave",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation ashbymap --probe markov-chain\n**Status:** open\n\nProblem: The kernel keeps each item's current status and not its transitions, so it cannot say which states absorb items or how long closure takes. Ashby's journal (index: Markov process, J.4539 to J.4545, J.4700; ultrastability in Markov machines, J.4904; Absorbing state; self-locking states collect every member of an ensemble, J.4055, J.4229) treats progress to an absorbing state as the stochastic form of stability.\n\nBuild: Add a migration with table `item_transitions (item_id, from_status, to_status, at)` written where `seed/worker/src/tick.js` changes an item's status, and `export function absorption(transitions, allowed)` to `seed/worker/src/ashby.js`: the transition matrix, its absorbing states and closed classes, those not in `allowed` (done, superseded, cancelled), and the expected steps to absorption from each state. Builtin metric `items_trapped` (items in a closed class outside the allowed set, target 0) with a goal under `core.adapt` in `seed/autonomy/goals.json`. Tests in `seed/worker/test/ashby.test.js` on a chain with a known fundamental matrix. Bind the concept `markov-chain` in `doctrine/ashby-concepts.json`.\n\n**Prediction:** ashby_gaps <= 3 within 720 h\n\n**Out of scope:** predicting single items; rows older than the retention window in `seed/autonomy/retention.json`.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ashbymap --probe markov-chain` passes when the concept is implemented and every mechanism it names exists (ASHBY-KERNEL-1).\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "role:operations",
+    "research",
+    "plus"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}
