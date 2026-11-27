@@ -1,6 +1,6 @@
 {
  "rule": "FLEET-MAP-1",
- "at": "2026-11-27T15:37:35Z",
+ "at": "2026-11-27T15:51:00Z",
  "repos": {
   "ultrastable/ultrastable": {
    "status": "not-a-copy",
@@ -11,9 +11,9 @@
    "notes": []
   },
   "ultrastable/seed": {
-   "status": "drifted",
+   "status": "equal",
    "how": "github",
-   "differ": 4,
+   "differ": 0,
    "missing": 0,
    "extra": 0,
    "notes": []
@@ -57,8 +57,8 @@
   "ultrastable/unlearn": {
    "status": "drifted",
    "how": "github",
-   "differ": 4,
-   "missing": 5,
+   "differ": 1,
+   "missing": 0,
    "extra": 0,
    "notes": [
     "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
