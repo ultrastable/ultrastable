@@ -7115,6 +7115,15 @@
    "body": "seed/worker/src/index.js GET /health answers status, worker, version, enabled and bindings_ok beside its own fields, as core/org/index.js does. Proven by node --test seed/worker/test/spec-11-fleet-runtime.test.js.",
    "probe": "grep:seed/worker/src/index.js::bindings_ok: true",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-27-owner-owned-kernel-registries-are-protected-paths",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Owner-owned kernel registries are protected paths",
+   "body": "Chosen over CODEOWNERS review because project rules allow no human review. The EV registry, step repertoire, partitions, kernel9 map and kernel pin now fail the protected-path gate unless a PR carries a Protected-change line. The fast loop and executor cannot edit them; the slow-loop identity gated by replay and rollback is the only other writer (to build).",
+   "probe": "grep:scripts/protected_paths.py::OWNER_OWNED",
+   "session": "session_0156nqDvPawiALe47iATg79o"
   }
  ]
 }
