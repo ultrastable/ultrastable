@@ -119,7 +119,7 @@ Criticality numbers (from `autonomy/criticality.json`): window 14 days, k_min 1,
 
 ## Standing rules
 
-98 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
+99 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
 a rule enforced only by the platform is marked so, and the platform checks it for every system it hosts.
 
 - **USER-BACKEND-1**: The user does the idea; the system does the backend; one fix improves every system. In this kit: `doctrine/user-backend.json`, `worker/src/errors.js`, `worker/test/errors.test.js`.
@@ -132,6 +132,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **COMPLETE-1**: Complete everything; close everything. In this kit: `worker/src/sweeper.js`.
 - **AUTO-SHIP-CLEAN-1**: Merge and deploy everything automatically; clean up everywhere. In this kit: `worker/src/handoff.js`, `worker/src/sweeper.js`.
 - **DRAIN-ALL-1**: Complete all work; drain every issue; merge every PR; zero manual intervention. In this kit: `worker/src/lane.js`, `worker/src/sweeper.js`.
+- **PR-NEVER-LOSE-1**: Automation never discards unmerged work. In this kit: `scripts/branch_cleanup.py`, `worker/src/prsafe.js`, `worker/src/sla.js`, `worker/src/sweeper.js`.
 - **STRANGE-LOOP-1**: Strange loops: every loop closes itself and improves itself; no zombie sessions. In this kit: checked by the platform.
 - **CLOCKWORK-1**: Clockwork: every loop is a clock, and a stopped or inaccurate clock is not a working clock. In this kit: `worker/src/pulse.js`.
 - **FLOW-DIRECTIVE-1**: Every loop declares its flows and closes its feedback. In this kit: checked by the platform.
