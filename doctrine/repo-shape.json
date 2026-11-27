@@ -16,6 +16,7 @@
   {"path": "tests", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "test", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": ".github", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
+  {"path": ".claude", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": ".devcontainer", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "agents", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},
   {"path": "scaffold", "class": "platform", "home": "ultrastable/ultrastable", "mode": "here"},

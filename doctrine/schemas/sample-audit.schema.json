@@ -25,6 +25,12 @@
     },
     "$schema": {
       "type": "string"
+    },
+    "max_open": {
+      "type": "integer"
+    },
+    "max_per_day": {
+      "type": "integer"
     }
   },
   "required": [
@@ -32,6 +38,8 @@
     "base",
     "ceiling",
     "floor",
+    "max_open",
+    "max_per_day",
     "step_up",
     "window"
   ]

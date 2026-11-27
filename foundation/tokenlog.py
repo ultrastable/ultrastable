@@ -2,6 +2,9 @@
 """TOKEN-LOG-1: where an agent session's tokens go, by kind of tool, so every efficiency change is measured against a baseline.
 
   python3 -m foundation tokenlog --session FILE.jsonl [--append LOG]   summarise one Claude Code transcript
+  python3 -m foundation tokenlog --session FILE.jsonl --store DB        also write the per-kind rows to the regulator ledger (token_log)
+  python3 -m foundation tokenlog --hook                                 Claude Code Stop hook: reads {transcript_path, session_id} on stdin
+                                                                         and appends the summary to .cache/token-log.jsonl (never committed)
   python3 -m foundation tokenlog --compare BASE.json NEW.json           tokens per session, before and after a change
 
 A summary holds the real usage totals the API reported (input, cache read, cache write, output) and, per tool kind (read, execute,
@@ -66,11 +69,39 @@ def compare(base: dict, new: dict) -> dict:
             "note": "cache reads weighted 0.1; compare sessions on the same task, never different tasks"}
 
 
+def to_store(summary: dict, db: str):
+    from .regulator import Store
+    st = Store(db)
+    for k, v in summary["by_kind"].items():
+        if v["calls"]:
+            st.log_tokens(summary["session"], ".", k, v["result_tokens_est"], 0)
+    return st.token_share_by_kind()
+
+
+def hook(stdin, root=Path(__file__).resolve().parents[1]) -> int:
+    """Stop hook: summarise the finished session. A hook that fails must not stop the session, so errors are returned, not raised."""
+    try:
+        d = json.loads(stdin.read() or "{}")
+        p = Path(d["transcript_path"])
+        s = summarise(p.read_text(errors="replace").splitlines()); s["session"] = d.get("session_id") or p.stem
+        out = root / ".cache/token-log.jsonl"
+        out.parent.mkdir(exist_ok=True)
+        with open(out, "a") as f:
+            f.write(json.dumps(s, sort_keys=True) + "\n")
+        return 0
+    except (KeyError, OSError, ValueError) as e:
+        print(f"tokenlog hook: {e}", file=sys.stderr); return 0
+
+
 def main(argv) -> int:
+    if "--hook" in argv:
+        return hook(sys.stdin)
     if "--session" in argv:
         p = Path(argv[argv.index("--session") + 1])
         s = summarise(p.read_text(errors="replace").splitlines()); s["session"] = p.stem
         print(json.dumps(s, indent=1))
+        if "--store" in argv:
+            to_store(s, argv[argv.index("--store") + 1])
         if "--append" in argv:
             with open(argv[argv.index("--append") + 1], "a") as f:
                 f.write(json.dumps(s, sort_keys=True) + "\n")

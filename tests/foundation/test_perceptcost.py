@@ -7,10 +7,10 @@ from foundation import perceptcost as pc
 
 def _root(d: Path):
     (d / "foundation").mkdir(); (d / "doctrine").mkdir(); (d / "ops").mkdir()
-    (d / "foundation/a.py").write_text('"""Churn gate for reverts."""\ndef gate():\n    pass\n' + "# churn\n" * 50)
-    (d / "foundation/b.py").write_text("# churn too\n" * 400)
+    (d / "foundation/a.py").write_text('def churn_gate():\n    pass\n' + "# churn\n" * 50)
+    (d / "foundation/b.py").write_text("# churn too and zzz\n" * 400)
     (d / "doctrine/replay-set.json").write_text(json.dumps({"interval_days": 7, "min_saving": 0.15,
-        "questions": [{"id": "q", "keywords": ["churn"], "answer": "foundation/a.py"}, {"id": "miss", "keywords": ["gate"], "answer": "foundation/b.py"}]}))
+        "questions": [{"id": "q", "keywords": ["churn"], "answer": "foundation/a.py"}, {"id": "miss", "keywords": ["zzz"], "answer": "foundation/b.py"}]}))
 
 
 class PerceptCostTest(unittest.TestCase):

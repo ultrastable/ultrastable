@@ -8,7 +8,11 @@ every card carries the source sha so a mismatch forces a re-read.
 import ast
 import hashlib
 import os
+import re
 
+JS_EXT = (".js", ".mjs", ".cjs", ".ts", ".tsx", ".jsx")
+JS_IMPORT = re.compile(r"""(?:import\s[^'"]*?from\s*|import\s*\(\s*|import\s+|require\(\s*)['"](\.[^'"]+)['"]""")
+JS_SYMBOL = re.compile(r"^\s*export\s+(?:default\s+)?(?:async\s+)?(function\*?|class|const|let|var)\s+([A-Za-z_$][\w$]*)", re.M)
 SKIP_DIRS = {".git", "node_modules", "__pycache__", ".venv", "venv", "dist", "build"}
 
 
@@ -51,6 +55,33 @@ def parse_py(path):
     return symbols, sorted(set(imports))
 
 
+def parse_js(path):
+    """Multi-language step (HANDOFF roadmap 2), stdlib only: exported symbols and relative imports, no tree-sitter dependency.
+    Relative specifiers are kept with a `js:` prefix and resolved against the importing file's directory in import_edges."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            text = f.read()
+    except (UnicodeDecodeError, OSError):
+        return [], []
+    symbols = [f"{'def' if k.startswith('function') else k} {n}" for k, n in JS_SYMBOL.findall(text)]
+    return symbols, sorted({"js:" + m for m in JS_IMPORT.findall(text)})
+
+
+def resolve_js(rel, spec, known):
+    base = os.path.dirname(rel)
+    parts = []
+    for seg in os.path.join(base, spec).replace(os.sep, "/").split("/"):
+        if seg == "..":
+            parts and parts.pop()
+        elif seg not in ("", "."):
+            parts.append(seg)
+    p = "/".join(parts)
+    for cand in [p] + [p + e for e in JS_EXT] + [p + "/index" + e for e in JS_EXT]:
+        if cand in known:
+            return cand
+    return None
+
+
 class RepoModel:
     def __init__(self, store, root):
         self.store, self.root = store, os.path.abspath(root)
@@ -59,7 +90,7 @@ class RepoModel:
         for d, dirs, files in os.walk(self.root):
             dirs[:] = sorted(x for x in dirs if x not in SKIP_DIRS)
             for fn in sorted(files):
-                if fn.endswith(".py"):
+                if fn.endswith((".py",) + JS_EXT):
                     full = os.path.join(d, fn)
                     yield os.path.relpath(full, self.root), full
 
@@ -74,7 +105,7 @@ class RepoModel:
             if known.get(rel) == sha:
                 unchanged += 1
                 continue
-            symbols, imports = parse_py(full)
+            symbols, imports = parse_js(full) if rel.endswith(JS_EXT) else parse_py(full)
             db.execute(
                 "INSERT OR REPLACE INTO file_state VALUES(?,?,?,?,?)",
                 (rel, sha, module_of(rel), "\n".join(symbols), "\n".join(imports)))
@@ -99,13 +130,22 @@ class RepoModel:
         """file -> files it imports (resolved against repo paths)."""
         rows = self.files()
         by_mod = {}
+        known = {r["path"] for r in rows}
         for r in rows:
+            if not r["path"].endswith(".py"):
+                continue
             p = r["path"][:-3].replace(os.sep, ".")
             by_mod[p] = r["path"]
             if p.endswith(".__init__"):
                 by_mod[p[:-9]] = r["path"]
         edges = {r["path"]: set() for r in rows}
         for r in rows:
+            if r["path"].endswith(JS_EXT):
+                for imp in filter(None, r["imports"].split("\n")):
+                    tgt = resolve_js(r["path"], imp[3:], known)
+                    if tgt and tgt != r["path"]:
+                        edges[r["path"]].add(tgt)
+                continue
             pkg = r["path"][:-3].replace(os.sep, ".").split(".")
             pkg = pkg[:-1]  # drop module name (or "__init__") -> containing package
             for imp in filter(None, r["imports"].split("\n")):
