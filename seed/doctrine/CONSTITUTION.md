@@ -43,7 +43,7 @@ Tick steps, in order:
 15. `check_plus_share`: a share of capacity goes to improvements
 16. `age_sla`: an item past its SLA is escalated, never ignored
 17. `cost_probe`: spend is sampled against the budget
-18. `ashby`: an objective measured only by its own target is filed; a breached guard under a healthy target is repaired first
+18. `second_goal`: an objective measured only by its own target is filed; a breached guard under a healthy target is repaired first
 19. `criticality`: k_eff is computed from verified deploys over cost and human touches
 20. `pulse`: the system publishes what it did, from its own tables
 21. `ignition`: the system reads its own stage from bootstrap to self-sustaining
@@ -154,5 +154,5 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
   - detector: `autonomy/phases.json`, `worker/src/orchestrate.js`
   - remediation: `scripts/phasework.py`, `worker/src/orchestrate.js`
 - **second-goal-in-code** (Rowan, 2026-11-27): The explicit goal is subordinate to the essential variables. Every objective with a target carries a guard its target does not move; a breached guard under a healthy target is repaired before the goal is pursued; a step is drawn only from untried, reversible candidates and kept only when the variables held; a task that harms the one who does it is not prescribed, and past failures are always recalled.
-  - detector: `worker/src/ashby.js`, `autonomy/ashby.json`
-  - remediation: `worker/src/ashby.js`, `worker/src/organization.js`
+  - detector: `worker/src/secondloop.js`, `autonomy/secondloop.json`
+  - remediation: `worker/src/secondloop.js`, `worker/src/organization.js`

@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// ASHBY-KERNEL-1: every concept in autonomy/ashby.json is an export that behaves as the register says, and the tick step acts on it.
+// SECOND-LOOP-KERNEL-1: every concept in autonomy/secondloop.json is an export that behaves as the register says, and the tick step acts on it.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeDb } from './d1shim.js';
-import * as A from '../src/ashby.js';
+import * as A from '../src/secondloop.js';
 import { runTick, STEP_ORDER, ensureItem } from '../src/tick.js';
 
-const reg = JSON.parse(readFileSync(new URL('../../autonomy/ashby.json', import.meta.url), 'utf8'));
+const reg = JSON.parse(readFileSync(new URL('../../autonomy/secondloop.json', import.meta.url), 'utf8'));
 const mean = (o, seeds) => seeds.reduce((s, seed) => s + A.homeostat({ ...o, seed }).redraws, 0) / seeds.length;
 const seeds = Array.from({ length: 60 }, (_, i) => i + 1);
 
 test('the register and the code are one list: every concept names an export, every export is named', () => {
-  const named = new Set(reg.concepts.filter(c => c.code === 'worker/src/ashby.js').flatMap(c => c.exports));
+  const named = new Set(reg.concepts.filter(c => c.code === 'worker/src/secondloop.js').flatMap(c => c.exports));
   for (const c of reg.concepts) {
-    if (c.code === 'worker/src/ashby.js') for (const e of c.exports) assert.equal(typeof A[e] !== 'undefined', true, `${c.id}: ashby.js has no export ${e}`);
+    if (c.code === 'worker/src/secondloop.js') for (const e of c.exports) assert.equal(typeof A[e] !== 'undefined', true, `${c.id}: secondloop.js has no export ${e}`);
     assert.ok(c.sources.length, `${c.id}: no source`);
     for (const s of c.sources) {
       assert.ok(s.journal_pages || s.work, `${c.id}: a source is a journal page or a published work`);
@@ -144,20 +144,20 @@ const metric = (db, id, obj, kind, breached = 0) => db.raw.prepare(`INSERT INTO 
 const ctx = () => ({ config, now: T0, nowIso: '2026-11-27 00:00:00', notes: [] });
 
 test('tick step: an objective measured only by its own target files one item, closed by the same reading', async () => {
-  assert.ok(STEP_ORDER.indexOf('ashby') > STEP_ORDER.indexOf('measure'), 'the step reads the breach flags measure just wrote');
+  assert.ok(STEP_ORDER.indexOf('second_goal') > STEP_ORDER.indexOf('measure'), 'the step reads the breach flags measure just wrote');
   const db = makeDb();
   metric(db, 'M-t1', 'OBJ-1', 'target'); metric(db, 'M-t2', 'OBJ-2', 'target'); metric(db, 'M-g2', 'OBJ-2', 'guard');
-  const s = await A.ashbyStep(db, ctx(), ensureItem);
+  const s = await A.secondGoalStep(db, ctx(), ensureItem);
   assert.deepEqual([s.objectives, s.ev_coverage, s.uncovered], [2, 0.5, ['OBJ-1']]);
   const item = db.raw.prepare('SELECT status, owner_role, title FROM items WHERE id = ?').get(A.COVERAGE_ITEM);
   assert.equal(item.status, 'ready'); assert.match(item.title, /OBJ-1/);
-  assert.equal(JSON.parse(db.raw.prepare("SELECT value FROM org WHERE key = 'ashby'").get().value).ev_coverage, 0.5);
+  assert.equal(JSON.parse(db.raw.prepare("SELECT value FROM org WHERE key = 'second_goal'").get().value).ev_coverage, 0.5);
   metric(db, 'M-g1', 'OBJ-1', 'guard');
-  await A.ashbyStep(db, ctx(), ensureItem);
+  await A.secondGoalStep(db, ctx(), ensureItem);
   const done = db.raw.prepare('SELECT status, disposition FROM items WHERE id = ?').get(A.COVERAGE_ITEM);
   assert.equal(done.status, 'done'); assert.match(done.disposition, /^fixed/);
   db.raw.prepare("DELETE FROM metrics WHERE id = 'M-g1'").run();
-  await A.ashbyStep(db, ctx(), ensureItem);
+  await A.secondGoalStep(db, ctx(), ensureItem);
   assert.equal(db.raw.prepare('SELECT status FROM items WHERE id = ?').get(A.COVERAGE_ITEM).status, 'ready', 'the same item reopens; nothing new is filed');
 });
 
@@ -165,18 +165,18 @@ test('tick step: a healthy goal over a breached guard puts the guard repair at t
   const db = makeDb();
   metric(db, 'M-t', 'OBJ-1', 'target', 0); metric(db, 'M-g', 'OBJ-1', 'guard', 1);
   db.raw.prepare("INSERT INTO items (id, title, owner_role, done_check, priority, status) VALUES ('BREACH-M-g', 'b', 'staff', 'x', 10, 'ready'), ('OTHER', 'o', 'staff', 'x', 5, 'ready')").run();
-  const s = await A.ashbyStep(db, ctx(), ensureItem);
+  const s = await A.secondGoalStep(db, ctx(), ensureItem);
   assert.deepEqual(s.inverted, [{ objective: 'OBJ-1', guards: ['M-g'] }]); assert.equal(s.raised, 1);
   assert.equal(db.raw.prepare("SELECT priority FROM items WHERE id = 'BREACH-M-g'").get().priority, 0);
-  assert.equal((await A.ashbyStep(db, ctx(), ensureItem)).raised, 0, 'idempotent');
+  assert.equal((await A.secondGoalStep(db, ctx(), ensureItem)).raised, 0, 'idempotent');
   db.raw.prepare("UPDATE metrics SET breached = 1 WHERE id = 'M-t'").run();
-  assert.deepEqual((await A.ashbyStep(db, ctx(), ensureItem)).inverted, [], 'a goal that is itself failing is not reporting success');
+  assert.deepEqual((await A.secondGoalStep(db, ctx(), ensureItem)).inverted, [], 'a goal that is itself failing is not reporting success');
 });
 
-test('the whole tick still runs every step with the ashby step in it', async () => {
+test('the whole tick still runs every step with the second_goal step in it', async () => {
   const db = makeDb();
   db.raw.exec("INSERT INTO roles (id, role, tick_every, model) VALUES ('op-1','operations',1,'m')");
   const r = await runTick(db, { config, now: T0 });
   assert.equal(r.completed, STEP_ORDER.length, JSON.stringify(r.errors));
-  assert.match(r.report, /ashby: 0 objective\(s\), guard coverage unmeasured/);
+  assert.match(r.report, /second_goal: 0 objective\(s\), guard coverage unmeasured/);
 });

@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as O from '../src/organization.js';
 
-const reg = JSON.parse(readFileSync(new URL('../../autonomy/ashby.json', import.meta.url), 'utf8'));
+const reg = JSON.parse(readFileSync(new URL('../../autonomy/secondloop.json', import.meta.url), 'utf8'));
 
 test('every organisation concept in the register is an export of organization.js, and every export is registered', () => {
   const mine = reg.concepts.filter(c => c.code === 'worker/src/organization.js');

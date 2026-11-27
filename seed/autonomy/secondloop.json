@@ -1,12 +1,12 @@
 {
- "$schema": "./schemas/ashby.schema.json",
- "_doc": "ASHBY-KERNEL-1 (Rowan, 2026-11-27): the concepts of W. Ross Ashby's journal and concept index and of Perez Lopez's 1974 paper built on them, that run as code in seed/worker/src/ashby.js and seed/worker/src/organization.js. One row per concept: the exports that implement it, our own statement of it, where it comes from, and how it fails. Read by seed/worker/test/ashby.test.js and seed/worker/test/organization.test.js, which fails when a concept names no export, an export is named by no concept, or a journal page is not a four-digit page number. verified = the page numbers were read on ashby.info index pages; false = taken from a secondary source.",
- "id": "ashby",
+ "$schema": "./schemas/secondloop.schema.json",
+ "_doc": "SECOND-LOOP-KERNEL-1 (Rowan, 2026-11-27): the concepts of W. Ross Ashby's journal and concept index and of Perez Lopez's 1974 paper built on them, that run as code in seed/worker/src/secondloop.js and seed/worker/src/organization.js. One row per concept: the exports that implement it, our own statement of it, where it comes from, and how it fails. Read by seed/worker/test/secondloop.test.js and seed/worker/test/organization.test.js, which fails when a concept names no export, an export is named by no concept, or a journal page is not a four-digit page number. verified = the page numbers were read on ashby.info index pages; false = taken from a secondary source.",
+ "id": "secondloop",
  "version": "1.1.0",
- "marker": "ASHBY-KERNEL-1",
- "code": "worker/src/ashby.js",
- "tick_step": "ashby",
- "item": "ASHBY-EV-COVERAGE",
+ "marker": "SECOND-LOOP-KERNEL-1",
+ "code": "worker/src/secondloop.js",
+ "tick_step": "second_goal",
+ "item": "EV-COVERAGE",
  "archive": {
   "home": "https://ashby.info/index.html",
   "journal": "https://ashby.info/journal/index.html",
@@ -51,7 +51,7 @@
     }
    ],
    "failure_mode": "The system chooses its own essential variables, or a probe fails silently and reads as in limits.",
-   "code": "worker/src/ashby.js"
+   "code": "worker/src/secondloop.js"
   },
   {
    "id": "step-mechanism",
@@ -81,7 +81,7 @@
     }
    ],
    "failure_mode": "Thrash (endless re-draws), a spent repertoire, a stable but bad configuration, or a trial of something that cannot be undone.",
-   "code": "worker/src/ashby.js"
+   "code": "worker/src/secondloop.js"
   },
   {
    "id": "multistable-gating",
@@ -110,7 +110,7 @@
     }
    ],
    "failure_mode": "Parts are coupled through something they share in the environment (a quota, a key, a rate limit) that no declared coupling shows.",
-   "code": "worker/src/ashby.js"
+   "code": "worker/src/secondloop.js"
   },
   {
    "id": "coupling-limit",
@@ -141,7 +141,7 @@
     }
    ],
    "failure_mode": "The limit comes from random linear systems; an agent loop is neither random nor linear, so a graph can pass the guard and still oscillate.",
-   "code": "worker/src/ashby.js"
+   "code": "worker/src/secondloop.js"
   },
   {
    "id": "requisite-variety",
@@ -159,7 +159,7 @@
     }
    ],
    "failure_mode": "Counting tools, prompts or agents as variety when they answer the same disturbance.",
-   "code": "worker/src/ashby.js"
+   "code": "worker/src/secondloop.js"
   },
   {
    "id": "regulator-model",
@@ -183,7 +183,7 @@
     }
    ],
    "failure_mode": "The theorem is weaker than its slogan: a trivial mapping satisfies it, so a passing score on few outcomes proves little.",
-   "code": "worker/src/ashby.js"
+   "code": "worker/src/secondloop.js"
   },
   {
    "id": "habituation",
@@ -204,7 +204,7 @@
     }
    ],
    "failure_mode": "Habituating to a variable that is drifting slowly toward its limit.",
-   "code": "worker/src/ashby.js"
+   "code": "worker/src/secondloop.js"
   },
   {
    "id": "two-goal-structure",
@@ -212,7 +212,7 @@
    "exports": [
     "twoGoal",
     "lexicographic",
-    "ashbyStep"
+    "secondGoalStep"
    ],
    "statement": "The explicit goal is pursued through main variables and is subordinate to keeping the essential variables in limits; a system judged by its goal alone is a stable system, not an ultrastable one.",
    "sources": [
@@ -227,7 +227,7 @@
     }
    ],
    "failure_mode": "The guard metric is itself moved by the target, so the pair measures one thing twice.",
-   "code": "worker/src/ashby.js"
+   "code": "worker/src/secondloop.js"
   },
   {
    "id": "consistency-of-action",
@@ -246,7 +246,7 @@
     }
    ],
    "failure_mode": "Efficiency is not measured at all, so every action looks consistent.",
-   "code": "worker/src/ashby.js"
+   "code": "worker/src/secondloop.js"
   },
   {
    "id": "homeostat",
@@ -274,7 +274,7 @@
     }
    ],
    "failure_mode": "The harness is linear; it calibrates budgets and windows and proves nothing about a real agent fleet.",
-   "code": "worker/src/ashby.js"
+   "code": "worker/src/secondloop.js"
   },
   {
    "id": "three-values-of-action",
@@ -412,6 +412,6 @@
    "why": "controlSystem, prescribe and evoke run on rows passed to them; reading them from the fleet's own outcomes and spend per role each tick is the next step"
   }
  ],
- "platform_map": "doctrine/ashby-concepts.json (platform): the platform binds the concepts of Ashby's index to this kernel code and to its own second loop",
- "work_record": "ultrastable/ultrastable issue 2620 (ASHBY-SPEC-1): this kernel is the pure logic for its steps 4 and 6 to 10; the Python reference harness is seed/scripts/homeostat.py (HOMEOSTAT-1) and homeostat() here is its JavaScript twin for the Worker's tests"
+ "platform_map": "doctrine/ashby-concepts.json (platform) is not bound to this module in this change: PR 2622 rewrites that file, and the binding follows it (Q-ASHBY-index)",
+ "work_record": "ultrastable/ultrastable issue 2620 (ASHBY-SPEC-1): this kernel is the pure logic for its steps 4 and 6 to 10; the Python reference harness is seed/scripts/homeostat.py (HOMEOSTAT-1) and homeostat() here is its JavaScript twin for the Worker's tests; PR 2622 adds seed/worker/src/ashby.js (variety, entropy, reducibility, search budget) to the goal loop and holds the rule id ASHBY-KERNEL-1, so this module is named secondloop and carries what that one does not"
 }

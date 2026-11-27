@@ -37,7 +37,7 @@ Tick steps, in order (from `worker/src/tick.js`):
 5. `probe_gates`: Gate cards close themselves when their probe shows the owner's step is done.
 6. `score_predictions`: Predictions due now are graded against built-in metrics.
 7. `measure`: OBJECTIVES-1: read every metric through its probe. Outside its healthy condition it files its own remedy item (owner, done check, closing probe) and closes that item when the probe passes again. A new system gets grace_hours before liveness
-8. `ashby`: ASHBY-KERNEL-1: the second goal. An objective measured only by its own target files ASHBY-EV-COVERAGE; a breached guard under a healthy target is repaired first.
+8. `second_goal`: SECOND-LOOP-KERNEL-1: the second goal. An objective measured only by its own target files EV-COVERAGE; a breached guard under a healthy target is repaired first.
 9. `accrue_trust`: Trust per (surface, action_class) from recorded outcomes; a crossed threshold opens a ladder PR item.
 10. `selfaudit`: SELFAUDIT-1: probe the failure-mode register; red files or reopens FM-<id>, green closes it with evidence.
 11. `unknowns`
@@ -178,7 +178,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **CONNECT-1**: A vector space and a knowledge graph in every system; novel connections are generated, not waited for. In this kit: checked by the platform.
 - **DATAGRAPH-1**: Every system keeps a knowledge graph of all its data, built and maintained automatically. In this kit: `worker/src/datagraph.js`, `worker/src/knowledge.js`, `worker/src/vendor/core/datagraph.js`, `worker/test/datagraph.test.js`.
 - **RESEARCH-1**: Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code. In this kit: checked by the platform.
-- **ASHBY-KERNEL-1**: Ashby's concepts and the organisation built on them are kernel code. In this kit: `autonomy/ashby.json`, `worker/src/ashby.js`, `worker/src/organization.js`, `worker/test/ashby.test.js`.
+- **SECOND-LOOP-KERNEL-1**: Ashby's concepts and the organisation built on them are kernel code. In this kit: `autonomy/secondloop.json`, `worker/src/organization.js`, `worker/src/secondloop.js`, `worker/test/organization.test.js`.
 - **THOUGHT-1**: Thought leadership is a loop: every paper becomes posts that carry the hook. In this kit: `worker/src/social.js`, `worker/test/social-connect.test.js`.
 - **SOCIAL-MODULE-1**: The social module is how a system faces humans. In this kit: `worker/src/auth/social.js`, `worker/src/humans.js`, `worker/src/social.js`, `worker/test/social-connect.test.js`.
 - **YEAR-SIM-1**: A year unattended is simulated, not asserted; the system does what it says. In this kit: `autonomy/goals.json`, `autonomy/yearsim.json`, `scripts/trajectory.py`, `scripts/yearsim.py`.

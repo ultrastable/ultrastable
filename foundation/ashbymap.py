@@ -1,5 +1,3 @@
-# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
-# Copyright (c) Ultrastable
 """ASHBY-CONCEPTS-1. Ultrastable is the foundation for any autonomous system.
 
 Every concept in doctrine/ashby-concepts.json is bound to code that carries it. --check fails when a mechanism path is gone or lost its

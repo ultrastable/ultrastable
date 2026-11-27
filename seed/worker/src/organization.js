@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // ORG-THEORY-1 (Rowan, 2026-11-27): "Implement ORGANIZATIONAL THEORY: A CYBERNETIC Approach in code."
 // Juan A. Perez Lopez, IESE Working Paper 5 (July 1974). The paper's model as pure functions; every concept is a row of
-// seed/autonomy/ashby.json and test/organization.test.js holds each to the paper's own statements.
+// seed/autonomy/secondloop.json and test/organization.test.js holds each to the paper's own statements.
 // Reading for a fleet of agents: a member is a role or loop; a task is an action class the control system prescribes; the reward is what the
 // organisation spends to get the task done; individual efficiency is what doing the task does to the member's other essential variables,
 // which nobody knows beforehand and the member learns by doing it.

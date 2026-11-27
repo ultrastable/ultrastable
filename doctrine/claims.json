@@ -2115,6 +2115,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-16a27cbb2c",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a problem that code is discarded and not",
+      "probe": [
+        "file:foundation/prsafe.py",
+        "file:foundation/prbound.py",
+        "file:seed/worker/src/prsafe.js",
+        "file:seed/worker/src/sweeper.js",
+        "file:seed/worker/src/sla.js",
+        "file:scripts/branch_cleanup.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-15cbf5a8c9",
       "surface": "agents/AGENTS.md",
       "text": "- **Strange loops: every loop closes itself and improves itself; no zombie sessions (STRANGE-LOOP-1, Rowan 2026-11-12).** The system closes",
@@ -3289,6 +3303,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-8dd9873b6c"
+    },
+    {
+      "id": "mirror-d5953d01d5",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a problem that code is discarded and not",
+      "probe": [
+        "file:foundation/prsafe.py",
+        "file:foundation/prbound.py",
+        "file:seed/worker/src/prsafe.js",
+        "file:seed/worker/src/sweeper.js",
+        "file:seed/worker/src/sla.js",
+        "file:scripts/branch_cleanup.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-16a27cbb2c"
     },
     {
       "id": "mirror-627752edd7",

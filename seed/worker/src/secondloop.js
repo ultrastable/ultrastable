@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// ASHBY-KERNEL-1 (Rowan, 2026-11-27): "Implement Ashby's journal and concept index into working parts of an autonomous AI system."
-// Every concept in seed/autonomy/ashby.json names one export of this file (test/ashby.test.js fails when it does not), with the page of
+// SECOND-LOOP-KERNEL-1 (Rowan, 2026-11-27): "Implement Ashby's journal and concept index into working parts of an autonomous AI system."
+// Every concept in seed/autonomy/secondloop.json names one export of this file (test/secondloop.test.js fails when it does not), with the page of
 // W. Ross Ashby's journal (ashby.info) or the published source it comes from. The archive forbids reproduction, so the register holds page
 // numbers, addresses and our own statements only: no image, no transcription.
-// Pure functions first (a tenant vendors them unchanged); the tick step `ashby` at the end is the one part that reads a database.
+// Pure functions first (a tenant vendors them unchanged); the tick step `second_goal` at the end is the one part that reads a database.
 // What is deliberately not Ashby's: the search. His uniselector draws blindly and his own arithmetic shows that it does not scale; selectStep
 // is guided by a model, keeps a share of blind draws for when the model is wrong, and never draws a candidate that cannot be undone.
 
@@ -243,11 +243,11 @@ export function homeostat({ n = 4, mode = 'local', seed = 1, limit = 1, k = 1, d
 
 // ---- 10. The tick step: the second goal, read from the system's own metrics (one indexed read, no model call) ----
 // Target metrics are the explicit goal; guard metrics are the objective's own essential variables. Two things are enforced each tick:
-// (a) an objective that has a target and no guard gets one item, ASHBY-EV-COVERAGE, closed only by the same reading;
+// (a) an objective that has a target and no guard gets one item, EV-COVERAGE, closed only by the same reading;
 // (b) where every target is healthy and a guard is out of limits, the guard's open breach item goes to the head of the queue, so the
-//     essential variable is repaired before the goal is pursued further. The reading is kept in org.ashby for /health and the dashboard.
-export const COVERAGE_ITEM = 'ASHBY-EV-COVERAGE';
-export async function ashbyStep(db, ctx, ensureItem) {
+//     essential variable is repaired before the goal is pursued further. The reading is kept in org.second_goal for /health and the dashboard.
+export const COVERAGE_ITEM = 'EV-COVERAGE';
+export async function secondGoalStep(db, ctx, ensureItem) {
   const tenant = (ctx.config && ctx.config.org_slug) || '';
   const res = await db.prepare(`SELECT id, objective_id, kind, breached, owner_role FROM metrics WHERE tenant_id IS NULL OR tenant_id = ?`).bind(tenant).all();
   const reading = twoGoal(res.results || []);
@@ -261,13 +261,13 @@ export async function ashbyStep(db, ctx, ensureItem) {
     await ensureItem(db, {
       id: COVERAGE_ITEM, kind: 'fix', priority: 20, owner_role: reading.uncovered[0].owner_role,
       title: `essential_variable_coverage: ${reading.uncovered.length} objective(s) are measured only by their own target (${reading.uncovered.map(u => u.objective).join(', ')}). Give each a probe-backed guard metric (kind guard) that its target does not move.`.slice(0, 400),
-      done_check: 'every objective with a target metric has at least one guard metric', closing_probe: 'ashby:ev_coverage',
+      done_check: 'every objective with a target metric has at least one guard metric', closing_probe: 'second_goal:ev_coverage',
     });
   } else {
     await db.prepare(`UPDATE items SET status = 'done', disposition = 'fixed: every objective with a target has a guard metric', updated_at = ? WHERE id = ? AND status NOT IN ('done','superseded','cancelled')`).bind(ctx.nowIso, COVERAGE_ITEM).run();
   }
   const snap = { at: ctx.nowIso, objectives: reading.objectives, ev_coverage: reading.coverage, uncovered: reading.uncovered.map(u => u.objective), inverted: reading.inverted, raised };
-  await db.prepare(`INSERT INTO org (key, value) VALUES ('ashby', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`).bind(JSON.stringify(snap)).run();
-  ctx.notes.push(`ashby: ${reading.objectives} objective(s), guard coverage ${reading.coverage === null ? 'unmeasured' : reading.coverage.toFixed(2)}, ${reading.inverted.length} goal-before-guard, ${raised} raised`);
+  await db.prepare(`INSERT INTO org (key, value) VALUES ('second_goal', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`).bind(JSON.stringify(snap)).run();
+  ctx.notes.push(`second_goal: ${reading.objectives} objective(s), guard coverage ${reading.coverage === null ? 'unmeasured' : reading.coverage.toFixed(2)}, ${reading.inverted.length} goal-before-guard, ${raised} raised`);
   return snap;
 }

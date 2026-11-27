@@ -3,14 +3,6 @@
   "version": 1,
   "schemas": [
     {
-      "name": "ashby.json",
-      "description": "Contract for seed/autonomy/ashby.json",
-      "fileMatch": [
-        "seed/autonomy/ashby.json"
-      ],
-      "url": "ashby.schema.json"
-    },
-    {
       "name": "balance.json",
       "description": "Contract for seed/autonomy/balance.json",
       "fileMatch": [
@@ -129,6 +121,14 @@
         "seed/autonomy/retention.json"
       ],
       "url": "retention.schema.json"
+    },
+    {
+      "name": "secondloop.json",
+      "description": "Contract for seed/autonomy/secondloop.json",
+      "fileMatch": [
+        "seed/autonomy/secondloop.json"
+      ],
+      "url": "secondloop.schema.json"
     },
     {
       "name": "seed-lifecycle.json",
