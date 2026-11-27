@@ -9,7 +9,7 @@ from _repo import ROOT, scratch
 from foundation import decisions as D, rescore as R
 
 T0 = dt.datetime(2026, 11, 18, 12, 0, tzinfo=dt.timezone.utc)
-ENV = {"GITHUB_TOKEN": "x"}
+ENV = {"CLOUDFLARE_API_TOKEN": "x", "CLOUDFLARE_ACCOUNT_ID": "x"}  # GitHub Models is retired (ROUTE-RETIRED-1); Workers AI is the reviewer route
 
 
 def repo(item_status="closed", done_check="file:present.txt"):
@@ -28,7 +28,7 @@ def settle(d, row, hit=True):
 
 
 def model(answer):
-    return lambda url, headers, body: {"choices": [{"message": {"content": answer}}]}
+    return lambda url, headers, body: {"result": {"response": answer}}  # the Workers AI reply shape
 
 
 def down(url, headers, body):
