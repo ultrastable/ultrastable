@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-code-regulator-1-failure-mode-audit-and-fixes",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "CODE-REGULATOR-1 failure-mode audit and fixes",
+  "body": "Audit of the regulator's failure modes: seven fixes, each with a test. Evidence outside the repository raises an error; a broken symlink is skipped by the index; dot-slash paths keep the impact set; an exhausted step menu opens one escalation; the token hook drops bad input and exits 0; CLI usage errors exit 2; the ledger connection closes. Ran 26 regulator tests, they pass. Root cause of most: input shape trusted at a boundary. Remaining scope to audit next: concurrent writers on one SQLite file and very large repositories, tracked as the next probe.",
+  "probe": "grep:foundation/regulator/ledger_hook.py::def safe_record",
+  "session": "session_0156nqDsD3rf97bBozkQVuW7"
+ },
+ "kind": "lesson",
+ "title": "CODE-REGULATOR-1 failure-mode audit and fixes",
+ "session": "session_0156nqDsD3rf97bBozkQVuW7"
+}
