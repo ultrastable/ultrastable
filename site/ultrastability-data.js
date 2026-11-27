@@ -4,77 +4,77 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": false,
    "value": 0.938
   },
   "happy_paths": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": false,
    "value": 85
   },
   "research_in_code": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": false,
    "value": 0.6
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": false,
    "value": 0.033
   },
   "self_shipping": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": false,
    "value": 0.786
   },
   "spec_quality": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": false,
-   "value": 0.4
+   "value": 0.386
   },
   "spend": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": false,
    "value": 11.345
   },
   "stalled_clocks": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": false,
    "value": 3
   },
   "survival_levels": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": true,
    "value": 3
   },
   "ui_findings": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-27T16:46:14Z",
+   "at": "2026-11-27T16:51:58Z",
    "ok": true,
    "value": 27.766
   }
