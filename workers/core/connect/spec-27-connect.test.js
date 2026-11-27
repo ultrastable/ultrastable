@@ -219,10 +219,9 @@ test('US-27-R54: the shortlist uses an item at most twice, however many candidat
   assert.equal(C.discover({ items, edges, vectors: new Map(items.map(i => [i.id, i.v])), spec: { z: { transfer: -5, bridge: 0 }, limit: 100, duplicate: 1, perItem: 4 } }).candidates.filter(c => c.a === 's').length, 4, 'perItem is a setting');
 });
 
-// Defect 8 of US-SPEC-27 section 7 (core/connect/index.js, the `bridge` generator takes max(graph novelty, 0.85) across groups). The test states the
-// requirement and fails today, so it is a `todo`: node:test reports it and the suite stays green. When bridge skips a pair already joined by a confirmed
-// edge of its own relation, it passes: remove the `todo` option and the PLANNED mark of R52 in the same change.
-test('US-27-R52: bridge does not propose a pair that a confirmed edge of its own relation already joins, even across groups', { todo: 'defect 8: bridge floors novelty at 0.85 across groups, so a linked pair is proposed again' }, () => {
+// Defect 8 of US-SPEC-27 section 7: the `bridge` generator took max(graph novelty, 0.85) across groups, so a pair a confirmed shares_mechanism edge already joins was
+// proposed again. It skips such a pair now (a link of another relation does not, see the next test).
+test('US-27-R52: bridge does not propose a pair that a confirmed edge of its own relation already joins, even across groups', () => {
   const items = [{ id: 'A', kind: 'solution', label: 'A', group: 'g1' }, { id: 'B', kind: 'solution', label: 'B', group: 'g2' }];
   const vectors = new Map([['A', vec(1, 0.2)], ['B', vec(0.9, 0.3)]]);
   const linked = [{ src: 'A', rel: 'shares_mechanism', dst: 'B', status: 'confirmed', provenance: [P] }];
@@ -238,4 +237,13 @@ test('US-27-R52: a pair one hop apart in the same group has graph novelty 0 and 
   assert.deepEqual(bridges('g2', []).map(c => c.novelty), [1], 'unreachable: fully novel');
   assert.deepEqual(bridges('g2', edge).map(c => c.novelty), [0.85], 'across groups the novelty is floored at 0.85 even when another relation links the pair');
   assert.equal(C.distanceNovelty(1), 0); assert.equal(C.distanceNovelty(2), 0.5); assert.equal(C.distanceNovelty(undefined), 1);
+});
+
+test('US-27-R53: the transfer background of a run is the similarity of pairs of different problems: three problems make three pairs, not nine', () => {
+  const items = ['p1', 'p2', 'p3'].map(id => ({ id, kind: 'problem', label: id }));
+  const vectors = new Map([['p1', vec(1, 0.1)], ['p2', vec(0.8, 0.5)], ['p3', vec(0.2, 0.9)]]);
+  const bg = C.discover({ items, edges: [], vectors }).stats.background.transfer;
+  assert.equal(bg.n, 3);
+  const direct = ['p1', 'p2', 'p3'], same = C.background(direct, direct, id => vectors.get(id));
+  assert.deepEqual([bg.mu, bg.sd], [same.mu, same.sd], 'the cutoff is read from the same background the definition names');
 });

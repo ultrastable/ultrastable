@@ -68,6 +68,7 @@ function boot(caps) {
     org_slug: 'self-org', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy: { trust: policy.trust, ladder: policy.ladder, surfaces: policy.surfaces },
     runner: { enabled: true }, router: routerConfig, vcs: { repo: 'owner/name', base: 'main' },
     selfdoer: { enabled: true, backlog_path: 'backlog.json', targets_path: 'targets.json', caps },
+    sla: { enabled: false }, // this scenario scripts one doer and one reviewer reply for the seeded backlog; the wired report card files monthly items of its own that the runner would take first
   };
   const org = createOrg({ db, env: ENV, config, now: () => clock.t, vcs, router, readFile: async p => files[p], fetch: async () => new Response('') });
   return { db, org, vcs, clock, tick: async () => { clock.t += 60e3; return org.tick(); } };

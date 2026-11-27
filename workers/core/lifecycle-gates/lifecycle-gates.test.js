@@ -133,10 +133,10 @@ test('G1 (US-15-R04): the charter\'s definition of done must be a runnable probe
   await fill(db, 'P', 'initiating', 'hybrid');
   const none = await advance(db, 'P', 'planning', { now: NOW });                             // no readiness port
   assert.deepEqual([none.ok, none.filed], [false, ['GATE-P-planning-readiness']]); assert.match(none.reasons[0], /could not be read/);
-  assert.match((await advance(db, 'P', 'planning', { readiness: async () => ({ score: 0.4 }), now: NOW })).reasons[0], /0.40 is under the initiation threshold 0.6/);
+  assert.match((await advance(db, 'P', 'planning', { readiness: async () => ({ score: 0.4 }), now: NOW })).reasons[0], /0.40 is under the initiation threshold 0.7/);
   assert.match((await advance(db, 'P', 'planning', { readiness: async () => { throw new Error('down'); }, now: NOW })).reasons[0], /could not be read/);
   assert.equal(one(db, `SELECT current_phase FROM kernel_projects WHERE id = 'P'`).current_phase, 'initiating');
-  assert.equal((await advance(db, 'P', 'planning', { readiness: async () => ({ score: 0.6 }), now: NOW })).ok, true);
+  assert.equal((await advance(db, 'P', 'planning', { readiness: async () => ({ score: 0.7 }), now: NOW })).ok, true);
   // T15-3 still holds through this layer: a charter change after G1 is a change request with a revert path
   const cr = await amendArtifact(db, { project_id: 'P', kind: 'A-INI-2', new_ref: 'docs/P/charter-v2.md', summary: 'raise the cap', revert_path: 'restore docs/P/A-INI-2.md', requested_by: 'project-manager', now: NOW });
   assert.equal(one(db, `SELECT revert_path FROM change_requests WHERE id = ?`, cr.change_request_id).revert_path, 'restore docs/P/A-INI-2.md');
@@ -331,12 +331,29 @@ test('US-15-R20, US-15-T11: the kernel advancePhase enforces the G1 conditions t
   assert.equal(one(db, `SELECT current_phase FROM kernel_projects WHERE id = 'Q'`).current_phase, 'initiating');
   await startProject(db, { id: 'P', name: 'p', now: NOW }); await fill(db, 'P', 'initiating', 'hybrid');
   assert.deepEqual((await advancePhase(db, 'P', 'planning', { now: NOW })).filed, ['GATE-P-planning-readiness']);                   // no readiness port: not a pass
-  assert.match((await advancePhase(db, 'P', 'planning', { readiness: async () => 0.2, now: NOW })).reasons[0], /0.20 is under the initiation threshold 0.6/);
+  assert.match((await advancePhase(db, 'P', 'planning', { readiness: async () => 0.2, now: NOW })).reasons[0], /0.20 is under the initiation threshold 0.7/);
   assert.deepEqual(await advancePhase(db, 'P', 'planning', { readiness: async () => 0.2, config: { require_readiness: false }, now: NOW }), { ok: true, phase: 'planning' });
 });
 
-test('US-15-R20, US-15-T11: loading core/lifecycle-gates registers all five conditions with the kernel, and the composition root loads it', async () => {
-  assert.deepEqual([gateExtraNames('G1'), gateExtraNames('G2'), gateExtraNames('G3')], [['charter-probe', 'readiness'], ['requirement-map'], ['deliverable-probes', 'retrospective']]);
+test('US-16-R15, T16-7: with the readiness port wired the reading decides both gates: G1 takes the elicit module\'s own g1, and G2 refuses while a non-reversible need is unanswered or the reading cannot be taken', async () => {
+  const db = setup();
+  await startProject(db, { id: 'R2', name: 'r2', override: { mode: 'hybrid', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
+  await fill(db, 'R2', 'initiating', 'hybrid');
+  // G1: the module's boolean is the verdict (its own threshold travels with it); a bare score is read against the default 0.7
+  assert.match((await advance(db, 'R2', 'planning', { readiness: async () => ({ score: 0.65, threshold: 0.7, g1: false }), now: NOW })).reasons[0], /0.65 is under the initiation threshold 0.7/);
+  assert.equal((await advance(db, 'R2', 'planning', { readiness: async () => ({ score: 0.65, threshold: 0.6, g1: true }), now: NOW })).ok, true);
+  await fill(db, 'R2', 'planning', 'hybrid'); await recordReadback(db, 'R2', NOW); item(db, 'R2-W1', { project: 'R2' });
+  // G2: a non-reversible need still unanswered is named; an unreadable reading is not a pass; g2 true passes
+  const blocked = await advance(db, 'R2', 'executing', { readiness: async () => ({ score: 1, g1: true, g2: false, blocking: ['deploy-region'] }), now: NOW });
+  assert.equal(blocked.ok, false); assert.deepEqual(blocked.filed, ['GATE-R2-executing-readiness-g2']); assert.match(blocked.reasons[0], /non-reversible needs not answered: deploy-region/);
+  assert.match((await advance(db, 'R2', 'executing', { readiness: async () => { throw new Error('down'); }, now: NOW })).reasons[0], /could not be read/);
+  assert.match((await advance(db, 'R2', 'executing', { readiness: async () => 0.9, now: NOW })).reasons[0], /not every MUST need is answered or defaulted/);
+  assert.equal(one(db, `SELECT current_phase FROM kernel_projects WHERE id = 'R2'`).current_phase, 'planning');
+  assert.deepEqual(await advance(db, 'R2', 'executing', { readiness: async () => ({ score: 1, g1: true, g2: true }), now: NOW }), { ok: true, phase: 'executing' });
+});
+
+test('US-15-R20, US-15-T11: loading core/lifecycle-gates registers all six conditions with the kernel, and the composition root loads it', async () => {
+  assert.deepEqual([gateExtraNames('G1'), gateExtraNames('G2'), gateExtraNames('G3')], [['charter-probe', 'readiness'], ['requirement-map', 'readiness-g2'], ['deliverable-probes', 'retrospective']]);
   assert.match(readFileSync(new URL('../org/buildout.js', import.meta.url), 'utf8'), /import \{[^}]*lifecycleStep[^}]*\} from '\.\.\/lifecycle-gates\/index\.js'/);   // the host that composes the lifecycle imports the module
 });
 

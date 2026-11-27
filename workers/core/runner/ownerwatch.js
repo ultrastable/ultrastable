@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Owner-step watch and probe cadence (US-SPEC-11). An owner step is a gate card (core/migrations gate_cards): an action only a person
+// Owner-step watch and probe cadence (US-SPEC-10). An owner step is a gate card (core/migrations gate_cards): an action only a person
 // can take. The watch re-probes each open card on a cadence (not every tick), closes it the moment its closing probe passes,
 // and escalates it, once per tier, when it stays open: tier 1 after owner_step_hours (an item for the escalation role), tier 2 after
 // twice that (the same item is raised to top priority). Probe kinds in gate_cards.closing_probe:

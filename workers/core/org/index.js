@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // The composition root: one object that starts every loop on one tick and serves every route of one organization.
-// createOrg({ db, env, config, fetch, now, readFile }) -> { extraSteps(), tick(), handle(request), packs }.
+// createOrg({ db, env, config, fetch, now, readFile }) -> { extraSteps(), tick(), scheduledTick(), handle(request), packs, surfaces, buildoutPorts(env) }.
 // Ports only (db, env, fetch, now, readFile). Optional injections: vcs, router, store, channels, importer, specStatus,
-// voiceRules, scope, compose, outputs, metrics (domain metrics for scoring predictions: { name: async (db, nowMs, row) => number }). The tick learns only that a secret exists; values are read by the router and the
+// voiceRules, scope, compose, outputs, metrics (domain metrics for scoring predictions: { name: async (db, nowMs, row) => number }),
+// ports (the ports of the build-out modules that a deployment cannot build from itself; core/org/buildout.js lists them). The tick learns only that a secret exists; values are read by the router and the
 // VCS adapter at call time and are never stored or logged here.
 import { runTick } from '../src/tick.js';
 import { handleConsole } from '../src/console.js';
@@ -17,8 +18,13 @@ import { createRunner, runnerExtraSteps } from '../runner/index.js';
 import { createGithubVcs } from '../runner/vcs-github.js';
 import { createSignin } from '../githubapp/signin.js';
 import { createGithubApp, createInstallationTokenProvider, hasAppCredentials } from '../githubapp/index.js';
-import { describeExtraSteps, handle as describeHandle } from '../describe/index.js';
+import { describeExtraSteps, handle as describeHandle, DESCRIBE_ROUTES } from '../describe/index.js';
+import { plusSlotsConfig, composeReaders, firstPartyReader, cloudflareAnalyticsReader, createPlusProposer } from '../plus/index.js';
+import { createResearchAgent } from '../staff/index.js';
+import { killSwitchPort } from '../router/caps/index.js';
+import { candidates as ladderCandidates } from '../ladder/index.js';
 import { createPacks } from '../packs/index.js';
+import { handle as fleetHandle } from '../fleet/index.js';
 import { sweep as yieldSweep } from '../yield/index.js';
 import { sweep as docgateSweep } from '../docgate/index.js';
 import { steward as stewardRun, rollup as stewardRollup } from '../steward/index.js';
@@ -66,14 +72,15 @@ export function runnerNeeds(config = {}, env = {}, { vcsInjected = false, appCre
   return [...new Set(need)];
 }
 
-const ROUTES = new Set(['/describe', '/describe.json', '/llms.txt']);
+const ROUTES = new Set(DESCRIBE_ROUTES);
 const iso = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
+const INFLIGHT_MS = 5 * 60e3; // a tick still unfinished after this is not in flight any more (the seed's rule)
 
 export function createOrg({
   db, env = {}, config = {}, fetch, now = () => Date.now(), readFile,
   vcs, downstream, mergeHosts, router, store, vault, channels = {}, importer, specStatus = null, voiceRules, scope, compose, outputs,
   sinks = [], gauges = {}, executors = [], agentDefs = {}, hooks = {}, routes = [], checks = {}, stepRuns, metrics = {},
-  endpoints = {}, roleHandlers = {}, tracker,
+  endpoints = {}, roleHandlers = {}, tracker, ports: hostPorts = {},
 } = {}) {
   const vaultStore = vault || createVault({ db });
   // The env the modules see: real env values win, a vault secret fills a missing name. Never logged or stored.
@@ -89,7 +96,7 @@ export function createOrg({
   const l3 = createConsoleL3({ db, now: clock, config: { version: config.version } });
   // Issue #201: the routes and ports of the build-out modules (walkthrough, dashboard, proxy guide, model port, stage 2, slots).
   const sla = createSla({ db, now: clock, config: config.sla || {} });
-  const surfaces = createSurfaces({ db, config, env, fetch: doFetch, now: clock, l3, sla, elicit: null, endpoints, roleHandlers, tracker });
+  const surfaces = createSurfaces({ db, config, env, fetch: doFetch, now: clock, l3, sla, elicit: null, endpoints, roleHandlers, tracker, ports: hostPorts });
   const describeScope = scope || dcfg.scope || {};
   const describeVoice = voiceRules || dcfg.voice_rules || {};
   const describeSpec = specStatus || dcfg.spec_status || null;
@@ -113,6 +120,12 @@ export function createOrg({
     }
   }
 
+  // US-09-R01, R08: the global kill switch (core/router/caps) and the capability matrix (core/ladder) reach every router this org builds. A store that has not applied the
+  // caps migration yet has no switch row to read, which reads as off; any other error is the router's to refuse on.
+  const routerPorts = {
+    killSwitch: async () => { try { return await killSwitchPort(db)(); } catch (e) { if (/no such table/i.test(String(e?.message))) return false; throw e; } },
+    matrix: async q => { try { return await ladderCandidates(db, q); } catch (e) { if (/no such table/i.test(String(e?.message))) return []; throw e; } },
+  };
   const runnerOn = () => !(config.runner?.enabled === false || (config.runner?.enabled !== true && !config.vcs?.repo));
   function runnerSteps(env) {
     // On by default wherever a repository is configured: a deployment builds its own backlog without being switched on.
@@ -123,7 +136,7 @@ export function createOrg({
     // Nothing is missing any more: every runner-needs card is answered, including ones for a route that was never used
     // because another provider covered it (a card whose probe can never pass would otherwise stay open for ever).
     const answered = { name: 'runner_needs_close', run: async (_db, ctx) => { const u = await db.prepare(`UPDATE gate_cards SET status='closed' WHERE id LIKE 'runner-needs-%' AND status='open'`).run(); if (u.meta.changes) ctx.notes.push(`runner_needs_close: ${u.meta.changes} card(s) closed, the runner has what it needs`); } };
-    const r = router || createRouter({ db, fetch: doFetch, now: clock, config: config.router, env, ai: env.AI || null });
+    const r = router || createRouter({ db, fetch: doFetch, now: clock, config: config.router, env, ai: env.AI || null, ...routerPorts });
     const v = vcs || createGithubVcs({ fetch: doFetch, repo: config.vcs.repo, base: config.vcs.base || 'main', env, tokenEnv: config.vcs?.token_env || 'VCS_TOKEN', ...(!env[config.vcs?.token_env || 'VCS_TOKEN'] && appReady && tokenProvider ? { tokenProvider } : {}) });
     const steps = runnerExtraSteps(createRunner({ db, now: clock, config: { ...config, runner: { ...(config.runner || {}), enabled: true } }, env, router: r, claims, vcs: v }));
     // Self-hosting (issue #13): an outer spend cap around every runner step, on top of the router's own caps.
@@ -136,7 +149,7 @@ export function createOrg({
   const ownerlink = () => createOwnerlink({ db, vault: vaultStore, fetch: doFetch, now: clock, config, env: env_cache, doors: config.doors });
   let env_cache = env;
   let built = null; // built on first use, so an agents flag without router config costs nothing until a turn runs
-  const lazyRouter = { call: (...a) => (built ||= createRouter({ db, fetch: doFetch, now: clock, config: config.router, env, ai: env.AI || null })).call(...a) };
+  const lazyRouter = { call: (...a) => (built ||= createRouter({ db, fetch: doFetch, now: clock, config: config.router, env, ai: env.AI || null, ...routerPorts })).call(...a) };
   const agents = on('agents')
     ? createAgents({ db, router: router || lazyRouter, now: clock, config: config.agents, hooks })
     : null;
@@ -165,6 +178,32 @@ export function createOrg({
     return r;
   };
 
+  // The ports of the build-out modules (core/org/buildout.js). A host injects the ones only it can build (`ports`); the others are built here from what this
+  // org already has, and only when what they need is configured, so an org with no model or no analytics account runs each step as it did without them.
+  const elicitInst = elicit || surfaces.elicit;
+  const attempt = f => { try { return f(); } catch { return undefined; } }; // a bad configuration value costs its one port, never the whole tick
+  function buildoutPortsFor(env_) {
+    const models = surfaces.models;
+    const modelsReady = Boolean(config.modelport?.aliases && Object.keys(config.modelport.aliases).length);
+    // The managers' model calls (a research proposal, a plus, a task of the fleet) go through the model port by alias: the manager's, else the doer's.
+    const complete = req => models.complete(models.roles.manager || models.roles.doer, { messages: req.messages, max_tokens: req.max_tokens });
+    const readers = [attempt(() => firstPartyReader({ db, now: clock, ...(config.plus?.reader?.first_party || {}) }))].filter(Boolean);
+    const cf = config.plus?.reader?.cloudflare;
+    if (cf?.zones && Object.keys(cf.zones).length) { const r = attempt(() => cloudflareAnalyticsReader({ fetch: doFetch, env: env_, token_env: cf.token_env, zones: cf.zones, window_h: cf.window_h, now: clock })); if (r) readers.push(r); }
+    return {
+      readFile, metrics, env: env_, sla, l3, models, tracker: surfaces.tracker(env_),
+      ...(readers.length ? { reader: composeReaders(readers) } : {}),
+      ...(Array.isArray(config.plus?.products) && config.plus.products.length ? { adopt: async () => config.plus.products } : {}),
+      ...(modelsReady ? {
+        research: createResearchAgent({ complete, readFile, config: config.staff }), propose: createPlusProposer({ complete }),
+        // a fleet task names an alias of the model port in its allowed_models; the port refuses an unknown one with its reason
+        ai: async ({ model, prompt, max_tokens }) => { const r = await models.complete(model, { messages: [{ role: 'user', content: prompt }], max_tokens }); if (!r.ok) throw new Error(r.error); return { text: r.text, cost: 0 }; },
+      } : {}),
+      ...(elicitInst ? { elicit: elicitInst, catalog: surfaces.catalog, readiness: project => elicitInst.readiness(project), readback: async project => ({ readback: (await elicitInst.readBack(project)).statements }) } : {}),
+      ...hostPorts,
+    };
+  }
+
   const cctx = () => ({ db, now: clock, config: config.claims || {} });
   const defaultOutputs = async days => (await db.prepare(`SELECT COUNT(*) AS n FROM items WHERE status = 'done' AND updated_at >= ?`).bind(iso(clock() - days * 86400e3)).first()).n;
 
@@ -174,6 +213,17 @@ export function createOrg({
       ...L2_EXTRA_STEPS,
       { name: 'claims_reap', run: async (_db, ctx) => { const r = await claims.reapExpired(cctx()); ctx.notes.push(`claims reaped: ${JSON.stringify(r)}`); } },
       { name: 'claims_release_terminal', run: async (_db, ctx) => { const r = await claims.releaseTerminal(cctx()); ctx.notes.push(`claims released on terminal items: ${JSON.stringify(r)}`); } },
+      // US-08-R19: a claim linked to a pull request is released when that pull request merges or has stayed closed. The reading of a pull request is a port of the host: either
+      // `readPull(repo, number)` itself, or `pullReader({ fetch, env, tokenEnv })` that builds it from the token the organization holds (adapters/github/pulls.js githubPullReader).
+      { name: 'claims_pr_reap', run: async (_db, ctx) => {
+        const tokenEnv = config.vcs?.token_env || 'VCS_TOKEN';
+        const readPull = hostPorts.readPull || (hostPorts.pullReader && typeof env_[tokenEnv] === 'string' && env_[tokenEnv] ? hostPorts.pullReader({ fetch: doFetch, env: env_, tokenEnv }) : null);
+        if (!readPull) { ctx.notes.push('claims_pr_reap: skipped, no readPull port'); return; }
+        const r = await claims.reapClosedPulls(cctx(), { readPull });
+        ctx.notes.push(`claims released on pull requests: ${r.released.length} released, ${r.kept.length} kept, ${r.unmeasured.length} unmeasured`);
+      } },
+      // US-08-R22: retention, at most once a day (the marker is a `pruned` event).
+      { name: 'claims_prune', run: async (_db, ctx) => { const r = await claims.pruneIfDue(cctx()); ctx.notes.push(`claims pruned: ${r ? JSON.stringify(r) : 'not due'}`); } },
       { name: 'describe', run: async (d, ctx) => describeExtraSteps({ fetch: doFetch, readFile, specStatus: describeSpec, packs: await describePacks(), scope: describeScope, compose, voiceRules: describeVoice })[0].run(d, ctx) },
       // waste (opt-in) runs the same yield sweep and then the gauge rules, so it replaces the yield step rather than doubling it.
       on('waste')
@@ -278,7 +328,7 @@ export function createOrg({
     if (on('console_l3') && typeof stepRuns === 'function') steps.push({ name: 'console_l3', run: async (_db, ctx) => { const f = await l3.sweepStepBudgets(await stepRuns()); ctx.notes.push(`console_l3: ${f.length} step-budget findings`); } });
     if (on('infra')) steps.push({ name: 'infra', run: async (_db, ctx) => { await heartbeat({ db, now: clock }, 'tick', config.infra.tick_every_minutes ?? null); ctx.notes.push('infra: tick heartbeat recorded'); } });
     // Spec build-out modules (issue #201): on by default, each off only by config.<name>.enabled === false.
-    steps.push(...buildoutSteps({ db, config, now: clock, fetch: doFetch, claims, ports: { readFile, metrics, env: env_, sla, models: surfaces.models, tracker: surfaces.tracker(env_) } }));
+    steps.push(...buildoutSteps({ db, config, now: clock, fetch: doFetch, claims, ports: buildoutPortsFor(env_) }));
     steps.push(...surfaces.steps(env_));
     steps.push(...crit.after);
     return steps;
@@ -289,25 +339,41 @@ export function createOrg({
     const e = await mergedEnv();
     // Let an unclaimed first-run window expire (and file its card) even if nobody visits; not a tick step, so the step list is unchanged.
     if (config.doors) await sweepFirstRun(db, { now: clock(), config: config.doors, hasKey: Boolean(e.CONSOLE_TOKEN) || Boolean(config.doors?.access?.team_domain) || Boolean(config.doors?.iap?.audience) }).catch(() => {});
-    return runTick(db, { config: { ...config, executor_takes_targeted: runnerOn() }, env: presence(e), now: clock(), extraSteps: extraSteps(e), metrics });
+    // US-04-R01, R05: the plus loop's reserved share is taken off the kernel's slots before it allocates, so the programs share what is left. A store without the plus tables keeps the kernel's own slots.
+    let kernel = config.kernel;
+    if (config.plus?.enabled !== false) { try { kernel = await plusSlotsConfig(db, { config, now: clock(), kernel: config.kernel || {} }); } catch { kernel = config.kernel; } }
+    return runTick(db, { config: { ...config, ...(kernel ? { kernel } : {}), executor_takes_targeted: runnerOn() }, env: presence(e), now: clock(), extraSteps: extraSteps(e), metrics });
   }
 
   async function handle(request) {
     const url = new URL(request.url);
     const p = url.pathname;
     if (p === '/health') {
-      const last = await db.prepare(`SELECT id, started_at, finished_at, steps_completed, steps_total, report, errors FROM tick_runs ORDER BY id DESC LIMIT 1`).first();
-      const ok = Boolean(last && last.steps_completed === last.steps_total);
+      // US-03-R20: the newest tick that finished, or one that has been running longer than any tick should (INFLIGHT_MS): a probe that lands while a tick is running reads the one before it.
+      const last = await db.prepare(`SELECT id, started_at, finished_at, steps_completed, steps_total, report, errors FROM tick_runs WHERE finished_at IS NOT NULL OR started_at < ? ORDER BY id DESC LIMIT 1`).bind(iso(clock() - INFLIGHT_MS)).first();
+      // US-13-R21: a clock that stopped is not healthy because its last tick finished; the dashboard's verdict is stalled when no tick is newer than the bound.
+      let verdict = null; try { verdict = await l3.health(); } catch { verdict = null; }
+      let bindingsOk = true; try { await db.prepare('SELECT 1 AS ok').first(); } catch { bindingsOk = false; }
+      const ok = Boolean(last && last.steps_completed === last.steps_total) && bindingsOk && verdict?.verdict !== 'stalled';
       // Issue #173 probe: claims released with no work in the last 24 h (dispatch that nothing executed).
       const since = new Date(clock() - 864e5).toISOString().slice(0, 19).replace('T', ' ');
       let unworked = null;
       try { unworked = (await db.prepare(`SELECT COUNT(*) AS n FROM outcomes WHERE surface='dispatch' AND action_class='claim_release' AND result='unworked' AND at >= ?`).bind(since).first())?.n ?? 0; } catch { /* store without the table */ }
-      return Response.json({ ok, org: config.org_slug, last_tick: last || null, claims_released_unworked_24h: unworked }, { status: ok ? 200 : 503 });
+      // US-11-R01: the fields every member of a fleet reports (status, worker, version, enabled, bindings_ok), beside the ones this route always had.
+      return Response.json({ ok, status: ok ? 'ok' : 'degraded', org: config.org_slug, worker: config.org_slug ?? null, version: config.version ?? null, enabled: true, bindings_ok: bindingsOk,
+        ...(verdict ? { verdict: verdict.verdict, tick_age_s: verdict.tick_age_s } : {}), last_tick: last || null, claims_released_unworked_24h: unworked }, { status: ok ? 200 : 503 });
     }
     if (p === '/owner' || p.startsWith('/owner/') || p === '/api/owner/actions') { env_cache = await mergedEnv(); const r = await ownerlink().handle(request); if (r) return r; }
+    // US-11-R01, R06: the fleet's status, the dispatcher's second route and the execute route, for the console token (the same bearer the audit route takes). core/org keeps its own /health.
+    if (p === '/fleet/status' || p === '/fleet/dispatch' || p === '/fleet/execute') {
+      const e = await mergedEnv(), tok = e.CONSOLE_TOKEN, authorize = rq => Boolean(tok) && rq.headers.get('authorization') === 'Bearer ' + tok;
+      if (!(await authorize(request))) return Response.json({ error: 'unauthorized' }, { status: 401 });
+      const fp = buildoutPortsFor(e);
+      return fleetHandle(request, { db, now: clock, config: config.fleet || {}, fetch: doFetch, claims, ai: fp.ai, deployed: fp.deployed, bindings: fp.bindings, executor: fp.executor, authorize });
+    }
     if (secrets && config.vcs?.repo && p.startsWith('/console/github/signin')) return createSignin({ vault: secrets, fetch: doFetch, now: clock, repo: config.vcs.repo })(request);
     if (githubApp && p.startsWith('/console/github/')) return githubApp(request, url.origin);
-    if (p === '/console' || p.startsWith('/console/') || p.startsWith('/api/console')) {
+    if (p === '/console' || p.startsWith('/console/') || p.startsWith('/api/console') || p === '/api/staff' || p.startsWith('/api/staff/')) {
       const e = await mergedEnv();
       return handleConsole(request, { DB: db, CONSOLE_TOKEN: e.CONSOLE_TOKEN }, { org: config.org_slug, vault: vaultStore, doors: config.doors, config, l3, mounts: surfaces.mounts, decorate: surfaces.decorate, fetch: doFetch, now: clock, envNames: presence(e) });
     }
@@ -319,7 +385,8 @@ export function createOrg({
     if (audit && (p === '/audit' || p.startsWith('/audit/'))) { const e = await mergedEnv(), tok = e.AUDIT_TOKEN || e.CONSOLE_TOKEN; const r = await audit.handle(request, { authorize: rq => Boolean(tok) && rq.headers.get('authorization') === 'Bearer ' + tok }); if (r) return r; }
     if (on('public_metrics')) { const r = await handlePublicMetrics(request, { db, now: clock(), config }); if (r) return r; }
     if (ROUTES.has(p.replace(/\/+$/, '') || '/')) {
-      return describeHandle(request, { db, now: clock(), specStatus: describeSpec, packs: await describePacks(), scope: describeScope, compose, voiceRules: describeVoice });
+      return describeHandle(request, { db, now: clock(), specStatus: describeSpec, packs: await describePacks(), scope: describeScope, compose, voiceRules: describeVoice,
+        probe: { fetch: doFetch, readFile, specStatus: describeSpec }, min_probe_interval_seconds: dcfg.min_probe_interval_seconds });
     }
     return null;
   }
@@ -327,5 +394,5 @@ export function createOrg({
   // What a scheduler calls: one tick per slot, so a cron that fires twice runs once (adapters/shared/slot.js). tick() stays unconditional.
   const scheduledTick = () => surfaces.scheduledTick(tick);
 
-  return { extraSteps, tick, scheduledTick, handle, packs, agents, elicit, audit, surfaces, models: surfaces.models, roleRuntime: surfaces.roleRuntime, stewardRollup: () => stewardRollup({ db }) };
+  return { extraSteps, tick, scheduledTick, handle, packs, agents, elicit, audit, surfaces, models: surfaces.models, roleRuntime: surfaces.roleRuntime, buildoutPorts: buildoutPortsFor, stewardRollup: () => stewardRollup({ db }) };
 }

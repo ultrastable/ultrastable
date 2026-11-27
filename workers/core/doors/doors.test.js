@@ -141,7 +141,7 @@ test('secret save returns no value, later reads never contain it, bad names and 
   const cookie = login.headers.get('set-cookie').split(';')[0];
   const save = async (name, value, extra) => handleConsole(post('/api/console/secret', { name, value }, { cookie, ...extra }), env, o);
   const before = await (await handleConsole(new Request(U + '/api/console', { headers: { cookie } }), env, o)).json();
-  assert.deepEqual(before.connections.map(c => [c.name, c.present]), [['ANTHROPIC_API_KEY', false], ['VCS_TOKEN', false]]);
+  assert.deepEqual(before.connections.map(c => [c.name, c.present]), [['ANTHROPIC_API_KEY', false], ['github', false]], 'a model key to paste, and GitHub access as one link to connect (US-30-R55), never a token to paste');
   const r = await save('ANTHROPIC_API_KEY', SECRET);
   assert.equal(r.status, 200); assert.deepEqual(await r.json(), { name: 'ANTHROPIC_API_KEY', stored: true });
   assert.equal((await save('NOT_ALLOWED_NAME', SECRET)).status, 400);

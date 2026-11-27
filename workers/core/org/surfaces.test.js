@@ -137,13 +137,13 @@ test('slots: a scheduler firing twice in one slot runs one tick; the next slot r
 });
 
 test('the declared routes and steps match what is mounted', () => {
-  assert.deepEqual(Object.keys(SURFACE_ROUTES), ['walkthrough', 'dashboard', 'proxy']);
+  assert.deepEqual(Object.keys(SURFACE_ROUTES), ['walkthrough', 'dashboard', 'proxy', 'staff']);
   const { org } = boot({ cfg: config({ modelport: { aliases: { medium: { endpoint: 'a', model: 'm', family: 'f' }, large: { endpoint: 'a', model: 'm', family: 'f' } } } }), extra: { endpoints: { a: async () => ({}) }, roleHandlers: { default: async () => ({ ok: true }) } } });
   const names = org.extraSteps().map(s => s.name);
   for (const n of SURFACE_STEPS) assert.ok(names.includes(n), `${n} is in org.extraSteps()`);
 });
 
-test('Google IAP: a request through the configured proxy with a valid signed header signs in; no header, wrong audience or a bad signature do not', async () => {
+test('T18-9 and US-18-R09: Google IAP: a request through the configured proxy with a valid signed header signs in; no header, wrong audience or a bad signature do not', async () => {
   const { IAP_KEYS_URL, IAP_ISSUER, _clearIapKeys } = await import('../doors/proxy.js');
   _clearIapKeys();
   const AUD = '/projects/1/global/backendServices/9';

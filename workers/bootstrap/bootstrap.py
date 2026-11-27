@@ -273,7 +273,8 @@ class Boot:
         facts.setdefault("budget_usd_per_month", self.budget)
         if "has_org_admin_token" not in facts:
             facts["has_org_admin_token"] = "ORG_ADMIN_TOKEN" in os.environ
-        plan = case_library.plan_cases(facts, packs=tuple(self.config.get("packs", [])))
+        enabled = tuple(self.config.get("packs", []))
+        plan = case_library.plan_cases(facts, packs=enabled, covers=case_library.pack_covers(enabled, self.root / "packs"))
         for c in plan["cards"]:
             self.state["gate_cards"].append(self.card(
                 f"CASE-{c['id']}", c["what"], c["why"], c["default"],
@@ -794,6 +795,8 @@ def validate_policy(policy: dict) -> list[str]:
             problems.append(f"{sname}: unknown start_rung {s['start_rung']}")
         if s["max_permission"] not in order:
             problems.append(f"{sname}: unknown max_permission {s['max_permission']}")
+        if sname in ("money", "legal", "outreach", "secrets") and s["max_permission"] == "execute":  # US-06-R12
+            problems.append(f"{sname}: ceiling must be below execute")
         ceiling = policy["ladder"]["ceiling_by_max_permission"][s["max_permission"]]
         if rungs.index(s["start_rung"]) > rungs.index(ceiling):
             problems.append(f"{sname}: start_rung above its ceiling {ceiling}")

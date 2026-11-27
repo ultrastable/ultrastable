@@ -171,7 +171,8 @@ export function discover({ items, edges = [], vectors, spec = {}, known = [] }) 
   const dist = (a, b) => { if (!distCache.has(a)) distCache.set(a, hops(adj, a, S.maxDepth)); return distCache.get(a).get(b); };
   const exploredKey = new Set(known.map(k => [...(k.members || [])].sort().join('+')));
   const ids = xs => xs.map(x => x.id);
-  const bg = { transfer: background(ids(toK), ids(toK), V), closure: background(ids(fromK), ids(toK), V) };
+  const T = ids(toK); // one array, so `background` sees the pairs of unrelated items only and not each item with itself (the mean and the cutoff follow US-27-R53)
+  const bg = { transfer: background(T, T, V), closure: background(ids(fromK), ids(toK), V) };
   const pairIds = ids(items.filter(i => i.kind === S.pair && V(i.id))); bg.bridge = background(pairIds, pairIds, V);
   const cut = Object.fromEntries(Object.keys(bg).map(k => [k, r3(Math.max(S.minSim[k], bg[k].mu + S.z[k] * bg[k].sd))]));
   cut.duplicate = r3(S.duplicate ?? Math.min(0.97, Math.max(0.25, bg.transfer.mu + S.dupZ * bg.transfer.sd)));
@@ -197,10 +198,12 @@ export function discover({ items, edges = [], vectors, spec = {}, known = [] }) 
       add({ kind: 'transfer', a: s.id, b: q.id, rel: S.link.rel, via: [best.p], relevance: r3(relevance), novelty: r3(novelty), support: r3(w(s)), value, sims: { analogue: r3(best.sim), fit: r3(fit) }, ...(restates ? { restates: best.p } : {}) });
     }
   }
-  // bridge: close in meaning, far in the graph or across groups
+  // bridge: close in meaning, far in the graph or across groups. A pair a confirmed edge of the same relation already joins is not proposed again, across groups either (US-27-R52).
+  const joined = new Set(edges.filter(e => e.rel === 'shares_mechanism' && (e.status || 'confirmed') === 'confirmed').flatMap(e => [e.src + '>' + e.dst, e.dst + '>' + e.src]));
   const pairs = items.filter(i => i.kind === S.pair && V(i.id));
   for (let i = 0; i < pairs.length; i++) for (let j = i + 1; j < pairs.length; j++) {
-    const A = pairs[i], B = pairs[j], sim = dot(V(A.id), V(B.id)); if (sim < cut.bridge) continue;
+    const A = pairs[i], B = pairs[j]; if (joined.has(A.id + '>' + B.id)) continue;
+    const sim = dot(V(A.id), V(B.id)); if (sim < cut.bridge) continue;
     const cross = A.group && B.group && A.group !== B.group, gn = distanceNovelty(dist(A.id, B.id));
     const novelty = Math.max(gn, cross ? 0.85 : 0); if (novelty <= 0) continue;
     const [a, b] = A.id < B.id ? [A, B] : [B, A];

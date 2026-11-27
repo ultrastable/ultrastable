@@ -9,7 +9,7 @@ import { makeDb } from '../_shared/testdb.js';
 import { OUT_DIR } from '../../tools/build_migrations.mjs';
 import { createOrg } from '../org/index.js';
 import { BUILDOUT_STEPS } from '../org/buildout.js';
-const TAIL = [...BUILDOUT_STEPS, 'stage2', 'proxy_guide']; // build-out tick steps, then the routes-and-ports steps of core/org/surfaces.js
+const TAIL = [...BUILDOUT_STEPS, 'stage2', 'stage', 'proxy_guide']; // build-out tick steps, then the routes-and-ports steps of core/org/surfaces.js
 import { createContainers } from '../containers/index.js';
 
 const policy = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
@@ -30,7 +30,7 @@ const authed = { authorization: 'Bearer console-token-123', 'content-type': 'app
 
 test('default: nothing opt-in is started and the step list is unchanged', () => {
   const { org } = boot({});
-  assert.deepEqual(org.extraSteps().map(s => s.name), ['l2', 'claims_reap', 'claims_release_terminal', 'describe', 'yield', 'packs', ...TAIL]);
+  assert.deepEqual(org.extraSteps().map(s => s.name), ['l2', 'claims_reap', 'claims_release_terminal', 'claims_pr_reap', 'claims_prune', 'describe', 'yield', 'packs', ...TAIL]);
   assert.equal(org.agents, null);
   assert.equal(org.elicit, null);
 });
@@ -40,7 +40,7 @@ test('enabled flags without their ports add only what can run; with ports every 
   assert.ok(!noPorts.includes('steward') && !noPorts.includes('containers') && !noPorts.includes('console_l3'));
   const sink = { name: 'mem', upsert: async () => ({ ref: 'r' }) };
   const names = boot(ALL_ON, { sinks: [sink], executors: [{ name: 'x', run: async () => ({ exit_code: 0 }) }], stepRuns: async () => [] }).org.extraSteps().map(s => s.name);
-  assert.deepEqual(names, ['l2', 'claims_reap', 'claims_release_terminal', 'describe', 'waste', 'packs', 'steward', 'ownerwatch', 'containers', 'agents', 'elicit', 'console_l3', 'infra', ...TAIL]);
+  assert.deepEqual(names, ['l2', 'claims_reap', 'claims_release_terminal', 'claims_pr_reap', 'claims_prune', 'describe', 'waste', 'packs', 'steward', 'ownerwatch', 'containers', 'agents', 'elicit', 'console_l3', 'infra', ...TAIL]);
 });
 
 test('one tick runs every wired loop and each leaves evidence', async () => {

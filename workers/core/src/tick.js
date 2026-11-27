@@ -252,13 +252,19 @@ export const STEPS = {
       // Matching only the role name left every instance-addressed item ready and undispatched for ever (found live 2026-11-13).
       // When a code executor is running (ctx.config.executor_takes_targeted), an item that names its target file is the
       // executor's: a role claim on it would hide it from the executor and then be released unworked (CRIT-3).
+      // US-08-R03: an item whose trigger item is not done (with its disposition) is not dispatched, even when something made it ready: the dispatcher is the last line,
+      // reconcile and core/claims the first. A list of triggers and a gate trigger are judged by core/claims (enforceTriggers), which demotes the item after dispatch.
       const item = await first(db, `SELECT id FROM items WHERE status='ready' AND (owner_role=? OR owner_role=?)
           AND (project IS NULL OR project = ? OR ? IS NULL)${ctx.config.executor_takes_targeted ? ` AND done_check NOT LIKE '%target:%'` : ''}
+          AND (trigger_on IS NULL OR trigger_on LIKE '%,%' OR trigger_on LIKE 'gate:%' OR trigger_on IN (SELECT id FROM items WHERE status='done' AND disposition IS NOT NULL AND disposition <> ''))
           AND id NOT IN (SELECT item_id FROM claims) ORDER BY (owner_role=?) DESC, priority, created_at LIMIT 1`,
         role.role, role.id, role.project, role.project, role.id);
       await run(db, `UPDATE roles SET last_tick_at=? WHERE id=?`, ctx.nowIso, role.id);
       if (!item) continue;
-      await run(db, `INSERT INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES (?, ?, ?, ?)`, item.id, role.id, ctx.nowIso, ctx.nowIso);
+      // US-14-R11: claims.item_id is the primary key. On a store with more than one writer a dispatcher that loses the race gets no row, and then neither changes the item nor writes a
+      // dispatch row for a claim it does not hold; the next tick picks again. (A store that translates INSERT OR IGNORE, as the Postgres shim does, behaves the same.)
+      const taken = await run(db, `INSERT OR IGNORE INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES (?, ?, ?, ?)`, item.id, role.id, ctx.nowIso, ctx.nowIso);
+      if (taken.meta?.changes === 0) continue;
       await run(db, `UPDATE items SET status='claimed', updated_at=? WHERE id=?`, ctx.nowIso, item.id);
       await run(db, `INSERT INTO dispatches (tick_id, role_id, item_id, model) VALUES (?, ?, ?, ?)`, ctx.tickId, role.id, item.id, role.model);
       n++;

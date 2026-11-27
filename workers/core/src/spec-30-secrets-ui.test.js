@@ -19,11 +19,11 @@ test('US-30-R54: the Connect screen lists each connection with its presence, sou
   const vault = vaultOf(); assert.deepEqual(await listConnections(null), [], 'no vault, no screen');
   await vault.put('OPENAI_API_KEY', SECRET);
   const list = await listConnections(vault, { ANTHROPIC_API_KEY: 'from-the-environment' }, { router });
-  assert.deepEqual(list.map(c => c.name), ['ANTHROPIC_API_KEY', 'VCS_TOKEN', 'OPENAI_API_KEY'], 'not allowlisted: dropped; each name once');
+  assert.deepEqual(list.map(c => c.name), ['ANTHROPIC_API_KEY', 'OPENAI_API_KEY'], 'not allowlisted: dropped; each name once; GitHub access is not a paste (US-30-R55)');
   const by = Object.fromEntries(list.map(c => [c.name, c])); assert.deepEqual([by.ANTHROPIC_API_KEY.present, by.ANTHROPIC_API_KEY.source, by.ANTHROPIC_API_KEY.set_at], [true, 'environment', null]);
-  assert.deepEqual([by.OPENAI_API_KEY.present, by.OPENAI_API_KEY.source], [true, 'console']); assert.ok(by.OPENAI_API_KEY.set_at); assert.deepEqual([by.VCS_TOKEN.present, by.VCS_TOKEN.source], [false, null]);
+  assert.deepEqual([by.OPENAI_API_KEY.present, by.OPENAI_API_KEY.source], [true, 'console']); assert.ok(by.OPENAI_API_KEY.set_at);
   assert.ok(!JSON.stringify(list).includes(SECRET)); for (const c of list) assert.ok(c.label && c.help, c.name);
-  assert.deepEqual(CONNECTIONS.map(c => c.name), ['ANTHROPIC_API_KEY', 'VCS_TOKEN']);
+  assert.deepEqual(CONNECTIONS.map(c => c.name), ['ANTHROPIC_API_KEY']);
 });
 
 test('US-30-R54: a pasted value is stored through the vault and never echoed: the reply and every error are free of it, a refused name or value is a plain 400, and a value that came from the environment cannot be removed here', async () => {
@@ -37,9 +37,7 @@ test('US-30-R54: a pasted value is stored through the vault and never echoed: th
   assert.deepEqual(await removeSecret(vault, { name: 'ANTHROPIC_API_KEY' }), { status: 200, body: { name: 'ANTHROPIC_API_KEY', removed: true } }); assert.equal(await vault.has('ANTHROPIC_API_KEY'), false);
 });
 
-// The requirement of section 4.5 that nothing meets yet (section 7 of the specification): the paste door still offers GitHub access as a token to paste (VCS_TOKEN), although the one-click GitHub App flow replaces it. This
-// test is that requirement's closing probe and stays a todo until the entry is withdrawn; it deliberately names no requirement id.
-test('the Connect screen offers no paste for a credential that a consent flow can issue (closing probe of the PLANNED part of the specification)', { todo: 'CONNECTIONS still lists VCS_TOKEN with an instruction to create and paste a token' }, () => {
+test('US-30-R55: the Connect screen offers no paste for a credential that a consent flow can issue: GitHub access is the one-click link, never a token to create and paste', () => {
   assert.ok(!CONNECTIONS.some(c => c.name === 'VCS_TOKEN'));
-  assert.ok(!CONNECTIONS.some(c => /\b(create|paste)\b/i.test(c.help) && c.name === 'VCS_TOKEN'));
+  assert.ok(!CONNECTIONS.some(c => /\b(create|paste)\b/i.test(c.help) && /GitHub|VCS/i.test(c.name + c.label)));
 });

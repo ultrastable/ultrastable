@@ -396,3 +396,37 @@ test('US-03-R11: the tick returns, for every step it ran, whether it completed a
   assert.equal(byName.score_predictions.ok, 0); assert.match(byName.score_predictions.evidence, /no such table: predictions/);
   assert.match(byName.probe_gates.evidence, /completed/);
 });
+
+test('US-08-R03: a ready item whose trigger item is not done is not dispatched; one whose trigger is done with its disposition is; list and gate triggers are left to core/claims', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('staff-1','staff',1,'m');
+    INSERT INTO items (id,title,owner_role,done_check,priority,status) VALUES ('A','a','staff','x',50,'open');
+    INSERT INTO items (id,title,owner_role,done_check,priority,status,trigger_on) VALUES ('C','c','staff','x',10,'ready','A'), ('L','l','staff','x',20,'ready','A,B'), ('G','g','staff','x',30,'ready','gate:card-1');`);
+  // C was made ready by hand while its trigger A is still open: it must not go first although it has the best priority
+  await runTick(db, { config, now: T0 });
+  const claimed = () => db.raw.prepare('SELECT item_id FROM claims ORDER BY item_id').all().map(x => x.item_id);
+  assert.deepEqual(claimed(), ['L'], 'C waits for A; the list trigger is judged by core/claims, so L is dispatched');
+  // the trigger is reopened after it was done: still not dispatched
+  db.raw.exec(`DELETE FROM claims; UPDATE items SET status='done', disposition='merged' WHERE id='A'; UPDATE items SET status='ready' WHERE id='L'`);
+  db.raw.exec(`UPDATE items SET status='open' WHERE id='A'`);
+  await runTick(db, { config, now: T0 + 60e3 });
+  assert.ok(!claimed().includes('C'), 'a reopened trigger holds its dependent back');
+  // the trigger done with a disposition releases it
+  db.raw.exec(`DELETE FROM claims; UPDATE items SET status='ready' WHERE id='L'; UPDATE items SET status='done', disposition='merged' WHERE id='A'`);
+  await runTick(db, { config, now: T0 + 120e3 });
+  assert.deepEqual(claimed(), ['C']);
+});
+
+test('US-14-R11: a dispatcher that loses the race for a claim skips the item: one claim, one dispatch row, the item untouched', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('staff-1','staff',1,'m');
+    INSERT INTO items (id,title,owner_role,done_check,priority,status) VALUES ('A','a','staff','x',10,'ready');`);
+  const prepare = db.prepare.bind(db);
+  // the other writer's row lands between this dispatcher's read and its insert
+  db.prepare = sql => { if (/^INSERT OR IGNORE INTO claims/.test(sql)) db.raw.exec(`INSERT OR IGNORE INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES ('A', 'other-writer', '2026-11-10 00:00:00', '2026-11-10 00:00:00')`); return prepare(sql); };
+  const r = await runTick(db, { config, now: T0 });
+  assert.deepEqual(r.errors, [], 'no unique violation fails the step');
+  assert.deepEqual(db.raw.prepare('SELECT item_id, agent FROM claims').all().map(x => [x.item_id, x.agent]), [['A', 'other-writer']]);
+  assert.equal(db.raw.prepare('SELECT COUNT(*) AS n FROM dispatches').get().n, 0, 'no dispatch row for a claim this dispatcher does not hold');
+  assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='A'").get().status, 'ready', 'the item is not changed by the dispatcher that lost');
+});
