@@ -7169,6 +7169,33 @@
    "body": "Round-2 code comments had been copied verbatim into private requirement lines, so public files shared 12-word runs with the private specs while disclosure --check (which reads only specs/) passed. The comments were reworded, and the private sentences that quote test titles or code literals were reworded instead, keeping every requirement id; a 12-word-run scan of the changed files against the private specs ran and found no requirement-line run left. Write a comment in the code's own words and cite the requirement id; never reconcile a spec by pasting the comment.",
    "probe": "grep:workers/core/packs/lex.js::every unclosed bracket is pushed with its kind",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-27-one-reader-for-both-vendored-from-forms-us-31-r63",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "One reader for both VENDORED_FROM forms (US-31-R63)",
+   "body": "workers/tools/vendor.py parse_vendored reads the JSON and the text form, keyed by the path inside the vendor directory; tenant_sync.py reads through it and revendor writes the form the tenant uses. Proven by node --test workers/tools/spec-31-vendor.test.mjs.",
+   "probe": "grep:workers/tools/vendor.py::def parse_vendored",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-27-text-form-lifting-entries-settle-through-the-record-us-31-r6",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Text-form lifting entries settle through the record (US-31-R63)",
+   "body": "revendor on a text-form tenant compared lifting entries (core paths relative to workers/) with vendor-directory keys, so they never settled to a shim. Each entry is now looked up through the record (_record_keys in workers/tools/tenant_sync.py): one the record lists settles to a shim of its vendored file; one whose code reached the core but the record does not list is reported as unsettled and kept, and foundation/tenantsync.py counts it as needs-pr. Evidence: node --test tools/spec-31-vendor.test.mjs from workers/, tests pass (9 of 9).",
+   "probe": "grep:workers/tools/tenant_sync.py::def _record_keys",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-27-text-form-tenants-re-vendor-file-by-file-from-their-recorded",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Text-form tenants re-vendor file by file from their recorded core paths (US-31-R63)",
+   "body": "A diff review of the round-2 landing found that tenant_sync.py revendor compared a text-form VENDORED_FROM (keys inside the vendor directory) with the workers selection (keys relative to workers/), so on a text-form tenant it would have deleted the vendored files and written the whole workers tree in their place. revendor and send-up now resolve each vendored file through core_sources: the JSON form keeps the whole selection, the text form takes exactly the listed files from each recorded core path under the repository root, removes nothing and reports a vanished core path as missing_in_core, which keeps the tenant out of in-sync. The same review tightened four guards: spec_ids fails two same-form definitions of one ID in one file, vendor.py --check and tenant_sync check report unreadable record lines and hashless files, heldByComment holds a pull request as HOLD unread when a later comment page cannot be read after a full first page, and connector callback refusals are written once per tenant, provider and reason kind an hour. The reference vault binds each sealed value to its name. actions-budget.json was restored to the minute budget and kill switch that ten consumers read, after executor PR #2661 had replaced it with a document nothing reads. Evidence: node --test tools/spec-31-vendor.test.mjs from workers/ (8 pass), seed Worker tests (1124 pass, 0 fail), every foundation test file and named check passing.",
+   "probe": "grep:workers/tools/tenant_sync.py::def core_sources",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
