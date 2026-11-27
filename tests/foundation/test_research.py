@@ -134,3 +134,31 @@ class NoMadeUpNumbers(unittest.TestCase):
         self.assertEqual(R.gate(p, st), [])
         p["sections"]["summary"].append("This cut costs by 47%.")
         self.assertTrue(any("47%" in b for b in R.gate(p, st)))
+
+
+class CyberneticsProgram(unittest.TestCase):
+    """CYBERNETICS-PROGRAM-1: the register readings are shares of declared registers, an unreadable register is n=0 (never met), and the program's studies stay valid."""
+    def test_register_shares_read_this_repository(self):
+        m = R._register_shares(ROOT)
+        for k in ("failure_modes_detected_share", "ashby_concepts_bound_share", "managers_closed_share", "targets_with_knobs_share"):
+            self.assertIn(k, m)
+            self.assertTrue(0 <= m[k]["value"] <= 1 and m[k]["n"] > 0, k)
+
+    def test_unreadable_registers_are_unmeasured_not_met(self):
+        d = scratch()
+        m = R._register_shares(d)
+        for k, v in m.items():
+            self.assertEqual((v["value"], v["n"]), (None, 0), k)
+            self.assertEqual(R.verdict({"metric": k, "target": {"op": ">=", "value": 0}}, m)["status"], "unmeasured")
+
+    def test_a_shorter_register_changes_the_share(self):
+        d = scratch(); (d / "doctrine").mkdir()
+        (d / "doctrine/registers.json").write_text(json.dumps({"failure_modes": [{"id": "a"}, {"id": "b"}]}))
+        (d / "doctrine/detectors.json").write_text(json.dumps({"detectors": [{"failure_mode": "a"}]}))
+        self.assertEqual(R._register_shares(d)["failure_modes_detected_share"]["value"], 0.5)
+
+    def test_the_program_studies_are_present_and_valid(self):
+        ids = {s["id"] for s in R.studies()}
+        for want in ("ashby-1952", "conant-ashby-1970", "ashby-variety-1956", "beer-vsm-1972", "powers-1973", "ashby-journal-2026", "foerster-1974"):
+            self.assertIn(want, ids)
+        self.assertEqual(R.validate(), [])

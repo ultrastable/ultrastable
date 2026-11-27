@@ -1,0 +1,105 @@
+{
+ "schema": "research-study/1",
+ "id": "ashby-variety-1956",
+ "order": 8,
+ "title": "An Introduction to Cybernetics",
+ "paper_title": "Only variety can absorb variety: how many kinds of trouble can an AI system answer?",
+ "paper_frame": "Ashby's law of requisite variety says a regulator can only hold outcomes steady if it has at least as many distinct responses as the environment has distinct disturbances. We read the law as a staffing and coverage question for an autonomous system: does every function have a manager that owns code, a clock, a probe and a settler?",
+ "authors": [
+  "W. Ross Ashby"
+ ],
+ "institution": "Chapman & Hall, London",
+ "kind": "book",
+ "version": "1956",
+ "seeded_by": "owner, 2026-11-27 (CYBERNETICS-PROGRAM-1)",
+ "source_url": "https://archive.org/details/introductiontocy00ashb",
+ "data": "Theory, with worked examples. The law of requisite variety is the subject of the book's chapter on regulation in the face of disturbance.",
+ "summary": "Variety is the number of distinguishable states. To keep an essential variable steady, the regulator's variety of responses must match the variety of disturbances; control cannot be bought with less. For software, the variety of responses is the number of distinct, owned ways the system can detect and fix a kind of trouble.",
+ "perspectives": [
+  "systems",
+  "oversight",
+  "reliability"
+ ],
+ "limits": [
+  "Reading. The source was not machine-read for this paper: its argument is stated in our own words from the publication's well-known content, with no quotation, and a reader should check the claim against the source linked above.",
+  "Counting. Variety here is counted as declared roles and loops, which is a lower bound: two managers can respond in the same way. The share measures coverage, not distinctness.",
+  "Disturbances. Whether the set of roles matches the set of disturbances the system meets is read from the work queue by a separate reading in the Worker; this paper does not measure it."
+ ],
+ "misperception": {
+  "belief": "One general-purpose AI agent, given enough instructions, can run a whole organization of work.",
+  "short": "One general agent can run everything.",
+  "counter": "Control needs as many distinct responses as there are distinct kinds of trouble. A system with one undifferentiated responder fails the law however capable the responder is; owned, distinct managers are the response variety."
+ },
+ "findings": [
+  {
+   "id": "V1",
+   "concern": "Trouble with no owner",
+   "claim": "Each function the system has to regulate needs a manager that runs named code, keeps a clock, has a closing probe and names the code that settles what it files. A role missing any of these is a response the system cannot actually give.",
+   "where": "Chapter on regulation (our statement)",
+   "perspective": "oversight",
+   "mechanisms": [
+    {
+     "rule": "MANAGERS-1",
+     "path": "doctrine/managers.json",
+     "how": "every role names code, clocks, a closing probe and a settler"
+    },
+    {
+     "rule": "MANAGERS-1",
+     "path": "foundation/managers.py",
+     "how": "the check fails a role with no loop, code, clock, probe or settler"
+    }
+   ],
+   "metric": "managers_closed_share",
+   "target": {
+    "op": ">=",
+    "value": 1.0
+   },
+   "prediction": "managers_closed_share >= 1 within 24 h"
+  },
+  {
+   "id": "V2",
+   "concern": "Responses that cannot change",
+   "claim": "Variety of response is useful only if the system can add or change a response when the old ones fail. The second loop must be able to change a parameter of the first loop for each essential variable.",
+   "where": "Chapter on regulation (our statement)",
+   "perspective": "systems",
+   "mechanisms": [
+    {
+     "rule": "ASHBY-1",
+     "path": "doctrine/ultrastability.json",
+     "how": "each essential variable declares the parameters its second loop may change"
+    },
+    {
+     "rule": "ASHBY-1",
+     "path": "foundation/ultrastability.py",
+     "how": "step functions are read for every variable"
+    }
+   ],
+   "metric": "step_function_share",
+   "target": {
+    "op": ">=",
+    "value": 1.0
+   },
+   "prediction": "step_function_share >= 1 within 24 h"
+  },
+  {
+   "id": "V3",
+   "concern": "Blind spots count too",
+   "claim": "A disturbance the system has no record of has no response. Failure modes that no detector watches are the unmodelled part of the environment.",
+   "where": "Chapter on regulation (our statement)",
+   "perspective": "reliability",
+   "mechanisms": [
+    {
+     "rule": "FAILURE-RESOLVE-1",
+     "path": "doctrine/detectors.json",
+     "how": "a detector per failure mode"
+    }
+   ],
+   "metric": "failure_modes_detected_share",
+   "target": {
+    "op": ">=",
+    "value": 1.0
+   },
+   "prediction": "failure_modes_detected_share >= 1 within 24 h"
+  }
+ ]
+}

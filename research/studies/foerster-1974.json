@@ -1,0 +1,85 @@
+{
+ "schema": "research-study/1",
+ "id": "foerster-1974",
+ "order": 12,
+ "title": "Cybernetics of cybernetics",
+ "paper_title": "Who observes the observer? A system that measures its own research",
+ "paper_frame": "Heinz von Foerster called second-order cybernetics the cybernetics of observing systems: the observer is part of what is observed. A research program run by the system it studies must be held to its own measurements. We read how many of the program's findings are met, and how many work items are written so that they cannot be misread.",
+ "authors": [
+  "Heinz von Foerster"
+ ],
+ "institution": "University of Illinois, Biological Computer Laboratory",
+ "kind": "edited volume",
+ "version": "1974",
+ "seeded_by": "owner, 2026-11-27 (CYBERNETICS-PROGRAM-1)",
+ "source_url": "https://en.wikipedia.org/wiki/Second-order_cybernetics",
+ "data": "Theory. The source URL is a secondary overview; the primary volume was not machine-read.",
+ "summary": "First-order cybernetics treats the system as observed from outside. Second-order cybernetics includes the observer: the one who describes the system is part of it, and descriptions change what they describe. A system that writes papers about itself is its own observer, and its papers are inputs to its own loops.",
+ "perspectives": [
+  "systems",
+  "oversight",
+  "quality"
+ ],
+ "limits": [
+  "Reading. The source was not machine-read for this paper: its argument is stated in our own words from the publication's well-known content, with no quotation, and a reader should check the claim against the source linked above.",
+  "Secondary source. The linked page is an overview, not the 1974 volume; the claim about the observer is stated at a level the overview supports.",
+  "Circularity. The share of met findings includes findings measured by the same machinery that files work for the unmet ones; the paper reports unmeasured findings as unmeasured and never as met."
+ ],
+ "misperception": {
+  "belief": "An AI system's own report on how well it is doing is as good as an outside audit.",
+  "short": "A system's self-report is as good as an audit.",
+  "counter": "The observer is part of the system. A self-report is only worth what its measurement is: each finding here is read from a ledger, an unmeasured one is shown as unmeasured, and every unmet one files its own work item."
+ },
+ "findings": [
+  {
+   "id": "O1",
+   "concern": "A research program that grades itself generously",
+   "claim": "The program is measured by the share of all its findings whose own measurement meets its target, excluding this finding. An unmeasured finding counts as not met.",
+   "where": "Volume's theme (our statement)",
+   "perspective": "oversight",
+   "mechanisms": [
+    {
+     "rule": "RESEARCH-1",
+     "path": "foundation/research.py",
+     "how": "every metric is read from the system's own ledgers"
+    },
+    {
+     "rule": "RESEARCH-1",
+     "path": "doctrine/research.json",
+     "how": "the register of studies and questions"
+    }
+   ],
+   "metric": "research_findings_met_share",
+   "target": {
+    "op": ">=",
+    "value": 0.5
+   },
+   "prediction": "research_findings_met_share >= 0.5 within 72 h"
+  },
+  {
+   "id": "O2",
+   "concern": "Instructions the observer can misread",
+   "claim": "Work items are the system's descriptions of what to do. An item that passes intake has a machine-checkable done check, a prediction, an out-of-scope line and a live proof, so it cannot be read two ways by two agents.",
+   "where": "Volume's theme (our statement)",
+   "perspective": "quality",
+   "mechanisms": [
+    {
+     "rule": "SPEC-GATE-1",
+     "path": "foundation/specgate.py",
+     "how": "the intake gate"
+    },
+    {
+     "rule": "SPEC-GATE-1",
+     "path": "seed/scripts/specgate.py",
+     "how": "the shared engine"
+    }
+   ],
+   "metric": "spec_quality",
+   "target": {
+    "op": ">=",
+    "value": 0.9
+   },
+   "prediction": "spec_quality >= 0.9 within 72 h"
+  }
+ ]
+}
