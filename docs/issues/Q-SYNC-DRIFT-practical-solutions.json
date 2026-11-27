@@ -1,7 +1,7 @@
 {
   "id": "Q-SYNC-DRIFT-practical-solutions",
-  "title": "Q-SYNC-DRIFT-practical-solutions: tenant practical-solutions is 9.3 days behind the platform (538 files, status needs-pr)",
-  "body": "**Owner:** operations\n**Trigger:** tenant-sync --run\n**Done check:** cmd:python3 -m foundation tenantsync --probe drift:practical-solutions\n**Prediction:** tenant_sync_drift_days <= 2 within 48 h\n**Status:** closed\n\nRead the last rows for practical-solutions in ops/tenant-sync/ledger.jsonl, fix what stops the re-vendor pull request (token, clone, tool error), and land it through the tenant's lane.\n\n**Closing probe:** cmd:python3 -m foundation tenantsync --probe drift:practical-solutions\n\n**Disposition:** shelved (ttl, 2026-11-27T01:08:42Z, DISPOSE-1)\n\n**Evidence:** open 32.4 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "title": "Q-SYNC-DRIFT-practical-solutions: tenant practical-solutions is 9.3 days behind the platform (541 files, status needs-pr)",
+  "body": "**Owner:** operations\n**Trigger:** tenant-sync --run\n**Done check:** cmd:python3 -m foundation tenantsync --probe drift:practical-solutions\n**Prediction:** tenant_sync_drift_days <= 2 within 48 h\n**Status:** open\n\nRead the last rows for practical-solutions in ops/tenant-sync/ledger.jsonl, fix what stops the re-vendor pull request (token, clone, tool error), and land it through the tenant's lane.\n\n**Closing probe:** cmd:python3 -m foundation tenantsync --probe drift:practical-solutions\n",
   "labels": [
     "p1",
     "agent-ready",
