@@ -32,8 +32,9 @@ def down_keys(a: dict, e: Exception) -> set:
 
 
 def rungs(root=REPO, env=None) -> list[dict]:
-    rs = agents.route_authors(env, root)
-    return [a for a in rs if a["id"] not in DOWN and a.get("route") not in DOWN] or rs
+    from . import routehealth  # ROUTE-CANARY-1: a rung whose last canary failed sits out DEMOTE_H hours while another rung is healthy
+    rs, bad = agents.route_authors(env, root), routehealth.demoted(root)
+    return [a for a in rs if a["id"] not in DOWN and a.get("route") not in DOWN and a["id"] not in bad] or [a for a in rs if a["id"] not in bad] or rs
 
 
 def transport(a: dict, prompt: str, env=None) -> tuple[str, dict]:
