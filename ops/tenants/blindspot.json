@@ -1,9 +1,9 @@
 {
- "at": "2026-11-26T16:51:48Z",
+ "at": "2026-11-27T16:37:46Z",
  "claims_drift": null,
  "declared_metric": 0.303,
  "declared_target": 0.15,
  "slug": "blindspot",
- "spend_vs_budget": 8.491,
+ "spend_vs_budget": 11.345,
  "uptime": 0.0
 }
