@@ -7,7 +7,7 @@ An agent starts from one short file (AGENTS.md; CLAUDE.md is `@AGENTS.md`). The 
 enforced by the checks they name; an agent reads the ones that govern the files it is about to change instead of all of them:
 
   python3 scripts/agentrules.py --for PATH [PATH ...] [--full] [--limit N]   rules that name these paths (or a directory above or below them)
-  python3 scripts/agentrules.py --show ID [ID ...]                            one rule in full, by id (or a word of its title)
+  python3 scripts/agentrules.py --show ID [ID ...]                            one rule in full, by id, a word of its title, or an id its text cites
   python3 scripts/agentrules.py --list                                        every rule: id and title
   python3 scripts/agentrules.py --budget                                      size of what an agent loads before it starts (JSON)
   python3 scripts/agentrules.py --check                                       the entry stays inside its budget and still names every document
@@ -99,7 +99,7 @@ def for_paths(rs: list[dict], paths: list[str], prefix: str = "") -> list[tuple[
 def find(rs: list[dict], key: str) -> list[dict]:
     k = key.strip()
     exact = [r for r in rs if k.upper() in (i.upper() for i in r["ids"])]
-    return exact or [r for r in rs if k.lower() in r["title"].lower() or k.lower() in r["id"].lower()]
+    return exact or [r for r in rs if k.lower() in r["title"].lower() or k.lower() in r["id"].lower()] or [r for r in rs if k in r["text"]]
 
 
 def closure(root, entry: str, _seen=None) -> list[tuple[str, str]]:

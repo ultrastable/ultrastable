@@ -2,31 +2,30 @@
 
 > Ultrastable is the foundation for any autonomous system.
 
-This repository is the platform: the one place Ultrastable's code and rules are written. `seed/` is the kernel every system runs and is published to `ultrastable/seed`; tenant repositories vendor files from here. This file is all an agent loads before it starts. The standing rules stay word for word in [`agents/AGENTS.md`](agents/AGENTS.md) and are enforced by the checks they name: fetch the ones for the files you will change, and do not read that file top to bottom.
+This repository is the platform: the one place Ultrastable's code and rules are written. `seed/` is the kernel every system runs and is published to `ultrastable/seed`; tenant repositories vendor files from here. This file is all an agent loads before it starts. The standing rules are in [`agents/AGENTS.md`](agents/AGENTS.md), each enforced by the check it names: fetch the ones for your files, and do not read that file whole.
 
 ## Commands
 
 | To | Run |
 |---|---|
-| see the rules for the files you will change | `python3 -m foundation agentrules --for PATH [PATH ...]` |
-| read one rule in full | `python3 -m foundation agentrules --show ID` |
-| list the rules, id and title | `python3 -m foundation agentrules --list` |
+| see the rules for your files | `python3 -m foundation agentrules --for PATH [PATH ...]` |
+| read one rule in full, or list them all | `python3 -m foundation agentrules --show ID`, `--list` |
 | run one platform test file | `python3 -m unittest discover -s tests/foundation -p "test_NAME.py"` |
 | run one kernel Worker test file | `cd seed/worker && node --test test/NAME.test.js` |
 | run the kernel's Python tests | `cd seed && python3 -m unittest discover -s tests` |
-| regenerate the generated files | `./scripts/regen_generated.sh` |
+| regenerate generated files | `./scripts/regen_generated.sh` |
 | run what CI runs | `python3 -m foundation checksrun` |
-| measure a change against the size limit | `cd seed && python3 scripts/prsize.py --range origin/main...HEAD` |
+| measure a change's size | `cd seed && python3 scripts/prsize.py --range origin/main...HEAD` |
 | record a lesson or a decision | `python3 -m foundation writeback record --kind lesson --title T --body B --probe grep:FILE::TEXT` |
 
-Python 3.12 and Node 24 (`.devcontainer/devcontainer.json`). There is no install step: the code has no third-party dependency except PyYAML, which only `checksrun` imports.
+Python 3.12 and Node 24 (`.devcontainer/devcontainer.json`). No install step: the only third-party dependency is PyYAML, for `checksrun`.
 
 ## How a change moves
 
 1. Branch from current `main`. Check that no open pull request already holds the work: `python3 -m foundation collisions --claim ID`.
 2. Keep the change to one concern and inside the size limit in `seed/autonomy/prsize.json`.
 3. Edit code where it is written (the table below) and change its test in the same commit.
-4. Run the tests for what you touched, then `./scripts/regen_generated.sh`, then the checks that `agentrules --for` lists for your paths.
+4. Run the tests for what you touched, then the checks that `agentrules --for` lists for your paths.
 5. Record what was learned with `writeback record`. `python3 -m foundation writeback check` fails a code change that has none.
 6. Push the branch and open a draft pull request from `.github/pull_request_template.md`. A change to a protected path carries a `Protected-change:` line in the body that says why.
 7. Stop. The server-side lane marks the pull request ready, merges it when its checks pass, deploys it and probes the result. Do not merge, deploy or poll.

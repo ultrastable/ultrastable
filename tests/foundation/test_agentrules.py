@@ -28,8 +28,8 @@ class Platform(unittest.TestCase):
         self.assertNotIn("agents/AGENTS.md", A.budget(REPO, json.loads((REPO / A.CONFIG).read_text()))["entries"]["CLAUDE.md"]["files"])
         ids = lambda p: [r["id"] for _, r in A.for_paths(rs, [p])]
         self.assertIn("WORK-NOT-PULSE-1", ids("seed/worker/src/greenguard.js"))
-        self.assertIn("AGENT-ENTRY-1", ids("seed/scripts/agentrules.py"))
-        self.assertTrue(A.find(rs, "AGENT-ENTRY-1")[0]["checks"])
+        # INSTRUCTIONS-BUDGET-1: the rule file only shrinks, so AGENT-ENTRY-1 is code (doctrine/agent-entry.json and this check) that the load rule cites
+        self.assertIn("agentrules --for PATH", A.find(rs, "AGENT-ENTRY-1")[0]["text"])
 
     def test_the_command_answers(self):
         out = io.StringIO()
@@ -38,7 +38,7 @@ class Platform(unittest.TestCase):
             self.assertEqual(A.main(["--for", "foundation/agentrules.py"]), 0)
             self.assertEqual(A.main(["--show", "AGENT-ENTRY-1"]), 0)
         self.assertIn("agent entry ok", out.getvalue())
-        self.assertIn("AGENT-ENTRY-1: An agent starts from one short file", out.getvalue())
+        self.assertIn("Load from the repository, never from tool memory", out.getvalue())
 
 
 if __name__ == "__main__":
