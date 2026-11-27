@@ -102,3 +102,16 @@ test('the hourly control pass still runs when the tick is lean (a cost breach mu
   assert.ok(r);
   assert.equal((await db.prepare('SELECT COUNT(*) n FROM goals').first()).n, 1);
 });
+
+test('PEREZ-LOPEZ-1: while an essential goal is off target, no other goal moves a knob', async () => {
+  const db = makeDb(); let ev = 0;
+  const c = { control: { essential: ['core.ev'] }, goals: [
+    { id: 'core.t', level: 'target', statement: 'x high', source: 'builtin', spec: 'x', op: '>=', target: 0.5 },
+    { id: 'core.ev', level: 'target', statement: 'ev zero', source: 'builtin', spec: 'ev', op: '<=', target: 0 }],
+    knobs: [{ id: 'core.k', goal_id: 'core.t', what: 'k', value: 4, min: 1, max: 6, step: 1, effect: -1, cooldown_h: 24, review_h: 24 }] };
+  const b = { x: async () => 0.2, ev: async () => ev };
+  ev = 3; const r = await goalsStep(db, { now: t0 }, c, { builtins: b });
+  assert.equal(r.adjusted.length, 0); assert.deepEqual(r.held, [{ goal: 'core.t', essential_off: ['core.ev'] }]);
+  ev = 0; const r2 = await goalsStep(db, { now: t0 + H }, c, { builtins: b });
+  assert.deepEqual(r2.adjusted.map(a => a.knob), ['core.k']);
+});

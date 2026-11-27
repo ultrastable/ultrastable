@@ -1975,6 +1975,16 @@
       ]
     },
     {
+      "id": "cited-91e6fd7e7e",
+      "surface": "site/saydo-data.js",
+      "text": "\"detail\": \"python3 -m foundation claimcode --check: FAIL agents/AGENTS.md:42: states a number, cadence or guarantee with no registered",
+      "probe": [
+        "file:foundation/claimcode.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-06c8ef7187",
       "surface": "site/worker.js",
       "text": "+ \"<div class=\\\"us-grid c2\\\">\" + card(\"Loops\", \"Each loop has a trigger, owner, definition of done, two independent paths and a closing",
