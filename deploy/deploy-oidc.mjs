@@ -51,4 +51,6 @@ catch (e) { console.error("::warning::DEPLOY-VISIBLE-1: recording deployments fa
 // SEED-DEPLOY-1: admitted seeds (doctrine/seed-deploys.json) deploy through the same OIDC route after the platform workers. A seed failure is a row in ops/deploys.jsonl
 // that the `seed-live` detector files; it never fails the platform deploy or blocks its record step.
 try { execFileSync("node", ["deploy/deploy-seed.mjs"], { cwd: fileURLToPath(new URL("..", import.meta.url)), stdio: "inherit" }); } catch (e) { console.error("seed deploy did not finish live:", e.message); }
-process.exit(results.every(r => r.ok) ? 0 : 1);
+// HEALTH-GATE-1 (ZHC-R6): a deploy whose tick does not answer /health afterwards is a failed deploy (the row says live_matches_commit false; the run goes red and the watchdog redeploys).
+if (!h) console.error("HEALTH-GATE-1: tick /health unreachable after deploy");
+process.exit(results.every(r => r.ok) && h ? 0 : 1);

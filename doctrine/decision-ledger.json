@@ -6834,6 +6834,15 @@
    "title": "The spinoff headroom read hit the retired account",
    "body": "ops/free-tier.json stayed at 2026-11-17 because the repo's Cloudflare secret names the retired account and every read since 2026-11-20 got an authz error. foundation/ideas.py now reads the tick's samples through the OIDC route, and the roadmap's spinoff section carries its own date (site/edge.js), so a stale section marks the page stale.",
    "probe": "grep:foundation/ideas.py::FREE-TIER-ROUTE-1"
+  },
+  {
+   "id": "decision-2026-11-27-health-gate-1-deploy-fails-when-tick-health-is-unreachable",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "HEALTH-GATE-1 deploy fails when tick health is unreachable",
+   "body": "deploy-oidc.mjs exits 1 when the tick /health does not answer after a deploy.",
+   "probe": "grep:deploy/deploy-oidc.mjs::HEALTH-GATE-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
   }
  ]
 }
