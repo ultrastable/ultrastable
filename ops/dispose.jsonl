@@ -2166,3 +2166,4 @@
 {"age_days": 5.1, "at": "2026-11-27T16:04:51Z", "disposition": "shelved", "evidence": "open 122.5 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-open-questions", "rule": "ttl", "status_before": "open"}
 {"age_days": 2.0, "at": "2026-11-27T16:04:51Z", "disposition": "shelved", "evidence": "open 48.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-replication-ledger", "rule": "ttl", "status_before": "open"}
 {"age_days": 2.0, "at": "2026-11-27T16:04:51Z", "disposition": "shelved", "evidence": "open 47.3 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SYNC-DRIFT-practical-solutions", "rule": "ttl", "status_before": "open"}
+{"age_days": 2.0, "at": "2026-11-27T16:12:50Z", "disposition": "shelved", "evidence": "open 47.5 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SYNC-DRIFT-practical-solutions", "rule": "ttl", "status_before": "open"}
