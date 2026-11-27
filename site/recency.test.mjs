@@ -28,3 +28,12 @@ test("live pages carry the time of their latest reading", () => {
   assert.equal(r.updated_at, "2026-11-27T09:00:00Z"); assert.equal(r.stale, false); assert.match(r.schedule, /26 hours/);
   assert.equal(readingRecency(null).stale, true);
 });
+import { sectionRecency } from "./edge.js";
+test("the roadmap's spinoff section carries its own date, and a stale one marks the page stale", async () => {
+  const s = sectionRecency("/roadmap", Date.parse("2026-11-27T11:00:00Z"));
+  assert.ok(s.spinoffs.updated_at); assert.equal(s.spinoffs.max_age_s, 48 * 3600);
+  assert.deepEqual(sectionRecency("/how"), {});
+  const h = await get("/roadmap"); const html = await h.text();
+  assert.match(html, /id="recency-spinoffs">Section spinoffs: Last updated/);
+  if (s.spinoffs.stale) { assert.equal(h.headers.get("x-stale"), "true"); assert.equal(h.headers.get("x-stale-sections"), "spinoffs"); }
+});

@@ -20,6 +20,7 @@ export function recencyText(r) {
 
 export function recencyHeaders(r) {
   const h = { 'X-Update-Schedule': r.schedule, 'X-Max-Age-Seconds': String(r.max_age_s), 'X-Stale': String(r.stale) };
+  if (r.stale_sections && r.stale_sections.length) h['X-Stale-Sections'] = r.stale_sections.join(',');
   if (r.updated_at) { h['X-Updated-At'] = r.updated_at; h['Last-Modified'] = new Date(r.updated_at).toUTCString(); }
   return h;
 }
