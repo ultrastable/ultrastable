@@ -680,3 +680,4 @@
 {"at": "2026-11-27T22:54:54Z", "clocks": 47, "kind": "beat", "seq": 678, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
 {"at": "2026-11-27T23:06:48Z", "clocks": 47, "kind": "beat", "seq": 679, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
 {"at": "2026-11-27T23:15:27Z", "clocks": 47, "kind": "beat", "seq": 680, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-27T23:25:25Z", "clocks": 47, "kind": "beat", "seq": 681, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
