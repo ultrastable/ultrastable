@@ -154,6 +154,8 @@ echo "lane: needs-pat merged=$wf_merged waiting=$wf_waiting credential=$wf_sourc
 if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
   # MERGE-AUDIT-1: a merge by any path this script cannot gate (a session's own token) is audited here and filed as an item the adoption commit carries
   (cd "$(dirname "$0")/.." && python3 -m foundation mergeaudit --apply >/dev/null) || { echo "lane: merge audit failed" >&2; echo x >>"$_SAFE_FAILS"; }
+  # SAMPLE-AUDIT-1: a risk-weighted sample of the day's merges (every protected-path PR) becomes a Q-AUDIT item for a clean-context reviewer
+  (cd "$(dirname "$0")/.." && python3 -m foundation sampleaudit --apply >/dev/null) || { echo "lane: sample audit failed" >&2; echo x >>"$_SAFE_FAILS"; }
   # RULES-1: every standing rule's runtime probes run (at most every interval_h); a violation files Q-RULE-* and runs its fix; status feeds the owner ops view
   (cd "$(dirname "$0")/.." && python3 -m foundation rules --run --apply --due >/dev/null) || { echo "lane: rules run failed" >&2; echo x >>"$_SAFE_FAILS"; }
   if [ -n "${DASHBOARD_URL:-}" ] && [ -n "${FLEET_TOKEN:-}" ]; then

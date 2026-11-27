@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-agents-re-derive-the-repo-each-session",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "Agents re-derive the repo each session",
+  "body": "Reads dominate agent tokens. Hash-keyed module cards (repomap), a conclusion ledger keyed by evidence hashes, and import-graph test selection now serve repeat questions; an unscoped change runs the full suite. Issue 2741.",
+  "probe": "grep:foundation/repomap.py::REPO-MAP-1"
+ },
+ "kind": "lesson",
+ "title": "Agents re-derive the repo each session",
+ "session": "Session: session_0156nqDuB65xWnsz5kxuJWzy"
+}

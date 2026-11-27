@@ -509,6 +509,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["impact"]:  # IMPACT-TESTS-1: foundation/impact.py
         from . import impact
         return impact.main(_av[1:])
+    if _av[:1] == ["sampleaudit"]:  # SAMPLE-AUDIT-1: foundation/sampleaudit.py
+        from . import sampleaudit
+        return sampleaudit.main(_av[1:])
     if _av[:1] == ["repomap"]:  # REPO-MAP-1: foundation/repomap.py
         from . import repomap
         return repomap.main(_av[1:])
