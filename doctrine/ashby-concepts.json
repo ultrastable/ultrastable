@@ -89,9 +89,10 @@
     {
       "id": "homeostat",
       "url": "https://ashby.info/journal/index/index.html#homeostat",
-      "summary": "Ashby's machine that found a stable setting by random step changes until its needles settled. The second loop's search draws untried values the same way.",
+      "summary": "Ashby's machine that found a stable setting by random step changes until its needles settled. The second loop's search draws untried values the same way. seed/scripts/homeostat.py is a seeded reference homeostat whose drills (termination, scaling, inversion, retention) run in CI.",
       "mechanisms": [
         "foundation/ultrastability.py::def _search",
+        "seed/scripts/homeostat.py::def run",
         "seed/worker/src/ashby.js::export function nextTrial",
         "seed/worker/test/ashby.test.js::nearest first"
       ],
