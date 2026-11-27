@@ -1,12 +1,11 @@
 {
   "id": "OL-20261127-4",
   "title": "ASHBY step 3: every knob move records a snapshot of all knobs and can be restored",
-  "owner_role": "operations",
-  "trigger": "issue 2620 step 3",
-  "status": "done",
-  "done_check": "grep:seed/worker/src/goals.js::export async function restoreSnapshot",
-  "prediction": "goals_test_failures == 0 within 24 h",
-  "out_of_scope": "automatic restore on an essential-variable veto (later step)",
-  "closing_probe": "grep:seed/worker/test/goals.test.js::ASHBY step 3",
-  "body": "**Done check:** grep:seed/worker/src/goals.js::export async function restoreSnapshot\n**Prediction:** goals_test_failures == 0 within 24 h\n**Out of scope:** automatic restore on a veto\n**Closing probe:** grep:seed/worker/test/goals.test.js::ASHBY step 3\n**Evidence:** node --test worker/test/goals.test.js: 13 pass, 0 fail\n**Session:** https://claude.ai/code/session_0156nqDredxRjgVfePwXUrAp"
+  "body": "**Owner:** product-manager\n**Trigger:** issue 2620 step 3 unticked\n**Done check:** grep:seed/worker/src/goals.js::export async function restoreSnapshot\n**Closing probe:** grep:seed/worker/test/goals.test.js::ASHBY step 3\n**Prediction:** goals_test_failures == 0 within 24 h\n**Out of scope:** automatic restore on an essential-variable veto\n**Status:** done\n\nknobSnapshot and restoreSnapshot in seed/worker/src/goals.js; every goal.knob audit record carries the snapshot taken before the move. Session: session_0156nqDredxRjgVfePwXUrAp\n\n**Evidence:** node --test seed/worker/test/goals.test.js: 13 pass, 0 fail. Session: session_0156nqDredxRjgVfePwXUrAp",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
 }
