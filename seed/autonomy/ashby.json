@@ -393,7 +393,7 @@
   },
   {
    "id": "adaptation-ledger",
-   "item": "OL-20261127-1",
+   "item": "OL-20261127-6",
    "why": "step trials, commits and rollbacks need their own table before interference and failure recall can be read from live data (journal 5410, 5592, 5601, 5775)"
   },
   {
@@ -412,5 +412,6 @@
    "why": "controlSystem, prescribe and evoke run on rows passed to them; reading them from the fleet's own outcomes and spend per role each tick is the next step"
   }
  ],
- "platform_map": "doctrine/ashby-concepts.json (platform): the platform binds the concepts of Ashby's index to this kernel code and to its own second loop"
+ "platform_map": "doctrine/ashby-concepts.json (platform): the platform binds the concepts of Ashby's index to this kernel code and to its own second loop",
+ "work_record": "ultrastable/ultrastable issue 2620 (ASHBY-SPEC-1): this kernel is the pure logic for its steps 4 and 6 to 10; the Python reference harness is seed/scripts/homeostat.py (HOMEOSTAT-1) and homeostat() here is its JavaScript twin for the Worker's tests"
 }
