@@ -22,30 +22,30 @@ Adaptation is discrete and reversible: a knob moves one step within bounds, the 
 
 ## How it runs
 
-One heartbeat on a server-side clock. Each tick: reconcile state, read every metric, score predictions, accrue trust, audit failure modes against their detectors, dispatch work, execute it, measure criticality, record. A failed step is logged and becomes an item; the remaining steps still run.
+One heartbeat on a server-side clock. Each tick: apply pending migrations, reconcile state, score predictions, read every metric, repair a breached guard before pursuing its goal, accrue trust, audit failure modes against their detectors, question what it does not know, turn goal knobs, plan, dispatch work, execute it, publish the pulse, measure criticality, read its own stage. A failed step is logged and becomes an item; the remaining steps still run.
 
 Tick steps, in order:
 
-1. `reconcile`: every item that left the active set has a disposition (no silent drop)
-2. `reap_claims`: claims with no heartbeat are released so work never stalls
-3. `connector_health`: every credential is read; a failing refresh becomes one reconnect link, never an instruction
-4. `probe_gates`: an identity-bound card closes when its probe passes, and its default stays in effect meanwhile
-5. `measure`: every metric is read; a breach files BREACH-<metric> with a closing probe
+1. `migrate`: pending schema migrations apply in order, once, before the tick writes its heartbeat row
+2. `reconcile`: every item that left the active set has a disposition (no silent drop)
+3. `reap_claims`: claims with no heartbeat are released so work never stalls
+4. `connector_health`: every credential is read; a failing refresh becomes one reconnect link, never an instruction
+5. `probe_gates`: an identity-bound card closes when its probe passes, and its default stays in effect meanwhile
 6. `score_predictions`: each logged prediction is graded against the measured outcome
-7. `accrue_trust`: trust per (surface, action class) moves with verified outcomes
-8. `selfaudit`: every failure mode in autonomy/failure-modes.json is probed; red files FM-<id>
-9. `migrate`: schema migrations apply in order, once
-10. `goals`: goals are measured and at most one knob moves one step per cooldown
-11. `plan`: the goal furthest out of bounds is broken into small items (audit, implement, verify, fix, integrate, gate) and read again after review_h
-12. `unknowns`: the system asks itself what it does not know and files the answer as work
-13. `dispatch`: ready items go to the role that owns them
-14. `execute`: claimed items are worked, opened as pull requests and merged by the server
-15. `check_plus_share`: a share of capacity goes to improvements
-16. `age_sla`: an item past its SLA is escalated, never ignored
-17. `cost_probe`: spend is sampled against the budget
-18. `second_goal`: an objective measured only by its own target is filed; a breached guard under a healthy target is repaired first
-19. `criticality`: k_eff is computed from verified deploys over cost and human touches
-20. `pulse`: the system publishes what it did, from its own tables
+7. `measure`: every metric is read; a breach files BREACH-<metric> with a closing probe
+8. `second_goal`: an objective measured only by its own target is filed; a breached guard under a healthy target is repaired first
+9. `accrue_trust`: trust per (surface, action class) moves with verified outcomes
+10. `selfaudit`: every failure mode in autonomy/failure-modes.json is probed; red files FM-<id>
+11. `unknowns`: the system asks itself what it does not know and files the answer as work
+12. `goals`: goals are measured and at most one knob moves one step per cooldown
+13. `plan`: the goal furthest out of bounds is broken into small items (audit, implement, verify, fix, integrate, gate) and read again after review_h
+14. `dispatch`: ready items go to the role that owns them
+15. `execute`: claimed items are worked, opened as pull requests and merged by the server
+16. `check_plus_share`: a share of capacity goes to improvements
+17. `age_sla`: an item past its SLA is escalated, never ignored
+18. `cost_probe`: spend is sampled against the budget
+19. `pulse`: the system publishes what it did, from its own tables
+20. `criticality`: k_eff is computed from verified deploys and loop-originated items over spend and human touches
 21. `ignition`: the system reads its own stage from bootstrap to self-sustaining
 
 Detectors: every failure mode has a read-only probe (1 = healthy); a red probe files FM-<id> that closes only when the probe is green.
@@ -55,7 +55,7 @@ Changes feed: what the system changed is published from merged work, never typed
 
 ## How it bootstraps
 
-From a bare idea (IDEA.md) to a running, measured, self-improving organization, with no step a person must perform. The boot never dies: a blocked stage is logged, becomes a backlog item with a closing probe, and the next stage runs degraded.
+From a bare idea (IDEA.md) to a running, measured, self-improving organization, with no step a person must perform. The boot never dies: a blocked stage is logged, becomes a backlog item with a closing probe, and the next stage runs degraded. Right after read, a copy of the template adopts its own identity (stage adopt) before anything is decided from its manifest.
 
 Stages: `read` > `constitute` > `qualify` > `instrument` > `detect` > `select` > `cases` > `plan` > `write` > `surfaces` > `org` > `provision` > `start` > `year_gate` > `verify_live`.
 
@@ -162,9 +162,6 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **automation-never-discards-work** (Rowan, 2026-11-27): Automation never closes a pull request on a label, a cached state or an unknown state: it reads the pull request live, tries to update its branch, and pins the head under refs/archive before any close. A pull request automation closed that main still lacks is reopened.
   - detector: `worker/src/prsafe.js`
   - remediation: `worker/src/prsafe.js`, `worker/src/sweeper.js`
-- **short-agent-entry** (Rowan, 2026-11-27): An agent loads one short entry file before its first step, inside a byte and line budget, and fetches the standing rules that govern the paths it will change. The rules stay enforced by their checks; nothing depends on an agent having read all of them.
-  - detector: `scripts/agentrules.py`, `autonomy/agent-entry.json`
-  - remediation: `scripts/agentrules.py`, `AGENTS.md`
 - **machine-readable-by-birth** (Rowan, 2026-11-27): Every repository carries the files agents and tools read before the code, each on an open standard: the identity files are rendered from one manifest, the community files are created when missing, and each file is validated against its own standard by a named validator; a file that cannot be read is unmeasured, never passing.
   - detector: `scripts/repoconform.py`, `autonomy/repo-conformance.json`
   - remediation: `scripts/surfaces.py`, `scripts/surfaces.py`

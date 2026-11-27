@@ -112,6 +112,7 @@ def contributing(cfg, pos, r):
 3. Every PR states what was verified and the evidence. Never review your own work; a review includes at least one plus.
 4. {pos['memory']['rule']}
 5. Contributions are licensed under the [{cfg['license']['name']}](https://github.com/{org}/ultrastable/blob/main/LICENSE), section 11 (DCO-style certification, licensed to everyone under the License, and to the Licensor for Commercial Licenses).
+6. Commit titles follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/), for example `fix(worker): retry merge on 502`.
 
 Other repositories: {nav(cfg, r['name'])}.
 """

@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-repo-conform-2-stage-3-of-3-the-system-definition-names-mach",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "REPO-CONFORM-2 stage 3 of 3: the system definition names machine-readable by birth; one tenant repository standard",
+  "body": "SYSTEM.md now says what machine-readable by birth means and where it is checked; the tenant repository standard (scaffold, tenantstd, fleetmap normalize and drift) is one definition. system.py and constitution.py follow the CLAUDE.md @import chain (AGENT-ENTRY-1). Session: session_0156nqDuSa1pdM6rAaTQ1irE",
+  "probe": "file:seed/scripts/system.py"
+ },
+ "kind": "decision",
+ "title": "REPO-CONFORM-2 stage 3 of 3: the system definition names machine-readable by birth; one tenant repository standard",
+ "session": ""
+}
