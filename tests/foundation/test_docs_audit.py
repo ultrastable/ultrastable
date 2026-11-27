@@ -27,6 +27,7 @@ def mk(files: dict, reg=None):
 
 class DocsAudit(unittest.TestCase):
     def test_orphan_fails(self):
+        """US-12-R16, US-12-T08: a document nothing names is listed as an orphan and the audit fails."""
         d = mk({"notes/plan.md": "# plan\nread by nobody\n"})
         bad = docs_audit.check(d)
         self.assertTrue(any("orphan document" in b and "notes/plan.md" in b for b in bad))
@@ -63,6 +64,7 @@ class DocsAudit(unittest.TestCase):
         self.assertTrue(any("non-document" in p for p in docs_audit.evaluate(d)["problems"]))
 
     def test_removal_ledger_checks_bytes_and_dangling_references(self):
+        """US-12-R16: a removed document is kept in the ledger with its digest, and a reference to it fails."""
         import hashlib
         keep = "# same\n"
         sha = hashlib.sha256(keep.encode()).hexdigest()

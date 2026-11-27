@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 """US-SPEC-21 second implementation (the plugin tier, seed/plugins): the requirements the specification records as BUILT there.
 
-US-21-R19 dry-run is the default and delivers nothing; US-21-R16 a request may reach only the hosts the plugin's adapter allows; US-21-R22 the
+US-21-R19 dry-run is the default and delivers nothing; US-21-R28 a request may reach only the hosts the plugin's adapter allows; US-21-R22 the
 minimum rung differs per action class; US-21-R24 cloud writes carry the managed label and nothing is ever deleted; US-21-R10 a transport that
 fails is recorded without the secret. Fast cases against Runtime with a fake transport; the full plugin suite is seed/plugins/tests.
+US-21-R18 (the platform's own actions keep the same boundary outside the pack host) is read from foundation/boundary.py and doctrine/boundary.json.
 """
 import json
 import shutil
@@ -17,6 +18,9 @@ from plugins.api import Runtime, Action, SCOPE  # noqa: E402
 from _repo import scratch  # noqa: E402
 from plugins.email import plugin as email  # noqa: E402
 from plugins.gcp import plugin as gcp  # noqa: E402
+from foundation import boundary  # noqa: E402
+
+REPO = SEED.parent
 
 ENV = {"MAIL_SEND_URL": "https://mail.example.workers.dev/send", "MAIL_SEND_TOKEN": "t0k-secret-value", "GCP_ACCESS_TOKEN": "g-secret-value"}
 
@@ -57,7 +61,7 @@ class Plugins(unittest.TestCase):
         self.assertTrue(ledger, "the run left a record")
         self.assertIn("dry-run", "".join(p.read_text() for p in ledger))
 
-    def test_us_21_r16_an_unlisted_egress_host_is_refused(self):
+    def test_us_21_r28_an_unlisted_egress_host_is_refused(self):
         rt = self.rt("live", "delegated")
         rt.grant_consent("a@x.org")
         a = email.build_send(rt, "a@x.org", "s", "b")
@@ -102,6 +106,27 @@ class Plugins(unittest.TestCase):
         self.assertNotIn("t0k-secret-value", json.dumps(r.detail) + r.reason)
         for p in rt.dir.glob("*.jsonl"):
             self.assertNotIn("t0k-secret-value", p.read_text())
+
+
+
+class PlatformBoundary(unittest.TestCase):
+    TOP = {"rows": {"s|x": {"rung": "self-extending", "score": 1}}}
+    LOW = {"rows": {"s|x": {"rung": "observed", "score": 0}}}
+
+    def test_us_21_r18_egress_and_reserved_classes_are_denied_to_an_inside_decision_at_any_rung(self):
+        d = boundary.load(REPO)
+        gated = [e["id"] for e in d["egress"]] + list(d["permissions"]["reserved"])
+        for need in ("credentials", "money", "owner-accounts", "public-publishing", "third-party-systems"):
+            self.assertIn(need, gated, "every egress class of US-21-R18 is declared")
+        for led in (self.LOW, self.TOP):
+            for a in gated:
+                self.assertFalse(boundary.decide("s", a, REPO, led)["allow"], a)
+
+    def test_us_21_r18_trust_widens_only_actions_inside_the_boundary(self):
+        mid = {"rows": {"s|x": {"rung": "assisted", "score": 0.6}}}
+        self.assertFalse(boundary.decide("s", "destroy-instance", REPO, mid)["allow"])
+        self.assertTrue(boundary.decide("s", "destroy-instance", REPO, self.TOP)["allow"])
+        self.assertFalse(boundary.decide("s", "not-an-inside-action", REPO, self.TOP)["allow"], "an action outside the declared inside set is never widened")
 
 
 if __name__ == "__main__":

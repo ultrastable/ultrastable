@@ -199,7 +199,7 @@ def measure_rows(rows: list[dict], cfg: dict, posts_7d: int = 0, suggestions=Non
 
 def live_rows(env, now=None):
     from . import clock
-    now = int(now or time.time()); w = now - 7 * 86400
+    now = int(now or time.time()); w = int((now - 7 * 86400) * 1000)  # hits.at is epoch milliseconds; a bound in seconds read every raw row
     q = lambda sql: clock._cf("d1/database/5cd83b52-864a-4510-b062-fc0d9402d06c/query", {"sql": sql}, env["CLOUDFLARE_API_TOKEN"], "81e3a4efb4eb66e613529b87682911bb")["result"][0]["results"]
     return q(f"SELECT ref, path, name, bot FROM hits WHERE at>={w} AND (bot=0 OR path='/feed.xml') LIMIT 20000")
 

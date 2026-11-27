@@ -79,7 +79,7 @@ test("story: a launched app has all three parts, and one stuck without a reposit
   assert.deepEqual(late.missing, ["repo"]); assert.equal(late.overdue, true);
   assert.equal(L.stackOf({ ...stuck, synthetic: true }, cfg, Date.parse("2026-11-04T00:00:00Z")).overdue, false, "a test idea is never deployed, so it is never overdue");
 });
-test("story: a person types the atlas idea and gets a live, managed app with its own repository, doing nothing else", async () => {
+test("US-19-R24 story: a person types the atlas idea and gets a live, managed app with its own repository, doing nothing else", async () => {
   const w = await world(), { id } = await submit(w, IDEA);
   assert.equal((await w.call("/s/" + id)).status, 200, "the app is live straight away");
   let l = await (await w.call("/s/" + id + "/launch")).json();
@@ -94,7 +94,7 @@ test("story: a person types the atlas idea and gets a live, managed app with its
   await w.pass(); assert.equal(w.deployed.length, 1, "a second pass deploys nothing twice");
 });
 
-test("story: they steer it in plain words; the page changes now and the request lands in the repository", async () => {
+test("US-19-R24 story: they steer it in plain words; the page changes now and the request lands in the repository", async () => {
   const w = await world(), { id } = await submit(w, IDEA); await w.pass();
   const r = await w.call("/api/change", { method: "POST", body: form({ id, change: "Add a filter by country" }), headers: { accept: "application/json" } });
   assert.equal(r.status, 200);
@@ -105,7 +105,7 @@ test("story: they steer it in plain words; the page changes now and the request 
   assert.ok((await (await w.call("/s/" + id + "/own")).text()).includes("Add a filter by country"), "they see what they asked for when they come back");
 });
 
-test("story: they come back later and take it over; only the browser that made it can", async () => {
+test("US-19-R24 story: they come back later and take it over; only the browser that made it can", async () => {
   const w = await world(), { id, cookie } = await submit(w, IDEA);
   const page = await (await w.call("/s/" + id + "/own", { headers: { cookie } })).text();
   assert.ok(page.includes("Invite me") && !/terminal|api key|token|install |command line/i.test(page), "the page asks for a GitHub name at most, and only if they want the repository");
@@ -117,7 +117,7 @@ test("story: they come back later and take it over; only the browser that made i
   assert.equal(l.state, "handed-over"); assert.deepEqual(w.invited, [[l.repo, "ada-l"]]);
 });
 
-test("story: the platform cannot finish the repository; the app is still live and managed, and it says so plainly", async () => {
+test("US-19-R25 story: the platform cannot finish the repository; the app is still live and managed, and it says so plainly", async () => {
   const w = await world({ admin: false }), { id, cookie } = await submit(w, IDEA);
   await w.call("/s/" + id + "/own", { method: "POST", body: form({ github: "ada-l" }), headers: { cookie } });
   const out = await w.pass();
@@ -134,7 +134,7 @@ test("story: the platform cannot finish the repository; the app is still live an
 
 // The failure branches a visitor can meet. Each must end in plain words with the system still acting: none is a dead end, none hands them a task.
 const DEV_WORDS = /terminal|command line|api key|token|secret|wrangler|git clone|credential|admin-app|code-app|gate |HTTP \d|upload:|workflow|exceeded|quota/i;
-test("story: the host has no room for the app's own system; the page stays live, it says so plainly and the next pass finishes", async () => {
+test("US-19-R25 story: the host has no room for the app's own system; the page stays live, it says so plainly and the next pass finishes", async () => {
   const w = await world(), { id, cookie } = await submit(w, IDEA);
   let room = false;
   const deploySeed = async (list) => list.map((x) => (room ? { live_ok: true, modules: 40, url: "https://ultrastable-seed-" + x.slug + ".ultrastable.workers.dev" } : { live_ok: false, error: "upload: [{\"code\":10037,\"message\":\"You have exceeded the limit of 100 Workers\"}]" }));
@@ -150,7 +150,7 @@ test("story: the host has no room for the app's own system; the page stays live,
   l = await (await w.call("/s/" + id + "/launch")).json();
   assert.ok(l.system && !out[0].error && l.waiting_on === null, "the pass after room frees up deploys it with nobody asking");
 });
-test("story: every place is taken, or GitHub refuses; what the visitor can read never carries backend words", async () => {
+test("US-19-R25 story: every place is taken, or GitHub refuses; what the visitor can read never carries backend words", async () => {
   const w = await world({ admin: false }), { id } = await submit(w, IDEA);
   await w.pass();
   const l = await (await w.call("/s/" + id + "/launch")).json();
@@ -160,7 +160,7 @@ test("story: every place is taken, or GitHub refuses; what the visitor can read 
     const say = plainWaiting(raw); assert.ok(say && !DEV_WORDS.test(say) && /do not need to do anything/.test(say), raw + " -> " + say);
   }
 });
-test("story: the model is unavailable when they type the idea; the idea is kept and the page is built later with nobody typing it again", async () => {
+test("US-19-R25 story: the model is unavailable when they type the idea; the idea is kept and the page is built later with nobody typing it again", async () => {
   const w = await world(); let up = false; const good = w.env.AI.run;
   w.env.AI = { run: async (...a) => { if (!up) throw new Error("model unavailable"); return good(...a); } };
   const r = await w.call("/api/idea", { method: "POST", body: form({ idea: IDEA, profile: "{}" }), headers: { accept: "application/json" } }), { id } = await r.json();
@@ -252,7 +252,7 @@ test("story: the scheduled test idea walks the same front door, is never deploye
   const real = (await submit(w, IDEA)).id; assert.equal((await w.internal({ op: "drop", id: real })).ok, false, "a real person's app can never be dropped by the probe");
 });
 
-test("story: a one-off is told so before anything is queued; the queue is closed to the public", async () => {
+test("US-19-R23 story: a one-off is told so before anything is queued; the queue is closed to the public", async () => {
   const w = await world();
   const r = await w.call("/api/idea", { method: "POST", body: form({ idea: "a birthday invitation" }), headers: { accept: "application/json" } });
   assert.equal(r.status, 422); assert.equal((await w.internal({ op: "list" })).launches.length, 0);

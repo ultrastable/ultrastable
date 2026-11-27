@@ -21,10 +21,12 @@ class Blindspots(unittest.TestCase):
         self.assertEqual(blindspots.check(REPO), [])
 
     def test_unmeasured_is_not_ok(self):
+        """US-16-R22: a probe that cannot run is unmeasured, never passed."""
         row = {r["id"]: r for r in blindspots.scan(self.tmp)["needs"]}["email-authentication"]
         self.assertEqual(row["state"], "unmeasured")
 
     def test_failed_probe_files_item_but_identity_bound_does_not(self):
+        """US-16-R22: a failed need files its own item; an identity-bound need is a gate and files none."""
         ids = {i["id"] for i in blindspots.items(blindspots.scan(self.tmp))}
         self.assertIn("Q-BLIND-backup-restore", ids)
         self.assertNotIn("Q-BLIND-terms-of-use", ids)
@@ -47,6 +49,7 @@ class Blindspots(unittest.TestCase):
             blindspots.answer(self.tmp, "security", "short")
 
     def test_learn_grows_register_and_gate_must_be_allowed(self):
+        """US-16-R22: the register only grows, and a gate must be one of the allowed identity-bound gates."""
         blindspots.learn(self.tmp, "new-need", "legal", "found after a rejection", "file:nope.md")
         self.assertIn("new-need", {n["id"] for n in blindspots.load(self.tmp)["needs"]})
         blindspots.learn(self.tmp, "bad-gate", "legal", "x", "file:nope.md", gate="owner-review")

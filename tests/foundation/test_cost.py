@@ -33,6 +33,7 @@ class Cost(unittest.TestCase):
         return d
 
     def test_guard(self):
+        """US-24-R62: a stale, empty or unmeasured cost reading fails the guard and is never read as zero."""
         import datetime as dt
         ok = {"ts": "t", "date": "2026-11-25", "d1": [{"databaseId": "x", "rowsRead": 1}], "neurons": 1, "breaches": [],
               "d1Size": [{"databaseId": "x", "name": "ultrastable-a", "bytes": 100}]}

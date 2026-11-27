@@ -8,6 +8,7 @@ from foundation import checksrun as C
 
 class ChecksRun(unittest.TestCase):
     def test_actions_only_steps_are_named_not_failed(self):
+        """US-24-R57: a step only the hosted runner can run is named with its reason, not failed."""
         self.assertIn("other Actions jobs", C.unrunnable('[ "${{ needs.fast.result }}" = success ]', {}))
         with mock.patch.dict("os.environ", {}, clear=True):
             self.assertIn("GITHUB_REPOSITORY", C.unrunnable("bash scripts/lane.sh merge", {}))
@@ -15,6 +16,7 @@ class ChecksRun(unittest.TestCase):
         self.assertEqual(C.unrunnable("python3 -m foundation rules --check", {}), "")
 
     def test_a_skipped_step_is_neither_a_failure_nor_a_pass(self):
+        """US-24-R57: the second route runs the same steps and a skipped step is neither a failure nor a pass."""
         steps = [{"name": "a", "run": "true", "cwd": ".", "env": {}}, {"name": "gate", "run": 'test "${{ needs.fast.result }}" = success', "cwd": ".", "env": {}},
                  {"name": "b", "run": "false", "cwd": ".", "env": {}}]
         ran = []

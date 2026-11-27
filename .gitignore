@@ -20,3 +20,7 @@ seed/worker/src/config.js
 
 # CODE-REGULATOR-1 local ledger (WAL creates -wal and -shm beside it)
 .regulator.sqlite*
+
+# A yearsim or year_gate run with the seed folder as its root writes its ledgers under seed/ops/; they are run artifacts, never tracked (a seeded
+# system keeps its own ops/ ledgers in its own repository, so seed/.gitignore does not list them).
+/seed/ops/

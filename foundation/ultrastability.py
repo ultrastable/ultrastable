@@ -356,9 +356,13 @@ def _slug(key: str) -> str:
     return re.sub(r"[^A-Za-z0-9_-]+", "-", key)
 
 
-def _predict(v, hours=72) -> str:
-    """SPEC-GATE-1: every item the second loop files carries the metric it should move, in the form the scorer reads."""
-    return f"{v['reading']} >= {v['min']} within {hours} h" if v.get("min") is not None else f"{v['reading']} <= {v['max']} within {hours} h"
+def _predict(v, hours=72, value=None) -> str:
+    """SPEC-GATE-1: every item the second loop files carries the metric it should move, in the form the scorer reads. US-26-R76: a reading above the
+    maximum gives `<= max` (a `>= min` line would be true on the day it is filed); a reading under the minimum, or none (unmeasured), gives `>= min` when
+    a minimum exists, else `<= max`."""
+    lo, hi = v.get("min"), v.get("max")
+    over = isinstance(value, (int, float)) and not isinstance(value, bool) and hi is not None and value > hi
+    return f"{v['reading']} >= {lo} within {hours} h" if lo is not None and not over else f"{v['reading']} <= {hi} within {hours} h"
 
 
 def _item(root, c, key, v, idx, step, value) -> str:
@@ -369,7 +373,7 @@ def _item(root, c, key, v, idx, step, value) -> str:
     if not p.exists():
         body = (f"**Owner:** executor\n**Trigger:** essential variable `{key}` out of bounds (reading {value}; limits {v.get('min')} to {v.get('max')})\n"
                 f"**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: {step['what']}. {v['why']}\n\n"
-                f"**Prediction:** {_predict(v)}\n**Out of scope:** changing the bounds of `{v['id']}` or any other essential variable; a step is judged by the reading, never by relaxing the limit.\n\n"
+                f"**Prediction:** {_predict(v, value=value)}\n**Out of scope:** changing the bounds of `{v['id']}` or any other essential variable; a step is judged by the reading, never by relaxing the limit.\n\n"
                 f"size: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `{v['id']}` inside its bounds.\n")
         p.write_text(json.dumps({"id": iid, "title": f"{iid}: {v['name']} out of bounds: {step['what']}", "body": body, "labels": step["labels"], "milestone": "Now", "workstream": step["workstream"]}, indent=2) + "\n", encoding="utf-8")
     return iid

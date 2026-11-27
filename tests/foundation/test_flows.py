@@ -14,9 +14,11 @@ class FlowTests(unittest.TestCase):
         self.assertEqual(flows.check(d=self.d, loops=self.loops), [])
 
     def test_every_declared_flow_is_on_a_cycle(self):
+        """US-12-R15: every declared flow of the registry lies on a feedback cycle."""
         self.assertEqual(set(self.d["flows"]), flows.graph(self.d)["closed"])
 
     def test_dead_end_is_caught(self):
+        """US-12-R15, US-12-T07: an outflow nothing consumes fails the check, which names it."""
         d = copy.deepcopy(self.d)
         d["flows"]["merge-lane"]["outflows"] = [{"signal": "nobody.reads", "via": "github:main"}]
         bad = flows.check(d=d, loops=self.loops)
@@ -29,6 +31,7 @@ class FlowTests(unittest.TestCase):
         self.assertTrue(any("names no returning signal" in b for b in flows.check(d=d, loops=self.loops)))
 
     def test_undeclared_loop_fails(self):
+        """US-12-R15: a registered loop that declares no flow fails the check."""
         d = copy.deepcopy(self.d)
         del d["flows"]["lifecycle"]  # the pending list is empty since OL-20261112-95, so an undeclared loop is one with no flow and no pending entry
         self.assertTrue(any("loop lifecycle declares no flow" in b for b in flows.check(d=d, loops=self.loops)))

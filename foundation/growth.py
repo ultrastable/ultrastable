@@ -67,7 +67,7 @@ def hits_metrics(token: str, acct: str, db: str, now: float | None = None) -> di
     from . import clock
     now = int(now or time.time())
     q = lambda sql: clock._cf(f"d1/database/{db}/query", {"sql": sql}, token, acct)["result"][0]["results"][0]
-    w = now - 7 * 86400
+    w = int((now - 7 * 86400) * 1000)  # hits.at is epoch milliseconds (seed/analytics record() writes Date.now()); a bound in seconds read every raw row
     a = q(f"SELECT COUNT(*) AS pv, COUNT(DISTINCT vid) AS v FROM hits WHERE bot=0 AND name='pageview' AND at>={w}")
     b = q(f"SELECT COUNT(*) AS n FROM hits WHERE bot=1 AND at>={w}")
     c = q(f"SELECT COUNT(*) AS n FROM hits WHERE bot=0 AND name='pageview' AND path LIKE '/pilot%' AND at>={w}")
