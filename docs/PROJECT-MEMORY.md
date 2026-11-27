@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: feat(fleet): kernel lock per tenant and canary-first pin bump (R8, R9) (#2817)
+- 2026-11-27: Protect the owner-owned kernel registries in the protected-path gate (#2822)
 - 2026-11-27: feat(seed): tick Worker holds, criticality ratio, health fields and spec tests (#2819)
 - 2026-11-27: Kernel check fails when a pinned signature escapes the recognition lint (#2818)
 - 2026-11-27: Pin Kernel 9.1.0 text with doctrine/kernel.lock (#2755)
