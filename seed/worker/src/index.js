@@ -52,7 +52,7 @@ import { importCredentials, reconcileBuffer, intakeInbox, seedLinkRows } from '.
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly, publicPage } from './visibility.js';
 import config from './config.js';
-import { tickRecency, stamp } from './recency.js';  // RECENCY-1
+import { tickRecency, stamp, probeStamps } from './recency.js';  // RECENCY-1
 import { backendRecord } from './errors.js';  // USER-BACKEND-1
 import { governedAI, budgetView, SHARES, halted, planOf } from './budget.js';
 import { recordSpend, readSpend, spendView } from './spend.js';  // SPEND-SOFT-1
@@ -159,7 +159,8 @@ const app = {
       await b('knowledge-graph', () => datagraphStep({ db: env.DB, config, ensureItem }));  // DATAGRAPH-1: every table of this system's own D1 becomes a graph (rows are nodes, references and mentioned ids are edges), kept bi-temporally; hubs, communities, bridges and orphans are read each pass, Adamic-Adar link leads are settled against later data, and a mostly unconnected kind files KG-ORPHANS-<kind>
       await b('graph-ai', () => graphAiStep({ db: env.DB, ai: gov.ai || null, config, spend: spendNow, ensureItem }));  // KGRAPH-AI-1: embeddings, extracted relations and community summaries on new graph nodes, scaled by the spend throttle
       await b('progress', () => progressStep({ db: env.DB, config, token, ensureItem }));  // PROGRESS-1: release cadence monitor; a slow system has its producers dispatched, a stalled one files STALL-<system>
-      await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
+      await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));
+      await b('recency', () => probeStamps({ siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // RECENCY-PROBE-1: every live page keeps its stamp  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
       if (new Date().getUTCMinutes() < 10) await b('gh-only', () => watchGhOnly({ token, loops: config.gh_only || [] }));  // GH-ONLY-WATCH-1: GitHub-only loops get a second clock and go live the hour Pages turns on
       if (new Date().getUTCMinutes() % 30 < 10) await b('tenant-deploy', () => watchTenantDeploys({ token, repo: main }));  // TENANT-DEPLOY-1: a tenant repository's merge ships within the hour (twice an hour, ~4 subrequests)
       if (new Date().getUTCMinutes() < 10) {  // DECLARED-LIVE-1: hourly, from this one cron
