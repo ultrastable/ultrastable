@@ -6861,6 +6861,24 @@
    "body": "deploy/deploy-site.mjs uploaded site/worker.js directly, so a deploy through it would have dropped the recency stamp that lives in site/edge.js. It now collects modules from site/edge.js and takes main_module and the VERSION check from the collected modules.",
    "probe": "grep:deploy/deploy-site.mjs::site/edge.js",
    "session": "session_0156nqDtsm3xWA5HrxzuWq8X"
+  },
+  {
+   "id": "decision-2026-11-27-canon-2-probes-for-the-paper-pipeline",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "CANON-2 probes for the paper pipeline",
+   "body": "canon_probe files Q-AUDIT-canon items when a filed paper item has no study, a paper is not live on /research, or not posted socially inside its limit; unreadable page is unmeasured. Detector canon-late, failure mode fm-paper-late.",
+   "probe": "grep:foundation/research.py::def canon_probe",
+   "session": "session_0156nqDsUQq8R5at568VZC1L"
+  },
+  {
+   "id": "lesson-2026-11-27-code-regulator-1-repo-model-conclusion-cache-and-breach-only",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "CODE-REGULATOR-1 repo model, conclusion cache and breach-only step-changes",
+   "body": "foundation/regulator added: ran 13 unit tests, they pass; probed on this repo (226 python files indexed, second index run re-parsed 0). A relative-import and a from-package-import miss in the first draft made impact selection return too few tests; both fixed and covered by tests. Efficiency gain is a hypothesis, not measured: threshold is a 15 percent cut in tokens per resolved task on a 30-task replay set, otherwise the map injection is removed.",
+   "probe": "grep:foundation/regulator/repomodel.py::def update",
+   "session": "session_0156nqDsD3rf97bBozkQVuW7"
   }
  ]
 }
