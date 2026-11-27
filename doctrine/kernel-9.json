@@ -270,7 +270,7 @@
    "says": "Rule of Two per job",
    "status": "built",
    "enforced_by": [
-    "foundation/ruleoftwo.py"
+    "foundation/jobtrust.py"
    ],
    "missing": ""
   },

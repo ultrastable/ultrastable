@@ -1,4 +1,5 @@
-# SPDX-License-Identifier: LicenseRef-Ultrastable
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 import tempfile, unittest
 from pathlib import Path
 from foundation import jobtrust
@@ -25,6 +26,16 @@ class JobTrust(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             w = Path(d) / ".github" / "workflows"; w.mkdir(parents=True); (w / "x.yml").write_text(WF)
             self.assertEqual(jobtrust.scan(Path(d)), ["x.yml:bad"])
+
+    def test_an_outsider_event_makes_the_job_untrusted(self):
+        wf = ("on: {issues: {types: [opened]}, schedule: [{cron: '5 6 * * *'}]}\npermissions: {issues: write}\njobs:\n"
+              "  sweep:\n    runs-on: ubuntu-latest\n    steps:\n      - run: ./sla.sh\n        env: {GH_TOKEN: \"${{ secrets.LANE_PAT }}\"}\n")
+        with tempfile.TemporaryDirectory() as d:
+            w = Path(d) / ".github" / "workflows"; w.mkdir(parents=True)
+            (w / "x.yml").write_text(wf)
+            self.assertEqual(jobtrust.scan(Path(d)), ["x.yml:sweep"])
+            (w / "x.yml").write_text(wf.replace("  sweep:\n", "  sweep:\n    if: ${{ github.event_name != 'issues' }}\n"))
+            self.assertEqual(jobtrust.scan(Path(d)), [])
 
     def test_repo_is_clean(self):
         self.assertEqual(jobtrust.check(), 0)
