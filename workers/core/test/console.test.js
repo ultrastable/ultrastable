@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeDb } from './d1shim.js';
-import { buildConsole, resolveCard, recordAsk, handleConsole } from '../src/console.js';
+import { buildConsole, resolveCard, recordAsk, handleConsole, questionKind } from '../src/console.js';
 import { runConsoleConformance } from './console-conformance.js';
 import { CONSOLE_HTML } from '../src/console-ui.js';
 
@@ -48,7 +48,7 @@ test('T18-5 and US-18-R03: a typed request becomes a work item with the words ke
   assert.equal((await recordAsk(db, '   ')).status, 400);
 });
 
-test('T18-1, T18-2, US-18-R09 and US-18-R13: console is off without a token, refuses a wrong key, and refuses cross-origin writes', async () => {
+test('T18-1, T18-2, US-18-R09 and US-18-R22: console is off without a token, refuses a wrong key, and refuses cross-origin writes', async () => {
   const db = makeDb(); seed(db);
   const U = 'https://x.example';
   assert.equal((await handleConsole(new Request(U + '/console'), { DB: db })).status, 503);
@@ -71,7 +71,7 @@ test('T18-1, T18-2, US-18-R09 and US-18-R13: console is off without a token, ref
   assert.equal(await handleConsole(new Request(U + '/health'), env), null);
 });
 
-// T18-7: the same suite runs against the in-process handler here; adapters/gcp runs it against Cloud Run (integration request).
+// T18-7: the same suite runs against the in-process handler here, and adapters/gcp/test/console-conformance.test.js runs it against the Cloud Run server.
 const inProcess = {
   name: 'in-process',
   async boot({ token }) {
@@ -158,4 +158,10 @@ test('US-18-R03 and R19: a request that only contains question words is stored a
     assert.equal(r.body.answered, true, said); assert.equal(r.body.screen, screen, said);
     assert.equal(db.raw.prepare('SELECT COUNT(*) AS n FROM items').get().n, before, 'a question creates no work');
   }
+});
+
+test('US-18-R19: the leading filler the normalisation drops is please, hey, ok, okay, so, and, tell me, can you tell me and could you tell me, in any run; inside a sentence it is not dropped', () => {
+  for (const said of ['Please what is stuck', 'Hey, what is stuck?', 'OK so what is stuck', 'okay and what is stuck', 'Tell me what is stuck', 'Can you tell me what is stuck?', 'Could you tell me what is stuck', 'please please, hey what is stuck'])
+    assert.equal(questionKind(said), 'stuck', said);
+  for (const said of ['Well what is stuck', 'What is stuck please', 'Would you tell me what is stuck', 'What is stuck and tell me']) assert.equal(questionKind(said), null, said);
 });

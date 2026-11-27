@@ -131,7 +131,7 @@ test('US-13-R05: a fall of exactly 0.5 in one-decimal scores files an item (2.3 
   assert.deepEqual(r.items, []);
 });
 
-test('US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one', async () => {
+test('US-13-T10 and US-13-R27 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one', async () => {
   const { db, t, l3 } = mk();
   const H = 3600e3;
   const run1 = { process: 'review', step: 'check', started_at: T0 - 9 * H, budget_hours: 4 };
@@ -176,7 +176,7 @@ test('US-13-R21: no check ever is stalled; an unfinished check, recorded errors,
   assert.deepEqual(h.reasons, ['the last check did not finish all its steps', 'the last check recorded 1 error(s)', 'every dispatch of the last check is still queued', '1 item(s) wait on a person']);
 });
 
-test('US-13-R05 / R16: a claimed drop item survives a second fall in the same dimension; a closed one reopens; created_at follows the injected clock', async () => {
+test('US-13-R05 / R27: a claimed drop item survives a second fall in the same dimension; a closed one reopens; created_at follows the injected clock', async () => {
   const { db, t, l3 } = mk();
   const card = s => l3.recordCard({ name: 'autonomy', rubric: 'r1', limits: LIMITS, scores: [good('loops', s)] });
   await card(4); await card(3); // first fall files L3-DROP-AUTONOMY-LOOPS

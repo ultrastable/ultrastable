@@ -241,10 +241,6 @@
    "spec": "US-SPEC-02",
    "tests": [
     {
-     "file": "core/staff/staff.test.js",
-     "name": "US-02-R14, US-02-T06: a refusal is recorded with its kind (authority, lane, control_plane, precondition), changes nothing, and a quiet duty leaves no row for a failed precondition"
-    },
-    {
      "file": "../seed/worker/test/spec-02-managers.test.js",
      "name": "US-02-R13, US-02-R14, US-02-T06: a manager switched off by data with a reason is not hired and not dispatched, and nothing is deleted"
     },
@@ -419,10 +415,6 @@
    "spec": "US-SPEC-04",
    "tests": [
     {
-     "file": "core/plus/plus.test.js",
-     "name": "US-04-T05, US-04-R15: an unmeasured plus stays shipped with an item through the grace period, then is reverted and counts as a miss"
-    },
-    {
      "file": "../seed/worker/test/spec-04-successors.test.js",
      "name": "US-04-R15, US-04-T05: a closed item has at most one NEXT successor, one pass emits no more than the batch, and above k_max none is emitted"
     }
@@ -432,14 +424,6 @@
    "id": "US-04-T06",
    "spec": "US-SPEC-04",
    "tests": [
-    {
-     "file": "core/plus/plus.test.js",
-     "name": "US-04-T06, US-04-R16: the daily cap counts plus rows created today, independent of the managers' origination cap"
-    },
-    {
-     "file": "core/plus/plus.test.js",
-     "name": "US-04-R16, US-04-T06: a plus written onto a seed row counts on the day it is filed, so the cap holds across ticks even when every product has an old seed"
-    },
     {
      "file": "../seed/worker/test/spec-04-successors.test.js",
      "name": "US-04-R16, US-04-T06: a NEXT item answered with a valid item files PLUS-<id> and is done; an answer without a done check, a known role or a closing probe parks it and files nothing"
@@ -1244,10 +1228,6 @@
    "spec": "US-SPEC-13",
    "tests": [
     {
-     "file": "core/console-l3/console-l3.test.js",
-     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one"
-    },
-    {
      "file": "core/sla/sla.test.js",
      "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question (through the service-level step)"
     },
@@ -1418,12 +1398,22 @@
   {
    "id": "T15-7",
    "spec": "US-SPEC-15",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R15, T15-7, A-MON-4: the risk and issue review files one item per incomplete open risk and per issue without a probe, counts new risks, and is a record"
+    }
+   ]
   },
   {
    "id": "T15-8",
    "spec": "US-SPEC-15",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R16, T15-8, A-MON-6: rework rate, defects escaped and probe pass rate are read from the project records; nothing under a ratio is unmeasured, not zero"
+    }
+   ]
   },
   {
    "id": "T15-9",
@@ -1667,8 +1657,12 @@
    "spec": "US-SPEC-18",
    "tests": [
     {
+     "file": "adapters/gcp/test/console-conformance.test.js",
+     "name": "T18-7: the console conformance suite T18-1 to T18-6 passes against the Cloud Run server as it passes against the in-process handler"
+    },
+    {
      "file": "core/test/console.test.js",
-     "name": "T18-1, T18-2, US-18-R09 and US-18-R13: console is off without a token, refuses a wrong key, and refuses cross-origin writes"
+     "name": "T18-1, T18-2, US-18-R09 and US-18-R22: console is off without a token, refuses a wrong key, and refuses cross-origin writes"
     }
    ]
   },
@@ -1678,7 +1672,7 @@
    "tests": [
     {
      "file": "core/test/console.test.js",
-     "name": "T18-1, T18-2, US-18-R09 and US-18-R13: console is off without a token, refuses a wrong key, and refuses cross-origin writes"
+     "name": "T18-1, T18-2, US-18-R09 and US-18-R22: console is off without a token, refuses a wrong key, and refuses cross-origin writes"
     }
    ]
   },
@@ -1729,6 +1723,10 @@
    "spec": "US-SPEC-18",
    "tests": [
     {
+     "file": "adapters/gcp/test/console-conformance.test.js",
+     "name": "T18-7: the console conformance suite T18-1 to T18-6 passes against the Cloud Run server as it passes against the in-process handler"
+    },
+    {
      "file": "core/test/console.test.js",
      "name": "T18-6 and US-18-R05: three screens are small and say what needs the person"
     },
@@ -1741,7 +1739,12 @@
   {
    "id": "T18-7",
    "spec": "US-SPEC-18",
-   "tests": []
+   "tests": [
+    {
+     "file": "adapters/gcp/test/console-conformance.test.js",
+     "name": "T18-7: the console conformance suite T18-1 to T18-6 passes against the Cloud Run server as it passes against the in-process handler"
+    }
+   ]
   },
   {
    "id": "T19-1",
@@ -1848,6 +1851,10 @@
     {
      "file": "core/steward/selfhost-contract.test.js",
      "name": "T20-4 and US-20-R07: a change to a protected path without Protected-change and the label fails the check; with both it passes"
+    },
+    {
+     "file": "core/steward/selfhost-contract.test.js",
+     "name": "T20-4, T20-9, US-20-R07 and US-20-R14: a deleted guard file fails the gate and an added human approver fails it only under the closed-loop flag"
     }
    ]
   },
@@ -3009,7 +3016,7 @@
     },
     {
      "file": "core/staff/staff.test.js",
-     "name": "US-02-R11, US-02-R15: a role filled by a person gets the same action record, prediction (decision STAFF-<id>, an unparsable one refused), brief and trust outcome, and is never acted for"
+     "name": "US-02-R11, US-02-R21: a role filled by a person gets the same action record, prediction (decision STAFF-<id>, an unparsable one refused), brief and trust outcome, and is never acted for"
     }
    ]
   },
@@ -3091,10 +3098,6 @@
     {
      "file": "../seed/worker/test/spec-02-managers.test.js",
      "name": "US-02-R14: a tick held lean by a cost breach still hires every manager that is on, because reconcile runs on every plan"
-    },
-    {
-     "file": "core/staff/staff.test.js",
-     "name": "US-02-R14, US-02-T06: a refusal is recorded with its kind (authority, lane, control_plane, precondition), changes nothing, and a quiet duty leaves no row for a failed precondition"
     }
    ]
   },
@@ -3110,10 +3113,6 @@
     {
      "file": "../seed/worker/test/tick.test.js",
      "name": "US-02-R15: a role that is not due is dispatched when an event wakes it, takes only its own item, and stays under its cap"
-    },
-    {
-     "file": "core/staff/staff.test.js",
-     "name": "US-02-R11, US-02-R15: a role filled by a person gets the same action record, prediction (decision STAFF-<id>, an unparsable one refused), brief and trust outcome, and is never acted for"
     }
    ]
   },
@@ -3423,9 +3422,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/tick.test.js",
+     "name": "US-03-R17: steps_total is the length of the declared list, extra steps included, and an extra step is guarded like a core step: it files its own TICKFAIL item and the steps after it run"
+    }
+   ]
   },
   {
    "id": "US-03-R18",
@@ -3836,10 +3840,6 @@
     {
      "file": "../seed/worker/test/spec-04-successors.test.js",
      "name": "US-04-R15, US-04-T05: a closed item has at most one NEXT successor, one pass emits no more than the batch, and above k_max none is emitted"
-    },
-    {
-     "file": "core/plus/plus.test.js",
-     "name": "US-04-T05, US-04-R15: an unmeasured plus stays shipped with an item through the grace period, then is reverted and counts as a miss"
     }
    ]
   },
@@ -3855,14 +3855,6 @@
     {
      "file": "../seed/worker/test/spec-04-successors.test.js",
      "name": "US-04-R16, US-04-T06: a NEXT item answered with a valid item files PLUS-<id> and is done; an answer without a done check, a known role or a closing probe parks it and files nothing"
-    },
-    {
-     "file": "core/plus/plus.test.js",
-     "name": "US-04-T06, US-04-R16: the daily cap counts plus rows created today, independent of the managers' origination cap"
-    },
-    {
-     "file": "core/plus/plus.test.js",
-     "name": "US-04-R16, US-04-T06: a plus written onto a seed row counts on the day it is filed, so the cap holds across ticks even when every product has an old seed"
     }
    ]
   },
@@ -4918,6 +4910,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "adapters/cloudflare/test/deployer.test.js",
+     "name": "US-07-R13: liveDigest reads the live script per module, for a multipart answer and for a single body keyed by cf-entrypoint"
+    },
+    {
+     "file": "adapters/cloudflare/test/deployer.test.js",
+     "name": "US-07-R13: through the canonical path, a live script equal to the published files keeps the deploy and a different one reverts it"
+    },
+    {
      "file": "core/deploy/deploy.test.js",
      "name": "artifact digest mismatch is refused (US-07-R13)"
     },
@@ -4928,14 +4928,6 @@
     {
      "file": "core/deploy/deploy.test.js",
      "name": "US-07-R13: a live digest that differs from the published digest reverts the deploy and records artifact:digest failed"
-    },
-    {
-     "file": "core/deploy/deploy.test.js",
-     "name": "US-07-R13: a deployer with no liveDigest keeps working and records the comparison as skipped, never as a match"
-    },
-    {
-     "file": "core/deploy/deploy.test.js",
-     "name": "US-07-R13: a per-file digest map is compared file by file (the platform deploy script's rule); a different shape is skipped, an unreadable digest is retried inside the window"
     }
    ]
   },
@@ -5230,7 +5222,7 @@
     },
     {
      "file": "core/test/tick.test.js",
-     "name": "US-08-R03: a ready item whose trigger item is not done is not dispatched; one whose trigger is done with its disposition is; list and gate triggers are left to core/claims"
+     "name": "US-08-R03: a ready item whose trigger item is not done is not dispatched; one whose trigger is done with its disposition is; a list or gate trigger the tick cannot judge goes back to open undispatched"
     }
    ]
   },
@@ -5361,24 +5353,24 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "adapters/github/issuestore.test.js",
+     "name": "US-08-R11, US-17-R11: githubIssuePages follows the Link header to the last page, leaves pull requests out and sends the token only in the Authorization header"
+    },
+    {
+     "file": "adapters/github/issuestore.test.js",
+     "name": "US-08-R11: without a Link header a full page means another page; a page bound that stops the read is reported truncated, and the visibility ratio reads it as unmeasured"
+    },
+    {
+     "file": "adapters/github/issuestore.test.js",
+     "name": "US-08-R11: an unset token makes no request, a failed page or a body that is not a list throws, and a bad repo name is refused"
+    },
+    {
      "file": "core/claims/claims.test.js",
      "name": "US-08-R11 / US-08-T06: a loop that scans 25 and books 0 opens an incident and reopens 25 items"
     },
     {
      "file": "core/claims/gate.test.js",
      "name": "US-08-R11: an accounting gap blocks closure of the parents of the unaccounted items until they are accounted for"
-    },
-    {
-     "file": "core/claims/gate.test.js",
-     "name": "US-08-R11: a blocked parent closed around the gate is reopened automatically on the next tick"
-    },
-    {
-     "file": "core/claims/gate.test.js",
-     "name": "US-08-R11: a count-only gap (scanned 25, booked 0) closes the loop gate; closing needs a disposition; cycles are refused"
-    },
-    {
-     "file": "core/claims/stores.test.js",
-     "name": "US-08-R11: a paged store with 3 pages is read completely and counted once per key"
     }
    ]
   },
@@ -6088,10 +6080,6 @@
     {
      "file": "../seed/worker/test/budget.test.js",
      "name": "US-09-R22 ORIGINATE-CAP-1: the system files at most ORIGINATE_MAX_PER_DAY items of its own a day"
-    },
-    {
-     "file": "core/router/caps/spec-citations.test.js",
-     "name": "US-09-R22 a keyless provider never serves a role the configuration does not allow it, the refusal names role_not_allowed, and configuration can allow it"
     }
    ]
   },
@@ -7314,7 +7302,7 @@
     },
     {
      "file": "core/console-l3/console-l3.test.js",
-     "name": "US-13-R05 / R16: a claimed drop item survives a second fall in the same dimension; a closed one reopens; created_at follows the injected clock"
+     "name": "US-13-R05 / R27: a claimed drop item survives a second fall in the same dimension; a closed one reopens; created_at follows the injected clock"
     },
     {
      "file": "core/sla/sla.test.js",
@@ -7428,7 +7416,7 @@
     },
     {
      "file": "core/console-l3/console-l3.test.js",
-     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one"
+     "name": "US-13-T10 and US-13-R27 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one"
     },
     {
      "file": "core/sla/sla.test.js",
@@ -7498,10 +7486,6 @@
     {
      "file": "../seed/worker/test/spec-13-service-levels.test.js",
      "name": "US-13-R14: the sweeper supersedes such a request on its pass, keeps its branch and files one item that carries the work"
-    },
-    {
-     "file": "core/console-l3/dashboard.test.js",
-     "name": "US-13-R14: the dashboard is served only to the signed-in owner and a state-changing request from another origin is refused"
     }
    ]
   },
@@ -7511,14 +7495,9 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/console-l3/dashboard.test.js",
-     "name": "US-13-R15 and US-18-R10: the page escapes every stored value and loads nothing from another host"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-13-R16",
@@ -7534,20 +7513,16 @@
      "name": "US-13-T07 and US-13-R16: an item created 4 hours ago at priority 40 is raised to priority 5 with one cause item for the day; a second tick files no second one"
     },
     {
-     "file": "core/console-l3/console-l3.test.js",
-     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question; the same run twice files one"
-    },
-    {
-     "file": "core/console-l3/console-l3.test.js",
-     "name": "US-13-R05 / R16: a claimed drop item survives a second fall in the same dimension; a closed one reopens; created_at follows the injected clock"
-    },
-    {
      "file": "core/sla/sla.test.js",
      "name": "US-13-R16 and US-13-R10: a breach after the item was closed reopens it, once"
     },
     {
      "file": "core/sla/sla.test.js",
      "name": "US-13-R16: weekly audit and path gap items reopen when the finding recurs"
+    },
+    {
+     "file": "core/sla/sla.test.js",
+     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question (through the service-level step)"
     }
    ]
   },
@@ -7649,12 +7624,12 @@
      "name": "US-14-R03 and US-14-R16: the uptime check is created with the service-agent OIDC token after the invoker binding; a refused creation stops the script with a non-zero status"
     },
     {
-     "file": "adapters/shared/slot.test.js",
-     "name": "US-14-R03: two instances receiving the same firing at once run one tick between them"
+     "file": "adapters/gcp/test/deploy-script.test.js",
+     "name": "US-14-R03: the tick clock is created when missing and updated when present; a refused creation stops the script with its message, never ends in deployed"
     },
     {
      "file": "adapters/shared/slot.test.js",
-     "name": "US-14-R03 and US-14-R17: a tick still running when the next slot starts is not overlapped; a claim abandoned past the bound is taken over"
+     "name": "US-14-R03: two instances receiving the same firing at once run one tick between them"
     }
    ]
   },
@@ -7784,16 +7759,16 @@
      "name": "US-14-R08: a canary whose new revision never became ready throws and shifts no traffic"
     },
     {
-     "file": "adapters/gcp/test/ports.test.js",
-     "name": "US-14-R08: a passing probe keeps the Cloud Run revision and releases the lock"
+     "file": "adapters/gcp/test/deployer.test.js",
+     "name": "US-14-R08: the canary waits for each long-running operation before it reads the new revision and the tagged URL; revisions go by their short name"
     },
     {
-     "file": "adapters/gcp/test/ports.test.js",
-     "name": "US-14-T05 and US-14-R08: a failing probe rolls Cloud Run traffic back to the previous revision"
+     "file": "adapters/gcp/test/deployer.test.js",
+     "name": "US-14-R08: a failed operation throws with its message and moves no traffic; one that never finishes stops after its bound"
     },
     {
-     "file": "core/deploy/deploy.test.js",
-     "name": "US-07-R12 / US-14-R08: failing probe rolls back automatically and records why"
+     "file": "adapters/gcp/test/deployer.test.js",
+     "name": "US-14-R08: a canary whose tagged revision has no URL puts all traffic back on the live revision and throws"
     }
    ]
   },
@@ -7890,14 +7865,6 @@
     {
      "file": "../seed/worker/test/spec-14-second-producer.test.js",
      "name": "US-14-R12: inside two intervals the second producer runs no tick but still records its run"
-    },
-    {
-     "file": "adapters/shared/purity.test.js",
-     "name": "US-14-R12: no core module outside the baseline imports a platform, and the baseline only shrinks"
-    },
-    {
-     "file": "adapters/shared/purity.test.js",
-     "name": "US-14-R12: the scanner sees each kind of platform call"
     }
    ]
   },
@@ -8178,11 +8145,11 @@
    "tests": [
     {
      "file": "core/lifecycle-gates/lifecycle-gates.test.js",
-     "name": "US-15-R15, US-15-T07: a risk review reads every trigger probe, marks a fired risk triggered and files it for its owner once, and flags what the register and the issues lack"
+     "name": "US-15-R15, US-15-T12: a risk review reads every trigger probe, marks a fired risk triggered and files it for its owner once, and flags what the register and the issues lack"
     },
     {
      "file": "core/lifecycle-gates/lifecycle-gates.test.js",
-     "name": "US-15-R15, US-15-T07: a register not reviewed inside the communication period files one review item, numbered after the reviews so far"
+     "name": "US-15-R15, US-15-T12: a register not reviewed inside the communication period files one review item, numbered after the reviews so far"
     },
     {
      "file": "core/lifecycle-gates/lifecycle-gates.test.js",
@@ -8209,11 +8176,19 @@
    "tests": [
     {
      "file": "core/lifecycle-gates/lifecycle-gates.test.js",
-     "name": "US-15-R16, US-15-T07: quality metrics are null when unmeasured and never 0, and match the stated formulas on seeded data"
+     "name": "US-15-R16, US-15-T12: quality metrics are null when unmeasured and never 0, and match the stated formulas on seeded data"
     },
     {
      "file": "core/lifecycle-gates/lifecycle-gates.test.js",
      "name": "US-15-R15, US-15-R16: the compliance report files one item per finding for its owner role, closes it when the finding clears, and is idempotent"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R16, T15-8, A-MON-6: rework rate, defects escaped and probe pass rate are read from the project records; nothing under a ratio is unmeasured, not zero"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R15, US-15-R16, A-MON-4, A-MON-6 on the tick: each open project is reviewed once per period and a closed project is left alone"
     }
    ]
   },
@@ -8229,10 +8204,6 @@
     {
      "file": "../seed/worker/test/spec-02-managers.test.js",
      "name": "US-02-R13, US-02-R14, US-02-T05, US-15-R17, T15-9: every manager of the register is on by default, and one tick hires each that has no row, idempotently"
-    },
-    {
-     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
-     "name": "US-15-R17, US-15-T08: a requirement with no mapped item, a mapped item that is not the project's or has no closing probe, or an item with a dangling trigger blocks G2 and files an item"
     }
    ]
   },
@@ -8694,6 +8665,22 @@
     {
      "file": "core/elicit/outcomes.test.js",
      "name": "T16-10 and US-16-R23: asking a need logs a decision and a parsable prediction with confidence 1 - p_wrong and registers its metric"
+    },
+    {
+     "file": "core/ignorance/ignorance.test.js",
+     "name": "US-16-R23: model output is untrusted: validated, capped, tagged, and refused from the author family"
+    },
+    {
+     "file": "core/ignorance/ignorance.test.js",
+     "name": "US-16-R23: a run records gaps, challenges the stalest subjects first, and never loses one (accounting invariant)"
+    },
+    {
+     "file": "core/ignorance/ignorance.test.js",
+     "name": "US-16-R23: closing needs a disposition and evidence; a fixed condition closes itself with evidence; a regression reopens"
+    },
+    {
+     "file": "core/ignorance/org.test.js",
+     "name": "US-16-R23: no token, a failing route, or the author family all degrade to the rule-based red team, never to silence"
     }
    ]
   },
@@ -8944,6 +8931,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "adapters/github/issuestore.test.js",
+     "name": "US-08-R11, US-17-R11: githubIssuePages follows the Link header to the last page, leaves pull requests out and sends the token only in the Authorization header"
+    },
     {
      "file": "core/claims/stores.test.js",
      "name": "US-17-R11: 303 open in a hidden store against 12 visible fires through pagedStore stores (all 315 over visible 12 is 26.25)"
@@ -9399,7 +9390,7 @@
    "tests": [
     {
      "file": "core/console-l3/dashboard.test.js",
-     "name": "US-13-R15 and US-18-R10: the page escapes every stored value and loads nothing from another host"
+     "name": "US-13-R26 and US-18-R10: the page escapes every stored value and loads nothing from another host"
     },
     {
      "file": "core/test/console-ui.test.js",
@@ -9463,14 +9454,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/test/console.test.js",
-     "name": "T18-1, T18-2, US-18-R09 and US-18-R13: console is off without a token, refuses a wrong key, and refuses cross-origin writes"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-19-R01",
@@ -9651,7 +9637,7 @@
     },
     {
      "file": "apps/launcher/test/turnstile.test.mjs",
-     "name": "US-19-R09 / US-19-R26 spend cap: N attempts per UTC day, then refused; a new day resets; only integers are stored"
+     "name": "US-19-R09 / US-19-R34 spend cap: N attempts per UTC day, then refused; a new day resets; only integers are stored"
     },
     {
      "file": "apps/launcher/test/turnstile.test.mjs",
@@ -9889,6 +9875,10 @@
     {
      "file": "core/test/agent-setup.test.js",
      "name": "US-19-R20 / US-19-R22 neither the skill nor the launcher page promises a platform other than Workers"
+    },
+    {
+     "file": "core/test/docs.test.js",
+     "name": "US-19-R20 / US-19-R22 every organization configuration names Cloudflare Workers as its only supported runtime and other runtimes only as proofs"
     }
    ]
   },
@@ -9919,6 +9909,10 @@
     {
      "file": "core/test/agent-setup.test.js",
      "name": "US-19-R20 / US-19-R22 neither the skill nor the launcher page promises a platform other than Workers"
+    },
+    {
+     "file": "core/test/docs.test.js",
+     "name": "US-19-R20 / US-19-R22 every organization configuration names Cloudflare Workers as its only supported runtime and other runtimes only as proofs"
     }
    ]
   },
@@ -9976,14 +9970,6 @@
     {
      "file": "../seed/worker/test/spec-10-repo-creation.test.js",
      "name": "US-19-R24 / US-19-R25 when the code host refuses a step the answer names what is waited on and the repository that exists stays"
-    },
-    {
-     "file": "apps/launcher/test/pow.test.mjs",
-     "name": "US-19-R25 the in-page SHA-256 chain equals the published reference algorithm"
-    },
-    {
-     "file": "apps/launcher/test/pow.test.mjs",
-     "name": "US-19-R25 out-of-bounds or malformed challenges are refused before any work"
     }
    ]
   },
@@ -9993,18 +9979,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "apps/launcher/test/turnstile.test.mjs",
-     "name": "US-19-R09 / US-19-R26 spend cap: N attempts per UTC day, then refused; a new day resets; only integers are stored"
-    },
-    {
-     "file": "apps/launcher/test/turnstile.test.mjs",
-     "name": "US-19-R09 / US-19-R26 LAUNCHER_MODE=public refuses to serve until robot check, rate limit and cap are all configured"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-20-R01",

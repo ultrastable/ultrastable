@@ -1,5 +1,5 @@
 {
- "$comment": "US-14-R12: core files that still reach a platform. A finding that is gone must be removed; a new finding is a failure. Rules: node-import, process, caches, cloudflare-import, env-db, adapter-import.",
+ "$comment": "US-14-R19: core files that still reach a platform. A finding that is gone must be removed; a new finding is a failure. Rules: node-import, process, caches, cloudflare-import, env-db, adapter-import.",
  "entries": {
   "core/_shared/testdb.js": {
    "rules": [

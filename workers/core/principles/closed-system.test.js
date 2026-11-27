@@ -37,11 +37,13 @@ test('US-23-R01: a decision written as a row reaches the tracker as its own issu
   assert.match(issues[0].body, /Revert path: set the cap back/);
 });
 
-test('T23-1 and US-23-R03: an issue with a passing closing probe is closed by the closer with the evidence recorded', () => { loopCloserTests('t23_1'); });
-test('T23-2 and US-23-R04: an issue with no probe and no linked pull request past its grace period is labelled and reported', () => { loopCloserTests('t23_2'); });
-test('T23-3 and US-23-R04: an epic files and tracks a child for each of its items and closes when all are closed', () => { assert.ok(loopCloserTests('t23_3') >= 2); });
+test('T23-1 and US-23-R03: an issue with a passing closing probe is closed by the closer with the evidence recorded', () => { loopCloserTests('t23_1_'); });
+test('T23-2 and US-23-R04: an issue with no probe and no linked pull request past its grace period is labelled and reported', () => { loopCloserTests('t23_2_'); });
+test('T23-3 and US-23-R04: an epic files and tracks a child for each of its items and closes when all are closed', () => { assert.ok(loopCloserTests('t23_3_') >= 2); });
 test('US-23-R02: an issue with a linked pull request or a probe is a closed loop (and one with neither is not)', () => { loopCloserTests('us_23_r02'); loopCloserTests('us_23_r04'); });
 test('US-23-R06: a loop that can detect a defect but cannot read what it needs files exactly one capability gap, closed by its probe', () => { assert.ok(loopCloserTests('us_23_r06') >= 5); });
+test('T23-10 and US-23-R17: two issues that need the Actions runs, and a token that cannot read them, still give a single gap issue', () => { loopCloserTests('t23_10_'); });
+test('T23-11 and US-23-R18: while main is red there is one incident issue and no second one, it closes once main is green, and a recurrence reopens it', () => { loopCloserTests('t23_11_'); loopCloserTests('us_23_r18_a_recurring'); });
 
 test('US-23-R05: the system reads its own backlog, predictions, outcomes and trust, so managers can act on what the loops produced', async () => {
   const db = makeDb([dir('../describe/migrations/')]);

@@ -24,7 +24,7 @@ BUILT means implemented and covered by a passing test in `lifecycle-gates.test.j
 | US-15-R02 selection rule; an override is a recorded decision | BUILT | `selectMode`, `startProject`, `lifecycle_mode_decisions` |
 | US-15-R03, R13 the mode changes weight and form only; nothing is omitted | BUILT | `requiredArtifacts`, `checkForm`, `submitTailored`. Field lists exist for A-INI-1, A-INI-2, A-INI-6, A-PLN-1, A-PLN-4, A-PLN-5, A-PLN-6, A-PLN-9; any other artifact must have some content |
 | G1: definition of done is a runnable probe; readiness score at least the threshold | BUILT | registered conditions `charter-probe` and `readiness`; a score that cannot be read does not pass |
-| US-15-R17, US-15-T08 G2: every requirement maps to an item with a closing probe; items have an owner and a valid trigger | BUILT | condition `requirement-map` |
+| US-15-R23, US-15-T13 G2: every requirement maps to an item with a closing probe; items have an owner and a valid trigger | BUILT | condition `requirement-map` |
 | US-15-R20, US-15-T11 the conditions hold whichever call reaches the phase change | BUILT | `registerGateExtra`, `advancePhase` in `core/kernel/lifecycle.js`; `advance` is the same call with the ports named |
 | US-15-R08 every deliverable has a closing probe a different agent runs | BUILT | `recordDeliverable`, `runDeliverableProbe`; condition `deliverable-probes` at G3 |
 | US-15-R09, T15-5 an iteration ends with a retrospective whose outputs are items | BUILT | `startIteration`, `endIteration`, `recordRetrospective`; condition `retrospective` at G3 |
@@ -33,11 +33,11 @@ BUILT means implemented and covered by a passing test in `lifecycle-gates.test.j
 | US-15-R12, T15-4 an out-of-scope request is a scope-gate entry and no item until a recorded decision enables the pack | BUILT | `requestWork`, `decidePack`, `classifyScope` |
 | US-15-R21, US-15-T10 one classifier (a superset of the console's table) and the pack host as the enabling decision | BUILT | `SCOPE_RULES`, the `packs` port. PLANNED: `core/src/console.js` `recordAsk` calling `requestWork` |
 | US-15-R14 no start above the portfolio cap | BUILT | `startProject`, `lifecycle_capacity` |
-| US-15-R15, R16, US-15-T07 risk and issue review, quality metrics, compliance report | BUILT | `monitor.js` (`recordRiskReview`, `evaluateRisks`, `riskReviewDue`, `computeQuality`, `complianceReport`, `monitorStep`) |
-| US-15-R18, US-15-T09 closing opens by itself; a closed project is archived once | BUILT | `closing.js` (`openClosing`, `archiveProject`, `archiveClosed`) |
+| US-15-R15, R16, US-15-T12 risk and issue review, quality metrics, compliance report | BUILT | `monitor.js` (`recordRiskReview`, `evaluateRisks`, `riskReviewDue`, `computeQuality`, `complianceReport`, `monitorStep`) |
+| US-15-R18, US-15-T14 closing opens by itself; a closed project is archived once | BUILT | `closing.js` (`openClosing`, `archiveProject`, `archiveClosed`) |
 | US-15-R01, R05 outcomes become programs and projects; initiation artifacts are drafted from answers | BUILT | `adopt.js` (`adoptOutcomes`, `draftArtifacts`); the composition root does not yet pass `readback`, `readiness` or `packs`: PLANNED |
 | US-15-R22 the system test precedes any project | BUILT in the platform seed (the bootstrap's `qualify` stage and the vision test), see the specification | no test here |
 | T15-1, T15-3, T15-6 through this layer | BUILT | asserted in `lifecycle-gates.test.js` |
 | Read-only probe | BUILT | `lifecycleProbe` |
-| US-15-R15, R16: A-MON-4 risk and issue review, A-MON-6 quality metrics, once per period | BUILT | `reviewRisks`, `qualityMetrics`, `refreshMonitoring`, `lifecycleStep`; each is one `artifacts` row (phase `monitoring`), no new table |
+| US-15-R15, R16, T15-7, T15-8: A-MON-4 risk and issue review, A-MON-6 quality metrics, once per period | BUILT | `reviewRisks`, `qualityMetrics`, `refreshMonitoring`, `lifecycleStep`; each is one `artifacts` row (phase `monitoring`), no new table |
 | G2 "every requirement maps to an item and a probe" | NOT COVERED | the kernel checks that items exist and have closing probes, not the mapping |

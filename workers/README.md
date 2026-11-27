@@ -2,6 +2,8 @@
 
 **The code of Ultrastable: a self-governing development platform that runs on Cloudflare Workers.**
 
+Cloudflare Workers is the only supported platform. Why, what it cannot do and when to choose something else: [docs/why-cloudflare.md](docs/why-cloudflare.md). The Cloud Run adapter shows that the code's seams hold; it is not a second supported platform.
+
 Coding agents are cheap. Managing them is not. Ultrastable runs the backlog, hands each item to the agent that fits, has a different agent verify every result, scores its own predictions, earns autonomy from a verified record, and interrupts a person only for a step that is both irreversible and identity-bound.
 
 It runs today inside [QNFO](https://qnfo.org), which is its first and live customer: see the [case study](https://github.com/ultrastable/spec/blob/main/docs/qnfo-case-study.md).

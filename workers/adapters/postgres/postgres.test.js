@@ -157,3 +157,8 @@ test('US-14-R14: the dispatch statement, which holds a template expression, tran
     assert.equal(/target:/.test(t.text), !!extra);
   }
 });
+
+test('US-14-R14 dialect: instr(x, y) becomes strpos(x, y), the same 1-based position and 0 when absent', () => {
+  assert.equal(translate(`SELECT id FROM p WHERE metric = ? AND instr(due_at, 'T') > 0`).text, `SELECT id FROM p WHERE metric = $1 AND strpos(due_at, 'T') > 0`);
+  assert.equal(translate(`SELECT instr(lower(a), lower(?)) AS at FROM t`).text, `SELECT strpos(lower(a), lower($1)) AS at FROM t`);
+});

@@ -51,7 +51,7 @@ const family = (n, fam) => ({ endpoint: `e-${n}`, model: n, family: fam, key_env
 const goodCfg = { modelport: { aliases: { medium: family('a', 'fam-a'), large: family('b', 'fam-b') }, roles: { doer: 'medium', reviewer: 'large' } } };
 const badCfg = { modelport: { aliases: { medium: family('a', 'fam-a'), large: family('b', 'fam-b') }, roles: { doer: 'medium', reviewer: 'medium' } } };
 
-function runScript({ config = null, curlFails = null, existing = false } = {}) {
+function runScript({ config = null, curlFails = null, existing = false, schedulerExists = false, schedulerRefused = false } = {}) {
   const dir = mkdtempSync(path.join(tmpdir(), 'us-deploy-'));
   try {
     const log = path.join(dir, 'calls.log'); const bin = path.join(dir, 'bin'); const cfgFile = path.join(dir, 'cfg.json');
@@ -64,6 +64,8 @@ case "$*" in
   *"versions access"*) echo fake-token-value;;
   *"projects describe"*) echo 123456789;;
   *"print-access-token"*) echo fake-access;;
+  *"scheduler jobs describe"*) ${schedulerExists ? 'echo projects/proj/locations/us-central1/jobs/ultrastable-tick' : 'echo "NOT_FOUND: Job not found" >&2; exit 1'};;
+  *"scheduler jobs create"*|*"scheduler jobs update"*) ${schedulerRefused ? 'echo "PERMISSION_DENIED: cloudscheduler.jobs.create" >&2; exit 1' : 'true'};;
 esac
 `);
     const listed = existing ? `{"uptimeCheckConfigs":[{"displayName": "ultrastable-tick-health"}]}` : '{}';
@@ -112,4 +114,18 @@ test('US-14-R03 and US-14-R16: the uptime check is created with the service-agen
   assert.notEqual(refused.status, 0, 'a refused creation is not swallowed'); assert.match(refused.stderr, /403/);
   const again = runScript({ config: goodCfg, existing: true });
   assert.equal(again.status, 0, again.stderr); assert.ok(!/-X POST/.test(again.calls), 'an existing check is not created twice');
+});
+
+test('US-14-R03: the tick clock is created when missing and updated when present; a refused creation stops the script with its message, never ends in deployed', () => {
+  const fresh = runScript({ config: goodCfg });
+  assert.equal(fresh.status, 0, fresh.stderr);
+  assert.match(fresh.calls, /gcloud scheduler jobs create http ultrastable-tick[^\n]*--schedule \*\/10 \* \* \* \*/);
+  const present = runScript({ config: goodCfg, schedulerExists: true });
+  assert.equal(present.status, 0, present.stderr);
+  assert.ok(!/scheduler jobs create/.test(present.calls), 'an existing job is not created twice');
+  assert.match(present.calls, /gcloud scheduler jobs update http ultrastable-tick[^\n]*--uri https:\/\/svc-abc\.run\.app\/tick/, 'it is pointed at the deployed service');
+  const refused = runScript({ config: goodCfg, schedulerRefused: true });
+  assert.notEqual(refused.status, 0, 'a refused creation is not swallowed');
+  assert.match(refused.stderr, /PERMISSION_DENIED/);
+  assert.ok(!/deployed https/.test(refused.stdout), 'the script does not report a deploy that has no clock');
 });

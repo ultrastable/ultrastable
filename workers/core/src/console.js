@@ -117,7 +117,7 @@ function explainCard(c) {
 }
 
 // Questions the three screens already answer (US-18-R03, R04, R19): data, matched on the typed words. A question is the WHOLE text, matched as a sentence on its
-// normalised form (lower case, no apostrophes or punctuation, a leading "please" or "tell me" dropped). A request that merely contains such words ("What should
+// normalised form (lower case, no apostrophes or punctuation, and any leading run of the FILLER words dropped: please, hey, ok, okay, so, and, tell me, can you tell me, could you tell me). A request that merely contains such words ("What should
 // be done about the logo colours?") is not a standing question: it is stored and becomes work (R03), never answered with an unrelated status line.
 export const QUESTIONS = [
   ['needs', /^(?:(?:what|anything)(?: do| does)?(?: you| it)? (?:(?:need|want) (?:from|of) me|need)|what needs me|what(?: is|s| are)? waiting on me)$/],

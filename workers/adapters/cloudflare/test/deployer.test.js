@@ -52,3 +52,51 @@ test('cloudflare deployer plugs into the canonical path (probe failure reverts)'
   assert.equal(r.status, 'reverted');
   assert.equal(f.state.version, 'ver-1');
 });
+
+// US-07-R13: the adapter reads the live script back and digests it per module as deploy/deploy-workers.mjs does, so core/deploy can
+// compare what serves with what was published. Both answers of the content endpoint are covered: multipart (one part per module) and a
+// single body keyed by its cf-entrypoint header.
+test('US-07-R13: liveDigest reads the live script per module, for a multipart answer and for a single body keyed by cf-entrypoint', async () => {
+  const { createHash } = await import('node:crypto');
+  const hex = (s) => createHash('sha256').update(s).digest('hex');
+  const seen = [];
+  const multipart = () => { const f = new FormData(); f.append('worker.js', new Blob(['export default {}'], { type: 'application/javascript+module' }), 'worker.js'); f.append('lib.js', new Blob(['export const x = 1;'], { type: 'application/javascript+module' }), 'lib.js'); return new Response(f); };
+  const single = () => new Response('export default { fetch() {} }', { headers: { 'content-type': 'application/javascript+module', 'cf-entrypoint': 'index.js' } });
+  let answer = multipart;
+  const fetch = async (url, init) => { seen.push({ url, method: init.method, auth: init.headers.authorization }); return answer(); };
+  const dep = cloudflareDeployer({ fetch, config, env: { CLOUDFLARE_API_TOKEN: 'tkn-value' } });
+  assert.deepEqual(await dep.liveDigest('api'), { 'worker.js': hex('export default {}'), 'lib.js': hex('export const x = 1;') });
+  assert.equal(seen[0].url, 'https://api.cloudflare.com/client/v4/accounts/acct-123/workers/scripts/api-script/content/v2');
+  assert.deepEqual([seen[0].method, seen[0].auth], ['GET', 'Bearer tkn-value']);
+  answer = single;
+  assert.deepEqual(await dep.liveDigest('api'), { 'index.js': hex('export default { fetch() {} }') });
+  answer = () => new Response('nope', { status: 404 });
+  await assert.rejects(dep.liveDigest('api'), (e) => /404/.test(e.message) && !e.message.includes('tkn-value'));
+  await assert.rejects(cloudflareDeployer({ fetch, config, env: {} }).liveDigest('api'), /token not present/);
+});
+
+test('US-07-R13: through the canonical path, a live script equal to the published files keeps the deploy and a different one reverts it', async () => {
+  const { createHash } = await import('node:crypto');
+  const hex = (s) => createHash('sha256').update(s).digest('hex');
+  const { makeDb } = await import('../../../core/_shared/testdb.js');
+  const { createDeploy } = await import('../../../core/deploy/index.js');
+  const { fileURLToPath } = await import('node:url');
+  const MIG = fileURLToPath(new URL('../../../core/deploy/migrations/', import.meta.url));
+  for (const tamper of [false, true]) {
+    const state = { version: 'ver-1', body: 'old' };
+    const fetch = async (url, init) => {
+      if (init.method === 'PUT') { state.version = 'ver-2'; state.body = tamper ? 'served by someone else' : await init.body.get('worker.js').text(); return Response.json({ success: true, result: {} }); }
+      if (init.method === 'POST') { state.version = JSON.parse(init.body).versions[0].version_id; return Response.json({ success: true, result: {} }); }
+      if (url.endsWith('/content/v2')) return new Response(state.body, { headers: { 'content-type': 'application/javascript+module', 'cf-entrypoint': 'worker.js' } });
+      return Response.json({ success: true, result: { deployments: [{ versions: [{ version_id: state.version, percentage: 100 }] }] } });
+    };
+    const dep = cloudflareDeployer({ fetch, config, env: { CLOUDFLARE_API_TOKEN: 'tkn-value' } });
+    const db = makeDb([MIG]);
+    const d = createDeploy({ db, deployer: dep, fetch: async () => new Response('ok'), sleep: async () => {}, config: { windowMs: 0 } });
+    const body = 'export default { fetch() { return new Response("v2"); } }';
+    const r = await d.deploy({ unit: 'api', artifact: { body, files: { 'worker.js': hex(body) } }, expectedVersion: 'ver-1' });
+    assert.equal(r.status, tamper ? 'reverted' : 'kept', tamper ? 'a live script that differs is reverted' : 'the live script equals the published file');
+    const check = db.raw.prepare('SELECT state FROM deploy_digest_checks ORDER BY rowid DESC LIMIT 1').get();
+    assert.equal(check.state, tamper ? 'mismatch' : 'match');
+  }
+});

@@ -47,7 +47,7 @@ function fakeCapNamespace() {
   return { mem, idFromName: n => n, get: () => ({ fetch: (u, init) => obj.fetch(new Request(u, init)) }) };
 }
 
-test('US-19-R09 / US-19-R26 spend cap: N attempts per UTC day, then refused; a new day resets; only integers are stored', async () => {
+test('US-19-R09 / US-19-R34 spend cap: N attempts per UTC day, then refused; a new day resets; only integers are stored', async () => {
   const ns = fakeCapNamespace();
   const env = { PROVISION_CAP: ns, DAILY_PROVISION_CAP: '2' };
   const day1 = Date.parse('2026-11-12T10:00:00Z'), day2 = Date.parse('2026-11-13T00:00:01Z');
@@ -116,7 +116,7 @@ test('US-19-R09 a rejected token and an unreachable siteverify both stop the req
   }
 });
 
-test('US-19-R09 / US-19-R26 LAUNCHER_MODE=public refuses to serve until robot check, rate limit and cap are all configured', async () => {
+test('US-19-R09 / US-19-R34 LAUNCHER_MODE=public refuses to serve until robot check, rate limit and cap are all configured', async () => {
   const full = { LAUNCHER_MODE: 'public', TURNSTILE_SECRET: SECRET, TURNSTILE_SITE_KEY: '0x4AAAA-key', RATE_LIMITER: { limit: async () => ({ success: true }) }, PROVISION_CAP: fakeCapNamespace() };
   for (const missing of ['TURNSTILE_SECRET', 'TURNSTILE_SITE_KEY', 'RATE_LIMITER', 'PROVISION_CAP']) {
     const env = { ...full }; delete env[missing];

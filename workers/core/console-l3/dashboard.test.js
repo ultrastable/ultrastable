@@ -62,7 +62,7 @@ test('US-13-R02: the status page, /api/state and the digest are computed from th
   assert.deepEqual(dash.render(s), html.replace(/x^/, ''));
 });
 
-test('US-13-R15 and US-18-R10: the page escapes every stored value and loads nothing from another host', async () => {
+test('US-13-R26 and US-18-R10: the page escapes every stored value and loads nothing from another host', async () => {
   const { dash } = mk();
   const res = await get(dash, '/'); const html = await res.text();
   assert.ok(!html.includes('<b>spend</b>')); assert.match(html, /Approve &lt;b&gt;spend&lt;\/b&gt;/); assert.match(html, /stays &quot;zero&quot;/);
@@ -204,7 +204,7 @@ test('US-13-R24 and US-13-T09: the analytics panel shows requests and errors per
   assert.match(await (await get(mkPanels({ analytics: async () => { throw new Error('GraphQL 403'); } }).dash, '/')).text(), /not measured<\/small> \(GraphQL 403\)/);
 });
 
-test('US-13-R14: the dashboard is served only to the signed-in owner and a state-changing request from another origin is refused', async () => {
+test('US-13-R25: the dashboard is served only to the signed-in owner and a state-changing request from another origin is refused', async () => {
   const { OUT_DIR } = await import('../../tools/build_migrations.mjs');
   const { createOrg } = await import('../org/index.js');
   const TOKEN = 'console-token-for-tests'; const ORIGIN = 'https://org.example.test';
