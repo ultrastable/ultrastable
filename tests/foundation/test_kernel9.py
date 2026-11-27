@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-"""Kernel 9.0.0 as code: clauses have enforcers, budgets hold, the repertoire vetoes irreversible classes, the hook blocks protected paths."""
+"""Kernel 9.1.0 as code: clauses have enforcers, budgets hold, the repertoire vetoes irreversible classes, the hook blocks protected paths."""
 import json, subprocess, unittest
 from _repo import ROOT, copy_repo, edit
 from foundation import kernel9
@@ -21,9 +21,9 @@ class Kernel9(unittest.TestCase):
         self.assertTrue(any("not reversible" in p for p in kernel9.check(r)))
 
     def test_kernel_is_unitary(self):
-        r = copy_repo(); t = r / "doctrine/kernel-9.0.0.md"; t.write_text(t.read_text() + "\nSee https://example.com/x\n")
+        r = copy_repo(); t = r / "doctrine/kernel-9.1.0.md"; t.write_text(t.read_text() + "\nSee https://example.com/x\n")
         self.assertTrue(any("not self-contained" in p for p in kernel9.check(r)))
-        r = copy_repo(); t = r / "doctrine/kernel-9.0.0.md"; t.write_text(t.read_text() + "\nRead doctrine/other.json\n")
+        r = copy_repo(); t = r / "doctrine/kernel-9.1.0.md"; t.write_text(t.read_text() + "\nRead doctrine/other.json\n")
         self.assertTrue(any("not self-contained" in p for p in kernel9.check(r)))
         r = copy_repo(); edit(r / "doctrine/step-repertoire.json", lambda d: d["defaults"].update(epsilon=0.9))
         self.assertTrue(any("differs" in p for p in kernel9.check(r)))

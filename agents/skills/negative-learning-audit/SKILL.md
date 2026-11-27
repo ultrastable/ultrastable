@@ -1,7 +1,7 @@
 ---
 name: negative-learning-audit
 description: Use weekly to detect action classes that look effective but degrade efficiency, and to check that failure memories are still retrieved.
-metadata: {kernel: "9.0.0"}
+metadata: {kernel: "9.1.0"}
 ---
 1. For each action class compute effectiveness, efficiency (cost per unit) and consistency (efficiency slope over windows); seed/scripts/perezlopez.py holds the arithmetic.
 2. Objective up while efficiency down for 2+ windows: flag `negative_learning`.

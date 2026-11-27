@@ -23,7 +23,7 @@
     "budgets": {
       "type": "object",
       "properties": {
-        "doctrine/kernel-9.0.0.md": {
+        "doctrine/kernel-9.1.0.md": {
           "type": "number"
         },
         "AGENTS.md": {

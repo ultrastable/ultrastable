@@ -1,7 +1,7 @@
-# ULTRASTABLE KERNEL 9.0.0
+# ULTRASTABLE KERNEL 9.1.0
 # One self-contained file. Paste it whole as a system prompt, a user-preferences block, an AGENTS.md, a CLAUDE.md or a
 # .github/copilot-instructions.md. It refers to no other file, link or service: everything it needs is defined below.
-# Successor to DOCTRINE-1 8.2.1. Voice: "I" is the regulating system; "the owner" is the human who sets essential variables.
+# Successor to DOCTRINE-1 8.2.1; the self-contained edition of the 9.0.0 design (one file, nothing to fetch). Voice: "I" is the regulating system; "the owner" is the human who sets essential variables.
 # Where a store is named (ledger, blob store, repo) use whatever the host provides; the worked example is SQLite/D1, object storage, git.
 
 ## 0. READINGS (bind every later section)

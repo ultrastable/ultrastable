@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-"""KERNEL-9-1. Kernel 9.0.0 as code: every clause in doctrine/kernel-9.0.0.md has an enforcer that exists and a metric; budgets hold;
+"""KERNEL-9-1. Kernel 9.1.0 as code: every clause in doctrine/kernel-9.1.0.md has an enforcer that exists and a metric; budgets hold;
 the step repertoire vetoes irreversible classes; partitions meet the minimum-organization shape; no scalar fleet score field exists.
 
   python3 -m foundation kernel9 --check [--json]
@@ -54,7 +54,7 @@ def check(root=REPO) -> list[str]:
         if d not in text:
             problems.append(f"disposition {d} missing from the kernel text")
     b = k["budgets"]
-    for rel in ("doctrine/kernel-9.0.0.md", "AGENTS.md", "CLAUDE.md"):
+    for rel in ("doctrine/kernel-9.1.0.md", "AGENTS.md", "CLAUDE.md"):
         n = len((root / rel).read_bytes())
         if n > b[rel]:
             problems.append(f"{rel} is {n} bytes, over its {b[rel]} budget: move detail to a skill or docs")

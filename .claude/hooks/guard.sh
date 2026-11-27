@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-# PreToolUse guard (kernel 9.0.0 R4/F3/G1). Exit 2 blocks; exit 1 does not. A tripwire, not a security boundary:
+# PreToolUse guard (kernel 9.1.0 R4/F3/G1). Exit 2 blocks; exit 1 does not. A tripwire, not a security boundary:
 # the boundary is branch protection, CODEOWNERS and the merge identity the executor never holds.
 set -uo pipefail
 in=$(cat)

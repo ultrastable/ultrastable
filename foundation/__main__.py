@@ -75,7 +75,7 @@
   python3 -m foundation glossary [--check|--apply|--show [ID]]            the owner's keywords, with tests, code and lineage
   python3 -m foundation loops [--verify|--list]                           the loop registry and its closing verifier
   python3 -m foundation kernel [--check|--lint FILE...|--metrics FILE...] the doctrine kernel as code
-  python3 -m foundation kernel9 [--check [--json]]  KERNEL-9-1: kernel 9.0.0 clauses each bound to an existing enforcer and metric, byte budgets, vetoed irreversible step classes
+  python3 -m foundation kernel9 [--check [--json]]  KERNEL-9-1: kernel 9.1.0 clauses each bound to an existing enforcer and metric, byte budgets, vetoed irreversible step classes
   python3 -m foundation userbackend [--check|--scan]                      USER-BACKEND-1: no raw backend error reaches a user; one shared module per fix, every Worker consumes it
   python3 -m foundation standingorder [--check|--lint FILE...|--file-items|--baseline]  CODE-ONLY-ORDER: decisions live in code the system consumes; no report hands a decision to the owner
   python3 -m foundation directive [--check|--lint FILE...|--ledger|--probe|--bootstrap] the guiding directive as code
