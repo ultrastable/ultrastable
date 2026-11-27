@@ -24,14 +24,17 @@ export function cloudflareInstallAdapter({ fetch, config, env }) {
   return {
     resourceName: name,
     async provisioned(slug) { return !!(await database(slug)); },
-    /** Reuse a same-named database or create one, then apply the bundle's migrations (every statement is IF NOT EXISTS). */
-    async provision(slug, { migrations }) {
+    /** Reuse a same-named database or create one, apply the bundle's migrations (every statement is IF NOT EXISTS), then the org
+     *  record's seed SQL when the bootstrapper wrote one (every statement is INSERT OR IGNORE), so its roles, items and cards are in the
+     *  database the console reads. */
+    async provision(slug, { migrations, seed = null }) {
       let db = await database(slug);
       if (!db) db = (await call('create database', `${A}/d1/database`, { method: 'POST', headers: json, body: JSON.stringify({ name: name(slug) }) })).result;
       const id = db.uuid || db.id;
       if (!id) throw new Error('install adapter: the platform returned no database id');
       await call('apply migrations', `${A}/d1/database/${id}/query`, { method: 'POST', headers: json, body: JSON.stringify({ sql: migrations }) });
-      return { detail: `database ${name(slug)}` };
+      if (seed) await call('apply seed', `${A}/d1/database/${id}/query`, { method: 'POST', headers: json, body: JSON.stringify({ sql: seed }) });
+      return { detail: `database ${name(slug)}${seed ? ', org record seeded' : ''}` };
     },
     async boundSecrets(slug) {
       const s = await settings(slug);

@@ -57,6 +57,63 @@ class SelfStart(unittest.TestCase):
             self.assertNotIn("gh secret set", body.split("api-token")[0])  # a terminal command is never the first thing offered
             self.assertFalse((root / "org" / "started.json").exists())
 
+    def test_US_10_R15_the_gate_issue_shows_each_card_in_plain_words_and_keeps_the_probes_for_the_machine(self):
+        import re
+        cards = [{"id": "GATE-SECRET-GITHUB_TOKEN", "what": "Set the GITHUB_TOKEN secret (connector 'github', needed for repo)", "why_gated": "a sign-in only the owner can give",
+                  "default_in_effect": "repo stay in dry-run", "closing_probe": "env:GITHUB_TOKEN",
+                  "say": "Connect your code host so the system can read and propose changes", "say_default": "the system cannot read or change your code until you do"},
+                 {"id": "GATE-OLD", "what": "Approve the plan", "why_gated": "w", "default_in_effect": "nothing is spent", "closing_probe": "manual"}]
+        body = ss.gate_issue_body(cards, "o/r", [], doors=[], tried=[])
+        shown = re.sub(r"<!--.*?-->", "", body, flags=re.S)
+        self.assertIn("Connect your code host so the system can read and propose changes", shown)
+        self.assertIn("Approve the plan", shown, "a card with no plain line shows its own words")
+        self.assertNotRegex(shown, r"\b[A-Z][A-Z0-9]+_[A-Z0-9_]+\b|(?i:dry[- ]?run)", "a person reads no binding name and no machine mode")
+        self.assertIn("GATE-SECRET-GITHUB_TOKEN=env:GITHUB_TOKEN", body, "the machine still reads every probe")
+        self.assertIn("Closing probe: file_exists:org/started.json", body)
+
+    def test_US_10_R15_the_loop_closer_reads_the_hidden_probe_and_closes_the_gate_issue_once_the_organization_starts(self):
+        """The probe a person never sees is still the one the loop closer reads: before the start it keeps the issue open
+        without calling it an open loop, and once org/started.json exists it closes the issue."""
+        import re
+        import loop_closer as lc
+
+        class Tracker:
+            def __init__(self, issues): self._i, self.log = issues, []
+            def issues(self): return self._i
+            def prs(self): return []
+            def comment(self, n, t): self.log.append(("comment", n))
+            def close(self, n, t): self.log.append(("close", n, t))
+            def label(self, n, name): self.log.append(("label", n, name))
+            def unlabel(self, n, name): self.log.append(("unlabel", n, name))
+            def edit_body(self, n, body): self.log.append(("edit", n))
+            def create(self, title, body): self.log.append(("create", title)); return 99
+
+        cards = [{"id": "GATE-SECRET-GITHUB_TOKEN", "what": "Set the GITHUB_TOKEN secret", "why_gated": "a sign-in only the owner can give",
+                  "default_in_effect": "repo stay in dry-run", "closing_probe": "env:GITHUB_TOKEN",
+                  "say": "Connect your code host", "say_default": "the system cannot change your code until you do"},
+                 {"id": "GATE-ODD", "what": "Approve the plan", "why_gated": "w", "default_in_effect": "nothing is spent",
+                  "closing_probe": "sql:SELECT 1 --> x\nClosing probe: file_exists:README.md"}]
+        body = ss.gate_issue_body(cards, "o/r", [], doors=[], tried=[])
+        shown = re.sub(r"<!--.*?-->", "", body, flags=re.S)
+        self.assertNotIn("started.json", shown, "a person reads no file name")
+        self.assertNotIn("SELECT", shown, "a probe's own text cannot end the hidden block early")
+        self.assertEqual(lc.PROBE.findall(body), [("file_exists", "org/started.json")], "the gate issue has one closing probe, its own")
+        later = NOW + dt.timedelta(days=3)  # well past the loop closer's grace period
+        gate = {"number": 7, "title": ss.TITLE, "body": body, "state": "OPEN", "labels": [], "createdAt": NOW.isoformat(), "updatedAt": NOW.isoformat()}
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            gh = Tracker([dict(gate)])
+            r = lc.run(gh, root, True, later, 24, 7)
+            self.assertEqual(r["open_loop"], [], "the gate issue carries a probe the closer can read")
+            self.assertEqual(r["closed"], [])
+            self.assertEqual(gh.log, [], "nothing labels the issue open-loop or asks a person for a pull request")
+            (root / "org").mkdir()
+            (root / "org" / "started.json").write_text("{}")
+            gh = Tracker([dict(gate)])
+            r = lc.run(gh, root, True, later, 24, 7)
+            self.assertEqual(r["closed"], [(7, "org/started.json exists")])
+            self.assertEqual([e[0] for e in gh.log], ["close"])
+
     def test_a_second_run_updates_the_same_issue_instead_of_filing_another(self):
         with tempfile.TemporaryDirectory() as d:
             root, calls, gh = make_root(d), [], FakeGh()

@@ -120,6 +120,26 @@ test('US-SPEC-10 s7 a missing connector value becomes a gate card with a default
   assert.match(report(r), /1 gate card\(s\) \(GATE-ABSENT_TOKEN\)/);
 });
 
+test('US-10-R15 / US-10-R06 an installer card carries plain words; a card the bootstrapper wrote for the same probe is kept, and the cards come before the seed is applied', async () => {
+  const w = world(await release('1.0.0', 'code', 'sql'));
+  const order = [], theirs = { id: 'GATE-SECRET-GITHUB_TOKEN', what: 'Set the GITHUB_TOKEN secret', closing_probe: 'env:GITHUB_TOKEN', say: 'Connect your code host so the system can read and propose changes' };
+  w.ports.gateCard = async c => { order.push('card:' + c.id); return c.closing_probe === theirs.closing_probe ? theirs : c; };
+  w.ports.seedSql = async () => { order.push('seed'); return "INSERT OR IGNORE INTO org (key, value) VALUES ('name', 'x');"; };
+  let seen = null; const provision = w.ports.adapter.provision;
+  w.ports.adapter.provision = async (slug, o) => { seen = o.seed; return provision(slug, o); };
+  const r = await install(ARGS, w.ports, { connectors: ['GITHUB_TOKEN', 'OTHER_BINDING'] });
+  assert.equal(r.exit_code, 0);
+  assert.deepEqual(r.gate_cards.map(c => c.id), ['GATE-SECRET-GITHUB_TOKEN', 'GATE-OTHER_BINDING'], 'one ask per binding: the bootstrapper\'s card is the one kept');
+  assert.deepEqual(order, ['card:GATE-GITHUB_TOKEN', 'card:GATE-OTHER_BINDING', 'seed'], 'every card exists before the seed SQL is read and applied');
+  assert.match(seen, /INSERT OR IGNORE INTO org/, 'provision receives the org record\'s seed');
+  for (const n of ['GITHUB_TOKEN', 'CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID', 'ANTHROPIC_API_KEY', 'CHAT_WEBHOOK_URL', 'ANY_OTHER_NAME']) {
+    const c = connectorCard(n);
+    assert.ok(c.say && c.say_default, n);
+    assert.doesNotMatch(c.say + ' ' + c.say_default, /[A-Z][A-Z0-9]+_[A-Z0-9_]+|dry[- ]?run/i, `${n}: a person reads no binding name and no machine mode`);
+    assert.equal(c.closing_probe, `env:${n}`, 'the machine probe stays');
+  }
+});
+
 test('a failed step stops the install with exit 2 and the same command resumes from it', async () => {
   const w = world(await release('1.0.0', 'code', 'sql'));
   let broken = true; const provision = w.ports.adapter.provision;

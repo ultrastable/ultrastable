@@ -989,7 +989,7 @@
    "tests": [
     {
      "file": "core/install/bootstrap-spec10.test.js",
-     "name": "US-10-T06 / US-10-R16: the nothing-public constraint adds KIT-6 at priority 5 and no id repeats in the backlog"
+     "name": "US-10-T06 / US-10-R34: the nothing-public constraint adds KIT-6 at priority 5 and no id repeats in the backlog"
     }
    ]
   },
@@ -2220,10 +2220,6 @@
    "spec": "US-SPEC-24",
    "tests": [
     {
-     "file": "tests/test_workflow_lint.py",
-     "name": "test US-24-T09 US-24-R57 a six job matrix pr concurrency without cancel a self hosted runner and two write jobs are w10 w12 w13 w14"
-    },
-    {
      "file": "../tests/foundation/test_lint_workflows.py",
      "name": "test a daily schedule with headers timeout and concurrency passes - US-24-T09: a daily cron that carries all three header comments passes."
     },
@@ -2237,10 +2233,6 @@
    "id": "US-24-T10",
    "spec": "US-SPEC-24",
    "tests": [
-    {
-     "file": "tests/test_workflow_lint.py",
-     "name": "test US-24-T10 US-24-R12 allow timeout raises the cap to 60 and needs a reason"
-    },
     {
      "file": "../seed/worker/test/lane.test.js",
      "name": "US-24-R60 US-24-T10: a mocked 429 with Retry-After stops the lane for the tick and records why"
@@ -4433,6 +4425,10 @@
     {
      "file": "core/trust/trust.test.js",
      "name": "US-06-R11, US-06-T04, US-06-R12 the validator passes the shipped policy and returns a problem for each fault of section 3.3; an invalid policy blocks"
+    },
+    {
+     "file": "tests/test_bootstrap_hardening.py",
+     "name": "test invalid policy blocks the read stage even without an idea file - US-10-R02, US-06-R11: the policy is validated before the idea is considered."
     }
    ]
   },
@@ -6133,11 +6129,11 @@
     },
     {
      "file": "tests/test_bootstrap_hardening.py",
-     "name": "test invalid policy blocks the read stage even without an idea file - US-10-R02: the policy is validated before the idea is considered."
+     "name": "test invalid policy blocks the read stage even without an idea file - US-10-R02, US-06-R11: the policy is validated before the idea is considered."
     },
     {
      "file": "tests/test_bootstrap_hardening.py",
-     "name": "test invalid policy seeds nothing above the lowest rung and apply is blocked - US-10-R02: an invalid policy blocks the read stage, the seed never applies it, an"
+     "name": "test invalid policy seeds nothing above the lowest rung and apply is blocked - US-10-R02, US-06-R26: an invalid policy blocks the read stage, the seed never app"
     }
    ]
   },
@@ -6204,8 +6200,16 @@
      "name": "US-10-R06: every gate card carries a default in effect and a closing probe, in a dry run and in apply"
     },
     {
+     "file": "core/install/install.test.js",
+     "name": "US-10-R15 / US-10-R06 an installer card carries plain words; a card the bootstrapper wrote for the same probe is kept, and the cards come before the seed is applied"
+    },
+    {
      "file": "tests/test_bootstrap_hardening.py",
      "name": "test every gate card in gate cards json is a gate cards row in seed sql - US-10-R06: a card added after write() is seeded too (the ladder card on a machine with"
+    },
+    {
+     "file": "tools/install.test.mjs",
+     "name": "US-10-R06 / US-10-R15 the installer asks once per binding: the bootstrapper's card is kept, and a card it adds is a seed row in plain words"
     }
    ]
   },
@@ -6407,12 +6411,12 @@
      "name": "US-10-R15: the owner README lists the plain-words default for every card, never the capability names"
     },
     {
-     "file": "tests/test_bootstrap_hardening.py",
-     "name": "test the seeded gate card rows hold the plain words lines - US-10-R15: the console reads `what` and `default_in_effect` from the table, so those columns hold wh"
+     "file": "core/install/install.test.js",
+     "name": "US-10-R15 / US-10-R06 an installer card carries plain words; a card the bootstrapper wrote for the same probe is kept, and the cards come before the seed is applied"
     },
     {
-     "file": "tests/test_bootstrap_readme.py",
-     "name": "test US-10-R15 readme has no variable names and no developer words outside the help sections"
+     "file": "tests/test_bootstrap_hardening.py",
+     "name": "test the seeded gate card rows hold the plain words lines - US-10-R15: the console reads `what` and `default_in_effect` from the table, so those columns hold wh"
     }
    ]
   },
@@ -6422,14 +6426,9 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/install/bootstrap-spec10.test.js",
-     "name": "US-10-T06 / US-10-R16: the nothing-public constraint adds KIT-6 at priority 5 and no id repeats in the backlog"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-10-R17",
@@ -11140,7 +11139,7 @@
     },
     {
      "file": "tests/test_loop_closer.py",
-     "name": "test T23 7 US-23-R06 US-23-R17 a closer that cannot read actions files one capability gap"
+     "name": "test T23 10 US-23-R06 US-23-R17 a closer that cannot read actions files one capability gap - T23-10: two issues that need the Actions runs, and a token that can"
     },
     {
      "file": "tests/test_loop_closer.py",
@@ -11253,18 +11252,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "tests/test_loop_closer.py",
-     "name": "test T23 8 US-23-R12 a red main opens one incident and a green main closes it by probe"
-    },
-    {
-     "file": "tests/test_loop_closer.py",
-     "name": "test US-23-R12 a recurring red main reopens the closed incident instead of filing a second"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-23-R13",
@@ -11465,7 +11455,7 @@
     },
     {
      "file": "tests/test_workflow_lint.py",
-     "name": "test US-24-T10 US-24-R12 allow timeout raises the cap to 60 and needs a reason"
+     "name": "test US-24-T14 US-24-R12 allow timeout raises the cap to 60 and needs a reason"
     }
    ]
   },
@@ -12100,18 +12090,9 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "tests/test_workflow_lint.py",
-     "name": "test US-24-T09 US-24-R57 a six job matrix pr concurrency without cancel a self hosted runner and two write jobs are w10 w12 w13 w14"
-    },
-    {
-     "file": "tests/test_workflow_lint.py",
-     "name": "test US-24-R57 the opt in rules w11 and w17 are enforced when asked and quiet otherwise"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-24-R58",

@@ -107,7 +107,8 @@ class LoopCloser(unittest.TestCase):
         r = self.run_(FakeGh([issue(1)]), apply=False)
         self.assertTrue(r["open_loop"])
 
-    def test_t23_8_us_23_r12_a_red_main_opens_one_incident_and_a_green_main_closes_it_by_probe(self):
+    def test_t23_11_us_23_r18_a_red_main_opens_one_incident_and_a_green_main_closes_it_by_probe(self):
+        """T23-11: while main is red there is one incident issue and no second one; once main is green the incident is closed."""
         gh = FakeGh([]); gh.ci_result = "failure"
         r = self.run_(gh)
         self.assertEqual(r["incidents"], ["failure"])
@@ -118,7 +119,7 @@ class LoopCloser(unittest.TestCase):
         r3 = self.run_(gh3)
         self.assertEqual(r3["closed"][0][0], 9)
 
-    def test_us_23_r12_a_recurring_red_main_reopens_the_closed_incident_instead_of_filing_a_second(self):
+    def test_us_23_r18_a_recurring_red_main_reopens_the_closed_incident_instead_of_filing_a_second(self):
         reopened = []
 
         class G(FakeGh):
@@ -179,7 +180,8 @@ class CapabilityGap(unittest.TestCase):
 
     TITLE = "CAPABILITY GAP: the Actions runs of main cannot be read by the loop closer"
 
-    def test_t23_7_us_23_r06_us_23_r17_a_closer_that_cannot_read_actions_files_one_capability_gap(self):
+    def test_t23_10_us_23_r06_us_23_r17_a_closer_that_cannot_read_actions_files_one_capability_gap(self):
+        """T23-10: two issues that need the Actions runs, and a token that cannot read them, still give a single gap issue."""
         gh = self.Blind([issue(1, body="Closing probe: ci_green:main", created=NEW), issue(2, body="Closing probe: ci_green:main", created=NEW)])
         r = self.run_(gh)
         self.assertEqual([c for c, _ in r["capability_gaps"]], ["ci"])

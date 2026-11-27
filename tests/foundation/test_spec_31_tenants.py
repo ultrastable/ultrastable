@@ -501,10 +501,13 @@ class Vendoring(unittest.TestCase):
         text = (vd / "VENDORED_FROM").read_text()
         self.assertRegex(text.splitlines()[0], r"^ultrastable/ultrastable@\S+$", "the scaffold writes the text form")
         self.assertEqual(T.check_tenant(d, STD, ROOT), [])
-        with self.assertRaises(json.JSONDecodeError, msg="tenant_sync.py fails on the text form; it never reads it as empty"):
-            self.ts.read_manifest(d, {"vendor_dir": "vendor/ultrastable"})
-        with self.assertRaises(json.JSONDecodeError, msg="vendor.py --check fails on the text form"):
-            self.vendor.check(vd)
+        # US-31-R63 landed: tenant_sync.py and vendor.py read the text form through one reader instead of failing on it, never as empty.
+        rows = [ln.split() for ln in text.splitlines()[1:] if ln.strip()]
+        want = {r[2][len("vendor/ultrastable/"):]: r[3][len("sha256:"):] for r in rows}
+        self.assertTrue(want, "the scaffold records at least one file")
+        got_text = self.ts.read_manifest(d, {"vendor_dir": "vendor/ultrastable"})
+        self.assertEqual((got_text["form"], got_text["files"]), ("text", want), "tenant_sync.py reads the text form, keyed inside the vendor directory")
+        self.assertEqual(self.vendor.check(vd), [], "vendor.py --check reads the text form and finds the scaffolded files unchanged")
         manifest = {"schema": "vendored-from/1", "source": "ultrastable/workers", "commit": "c1", "files": {"contract.js": "0" * 64}}
         put(vd, "VENDORED_FROM", manifest)
         self.assertEqual(self.ts.read_manifest(d, {"vendor_dir": "vendor/ultrastable"})["files"], manifest["files"], "the JSON form is the one tenant_sync.py reads")

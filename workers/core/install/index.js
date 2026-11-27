@@ -41,16 +41,31 @@ export async function verifyBundle(fetched, { publicKey = null, requireSignature
   return { ok: true, manifest, signed: !!publicKey };
 }
 
+// US-10-R15: what a person reads on an installer card (`say`, `say_default`). `what` and `default_in_effect` keep the binding name and the
+// machine's mode for the probe and the log; the console shows the plain lines.
+const PLAIN = {
+  GITHUB_TOKEN: ['Connect your code host so the system can read and propose changes', 'the system cannot read or change your code until you do'],
+  CLOUDFLARE_API_TOKEN: ['Sign in to your hosting account so the system can run it', 'the system is prepared but not switched on until you do'],
+  CLOUDFLARE_ACCOUNT_ID: ['Say which hosting account the system may use', 'the system is prepared but not switched on until you do'],
+  ANTHROPIC_API_KEY: ['Let the system use an AI model provider (free models are used until you do)', 'the system uses free AI models only'],
+  CHAT_WEBHOOK_URL: ["Connect a chat channel for the system's short reports", 'the system keeps its reports in the console only'],
+};
+const PLAIN_OTHER = ['Connect one more service the system needs', 'that part of the system waits; everything else carries on'];
+
 /** The gate card for a connector whose value is absent: the default is in effect and the probe is its presence. */
-export const connectorCard = name => ({ id: `GATE-${name}`, what: `Connect ${name}`, why_gated: 'A credential is the owner\'s to grant; the installer never reads or stores its value.',
-  default_in_effect: 'those capabilities stay in dry-run', closing_probe: `env:${name}` });
+export const connectorCard = name => {
+  const [say, say_default] = PLAIN[name] || PLAIN_OTHER;
+  return { id: `GATE-${name}`, what: `Connect ${name}`, why_gated: 'A credential is the owner\'s to grant; the installer never reads or stores its value.',
+    default_in_effect: 'those capabilities stay in dry-run', closing_probe: `env:${name}`, say, say_default };
+};
 
 /**
  * Run the install. args: { slug, runtime, idea }. ports:
  *   preconditions() -> [missing things]            fetchBundle() -> { bundle, migrations, manifestText, signature? }
- *   bootstrapped(slug) / bootstrap({slug, idea})   adapter.provisioned(slug) / adapter.provision(slug, {migrations})
+ *   bootstrapped(slug) / bootstrap({slug, idea})   adapter.provisioned(slug) / adapter.provision(slug, {migrations, manifest, seed})
  *   env (presence only)                            adapter.boundSecrets(slug) -> [names] / adapter.bindSecret(slug, name)
- *   gateCard(card)                                 adapter.liveVersion(slug) -> { version, sha256 } | null / adapter.deploy(slug, {bundle, manifest})
+ *   gateCard(card) -> the card kept (the one the    adapter.liveVersion(slug) -> { version, sha256 } | null / adapter.deploy(slug, {bundle, manifest})
+ *     bootstrapper already wrote for the same probe, or this one)    seedSql() -> the org record's seed SQL | null
  *   health(slug) -> http status                    sleep(ms), registered(slug) -> { bundle_sha256 } | null / register({...})
  * A port's run may return { status: 'degraded', detail } (a dry run that planned and did not act). Steps after a failure do not run.
  */
@@ -93,11 +108,13 @@ export async function install(args, ports, opts = {}) {
   const a = ports.adapter;
 
   if (await step('bootstrap', () => ports.bootstrapped(slug), () => ports.bootstrap({ slug, idea, runtime })) === 'failed') return out;
-  if (await step('provision', () => a.provisioned(slug), () => a.provision(slug, { migrations: fetched.migrations, manifest })) === 'failed') return out;
 
-  // Connectors: presence only. The value is never read here; the adapter binds by name.
+  // Connectors: presence only. The value is never read here; the adapter binds by name. A missing one becomes a gate card before the
+  // database is provisioned, so the card is in the org record's seed SQL when it is applied (US-10-R06); a card the bootstrapper already
+  // wrote for the same probe is kept instead of a second one.
   const present = connectors.filter(n => !!ports.env?.[n]), absent = connectors.filter(n => !ports.env?.[n]);
-  for (const n of absent) { const card = connectorCard(n); out.gate_cards.push(card); try { await ports.gateCard?.(card); } catch (e) { return fail('connectors', text(e)); } }
+  for (const n of absent) { const card = connectorCard(n); try { out.gate_cards.push((await ports.gateCard?.(card)) || card); } catch (e) { return fail('connectors', text(e)); } }
+  if (await step('provision', () => a.provisioned(slug), async () => a.provision(slug, { migrations: fetched.migrations, manifest, seed: (await ports.seedSql?.()) || null })) === 'failed') return out;
   const bound = async () => { const have = new Set((await a.boundSecrets(slug)) || []); return present.every(n => have.has(n)); };
   const cs = await step('connectors', bound, async () => { const have = new Set((await a.boundSecrets(slug)) || []); for (const n of present) if (!have.has(n)) { const r = await a.bindSecret(slug, n); if (r?.status === 'degraded') return r; } });
   if (cs === 'failed') return out;

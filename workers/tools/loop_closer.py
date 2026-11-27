@@ -272,7 +272,7 @@ def run(gh, root: Path, apply: bool, now: dt.datetime, grace_h: float, stale_d: 
         if apply:
             closed_before = sorted((i for i in incidents if i["state"].upper() != "OPEN"), key=lambda i: i["number"])
             if closed_before and hasattr(gh, "reopen"):
-                # US-23-R12: a recurrence reopens the earlier incident instead of filing a second one.
+                # US-23-R18: a recurrence reopens the earlier incident instead of filing a second one.
                 gh.reopen(closed_before[-1]["number"], f"The incident has recurred: the latest completed ci run on main concluded {ci}.")
             else:
                 gh.create(incident_title, f"The latest completed ci run on main concluded: {ci}. Fix main before anything else merges." + chr(10) + chr(10) + "Closing probe: ci_green:main")

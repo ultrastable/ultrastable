@@ -91,6 +91,15 @@ class OwnerReadmeParts(Hermetic):
                              "Let the system use an AI model provider (free models are used until you do)")
             self.assertEqual(by_id["GATE-BUDGET"]["say"], "Approve what the system may spend a month: 50 USD")
 
+    def test_US_10_R15_the_boot_report_names_no_flag_mode_or_variable(self):
+        t, d = boot("50")
+        with t:
+            rep = (d / "org/boot-report.md").read_text(encoding="utf-8")
+            self.assertEqual(len(rep.strip().splitlines()), 4, rep)
+            self.assertIsNone(ENV_NAME.search(rep), rep)
+            self.assertNotRegex(rep, r"--\w|(?i:dry[- ]?run)|\{'", "no flag, no machine mode and no raw dictionary")
+            self.assertIn("Sign in to your hosting account so the system can run it", rep)
+
     def test_US_10_R15_the_readme_lists_the_say_lines_not_the_machine_text(self):
         t, d = boot("50")
         with t:

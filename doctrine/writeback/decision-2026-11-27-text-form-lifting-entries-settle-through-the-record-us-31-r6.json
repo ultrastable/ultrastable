@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-text-form-lifting-entries-settle-through-the-record-us-31-r6",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "Text-form lifting entries settle through the record (US-31-R63)",
+  "body": "revendor on a text-form tenant compared lifting entries (core paths relative to workers/) with vendor-directory keys, so they never settled to a shim. Each entry is now looked up through the record (_record_keys in workers/tools/tenant_sync.py): one the record lists settles to a shim of its vendored file; one whose code reached the core but the record does not list is reported as unsettled and kept, and foundation/tenantsync.py counts it as needs-pr. Evidence: node --test tools/spec-31-vendor.test.mjs from workers/, tests pass (9 of 9).",
+  "probe": "grep:workers/tools/tenant_sync.py::def _record_keys",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "decision",
+ "title": "Text-form lifting entries settle through the record (US-31-R63)",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}

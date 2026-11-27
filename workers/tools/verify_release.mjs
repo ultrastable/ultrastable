@@ -6,7 +6,8 @@
 // Usage: node tools/verify_release.mjs --base <url-or-directory> [--public-key <base64 raw key>] [--require-signature] [--launcher <url>]
 // Exit 0 verified; 3 a hash, signature or fingerprint does not match; 2 a file is missing, cannot be read (a network or disk error) or the arguments are wrong.
 // The report says whether a signature was checked: `signature` is 'verified' (a key was given and the signature matched), 'unchecked' (a manifest.sig is
-// published but no key was given, so it was not checked) or 'absent'. --require-signature turns anything but 'verified' into exit 3.
+// published but was not checked, or did not verify) or 'absent' (no manifest.sig was read). --require-signature turns anything but 'verified' into
+// exit 3, a missing manifest.sig included; without it, a key with no manifest.sig published is a missing file (exit 2).
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -36,11 +37,16 @@ export async function verifyRelease({ read, publicKey = null, requireSignature =
   const get = async n => { try { return await read(n); } catch (e) { problems.push(`${n} could not be read: ${String(e?.message || e).slice(0, 200)}`); return null; } };
   for (const n of ['bundle.js', 'migrations.sql', 'manifest.json']) { files[n] = await get(n); if (files[n] === null && !problems.some(p => p.startsWith(`${n} `))) problems.push(`${n} is missing`); }
   files['manifest.sig'] = await get('manifest.sig');
-  if (publicKey && files['manifest.sig'] === null && !problems.some(p => p.startsWith('manifest.sig '))) problems.push('manifest.sig is missing');
-  if (problems.length) return { ok: false, exit: EXIT.usage, problems, signature: 'absent' };
-  const signature = publicKey ? 'verified' : files['manifest.sig'] === null ? 'absent' : 'unchecked';
+  const noSig = files['manifest.sig'] === null, sigUnread = problems.some(p => p.startsWith('manifest.sig '));
+  const unverified = noSig ? 'absent' : 'unchecked'; // what the report says whenever the signature did not get checked and matched
+  if (publicKey && noSig && !sigUnread && !requireSignature) problems.push('manifest.sig is missing');
+  if (problems.length) return { ok: false, exit: EXIT.usage, problems, signature: unverified };
+  if (requireSignature && noSig) return { ok: false, exit: EXIT.mismatch, problems: ['signature_missing'], signature: 'absent' };
   const v = await verifyBundle({ bundle: files['bundle.js'], migrations: files['migrations.sql'], manifestText: files['manifest.json'], signature: files['manifest.sig']?.trim() }, { publicKey, requireSignature });
-  if (!v.ok) return { ok: false, exit: EXIT.mismatch, problems: [`${v.reason}${v.part ? ` (${v.part})` : ''}`], signature: v.reason.startsWith('signature') || v.reason === 'no_public_key' ? 'unchecked' : signature };
+  // verifyBundle reads the manifest, then checks the signature, then the digests: only a failure after the signature check leaves it verified.
+  const checked = v.ok || ['manifest_has_no_digest', 'digest_mismatch'].includes(v.reason);
+  const signature = publicKey && checked ? 'verified' : unverified;
+  if (!v.ok) return { ok: false, exit: EXIT.mismatch, problems: [`${v.reason}${v.part ? ` (${v.part})` : ''}`], signature };
   const m = v.manifest;
   if (!SEMVER.test(String(m.version))) problems.push(`manifest version "${m.version}" is not a semantic version`);
   for (const k of ['products', 'permissions']) if (!Array.isArray(m[k]) || !m[k].length) problems.push(`manifest names no ${k}`);

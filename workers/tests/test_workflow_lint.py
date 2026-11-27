@@ -116,7 +116,7 @@ class LintTests(unittest.TestCase):
             self.assertEqual(wl.lint_text(cached, repo_root=d), [])
         self.assertEqual(wl.lint_text(node), [], "the rule is off without a repository root")
 
-    def test_us_24_t10_us_24_r12_allow_timeout_raises_the_cap_to_60_and_needs_a_reason(self):
+    def test_us_24_t14_us_24_r12_allow_timeout_raises_the_cap_to_60_and_needs_a_reason(self):
         slow = GOOD.replace("timeout-minutes: 5", "timeout-minutes: 30")
         self.assertEqual(rules(slow), ["W03"])
         self.assertEqual(wl.lint_text("# allow-timeout: 30 end to end proof of a seed launch\n" + slow), [])
@@ -124,13 +124,13 @@ class LintTests(unittest.TestCase):
         self.assertEqual(rules("# allow-timeout: 90 too long\n" + GOOD.replace("timeout-minutes: 5", "timeout-minutes: 90")), ["W03"])
         self.assertEqual(rules("# allow-timeout: 20 reason\n" + GOOD.replace("timeout-minutes: 5", "timeout-minutes: 30")), ["W03"], "the cap is what the comment states")
 
-    def test_us_24_t09_us_24_r57_a_six_job_matrix_pr_concurrency_without_cancel_a_self_hosted_runner_and_two_write_jobs_are_w10_w12_w13_w14(self):
+    def test_us_24_t13_us_24_r64_a_six_job_matrix_pr_concurrency_without_cancel_a_self_hosted_runner_and_two_write_jobs_are_w10_w12_w13_w14(self):
         text = GOOD.replace("  cancel-in-progress: true\n", "").replace("  contents: read", "  contents: write").replace(
             "    runs-on: ubuntu-latest\n", "    runs-on: self-hosted\n    strategy:\n      matrix:\n        node: [18, 20, 22]\n        os: [a, b]\n")
         text += "  u:\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    steps:\n      - run: echo\n"
         self.assertEqual(rules(text), ["W10", "W12", "W13", "W14"])
 
-    def test_us_24_r57_the_opt_in_rules_w11_and_w17_are_enforced_when_asked_and_quiet_otherwise(self):
+    def test_us_24_r64_the_opt_in_rules_w11_and_w17_are_enforced_when_asked_and_quiet_otherwise(self):
         sched = "# allow-schedule: daily, 2 minutes\n" + GOOD.replace("  push:", "  schedule:\n    - cron: '0 6 * * *'\n  push:")
         self.assertEqual(wl.lint_text(sched), [])
         strict = {f.split()[1] for f in wl.lint_text(sched, require_path_filters=True, require_second_route=True)}

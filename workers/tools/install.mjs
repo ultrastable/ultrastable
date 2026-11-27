@@ -26,7 +26,8 @@ export function parseArgs(argv) {
   return o;
 }
 const dryAdapter = () => ({
-  provisioned: async () => false, provision: async () => ({ status: 'degraded', detail: 'dry run: create database, apply migrations planned' }),
+  provisioned: async () => false,
+  provision: async (slug, { seed } = {}) => ({ status: 'degraded', detail: `dry run: create database, apply migrations${seed ? ' and the org record\'s seed SQL' : ''} planned` }),
   boundSecrets: async () => [], bindSecret: async () => ({ status: 'degraded', detail: 'dry run: secrets are bound with --apply' }),
   liveVersion: async () => null, deploy: async () => ({ status: 'degraded', detail: 'dry run: upload of the verified bundle planned' }),
 });
@@ -44,7 +45,8 @@ export async function main(argv, { env = process.env, fetch: fetchPort = globalT
   const optional = async name => { try { return (await read(name)).trim(); } catch { return undefined; } };
   let connectors = [];
   try { connectors = Object.values(JSON.parse(readFileSync(path.join(root, 'ultrastable.json'), 'utf8')).connectors || {}).filter(c => !c.optional).map(c => c.env); } catch { /* no org config: no connectors to bind */ }
-  const tenantFile = path.join(out, 'tenant.json'), cardsFile = path.join(out, 'gate-cards.json');
+  const tenantFile = path.join(out, 'tenant.json'), cardsFile = path.join(out, 'gate-cards.json'), seedFile = path.join(out, 'seed.sql');
+  const sq = v => (v == null ? 'NULL' : `'${String(v).replace(/'/g, "''")}'`);
   const ports = {
     env,
     async preconditions() {
@@ -71,10 +73,18 @@ export async function main(argv, { env = process.env, fetch: fetchPort = globalT
     async gateCard(card) {
       let cards = [];
       try { cards = JSON.parse(readFileSync(cardsFile, 'utf8')); } catch { /* first card */ }
-      if (cards.some(c => c.id === card.id)) return;
+      // The bootstrapper already cards a missing connector (GATE-SECRET-<env>, probe env:<env>): one ask per binding, never two.
+      const same = cards.find(c => c.id === card.id || c.closing_probe === card.closing_probe);
+      if (same) return same;
       mkdirSync(out, { recursive: true });
       writeFileSync(cardsFile, JSON.stringify([...cards, card], null, 2) + '\n');
+      if (existsSync(seedFile)) { // US-10-R06 and R15: every card in the card file is a seed row, and the console shows its plain lines
+        const row = [card.id, card.say || card.what, card.why_gated, card.say_default || card.default_in_effect, card.prepared_by_fleet || 'the one-command installer', card.closing_probe];
+        writeFileSync(seedFile, readFileSync(seedFile, 'utf8') + `INSERT OR IGNORE INTO gate_cards (id, what, why_gated, default_in_effect, prepared_by_fleet, closing_probe) VALUES (${row.map(sq).join(', ')});\n`);
+      }
+      return card;
     },
+    seedSql: async () => (existsSync(seedFile) ? readFileSync(seedFile, 'utf8') : null),
     adapter: o.apply ? cloudflareInstallAdapter({ fetch: fetchPort, config: { accountId: o['account-id'] }, env }) : dryAdapter(),
     health: async () => { try { return (await fetchPort(String(o['health-url']).replace(/\/$/, '') + '/health')).status; } catch { return 0; } },
     sleep,

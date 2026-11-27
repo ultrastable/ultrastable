@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { generateKeyPairSync, createHash } from 'node:crypto';
-import { mkdtempSync, writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, mkdirSync, readFileSync, existsSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { main, parseArgs } from './install.mjs';
@@ -69,6 +69,34 @@ test('US-SPEC-10 s7 a dry run verifies the bundle, runs the bootstrapper once, w
   assert.equal(f.logs[1].steps.find(s => s.name === 'bootstrap').status, 'skipped');
   assert.equal(JSON.parse(readFileSync(path.join(f.out, 'gate-cards.json'), 'utf8')).length, 1, 'the card is not duplicated');
   assert.equal(existsSync(path.join(f.out, 'tenant.json')), false, 'a dry run registers no tenant');
+});
+
+test('US-10-R06 / US-10-R15 the installer asks once per binding: the bootstrapper\'s card is kept, and a card it adds is a seed row in plain words', async () => {
+  const f = fixture();
+  const seed = "INSERT OR IGNORE INTO org (key, value) VALUES ('name', 'Tool Share');\n";
+  const boot = (cards) => (cmd, args) => {
+    const o = args[args.indexOf('--out') + 1]; mkdirSync(o, { recursive: true });
+    writeFileSync(path.join(o, 'boot-log.json'), '{}'); writeFileSync(path.join(o, 'charter.md'), '# c');
+    writeFileSync(path.join(o, 'gate-cards.json'), JSON.stringify(cards)); writeFileSync(path.join(o, 'seed.sql'), seed);
+    return { status: 0, stdout: '', stderr: '' };
+  };
+  const run = (spawn) => { const logs = []; return main(['--slug', 'tool-share', '--root', f.root, '--bundle-dir', f.bundleDir, '--json'], { env: {}, spawn, log: x => logs.push(JSON.parse(x)), sleep: async () => {} }).then(code => ({ code, r: logs[0] })); };
+  const theirs = { id: 'GATE-SECRET-CODE_HOST_TOKEN', what: 'Set the CODE_HOST_TOKEN secret', why_gated: 'w', default_in_effect: 'repo stay in dry-run', prepared_by_fleet: 'p', closing_probe: 'env:CODE_HOST_TOKEN', say: 'Connect your code host', say_default: 'the system waits' };
+  let { code, r } = await run(boot([theirs]));
+  assert.equal(code, 0);
+  assert.deepEqual(r.gate_cards.map(c => c.id), ['GATE-SECRET-CODE_HOST_TOKEN']);
+  assert.deepEqual(JSON.parse(readFileSync(path.join(f.out, 'gate-cards.json'), 'utf8')).map(c => c.id), ['GATE-SECRET-CODE_HOST_TOKEN'], 'no second card for the same binding');
+  assert.equal(readFileSync(path.join(f.out, 'seed.sql'), 'utf8'), seed, 'nothing to add to the seed');
+  assert.match(r.steps.find(s => s.name === 'provision').detail, /seed SQL planned/, 'the dry run plans the seed with the migrations');
+  rmSync(f.out, { recursive: true, force: true });
+  ({ code, r } = await run(boot([])));
+  assert.equal(code, 0);
+  const cards = JSON.parse(readFileSync(path.join(f.out, 'gate-cards.json'), 'utf8')), sql = readFileSync(path.join(f.out, 'seed.sql'), 'utf8');
+  assert.deepEqual(cards.map(c => c.id), ['GATE-CODE_HOST_TOKEN']);
+  const rows = sql.split('\n').filter(l => l.startsWith('INSERT OR IGNORE INTO gate_cards'));
+  assert.equal(rows.length, 1, 'every card in the card file is a row of the seed SQL');
+  assert.ok(rows[0].includes(`'${cards[0].say}'`) && rows[0].includes(`'${cards[0].say_default}'`), rows[0]);
+  assert.doesNotMatch(rows[0].replace("'env:CODE_HOST_TOKEN'", '').replace("'GATE-CODE_HOST_TOKEN'", ''), /CODE_HOST_TOKEN|dry[- ]?run/, 'the console columns hold the plain lines; the binding stays in the probe');
 });
 
 test('preconditions: a missing idea file, a missing bundle source, --apply without its inputs and a bad flag all exit 2 before anything runs', async () => {

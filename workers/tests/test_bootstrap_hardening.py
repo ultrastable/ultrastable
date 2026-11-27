@@ -49,7 +49,7 @@ class Hardening(Hermetic):
                     self.assertTrue(c.get(f), f"{c['id']} lacks {f}")
 
     def test_invalid_policy_blocks_the_read_stage_even_without_an_idea_file(self):
-        """US-10-R02: the policy is validated before the idea is considered."""
+        """US-10-R02, US-06-R11: the policy is validated before the idea is considered."""
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             copy_seed(root)
@@ -85,7 +85,7 @@ class Hardening(Hermetic):
             self.assertEqual(rows, {c["id"] for c in cards})
 
     def test_invalid_policy_seeds_nothing_above_the_lowest_rung_and_apply_is_blocked(self):
-        """US-10-R02: an invalid policy blocks the read stage, the seed never applies it, and apply provisions nothing."""
+        """US-10-R02, US-06-R26: an invalid policy blocks the read stage, the seed never applies it, and apply provisions nothing."""
         for mode in ("--dry-run", "--apply"):
             with tempfile.TemporaryDirectory() as d:
                 root = Path(d)
