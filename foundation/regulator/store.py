@@ -34,6 +34,15 @@ class Store:
         self.db.row_factory = sqlite3.Row
         self.db.executescript(SCHEMA)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
+
+    def close(self):
+        self.db.close()
+
     def log_tokens(self, task_id, module, kind, input_tokens, output_tokens, cache_read=0):
         self.db.execute(
             "INSERT INTO token_log(ts,task_id,module,kind,input_tokens,output_tokens,cache_read_tokens)"

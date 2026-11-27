@@ -69,8 +69,11 @@ class RepoModel:
         known = {r["path"]: r["sha"] for r in db.execute("SELECT path, sha FROM file_state")}
         seen, parsed, unchanged = set(), 0, 0
         for rel, full in self._walk():
+            try:
+                sha = sha_file(full)
+            except OSError:  # unreadable, broken symlink or vanished mid-walk: skip, do not abort the whole refresh
+                continue
             seen.add(rel)
-            sha = sha_file(full)
             if known.get(rel) == sha:
                 unchanged += 1
                 continue
