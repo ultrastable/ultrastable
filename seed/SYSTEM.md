@@ -63,7 +63,8 @@ Loops the same cron runs beside the tick (from `worker/src/index.js`):
 - `knowledge-graph`: DATAGRAPH-1: every table of this system's own D1 becomes a graph (rows are nodes, references and mentioned ids are edges), kept bi-temporally; hubs, communities, bridges and orphans are read each pass
 - `graph-ai`: KGRAPH-AI-1: embeddings, extracted relations and community summaries on new graph nodes, scaled by the spend throttle
 - `progress`: PROGRESS-1: release cadence monitor; a slow system has its producers dispatched, a stalled one files STALL-<system>
-- `freshness`: LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
+- `freshness`
+- `recency`: RECENCY-PROBE-1: every live page keeps its stamp
 - `gh-only`: GH-ONLY-WATCH-1: GitHub-only loops get a second clock and go live the hour Pages turns on
 - `tenant-deploy`: TENANT-DEPLOY-1: a tenant repository's merge ships within the hour (twice an hour, ~4 subrequests)
 - `tenant-pulse`: every tenant back end has a second route to run besides its own cron
