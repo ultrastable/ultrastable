@@ -237,6 +237,20 @@ class Effect(unittest.TestCase):
         self.assertIn("shrink", executor.elision_gap(["a.js"], r))
         self.assertIsNone(executor.consumer_gap(["doctrine/code-agents.json"], ROOT))  # read by foundation/agents.py
 
+    def test_a_config_that_loses_its_keys_is_refused(self):  # SCHEMA-KEEP-1: 54d6e57e7 replaced actions-budget.json with an unrelated document
+        import subprocess
+        r = scratch()
+        subprocess.run(["git", "init", "-q"], cwd=r, check=True)
+        (r / "c.json").write_text('{"_doc": "d", "essential": [], "monthly_free_minutes": 2000}')
+        subprocess.run(["git", "add", "-A"], cwd=r, check=True)
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.org", "commit", "-qm", "x"], cwd=r, check=True)
+        self.assertIsNone(executor.contract_gap(["c.json"], r))
+        (r / "c.json").write_text('{"_doc": "d2", "essential": [], "monthly_free_minutes": 2000, "extra": 1}')
+        self.assertIsNone(executor.contract_gap(["c.json"], r), "adding a key is fine")
+        (r / "c.json").write_text('{"id": "free-tier-meter:spend", "budget": {}}')
+        self.assertIn("essential", executor.contract_gap(["c.json"], r)); self.assertIn("SCHEMA-KEEP-1", executor.contract_gap(["c.json"], r))
+        self.assertIsNone(executor.contract_gap(["new.json"], r), "a new file has nothing to keep")
+
 
 class ForeignCifail(unittest.TestCase):
     def test_other_repos_ci_item_is_not_takeable_here(self):  # FOREIGN-FIX-1
