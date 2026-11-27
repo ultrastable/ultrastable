@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-a-conflict-label-is-a-past-reading-read-live-mergeability-be",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "A conflict label is a past reading; read live mergeability before closing (PR-BOUND-3)",
+  "body": "prbound closed #2615 twice on a conflict label set at 02:50 while the branch merged cleanly with main, once 11 seconds after a reopen. The closer now reads GitHub's live mergeable state, drops a stale label and waits on an unknown state.",
+  "probe": "grep:foundation/prbound.py::def live_mergeable\\(",
+  "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
+ },
+ "kind": "lesson",
+ "title": "A conflict label is a past reading; read live mergeability before closing (PR-BOUND-3)",
+ "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
+}
