@@ -1,8 +1,51 @@
 # AGENTS.md
 
-Start with [`SYSTEM.md`](SYSTEM.md): what an Ultrastable system is, how it runs, how it bootstraps and how it becomes autonomous and reaches criticality, generated from this repository's code and checked by `python3 scripts/system.py --check`.
+> Ultrastable is the foundation for any autonomous system.
 
-The protocol for every agent in this repo is in [`agents/AGENTS.md`](agents/AGENTS.md). Read it first, then your role file in [`agents/roles/`](agents/roles/). Limits: [`autonomy/policy.json`](autonomy/policy.json).
+This repository is one Ultrastable system, started from the kernel. The owner wrote [`IDEA.md`](IDEA.md); everything else is the system's work. This file is all an agent loads before it starts. The standing rules stay word for word in [`agents/AGENTS.md`](agents/AGENTS.md) and are enforced by the checks they name: fetch the ones for the files you will change, and do not read that file top to bottom.
+
+## Commands
+
+| To | Run |
+|---|---|
+| see the rules for the files you will change | `python3 scripts/agentrules.py --for PATH [PATH ...]` |
+| read one rule in full | `python3 scripts/agentrules.py --show ID` |
+| list the rules, id and title | `python3 scripts/agentrules.py --list` |
+| check the system against its own definition | `python3 scripts/system.py --check` |
+| run one Worker test file | `cd worker && node --test test/NAME.test.js` |
+| run the Python tests | `python3 -m unittest discover -s tests` |
+| boot or re-boot the system (idempotent) | `python3 bootstrap/bootstrap.py` |
+| measure a change against the size limit | `python3 scripts/prsize.py --range origin/main...HEAD` |
+
+Python 3.12 and Node 24 (`.devcontainer/devcontainer.json`). There is no install step.
+
+## How a change moves
+
+1. Branch from current `main`, one concern per change, inside the size limit in `autonomy/prsize.json`.
+2. Change the code and its test in the same commit, and run the tests for what you touched.
+3. Run the checks that `agentrules.py --for` lists for your paths, and `python3 scripts/system.py --check`.
+4. Push the branch and open a draft pull request with a `## Handoff` block (`item:`, `agent:`, `verify:`, `deploy:`).
+5. Stop. The system's own Worker merges the pull request when its checks pass, deploys it and probes the result. Do not merge, deploy or poll.
+
+## Limits
+
+- Refer to a secret by its binding name. Do not print, commit or paste a value.
+- Protected paths are `.github/`, `autonomy/`, `AGENTS.md`, `CLAUDE.md` and `LICENSE`. Change one only when the task is about it. Do not weaken a guard or a test to get a pass.
+- The kernel arrives from the platform by `.github/workflows/platform-sync.yml`. A fix to kernel code (`worker/src`, `scripts`, `bootstrap`, `doctrine`, `agents`) belongs in `ultrastable/ultrastable` under `seed/`; this system's own files are `IDEA.md`, `README.md`, `org/` and its content.
+- `SYSTEM.md` and `doctrine/CONSTITUTION.md` are generated. Change the code or `doctrine/constitution.json` and run `python3 scripts/system.py --write` or `python3 scripts/constitution.py --render`.
+- Stop for the owner only at a step that cannot be undone and commits the owner's identity: money, a signature, their own account, deleting data that has no backup. Make it reversible first. If it cannot be, record one gate card with its default in effect and go on with other work.
+
+## Read when the task needs it
+
+| File | When |
+|---|---|
+| [`SYSTEM.md`](SYSTEM.md) | what an Ultrastable system is: tick steps, boot stages and the index from each rule to its code |
+| [`doctrine/CONSTITUTION.md`](doctrine/CONSTITUTION.md) | essential variables, the ladder, criticality and each rule's detector and remediation |
+| [`doctrine/SYSTEM.md`](doctrine/SYSTEM.md), [`doctrine/VISION.md`](doctrine/VISION.md) | the definition, and what the product is and is not for |
+| [`doctrine/GUIDING-DIRECTIVE.md`](doctrine/GUIDING-DIRECTIVE.md) | the owner's directive on autonomy, in full |
+| [`autonomy/policy.json`](autonomy/policy.json), [`agents/roles/`](agents/roles/) | your limits and your role |
+
+## Axioms the checks hold
 
 > CONSTITUTION-1: what an ultrastable system is, how it runs, bootstraps, becomes autonomous and reaches criticality is in [`doctrine/CONSTITUTION.md`](doctrine/CONSTITUTION.md), generated from `doctrine/constitution.json`, which the system reads at boot (stage `constitute`) and checks with `python3 scripts/constitution.py --check`. A standing rule with no detector and remediation in code fails that check. Nobody supplies this by chat.
 

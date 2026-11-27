@@ -162,3 +162,6 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **automation-never-discards-work** (Rowan, 2026-11-27): Automation never closes a pull request on a label, a cached state or an unknown state: it reads the pull request live, tries to update its branch, and pins the head under refs/archive before any close. A pull request automation closed that main still lacks is reopened.
   - detector: `worker/src/prsafe.js`
   - remediation: `worker/src/prsafe.js`, `worker/src/sweeper.js`
+- **short-agent-entry** (Rowan, 2026-11-27): An agent loads one short entry file before its first step, inside a byte and line budget, and fetches the standing rules that govern the paths it will change. The rules stay enforced by their checks; nothing depends on an agent having read all of them.
+  - detector: `scripts/agentrules.py`, `autonomy/agent-entry.json`
+  - remediation: `scripts/agentrules.py`, `AGENTS.md`

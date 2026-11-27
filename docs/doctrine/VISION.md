@@ -77,7 +77,7 @@ the commitment is stating the loop, the measure, the upkeep and the budget.
 
 | Place | How |
 |---|---|
-| `CLAUDE.md`, `seed/CLAUDE.md` | import this file, so every agent session starts from it |
+| `AGENTS.md`, `seed/AGENTS.md` | the entry file every agent session loads names this file for product and bootstrap work (AGENT-ENTRY-1) |
 | `docs/BOOTSTRAP-PROMPT.md` section 0 | the bootstrap qualifies the idea before it initializes anything |
 | `seed/IDEA.md` | the founder's one file carries a `# System test` section |
 | `seed/bootstrap/bootstrap.py` | stage `qualify` stops the boot with a not-a-fit card before any role is hired or anything is provisioned |

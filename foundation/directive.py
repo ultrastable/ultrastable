@@ -136,7 +136,7 @@ def instruction_check(root, d=None) -> list[str]:
     for p in names:
         t = p.read_text(encoding="utf-8")
         rel = p.relative_to(root).as_posix()
-        if p.name == "CLAUDE.md" and "@agents/AGENTS.md" in t:
+        if p.name == "CLAUDE.md" and ("@agents/AGENTS.md" in t or "@AGENTS.md" in t.splitlines()):
             continue  # imports AGENTS.md
         if d["instruction_marker"] not in t:
             bad.append(f"{rel}: does not carry the guiding directive ({d['instruction_marker']})")
@@ -294,7 +294,7 @@ def probe_all(root=REPO, now=None) -> list[dict]:
 def bootstrap(root=REPO) -> list[str]:
     """The memory-free reading order. Fails when any step's file is missing: a fresh agent with project memory disabled can start from the repo alone."""
     root, out = Path(root), []
-    order = ["CLAUDE.md", "agents/AGENTS.md", "docs/doctrine/GUIDING-DIRECTIVE.md", "doctrine/kernel-8.2.1.md", "docs/PROJECT-MEMORY.md",
+    order = ["CLAUDE.md", "AGENTS.md", "agents/AGENTS.md", "docs/doctrine/GUIDING-DIRECTIVE.md", "doctrine/kernel-8.2.1.md", "docs/PROJECT-MEMORY.md",
              "agents/PROJECT-INSTRUCTIONS.md", "doctrine/durable-facts.json", "docs/BOOTSTRAP-NO-MEMORY.md"]
     for rel in order:
         out.append(("ok   " if (root / rel).is_file() else "MISSING ") + rel)
