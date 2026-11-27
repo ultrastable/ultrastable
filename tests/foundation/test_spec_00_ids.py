@@ -39,11 +39,15 @@ SPEC = f"# US-SPEC-77\n\n- **{R1} [L1]** A thing MUST hold.\n- **{R2} [L2]** Ano
 
 
 class Identifiers(unittest.TestCase):
-    def test_us_00_r11_a_requirement_is_never_renumbered_reused_or_dropped(self):
+    def test_us_00_r11_and_us_00_t05_a_requirement_is_never_renumbered_reused_or_dropped(self):
         ok = tree(SPEC, ledger=[R1, R2])
         self.assertEqual(spec_ids.check(ok), [])
         twice = tree(SPEC + f"- **{R1} [L1]** The same identifier again.\n", ledger=[R1, R2])
         self.assertTrue(any("defined 2 times" in b and R1 in b for b in spec_ids.check(twice)), "an identifier is never reused")
+        two = tree(SPEC, ledger=[R1, R2])
+        (two / "specs" / "US-SPEC-77-other.md").write_text(f"# US-SPEC-77 other\n\n- **{R1} [L1]** Defined again in a second file.\n", encoding="utf-8")
+        self.assertTrue(any("defined 2 times" in b and "US-SPEC-77-example.md" in b and "US-SPEC-77-other.md" in b for b in spec_ids.check(two)),
+                        "an identifier defined in two specifications is reported")
         wrong = tree(f"# x\n- **{P}78-R01 [L1]** Defined under specification 77.\n", ledger=[f"{P}78-R01"])
         self.assertTrue(any("not specification 78" in b for b in spec_ids.check(wrong)), "an identifier sits in the specification its number names")
         gone = tree(f"# x\n- **{R1} [L1]** A thing MUST hold.\n", ledger=[R1, R2])
@@ -59,7 +63,7 @@ class Identifiers(unittest.TestCase):
         other = [b for b in spec_ids.check(ROOT) if "defined but not recorded" not in b]
         self.assertEqual(other, [])
 
-    def test_us_00_r12_a_built_line_that_names_a_file_that_is_not_there_is_found(self):
+    def test_us_00_r12_and_us_00_t06_a_built_line_that_names_a_file_that_is_not_there_is_found(self):
         code = {"a.js": "// real\n", "sub/b.py": "# real\n"}
         spec = ("# US-SPEC-77\n\n## 8. Reference implementation status\n\n"
                 "- Thing: BUILT in `a.js` with tests in `sub/b.py`.\n"
