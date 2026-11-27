@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261127-2",
+  "title": "OL-20261127-2: Wire the Perez Lopez guard into the tick (#2620 step 10)",
+  "body": "**Owner:** product-manager\n**Trigger:** issue 2620 step 10 unticked\n**Done check:** cmd:python3 scripts/perezlopez.py --check\n**Closing probe:** `python3 seed/scripts/perezlopez.py --check` exits 0 and seed/worker/src calls admit() before a step\n**Prediction:** retired_action_classes >= 0 within 336 h\n**Out of scope:** the VSM mapping, owned by PR 2624\n**Status:** open\n\nseed/scripts/perezlopez.py holds the Perez Lopez (IESE WP 5, 1974) rules as pure functions with drills. Next: call admit() before a step, store action_eval rows and retire classes in the tick. Session: session_0156nqDredxRjgVfePwXUrAp",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
