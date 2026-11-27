@@ -10,6 +10,11 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: fix(lane): a pull request carries no generator-owned files, so main moving under it cannot kill it (PR-NO-GENERATED-1) (#2694)
+- 2026-11-27: feat(checks): workflow tokens read-only at the top, identities registered (ZHC-R4) (#2697)
+- 2026-11-27: fix(site): growth hits window in milliseconds and cached (READ-BUDGET-12) (#2696)
+- 2026-11-27: fix(executor): take only the org's own issues and fence issue text as data (ZHC-R12) (#2695)
+- 2026-11-27: feat(checks): refuse executor PRs that only undo main's last day (ZHC-R13) (#2690)
 - 2026-11-27: feat(checks): tests-protected guard (ZHC-R11) (#2689)
 - 2026-11-27: fix(executor): carry the trailers into the squash merge (ZHC-R7) (#2688)
 - 2026-11-27: fix(executor): a model-level failure no longer downs the provider route; retire GitHub Models rungs (LADDER-1) (#2680)

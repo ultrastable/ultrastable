@@ -6613,6 +6613,51 @@
    "body": "checks runs tests-protected on every PR; counts are summed over the change so moves pass (ZHC-R11 #2676).",
    "probe": "grep:.github/workflows/checks.yml::foundation testguard",
    "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-an-executor-pr-that-only-undoes-main-s-last-day-is-refused",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "An executor PR that only undoes main's last day is refused",
+   "body": "CHURN-GUARD-1 (ZHC-R13 #2678): checks runs churn --gate --executor; a change whose every file returns to a pre-commit state of the last 24 h fails. redmain repairs and non-executor PRs are not gated.",
+   "probe": "grep:.github/workflows/checks.yml::foundation churn --gate",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-the-coder-job-takes-only-issues-its-own-organization-wrote-a",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "The coder job takes only issues its own organization wrote, and reads issue text fenced as data",
+   "body": "RULE-OF-TWO-1 (ZHC-R12 #2677): executor.pick skips issues not by an owner, member, collaborator or the org's own bots; crossrepo reads REST issues so the author is known; issue text is wrapped in a random-marker data block.",
+   "probe": "grep:foundation/executor.py::def trusted",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-workflow-tokens-no-new-top-level-write-identities-registered",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Workflow tokens: no new top-level write, identities registered",
+   "body": "IDENTITIES-1 (ZHC-R4 #2669): 52 workflows grant write at the top today and are listed; the list only shrinks, a new one fails checks. Merge, agent and administration identities with scopes and never-lists are in doctrine/identities.json.",
+   "probe": "grep:.github/workflows/checks.yml::foundation identities --check",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "lesson-2026-11-27-a-window-in-seconds-against-a-millisecond-column-read-the-wh",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "A window in seconds against a millisecond column read the whole ultrastable-ops hits table on every call",
+   "body": "READ-BUDGET-12: growthHits bound a seconds window to hits.at (milliseconds), so the three aggregate queries matched every row: all-time counts and about 24,000 rows read per query, every 90 seconds, 3.4M rows an hour against a 50,000 budget; the D1 query analytics named the queries. Fixed: a millisecond window and a 10-minute Cache API entry; tests pass (site/growth-hits.test.mjs), verified by the second call making no database read.",
+   "probe": "grep:site/worker.js::READ-BUDGET-12",
+   "session": "https://claude.ai/code/session_0156nqDsxJd4poRv2mkbug9e"
+  },
+  {
+   "id": "lesson-2026-11-27-pr-no-generated-1-a-pull-request-does-not-carry-generator-ow",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "PR-NO-GENERATED-1: a pull request does not carry generator-owned files; main's post-merge job is their one writer",
+   "body": "The fast job of checks regenerated files and pushed them onto the pull request. Main regenerated the same files minutes later, so the pull request conflicted; the Worker's resolver knew generated files only by a hand-written list that missed newer papers and ledgers, so it reported a code conflict; each bot push cancelled the run in progress, so no run finished; and the closer shut the pull request after its bound (#2664 after 35 minutes, #2615 three times). The regenerate step now works in the run's workspace and pushes nothing, the Worker and the Python resolver treat papers, site data modules and ops ledgers as classes of generator-owned files, the post-merge generators also own the kit's SYSTEM.md and claims file, and the fast job's limit is above its measured duration.",
+   "probe": "grep:seed/worker/src/generated.js::GENERATED_PATTERNS",
+   "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
   }
  ]
 }
