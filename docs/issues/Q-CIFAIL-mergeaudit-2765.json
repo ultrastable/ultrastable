@@ -1,7 +1,7 @@
 {
   "id": "Q-CIFAIL-mergeaudit-2765",
   "title": "Q-CIFAIL-mergeaudit-2765: PR #2765 merged without a green checks run",
-  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 2765\n**Status:** open\n\nMERGE-AUDIT-1: PR #2765 (spinoff: portfolio tick) merged at 2026-11-27T12:21:24Z with its `checks` run at `missing` on head 7a675ff. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 2765\n**Status:** open\n\nMERGE-AUDIT-1: PR #2765 (spinoff: portfolio tick) merged at 2026-11-27T12:21:24Z with its `checks` run at `missing` on head 7a675ff. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.\n\n**Vacuous:** 2026-11-27T12:42:40Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "role:staff",
     "ci-failure"
