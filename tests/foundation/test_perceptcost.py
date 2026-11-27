@@ -34,5 +34,24 @@ class PerceptCostTest(unittest.TestCase):
             self.assertTrue(pc.due(d, dt.date(2026, 11, 27)))
 
 
+class Envelope(unittest.TestCase):
+    def test_row_is_a_cloudevent_and_due_reads_it(self):
+        from foundation import cloudevents, openstd
+        r = {"date": "2026-11-27", "rows": []}
+        e = pc.envelope(r)
+        self.assertEqual(cloudevents.conforms(e), [])
+        self.assertEqual(cloudevents.unwrap(e), r)
+        with tempfile.TemporaryDirectory() as t:
+            d = Path(t); _root(d)
+            (d / pc.LOG).write_text(json.dumps(e) + "\n")
+            self.assertTrue(openstd.ledger_ok(d, pc.LOG))
+            self.assertFalse(pc.due(d, dt.date(2026, 11, 28)))
+            self.assertTrue(pc.due(d, dt.date(2026, 12, 4)))
+
+    def test_repo_ledger_conforms(self):
+        from foundation import openstd
+        self.assertTrue(openstd.ledger_ok(pc.REPO, pc.LOG))
+
+
 if __name__ == "__main__":
     unittest.main()

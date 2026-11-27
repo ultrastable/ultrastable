@@ -1,5 +1,5 @@
 {
- "at": "2026-11-27T12:47:14Z",
+ "at": "2026-11-27T13:26:15Z",
  "days": 730,
  "drills": {
   "actions-billing": {
@@ -41,7 +41,7 @@
   },
   "dependency-break": {
    "capacity": 0.9,
-   "evidence": "every ecosystem is advanced by Dependabot: github-actions 1, npm 5",
+   "evidence": "every ecosystem is advanced by Dependabot: github-actions 1, npm 5; 4 manifest(s) on the shrink-only baseline doctrine/deprot.json",
    "exercised": true,
    "mode": "recovers",
    "recover": true
