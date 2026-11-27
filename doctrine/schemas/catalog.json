@@ -451,6 +451,14 @@
       "url": "idea-bank.schema.json"
     },
     {
+      "name": "identities.json",
+      "description": "Contract for doctrine/identities.json",
+      "fileMatch": [
+        "doctrine/identities.json"
+      ],
+      "url": "identities.schema.json"
+    },
+    {
       "name": "improve.json",
       "description": "Contract for doctrine/improve.json",
       "fileMatch": [
