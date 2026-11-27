@@ -2909,21 +2909,13 @@ export default {
  },
  "readings": {
   "access-check:claims_drift": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:spend": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 169.82
@@ -2935,31 +2927,19 @@ export default {
    "value": 0.0
   },
   "access-check:value": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:claims_drift": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:spend": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 169.82
@@ -2971,31 +2951,19 @@ export default {
    "value": 0.0
   },
   "air-quality:value": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:claims_drift": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 8.491
@@ -3007,41 +2975,25 @@ export default {
    "value": 0.0
   },
   "blindspot:value": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": true,
    "unmeasured": false,
    "value": 2.02
   },
   "claims_drift": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "country-snapshot:claims_drift": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:spend": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 169.82
@@ -3053,41 +3005,25 @@ export default {
    "value": 0.0
   },
   "country-snapshot:value": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "deploy_health": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.915
   },
   "free-tier-meter:claims_drift": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:spend": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 169.82
@@ -3099,51 +3035,31 @@ export default {
    "value": 0.0
   },
   "free-tier-meter:value": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "happy_paths": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "lessons_enforced": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.692
   },
   "loop-ledger:claims_drift": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "loop-ledger:spend": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
@@ -3155,31 +3071,19 @@ export default {
    "value": 0.0
   },
   "loop-ledger:value": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:claims_drift": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 169.82
@@ -3191,41 +3095,25 @@ export default {
    "value": 0.0
   },
   "numbers-board:value": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "owner_interventions": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 74
   },
   "portfolio-board:claims_drift": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 169.82
@@ -3237,55 +3125,30 @@ export default {
    "value": 0.0
   },
   "portfolio-board:value": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "research_in_code": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.621
   },
   "second_loop_keep_rate": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "self_shipping": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.786
   },
   "spec_quality": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-   "in_bounds": false,
-   "unmeasured": false,
-   "value": 0.36
-  },
-  "spend": {
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
    "in_bounds": false,
    "unmeasured": false,
@@ -3293,47 +3156,30 @@ export default {
   },
   "spend": {
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 8.491
   },
   "stalled_clocks": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": false,
    "unmeasured": false,
    "value": 3
   },
   "ui_findings": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "unattended_horizon": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": true,
    "unmeasured": false,
    "value": 730
   },
   "value": {
-<<<<<<< HEAD
-   "at": "2026-11-27T04:20:29Z",
-=======
    "at": "2026-11-27T04:26:55Z",
->>>>>>> origin/main
    "in_bounds": true,
    "unmeasured": false,
    "value": 31.681
