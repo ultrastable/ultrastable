@@ -12,6 +12,7 @@
   python3 -m foundation resilience [--run [--apply]|--report|--check|--probe ID]   every clock keeps ticking; stalled ones are restarted (RESILIENCE-1)
   python3 -m foundation verify [--check|--report]                          VERIFY-1: model-check the core loops and tie the models to the code
   python3 -m foundation ultrastability [--tick [--apply]|--check|--data [--apply]]  Ashby's two loops over essential variables (ULTRASTABILITY-1)
+  python3 -m foundation freeadapt [--report|--run [--apply]|--probe CLASS|--levels|--check]  FREELY-ADAPTIVE-1: both verdicts on every action, three survival levels (Pérez López 1974)
   python3 -m foundation lessons [--check]  every lesson bound to enforcing code or an open item (LESSONS-1)
   python3 -m foundation specgate [--check]  work items an agent cannot misread: done check, prediction, out of scope, live proof (SPEC-GATE-1)
   python3 -m foundation criticality [--tick [--apply]|--check|--gate]     the mantra as a computed invariant (CRITICALITY-1)

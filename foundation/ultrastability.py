@@ -53,7 +53,20 @@ def readings(root=REPO) -> dict:
             "criticality.cost": cost, "criticality.verified_share": round(verified, 3), "claims.drift": drift, "criticality.k": c["k"], "resilience.stalled": resilience.stalled_reading(root),
             "uiux.findings": uiux.status_reading(root, "findings_blocking"), "uiux.happy_paths": uiux.status_reading(root, "happy_path_pass_share"),
             "owner.interventions_7d": owner_interventions(root), "ultra.keep_rate": keep_rate(root), "spec.quality": spec_quality(root),
-            "research.met_share": research_met(root), "lessons.enforced_share": lessons_share(root)}
+            "research.met_share": research_met(root), "lessons.enforced_share": lessons_share(root),
+            "freeadapt.levels": survival_levels(root)}
+
+
+def survival_levels(root):
+    """FREELY-ADAPTIVE-1 (Pérez López, IESE WP 5, 1974, chapter V): how many of effective, attractive and consistent hold now. An unmeasured
+    level counts as not met; None only when none of the three can be read."""
+    from . import freeadapt
+    try:
+        lv = freeadapt.levels(root)
+    except (OSError, ValueError, KeyError, TypeError) as e:
+        print(f"ultrastability: survival levels unreadable: {e}", file=sys.stderr)
+        return None
+    return lv["met"] if lv["measured"] else None
 
 
 def lessons_share(root):
@@ -641,7 +654,7 @@ def _parse(root):
 
 def readings_keys():
     return ("yearsim.horizon_p10", "yearsim.self_rate", "criticality.cost", "criticality.verified_share", "claims.drift", "criticality.k", "resilience.stalled", "uiux.findings", "uiux.happy_paths",
-            "owner.interventions_7d", "ultra.keep_rate", "spec.quality", "research.met_share", "lessons.enforced_share")
+            "owner.interventions_7d", "ultra.keep_rate", "spec.quality", "research.met_share", "lessons.enforced_share", "freeadapt.levels")
 
 
 def data(root=REPO) -> dict:

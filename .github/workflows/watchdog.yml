@@ -52,6 +52,9 @@ jobs:
         run: python3 -m foundation runway --run --apply --changed-file "$RUNNER_TEMP/changed"
       - name: Ultrastability tick (a stall is a second-order event)
         run: python3 -m foundation ultrastability --tick --apply && python3 -m foundation ultrastability --data --apply
+      - name: Freely-adaptive pass (FREELY-ADAPTIVE-1, Pérez López 1974)
+        # an action class whose recent actions keep pushing other essential variables out of their limits files Q-FAS-<class>
+        run: python3 -m foundation freeadapt --run --apply --changed-file "$RUNNER_TEMP/changed"
       - name: Record
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}

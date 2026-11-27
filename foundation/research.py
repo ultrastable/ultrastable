@@ -47,6 +47,11 @@ METRICS = {
     "kg_systems_share": "share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending",
     "owner_interventions_7d": "owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl)",
     "spec_quality": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
+    "essential_measured_share": "share of essential variables (platform and tenant) whose latest reading in the last 7 days has a value (ops/ultrastability.jsonl)",
+    "efficiency_verdict_share": "share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py)",
+    "action_classes_consistent_share": "share of judged action classes whose recent actions mostly left the other essential variables inside their limits (foundation/freeadapt.py)",
+    "survival_levels_met": "how many of the three survival levels hold now: effective, attractive, consistent (foundation/freeadapt.py)",
+    "lessons_enforced_share": "share of recorded lessons bound to a check, variable, detector or test (doctrine/lessons.json)",
     "research_findings_met_share": "share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1)",
 }
 NOW = lambda: dt.datetime.now(dt.timezone.utc)
@@ -158,6 +163,24 @@ def measures(root=REPO, pol=None) -> dict:
     except (OSError, ValueError, KeyError) as e:
         print(f"research: second-loop readings failed: {e}", file=sys.stderr)
         m["owner_interventions_7d"] = m["spec_quality"] = {"value": None, "n": 0, "source": "unreadable"}
+    m["essential_measured_share"] = essential_measured(us, end or NOW())
+    try:  # FREELY-ADAPTIVE-1: both kinds of learning and the three survival levels (Pérez López, IESE WP 5, 1974)
+        from . import freeadapt as FA
+        fr = FA.report(root)
+        lv = fr["levels"]
+        m["efficiency_verdict_share"] = {"value": fr["efficiency_verdict_share"], "n": fr["settled_actions"], "source": "ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl"}
+        m["action_classes_consistent_share"] = {"value": fr["action_classes_consistent_share"], "n": fr["classes_judged"], "source": "foundation/freeadapt.py over the same ledgers"}
+        m["survival_levels_met"] = {"value": lv["met"], "n": lv["measured"], "source": "ops/criticality.jsonl and ops/executor-log.jsonl (foundation/freeadapt.py)"}
+    except (OSError, ValueError, KeyError, TypeError) as e:
+        print(f"research: freeadapt readings failed: {e}", file=sys.stderr)
+        m["efficiency_verdict_share"] = m["action_classes_consistent_share"] = m["survival_levels_met"] = {"value": None, "n": 0, "source": "unreadable"}
+    try:
+        from . import ultrastability as U3
+        ls = U3.lessons_share(root)
+        m["lessons_enforced_share"] = {"value": ls, "n": None if ls is None else 1, "source": "doctrine/lessons.json (foundation/lessons.py)"}
+    except (OSError, ValueError, KeyError) as e:
+        print(f"research: lessons reading failed: {e}", file=sys.stderr)
+        m["lessons_enforced_share"] = {"value": None, "n": 0, "source": "unreadable"}
     fs = [f for st in studies(root, pol) for f in st.get("findings", []) if f.get("metric") != "research_findings_met_share"]
     met = [f for f in fs if verdict(f, m)["status"] == "met"]
     m["research_findings_met_share"] = {"value": round(len(met) / len(fs), 3) if fs else None, "n": len(fs), "source": "research/studies, each finding measured as above"}
@@ -165,6 +188,17 @@ def measures(root=REPO, pol=None) -> dict:
                     "prs": len(prs), "merged": len(merged), "regime": last.get("regime"), "k_self": last.get("k_self"),
                     "as_of": max([x for x in (snap.get("fetched_at"), last.get("at"), deps[-1].get("at") if deps else None) if x] or [None], key=lambda x: _t(x) if x else dt.datetime.min.replace(tzinfo=dt.timezone.utc))}
     return m
+
+
+def essential_measured(rows: list[dict], end, days=7) -> dict:
+    """FREELY-ADAPTIVE-1 (Pérez López, 1974: "an organization may die because it does not know that its essential variables are disturbed"): the
+    latest reading of every essential variable seen in the last `days`; a variable whose latest reading has no value is not known."""
+    cut, last = end - dt.timedelta(days=days), {}
+    for r in rows:
+        if r.get("ev") == "reading" and r.get("var") and (_t(r.get("at")) or cut) >= cut:
+            last[r["var"]] = r
+    known = sum(1 for r in last.values() if r.get("value") is not None and not r.get("unmeasured"))
+    return {"value": round(known / len(last), 3) if last else None, "n": len(last), "source": f"ops/ultrastability.jsonl, latest reading per variable in the last {days} days"}
 
 
 def verdict(finding: dict, ms: dict) -> dict:
@@ -480,7 +514,9 @@ def file_items(root, study, ms, apply) -> list[str]:
             continue
         iid = f"Q-RES-{study['id']}-{f['id']}"
         body = (f"**Owner:** product-manager\n**Trigger:** research pass: {study['id']} finding {f['id']} is {v['status']} (measured {v['value']})\n"
-                f"**Done check:** cmd:python3 -m foundation research --probe {study['id']}:{f['id']}\n**Prediction:** {f['prediction']}\n**Status:** open\n\n"
+                f"**Done check:** cmd:python3 -m foundation research --probe {study['id']}:{f['id']}\n**Prediction:** {f['prediction']}\n"
+                f"**Out of scope:** editing the study, its target or the paper to match the code; the measurement is changed only by changing the mechanism\n"
+                f"**Closing probe:** `python3 -m foundation research --probe {study['id']}:{f['id']}`\n**Status:** open\n\n"
                 f"Concern: {f['concern'].rstrip('.?')}. The study: {f['claim']}\n\nMechanisms that should answer it: " + ("; ".join(f"{m['rule']} ({m['path']})" for m in f["mechanisms"]) or "none yet; build one") +
                 f".\n\nMetric: {METRICS[f['metric']]}, target {f['target']['op']} {f['target']['value']}. Improve the mechanism (or add one) until the probe passes; "
                 "the white paper at /research updates itself from the same measurement.")

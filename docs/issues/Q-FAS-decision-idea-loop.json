@@ -1,0 +1,12 @@
+{
+  "id": "Q-FAS-decision-idea-loop",
+  "title": "Q-FAS-decision-idea-loop: action class decision:idea-loop keeps disturbing other essential variables",
+  "body": "**Owner:** executor\n**Trigger:** freeadapt pass: action class `decision:idea-loop` kept 0.333 of its last 6 measured actions efficient (floor 0.5); essential variables disturbed while they were open: claims_drift, deploy_health, stalled_clocks, value\n**Done check:** cmd:python3 -m foundation freeadapt --probe decision:idea-loop\n**Prediction:** action_classes_consistent_share >= 0.9 within 336 h\n**Out of scope:** changing the floor, the window or the ledgers this reading comes from; the action's own target metric (scored elsewhere)\n**Status:** open\n\nFREELY-ADAPTIVE-1 (Pérez López, IESE WP 5, 1974, chapter III): an ultrastable system discards action alternatives found to have decreasing efficiency. These actions reached their own targets or were reverted, but while they were open other needs of the system left their limits (the model was incomplete, not incorrect). Redesign the alternative so it guards the disturbed variables, or retire it from its loop.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation freeadapt --probe decision:idea-loop`\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

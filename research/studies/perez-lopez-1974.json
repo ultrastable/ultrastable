@@ -1,0 +1,229 @@
+{
+  "schema": "research-study/1",
+  "id": "perez-lopez-1974",
+  "order": 6,
+  "paper_title": "Effective is not enough: Pérez López's freely-adaptive system and the two kinds of learning an autonomous system needs",
+  "paper_frame": "Pérez López took Ashby's ultrastable system from the organism to the organization. He shows that every action has to be judged twice, on whether it reached its goal and on what it did to everything else the system needs, and that an organization survives only while it is effective, attractive and consistent at once. We state each of his points as a property this system can fail, measure it from the system's own ledgers, and built the reading that was missing: a second verdict on every settled action and the three survival levels.",
+  "title": "Organizational Theory: A Cybernetic Approach",
+  "authors": [
+    "Juan A. Pérez López"
+  ],
+  "institution": "IESE Business School, University of Navarra",
+  "kind": "working paper",
+  "version": "WP No 5, July 1974",
+  "seeded_by": "owner, 2026-11-27 (uploaded PDF, \"audit and implement in code\")",
+  "source_url": "https://www.iese.edu/media/research/pdfs/DI-0005-E.pdf",
+  "data": "Theory, building on Barnard's The Functions of the Executive and Ashby's Design for a Brain. Chapter I cybernetic theory of organization, II building the model, III individuals as ultrastable systems, IV the control system of an organization, V the freely-adaptive-system.",
+  "summary": "Ashby's ultrastable system explains how an organism learns to keep its essential variables in limits, but nature builds that mechanism into organisms and no one builds it into organizations, so it must be built on purpose. Every action has an effectiveness (its explicit, predictable consequence), an efficiency (its consequences for the system's other needs, learned only by experience) and a consistency (how its efficiency changes as the system learns). An organization survives only if it is effective, attractive to its members and consistent at once.",
+  "perspectives": [
+    "systems",
+    "reliability",
+    "economics",
+    "oversight"
+  ],
+  "limits": [
+    "Reading. The whole working paper was read from the IESE PDF the owner supplied; the passages quoted in the findings are verbatim.",
+    "Members. Pérez López's members are people with motives. The members whose acceptance is read here are the executor's attempts on work orders (merged against discarded); a model has no motives, so attractiveness is an operational analogue of his concept, not a claim about motivation.",
+    "Attribution. An essential variable that left its limits while an action was open is counted against every action open at the time. Co-occurrence is not causation, so the count of incomplete-model actions is an upper bound on the actions that really caused a disturbance.",
+    "Effectiveness of an action is the verdict its own loop recorded (a decision scored as a hit, a growth experiment kept, a second-loop step kept). Actions that recorded no verdict are not counted, and an action with no earlier reading of any other variable has no efficiency verdict.",
+    "Organizational effectiveness reads k from the latest criticality tick, which counts deploys driven from outside the system; k_self, the system's own share, is reported beside it and is not what the level is judged on.",
+    "Pérez López leaves measurement aside on purpose (chapter IV). The floors used here (half of recent actions efficient, half of attempts merged) are this system's choices, stated in foundation/freeadapt.py, not figures from the paper."
+  ],
+  "findings": [
+    {
+      "id": "P1",
+      "concern": "A control system that only corrects deviations from plans",
+      "claim": "In a stable system feedback only corrects deviations from a plan that someone outside set. In an ultrastable system the aim of the control function is twofold: \"Ensure that plans are consistent with objectives\" and \"Ensure that plans are accomplished\". A system whose work items carry no objective to be measured against can only do the second.",
+      "where": "Chapter I, pages 4 and 5",
+      "perspective": "systems",
+      "mechanisms": [
+        {
+          "rule": "GOALS-1",
+          "path": "seed/worker/src/goals.js",
+          "how": "the system keeps its own goal hierarchy and turns bounded knobs toward each target"
+        },
+        {
+          "rule": "PLAN-1",
+          "path": "seed/worker/src/planner.js",
+          "how": "the goal furthest out of bounds becomes a task tree, gated on a fresh reading of that goal"
+        },
+        {
+          "rule": "SPEC-GATE-1",
+          "path": "seed/scripts/specgate.py",
+          "how": "a work item needs a done check, a prediction on a metric, an out-of-scope line and a live probe"
+        }
+      ],
+      "metric": "spec_quality",
+      "target": {
+        "op": ">=",
+        "value": 0.9
+      },
+      "prediction": "spec_quality >= 0.9 within 336 h"
+    },
+    {
+      "id": "P2",
+      "concern": "Not knowing that an essential variable is disturbed",
+      "claim": "Nature has given organisms the mechanisms that keep essential variables in limits; it has not given them to organizations, so they must be built in on purpose. \"An organism may die because it does not have a 'program' to cope with disturbances in the value of its essential variables. An organization may die because it does not know that its essential variables are disturbed.\"",
+      "where": "Chapter I, page 5",
+      "perspective": "reliability",
+      "mechanisms": [
+        {
+          "rule": "ULTRASTABILITY-1",
+          "path": "foundation/ultrastability.py",
+          "how": "every essential variable is read each tick; one that cannot be read is never in bounds and files its own UNMEASURED item"
+        },
+        {
+          "rule": "REDTEAM-1",
+          "path": "foundation/redteam.py",
+          "how": "a reading with no data never counts as met"
+        }
+      ],
+      "metric": "essential_measured_share",
+      "target": {
+        "op": ">=",
+        "value": 0.95
+      },
+      "prediction": "essential_measured_share >= 0.95 within 336 h"
+    },
+    {
+      "id": "P3",
+      "concern": "Scoring only whether an action reached its target",
+      "claim": "An action is effective when it reaches its explicit goal and efficient when its unsought consequences do not offset that. Barnard runs the two together, but they teach different things: when the predicted result does not happen, the model is incorrect; when it happens and produces offsetting dissatisfactions, the model is incomplete. A system that scores only predictions learns only the first.",
+      "where": "Chapter III, pages 11 to 13",
+      "perspective": "systems",
+      "mechanisms": [
+        {
+          "rule": "FREELY-ADAPTIVE-1",
+          "path": "foundation/freeadapt.py",
+          "how": "every settled decision, growth experiment and second-loop step gets an efficiency verdict beside its own: did another essential variable of its scope leave its limits while it was open"
+        },
+        {
+          "rule": "DECISIONS-1",
+          "path": "foundation/decisions.py",
+          "how": "every decision logs its prediction and is scored against the measured outcome (the effectiveness verdict)"
+        }
+      ],
+      "metric": "efficiency_verdict_share",
+      "target": {
+        "op": ">=",
+        "value": 0.8
+      },
+      "prediction": "efficiency_verdict_share >= 0.8 within 168 h"
+    },
+    {
+      "id": "P4",
+      "concern": "Repeating actions whose side effects keep growing",
+      "claim": "\"An ultrastable system is one that has a built-in mechanism which ensures consistency, that is to say, a mechanism which systematically discards action alternatives that have been found to have decreasing efficiency after they were tried.\"",
+      "where": "Chapter III, page 11",
+      "perspective": "reliability",
+      "mechanisms": [
+        {
+          "rule": "FREELY-ADAPTIVE-1",
+          "path": "foundation/freeadapt.py",
+          "how": "an action class whose recent actions mostly disturbed other essential variables files a Q-FAS item to redesign or retire it, closed only when the same reading passes"
+        },
+        {
+          "rule": "ULTRASTABILITY-1",
+          "path": "foundation/ultrastability.py",
+          "how": "a second-loop step is kept only when its variable is back inside its limits; otherwise it is undone"
+        }
+      ],
+      "metric": "action_classes_consistent_share",
+      "target": {
+        "op": ">=",
+        "value": 0.9
+      },
+      "prediction": "action_classes_consistent_share >= 0.9 within 336 h"
+    },
+    {
+      "id": "P5",
+      "concern": "Surviving on one level only",
+      "claim": "\"An organization, to survive, must accomplish goals at all three levels\": effective (it must generate more resources than are needed to motivate membership), attractive (it must create enough motivation in its members to persuade them to cooperate) and consistent (otherwise it lasts only as long as it can buy back lost attractiveness with greater rewards, until it needs more resources to motivate people than it obtains).",
+      "where": "Chapter V, pages 18 to 20",
+      "perspective": "economics",
+      "mechanisms": [
+        {
+          "rule": "FREELY-ADAPTIVE-1",
+          "path": "foundation/freeadapt.py",
+          "how": "the three levels are read every pass: k at or above its floor, the share of the executor's attempts that are merged, and that share not falling between the earlier and later half"
+        },
+        {
+          "rule": "CRITICALITY-1",
+          "path": "foundation/criticality.py",
+          "how": "k = verified deploys over normalized cost and human touches, logged every tick"
+        },
+        {
+          "rule": "ULTRASTABILITY-1",
+          "path": "doctrine/ultrastability.json",
+          "how": "survival_levels is an essential variable held at 3, so the second loop acts when one level fails"
+        }
+      ],
+      "metric": "survival_levels_met",
+      "target": {
+        "op": ">=",
+        "value": 3
+      },
+      "prediction": "survival_levels_met >= 3 within 168 h"
+    },
+    {
+      "id": "P6",
+      "concern": "A memory that leaves past mistakes out",
+      "claim": "Selective use of memory is central: an evoked set can leave out what shows that previous actions were wrong. The working paper defines \"pride\" as the attitude \"which tends to eliminate from the 'evoked set' all those elements in memory which show that previous actions were wrong\". A system that records its mistakes but lets nothing act on them has that blind spot.",
+      "where": "Chapter III, page 11 and footnote 3",
+      "perspective": "oversight",
+      "mechanisms": [
+        {
+          "rule": "LESSONS-1",
+          "path": "foundation/lessons.py",
+          "how": "every recorded lesson is bound to a check, variable, detector or test, or carried by an open item until it is"
+        },
+        {
+          "rule": "FAILURE-RESOLVE-1",
+          "path": "foundation/failure_audit.py",
+          "how": "every failure mode has a live detector and a failing one files its own item"
+        }
+      ],
+      "metric": "lessons_enforced_share",
+      "target": {
+        "op": ">=",
+        "value": 1.0
+      },
+      "prediction": "lessons_enforced_share >= 1 within 336 h"
+    },
+    {
+      "id": "P7",
+      "concern": "The member knowing better than the organization",
+      "claim": "Organizational values forbid tasks that do not satisfy a member's needs \"even though that fact may not be known to the individual\", and \"an organization will be successful insofar as it knows better than the individual himself what actions by the individual will satisfy the individual's needs.\" Each time the owner has to step in and correct the system, the reverse held.",
+      "where": "Chapter V, page 20",
+      "perspective": "oversight",
+      "mechanisms": [
+        {
+          "rule": "IGNORANCE-1",
+          "path": "foundation/ignorance.py",
+          "how": "what the owner does not know is computed (known minus told), never asked"
+        },
+        {
+          "rule": "BLINDSPOT-1",
+          "path": "foundation/blindspots.py",
+          "how": "a register of needs the owner is not expected to know, each with a probe"
+        },
+        {
+          "rule": "SECOND-LOOP-2",
+          "path": "foundation/ultrastability.py",
+          "how": "owner interventions are an essential variable held at 0"
+        }
+      ],
+      "metric": "owner_interventions_7d",
+      "target": {
+        "op": "<=",
+        "value": 0
+      },
+      "prediction": "owner_interventions_7d <= 0 within 336 h"
+    }
+  ],
+  "misperception": {
+    "belief": "An autonomous system is under control when every action it takes is scored on whether it reached its own target.",
+    "short": "Hitting the target is enough.",
+    "counter": "An action can reach its target and still push something else the system needs out of its limits. A system has to score both, learn which of its actions keep doing harm, and drop them, or it learns only half of what experience teaches."
+  }
+}

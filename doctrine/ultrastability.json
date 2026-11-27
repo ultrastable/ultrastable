@@ -492,6 +492,31 @@
               "what": "build: take the Q-LESSON items and bind each lesson to a check, variable, detector or test"
             }
           ]
+        },
+        {
+          "id": "survival_levels",
+          "name": "Survival levels held",
+          "reading": "freeadapt.levels",
+          "min": 3,
+          "max": null,
+          "unit": "levels of three (effective, attractive, consistent) that hold now",
+          "first_order": [
+            "executor",
+            "criticality"
+          ],
+          "why": "FREELY-ADAPTIVE-1 (Pérez López, Organizational Theory: A Cybernetic Approach, IESE WP 5, 1974): an organization survives only if it is effective, attractive and consistent at once; one level alone buys time until it needs more to motivate its members than it obtains. Read by foundation/freeadapt.py.",
+          "ladder": [
+            {
+              "kind": "item",
+              "labels": [
+                "p0",
+                "agent-ready",
+                "raises-self"
+              ],
+              "workstream": "Ultrastability",
+              "what": "build: run `python3 -m foundation freeadapt --levels`, take the level that fails (k under its floor, the executor's attempts mostly discarded, or that share falling) and change the loop that feeds it until the reading holds 3"
+            }
+          ]
         }
       ]
     },

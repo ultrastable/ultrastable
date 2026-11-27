@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-p-rez-l-pez-1974-ingested-both-verdicts-on-every-action-free",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "Pérez López 1974 ingested; both verdicts on every action (FREELY-ADAPTIVE-1)",
+  "body": "Every settled action gets an effectiveness verdict (its own) and an efficiency verdict (another essential variable of its scope left its limits while it was open). Inconsistent action classes file Q-FAS items; the three survival levels are the essential variable survival_levels.",
+  "probe": "grep:foundation/freeadapt.py::def levels\\(",
+  "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
+ },
+ "kind": "decision",
+ "title": "Pérez López 1974 ingested; both verdicts on every action (FREELY-ADAPTIVE-1)",
+ "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
+}
