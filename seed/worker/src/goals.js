@@ -153,8 +153,11 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
   await ensure(db); const c = cfgOf(cfg), now = ctx.now || Date.now(), out = { read: 0, met: 0, off: 0, adjusted: [], reviewed: [], stretch: [], retired: [], filed: [] };
   if (cfg) await seedGoals(db, cfg, { now });
   if (cfg && cfg.tenant_feeds && cfg.tenant_feeds.length) out.feeds = await pullFeeds(db, cfg.tenant_feeds, { fetchFn: ctx.fetch || (ctx.env && ctx.env.fetch) || fetch, now });
-  const goals = await all(db, `SELECT * FROM goals WHERE status='active' AND level='target'`);
-  let adjusts = 0;
+  // PEREZ-LOPEZ-1: essential variables come before the objective. Essential goals are read first; while one is off target,
+  // no other goal may move a knob this pass (seed/scripts/perezlopez.py admit()).
+  const ess = new Set(c.essential || []);
+  const goals = (await all(db, `SELECT * FROM goals WHERE status='active' AND level='target'`)).sort((a, b) => ess.has(b.id) - ess.has(a.id));
+  let adjusts = 0, evBreach = [];
   for (const g of goals) {
     const v = await readGoal(db, g, { builtins, now, stale_days: c.stale_days });
     if (v === null) {  // no reading: retire a system or tenant goal that has had none for stale_days; a seed goal files its own item
@@ -171,6 +174,7 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
     const streak = met ? g.streak + 1 : 0;
     await run(db, 'UPDATE goals SET last_value=?, last_at=?, met=?, streak=? WHERE id=?', v, now, met ? 1 : 0, streak, g.id);
     met ? out.met++ : out.off++;
+    if (!met && ess.has(g.id)) evBreach.push(g.id);
     // review: the last unreviewed change of each knob of this goal, once its review time has passed
     const due = await all(db, `SELECT a.*, k.value AS kval, k.cooldown_h FROM goal_adjustments a JOIN goal_knobs k ON k.id = a.knob_id WHERE a.goal_id=? AND a.reviewed_at IS NULL AND a.review_after <= ?`, g.id, now);
     for (const a of due) {
@@ -189,7 +193,9 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
     if (!met && need !== 0) {
       let moved = false;
       const pending = await first(db, `SELECT COUNT(*) AS n FROM goal_adjustments WHERE goal_id=? AND reviewed_at IS NULL`, g.id);
-      if (!(pending && pending.n) && adjusts < c.max_adjust_per_run) {
+      const held = evBreach.length && !ess.has(g.id);
+      if (held) (out.held ||= []).push({ goal: g.id, essential_off: evBreach.slice() });
+      if (!held && !(pending && pending.n) && adjusts < c.max_adjust_per_run) {
         const cand = [];
         const recent = await all(db, `SELECT knob_id, at, old, new FROM goal_adjustments WHERE goal_id=? AND at >= ?`, g.id, now - 30 * 86400e3);
         for (const k of knobs) {
@@ -210,7 +216,7 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
         }
       }
       const resting = pending && pending.n;
-      if (!moved && !resting && ensureItem && g.tenant === 'core') {
+      if (!moved && !resting && !held && ensureItem && g.tenant === 'core') {
         const f = await ensureItem(db, { id: itemId, kind: 'fix', priority: 6, owner_role: 'product-manager', title: `Goal ${g.id} reads ${v}; target ${g.op} ${g.target}${g.deadline ? ' by ' + g.deadline : ''}. No knob can move it now (${knobs.length ? 'all at a bound, resting after a revert, or cooling down' : 'none attached'}). Build a lever for it: ${g.statement}`.slice(0, 400), done_check: `goal ${g.id} reads ${g.op} ${g.target}`, closing_probe: `SELECT COUNT(*) FROM goals WHERE id='${g.id}' AND met=1`, surface: 'goals' });
         if (f) out.filed.push(itemId);
       }
