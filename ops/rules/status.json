@@ -1,5 +1,5 @@
 {
- "at": "2026-11-26T22:43:49Z",
+ "at": "2026-11-27T04:57:20Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -32,16 +32,16 @@
    "item": null
   },
   "front-end-matches-back-end/claims": {
-   "status": "ok",
-   "detail": "claims: 432 verified of 432; 0 drift",
+   "status": "violated",
+   "detail": "claims: 434 verified of 436; 2 drift",
    "fixed": false,
-   "item": null
+   "item": "Q-RULE-front-end-matches-back-end-claims"
   },
   "front-end-matches-back-end/claimcode": {
-   "status": "ok",
-   "detail": "claimcode ok",
+   "status": "violated",
+   "detail": "claimcode: 1 problems",
    "fixed": false,
-   "item": null
+   "item": "Q-RULE-front-end-matches-back-end-claimcode"
   },
   "front-end-matches-back-end/pages-live": {
    "status": "unmeasured",
@@ -57,7 +57,7 @@
   },
   "no-merge-over-red/mergeaudit": {
    "status": "violated",
-   "detail": "merged without green checks: #2529, #2545",
+   "detail": "merged without green checks: #2589, #2596, #2644",
    "fixed": false,
    "item": "Q-RULE-no-merge-over-red-mergeaudit"
   },
@@ -218,7 +218,9 @@
    "item": null
   }
  },
- "filed": [],
+ "filed": [
+  "Q-RULE-front-end-matches-back-end-claimcode"
+ ],
  "rules": {
   "closed-loops": {
    "status": "enforced",
@@ -235,7 +237,7 @@
    "statement": "No decision, question or step is handed to the owner; agents decide, deploy and verify (GUIDING-DIRECTIVE, CODE-ONLY-ORDER)."
   },
   "front-end-matches-back-end": {
-   "status": "unmeasured",
+   "status": "violated",
    "ci": 2,
    "probes": 4,
    "gaps": [
