@@ -1,4 +1,5 @@
-# SPDX-License-Identifier: LicenseRef-Ultrastable
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 # RED-MERGE-1 (ZHC-R5): the closing probe of the merge-lane item, measured: how many commits that reached main in the window had a failing
 # `checks` run. python3 -m foundation redmerge [--days 7] [--repo O/R]   exit 1 when any, and unmeasured (gh unreadable) is never 0.
 import json, subprocess, sys

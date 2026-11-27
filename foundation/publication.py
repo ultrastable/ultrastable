@@ -130,7 +130,17 @@ def fix_headers(root=REPO) -> list[str]:
         p = root / msg.split(":", 1)[0]
         c = "#" if p.suffix in (".py", ".sh", ".toml", ".yml", ".yaml") else "//"
         t = p.read_text(encoding="utf-8")
-        head = f"{c} SPDX-License-Identifier: {load(root)['spdx'].split(': ', 1)[-1]}\n{c} Copyright (c) Ultrastable\n"
+        ident = load(root)['spdx'].split(': ', 1)[-1]
+        head = f"{c} SPDX-License-Identifier: {ident}\n{c} Copyright (c) Ultrastable\n"
+        # SPDX-AUTOFIX-2: a header that names another identifier is rewritten in place, never stacked under a second header
+        lines = t.split("\n")
+        wrong = next((i for i, ln in enumerate(lines[:5]) if "SPDX-License-Identifier:" in ln), None)
+        if wrong is not None:
+            lines[wrong] = f"{c} SPDX-License-Identifier: {ident}"
+            if not any("Copyright (c) Ultrastable" in ln for ln in lines[:6]):
+                lines.insert(wrong + 1, f"{c} Copyright (c) Ultrastable")
+            p.write_text("\n".join(lines), encoding="utf-8"); done.append(str(p.relative_to(root)))
+            continue
         if t.startswith("#!"):
             first, rest = t.split("\n", 1)
             t = first + "\n" + head + rest
