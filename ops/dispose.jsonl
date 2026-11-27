@@ -1915,3 +1915,4 @@
 {"age_days": 4.6, "at": "2026-11-27T03:58:56Z", "disposition": "shelved", "evidence": "open 110.4 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-did-it-work", "rule": "ttl", "status_before": "open"}
 {"age_days": 4.6, "at": "2026-11-27T03:58:56Z", "disposition": "shelved", "evidence": "open 110.4 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-open-questions", "rule": "ttl", "status_before": "open"}
 {"age_days": 1.5, "at": "2026-11-27T03:58:56Z", "disposition": "shelved", "evidence": "open 36.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-SEED-replication-ledger", "rule": "ttl", "status_before": "open"}
+{"age_days": 0.6, "at": "2026-11-27T04:02:31Z", "disposition": "shelved", "evidence": "open 14.3 hours (limit 6 hours) and no loop closed it (SLA-8H-1).", "id": "Q-CLEANROOM-boot", "rule": "ttl", "status_before": "open"}
