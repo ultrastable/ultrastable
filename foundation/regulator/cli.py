@@ -7,6 +7,7 @@ impact F [F ...]      affected tests for changed files (P7)
 ask Q                 conclusion-cache lookup (P2); exit 1 on miss/stale
 tell Q A -e FILE ...  store a conclusion with its evidence files
 hook                  read a PostToolUse payload on stdin into the token ledger
+schema                print the ledger SQL (D1-compatible)
 tokens                token share by kind + cache-read share (experiment 1 baseline)
 """
 import argparse
@@ -49,6 +50,9 @@ def main(argv=None):
         import sys
         from .ledger_hook import record
         record(s, json.loads(sys.stdin.read() or "{}"))
+    elif a.cmd == "schema":
+        from .store import schema_sql
+        print(schema_sql(), end="")
     elif a.cmd == "tokens":
         print(json.dumps({"share_by_kind": s.token_share_by_kind(),
                           "cache_read_share": s.cache_read_share()}))
