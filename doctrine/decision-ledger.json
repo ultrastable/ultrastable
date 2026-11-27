@@ -6542,6 +6542,24 @@
    "body": "Executor commit 54d6e57e7 (Q-ULTRA-free-tier-meter-spend-REDESIGN) overwrote the workflow kill-switch config with an unrelated document; test_lint_workflows, test_launch and silentfail then raised KeyError on every PR. Restored from 22e4d4800; the executor now refuses a change that drops top-level keys of an existing JSON object (SCHEMA-KEEP-1); tests pass.",
    "probe": "grep:foundation/executor.py::def contract_gap",
    "session": "session_0156nqDsxJd4poRv2mkbug9e"
+  },
+  {
+   "id": "decision-2026-11-27-github-models-is-retired-not-down",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "GitHub Models is retired, not down",
+   "body": "GitHub retired GitHub Models on 2026-07-30 (github.blog changelog). Its rungs carry retired and available() never routes them; the 200 OK body is the shutdown, not an outage.",
+   "probe": "grep:foundation/agents.py::ROUTE-RETIRED-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "lesson-2026-11-27-one-model-s-5xx-must-not-down-its-whole-provider-route",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "One model's 5xx must not down its whole provider route",
+   "body": "On 2026-11-27 glm-4.7-flash returned 502 and the ladder marked all Workers AI down, so working models were never asked; executor failed 14 of 15 runs. Sessions made 302 of 349 merges in the week before. down_keys now scopes a 5xx to the model.",
+   "probe": "grep:foundation/agent_ladder.py::def down_keys",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
   }
  ]
 }
