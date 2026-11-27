@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable
 import unittest
+import _repo  # noqa: E402  (tests/foundation is on sys.path under discover)
 from foundation import kernellock
 
 class KernelLock(unittest.TestCase):
@@ -14,9 +15,9 @@ class KernelLock(unittest.TestCase):
 
 class Bump(unittest.TestCase):
     def _root(self, canary_pin):
-        import json, tempfile
+        import json
         from pathlib import Path
-        d = Path(tempfile.mkdtemp()); (d / "doctrine").mkdir()
+        d = _repo.scratch(); (d / "doctrine").mkdir()
         (d / "doctrine/kernel-lock.json").write_text(json.dumps({"canary": "c", "tenants": {"c": {"pin": canary_pin}, "t": {"pin": None}, "p": {"pin": None}}}))
         (d / "doctrine/tenant-repos.json").write_text(json.dumps({"tenants": {"c": {"state": "own-repo"}, "t": {"state": "moved"}, "p": {"state": "planned"}}}))
         return d
