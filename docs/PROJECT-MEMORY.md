@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: fix(research): the Conant and Ashby summary states its idea without addressing the reader (#2716)
+- 2026-11-27: build(deps): Bump ossf/scorecard-action from 2.4.4 to 2.6.0 in the actions group (#2710)
 - 2026-11-27: feat(executor): refuse a model reply of the wrong shape (R12) (#2708)
 - 2026-11-27: feat(deploy): read live Workers against main (R6) (#2706)
 - 2026-11-27: feat(deploy): roll back drifted Worker deploys (R6) (#2701)

@@ -1,5 +1,5 @@
 {
- "at": "2026-11-27T04:57:20Z",
+ "at": "2026-11-27T10:57:35Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -32,16 +32,16 @@
    "item": null
   },
   "front-end-matches-back-end/claims": {
-   "status": "violated",
-   "detail": "claims: 434 verified of 436; 2 drift",
+   "status": "ok",
+   "detail": "claims: 436 verified of 436; 0 drift",
    "fixed": false,
-   "item": "Q-RULE-front-end-matches-back-end-claims"
+   "item": null
   },
   "front-end-matches-back-end/claimcode": {
-   "status": "violated",
-   "detail": "claimcode: 1 problems",
+   "status": "ok",
+   "detail": "claimcode ok",
    "fixed": false,
-   "item": "Q-RULE-front-end-matches-back-end-claimcode"
+   "item": null
   },
   "front-end-matches-back-end/pages-live": {
    "status": "unmeasured",
@@ -56,10 +56,10 @@
    "item": null
   },
   "no-merge-over-red/mergeaudit": {
-   "status": "violated",
-   "detail": "merged without green checks: #2589, #2596, #2644",
+   "status": "ok",
+   "detail": "every recent merge had a green checks run",
    "fixed": false,
-   "item": "Q-RULE-no-merge-over-red-mergeaudit"
+   "item": null
   },
   "no-merge-over-red/ciwatch": {
    "status": "ok",
@@ -218,9 +218,7 @@
    "item": null
   }
  },
- "filed": [
-  "Q-RULE-front-end-matches-back-end-claimcode"
- ],
+ "filed": [],
  "rules": {
   "closed-loops": {
    "status": "enforced",
@@ -237,7 +235,7 @@
    "statement": "No decision, question or step is handed to the owner; agents decide, deploy and verify (GUIDING-DIRECTIVE, CODE-ONLY-ORDER)."
   },
   "front-end-matches-back-end": {
-   "status": "violated",
+   "status": "unmeasured",
    "ci": 2,
    "probes": 4,
    "gaps": [
@@ -246,7 +244,7 @@
    "statement": "Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1)."
   },
   "no-merge-over-red": {
-   "status": "violated",
+   "status": "enforced",
    "ci": 2,
    "probes": 2,
    "gaps": [],
