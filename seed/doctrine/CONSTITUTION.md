@@ -155,3 +155,6 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **every-essential-variable-holds-a-veto** (Rowan, 2026-11-27): A change the second loop makes is judged by every essential variable, not only the one it was made for: a step that knocks a variable that was holding out of its limits is undone, and the undo is read as a trial. The search for a value that holds goes on past a knob's declared direction, and the regulator reads its own variety and structure from its own tables. The mechanisms are taken from W. Ross Ashby's journal and cite its pages.
   - detector: `worker/src/ashby.js`, `worker/src/regulation.js`
   - remediation: `worker/src/goals.js`, `worker/src/ashby.js`
+- **never-discard-unmerged-work** (Rowan, 2026-11-27): Automation never closes a pull request or deletes a branch on a label or a cached state: it reads the pull request live, leaves one that still merges open, and pins the head under an archive ref and reads it back before any close.
+  - detector: `worker/src/prsafe.js`, `worker/src/prsafe.js`
+  - remediation: `worker/src/prsafe.js`, `worker/src/sweeper.js`

@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-a-joint-reading-must-not-be-made-unmeasurable-by-a-goal-noth",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "A joint reading must not be made unmeasurable by a goal nothing reads",
+  "body": "Read live after the deploy of PR 2622, /api/goals structure showed rest, joint order and dependence as null: goals with no reading in the window (core.year.unattended and four stretch goals) left no complete row. structureOf now names such goals in unread and takes the joint readings over the rest. Evidence: node --test seed/worker/test/ashby-loop.test.js, 12 tests pass; the live reading is probed again after this change deploys.",
+  "probe": "grep:seed/worker/src/goals.js::unread, rest: jointRest(full)",
+  "session": "session_0156nqDvC5egisoaWX278iM6"
+ },
+ "kind": "lesson",
+ "title": "A joint reading must not be made unmeasurable by a goal nothing reads",
+ "session": "session_0156nqDvC5egisoaWX278iM6"
+}

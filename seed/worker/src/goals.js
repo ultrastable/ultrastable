@@ -340,7 +340,10 @@ export async function structureOf(db, { now = Date.now(), samples = null, max_jo
   const gs = await all(db, `SELECT id, op, target FROM goals WHERE status = 'active' AND level = 'target'`), spec = Object.fromEntries(gs.filter(g => OPS[g.op]).map(g => [g.id, g]));
   const rowsAt = new Map();
   for (const x of samples || await all(db, `SELECT goal_id, at, value FROM goal_samples WHERE at >= ? ORDER BY at`, now - 14 * 86400e3)) { const g = spec[x.goal_id]; if (!g) continue; const r = rowsAt.get(x.at) || {}; r[x.goal_id] = OPS[g.op](x.value, g.target); rowsAt.set(x.at, r); }
-  const ids = Object.keys(spec).sort(), full = [...rowsAt.values()].filter(r => ids.every(i => i in r)), over = ids.slice(0, 10);
+  // A goal with no reading in the window (a metric nothing has measured yet, a stretch goal not yet read) cannot be judged with the others; counted, it
+  // would leave no complete row and every joint reading unmeasured. Such goals are named in `unread` and the joint readings are over the rest.
+  const read = new Set([...rowsAt.values()].flatMap(r => Object.keys(r))), ids = Object.keys(spec).filter(i => read.has(i)).sort(), unread = Object.keys(spec).filter(i => !read.has(i)).sort();
+  const full = [...rowsAt.values()].filter(r => ids.every(i => i in r)), over = ids.slice(0, 10);
   const dep = [];
   if (full.length >= 24) for (let i = 0; i < over.length; i++) for (let j = i + 1; j < over.length; j++) { const t = transmission(full.map(r => [r[over[i]], r[over[j]]])); if (t.bits >= 0.1) dep.push({ a: over[i], b: over[j], bits: t.bits }); }
   const moves = await all(db, `SELECT knob_id, old, new, kept FROM goal_adjustments WHERE reviewed_at IS NOT NULL ORDER BY id DESC LIMIT 200`);
@@ -348,7 +351,7 @@ export async function structureOf(db, { now = Date.now(), samples = null, max_jo
   const inter = await all(db, `SELECT at, knob_id, goal_id, upset_goal, exonerated FROM goal_interference ORDER BY id DESC LIMIT 20`);
   return { source: "W. Ross Ashby's journal, https://ashby.info/journal/index/index.html (ASHBY-KERNEL-1); each reading is computed from this system's own tables",
     parts, largest_joint: red.largest_joint, max_joint: red.max_joint, irreducible: red.irreducible,
-    rest: jointRest(full), joint_order: full.length >= 12 && over.length ? { goals: over, k: cylindrance(full.map(r => over.map(i => r[i]))), readings: full.length } : null,
+    unread, rest: jointRest(full), joint_order: full.length >= 12 && over.length ? { goals: over, k: cylindrance(full.map(r => over.map(i => r[i]))), readings: full.length } : null,
     states_seen: full.length ? { ...variety(full.map(r => JSON.stringify(ids.map(i => r[i])))), readings: full.length } : null,
     dependence: full.length >= 24 ? dep.sort((x, y) => y.bits - x.bits).slice(0, 5) : null,
     black_box: { repeated: box.repeated, determinate_share: box.determinate_share, hidden: box.hidden.slice(0, 10) },

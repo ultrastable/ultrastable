@@ -1007,6 +1007,34 @@
           "has": "export function nextTrial"
         }
       ]
+    },
+    {
+      "id": "never-discard-unmerged-work",
+      "rule": "Automation never closes a pull request or deletes a branch on a label or a cached state: it reads the pull request live, leaves one that still merges open, and pins the head under an archive ref and reads it back before any close.",
+      "source": "Rowan, 2026-11-27",
+      "covers": [
+        "PR-NEVER-LOSE-1"
+      ],
+      "detector": [
+        {
+          "file": "worker/src/prsafe.js",
+          "has": "export async function livePr"
+        },
+        {
+          "file": "worker/src/prsafe.js",
+          "has": "export const verdict"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "worker/src/prsafe.js",
+          "has": "export async function safeClose"
+        },
+        {
+          "file": "worker/src/sweeper.js",
+          "has": "import { safeClose } from './prsafe.js'"
+        }
+      ]
     }
   ]
 }

@@ -1714,6 +1714,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a problem that code is discarded and not",
+   "detail": "",
+   "how": "file:foundation/prsafe.py + file:foundation/prbound.py + file:seed/worker/src/prsafe.js + file:seed/worker/src/sweeper.js + file:seed/worker/src/sla.js + file:scripts/branch_cleanup.py",
+   "id": "cited-16a27cbb2c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Strange loops: every loop closes itself and improves itself; no zombie sessions (STRANGE-LOOP-1, Rowan 2026-11-12).** The system closes",
    "detail": "",
    "how": "file:scripts/completion_sweep.sh + file:instances/ultrastable/loop-registry.json",
@@ -2609,6 +2618,15 @@ export default {
    "detail": "",
    "how": "file:ops/checks-session.jsonl + file:foundation/drainwatch.py + file:foundation/checksrun.py",
    "id": "mirror-222143350a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a problem that code is discarded and not",
+   "detail": "",
+   "how": "file:foundation/prsafe.py + file:foundation/prbound.py + file:seed/worker/src/prsafe.js + file:seed/worker/src/sweeper.js + file:seed/worker/src/sla.js + file:scripts/branch_cleanup.py",
+   "id": "mirror-d5953d01d5",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3667,7 +3685,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 129 Python and 1072 Worker tests",
+   "claim": "seed-tests: 129 Python and 1077 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3676,7 +3694,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 1072 Worker tests",
+   "claim": "seed-worker-tests: 1077 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3935,7 +3953,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 434,
-  "total": 434
+  "pass": 436,
+  "total": 436
  }
 };

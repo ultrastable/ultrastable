@@ -142,6 +142,7 @@ test('structure: joint rest against the product of the parts, the order of the c
   const db = makeDb(); vals.a = 0.6;
   for (let i = 0; i < 16; i++) { vals.a = i % 2 ? 0.6 : 0.2; vals.b = i % 2 ? 0.2 : 0.9; await goalsStep(db, { now: t0 + i * H }, { goals: cfg.goals, knobs: [] }, { builtins }); }
   const st = await structureOf(db, { now: t0 + 17 * H });
+  assert.deepEqual(st.unread, []);
   assert.equal(st.rest.n, 16); assert.equal(st.rest.product, 0.25); assert.equal(st.rest.observed, 0); assert.equal(st.rest.gap, -0.25);  // each rests half the time, never both
   assert.deepEqual(st.joint_order, { goals: ['core.a', 'core.b'], k: 2, readings: 16 });  // the two must be looked at together
   assert.deepEqual(st.states_seen, { n: 2, bits: 1, readings: 16 }); assert.equal(st.dependence, null, 'fewer than 24 joint readings: dependence is not judged');
@@ -153,6 +154,15 @@ test('structure: joint rest against the product of the parts, the order of the c
   assert.equal(await METRICS.largest_joint_component(db), 9);
   const big = await structureOf(db, { now: t0 + 31 * H });
   assert.equal(big.irreducible.length, 1); assert.equal(big.parts[0].search.feasible, false, '3^9 settings cannot be searched in a year of two-day trials');
+});
+
+test('structure: a goal nothing has read yet is named as unread and does not leave the joint readings unmeasured', async () => {
+  const db = makeDb(), withUnread = { goals: [...cfg.goals, { id: 'core.z', level: 'target', statement: 'not measured yet', source: 'metric', spec: 'no_such_metric', op: '>=', target: 1 }], knobs: [] };
+  for (let i = 0; i < 16; i++) { vals.a = i % 2 ? 0.6 : 0.2; vals.b = i % 2 ? 0.2 : 0.9; await goalsStep(db, { now: t0 + i * H }, withUnread, { builtins }); }
+  const st = await structureOf(db, { now: t0 + 17 * H });
+  assert.deepEqual(st.unread, ['core.z']);
+  assert.equal(st.rest.n, 16); assert.equal(st.rest.observed, 0); assert.deepEqual(Object.keys(st.rest.parts), ['core.a', 'core.b']);
+  assert.deepEqual(st.joint_order.goals, ['core.a', 'core.b']);
 });
 
 test('requisite variety from the work queue: a fix item open past the grace period is a disturbance no response held', async () => {
