@@ -1007,6 +1007,30 @@
           "has": "export function nextTrial"
         }
       ]
+    },
+    {
+      "id": "automation-never-discards-work",
+      "rule": "Automation never closes a pull request on a label, a cached state or an unknown state: it reads the pull request live, tries to update its branch, and pins the head under refs/archive before any close. A pull request automation closed that main still lacks is reopened.",
+      "source": "Rowan, 2026-11-27",
+      "covers": [
+        "PR-NEVER-LOSE-1"
+      ],
+      "detector": [
+        {
+          "file": "worker/src/prsafe.js",
+          "has": "export async function livePr"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "worker/src/prsafe.js",
+          "has": "export async function safeClose"
+        },
+        {
+          "file": "worker/src/sweeper.js",
+          "has": "safeClose"
+        }
+      ]
     }
   ]
 }
