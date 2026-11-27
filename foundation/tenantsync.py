@@ -153,8 +153,8 @@ def file_items(root, m) -> list[str]:
     return filed
 
 
-def probe(root, spec) -> bool:
-    m = metrics(root)
+def probe(root, spec, now=None) -> bool:
+    m = metrics(root, now)
     kind, _, key = spec.partition(":")
     if kind == "drift":
         return m["tenants"].get(key, {}).get("ok", False)

@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-a-new-ledger-needs-its-envelope-before-the-first-write",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "A new ledger needs its envelope before the first write",
+  "body": "The weekly perception-cost loop appended a bare JSON row to ops, and the open-standards check turned main red once the lane wrote it. The row is now a CloudEvents envelope, built and checked by the code that writes it, and a test reads the real ledger with the same check.",
+  "probe": "grep:foundation/perceptcost.py::cloudevents.conforms"
+ },
+ "kind": "lesson",
+ "title": "A new ledger needs its envelope before the first write",
+ "session": "Session: session_0156nqDuB65xWnsz5kxuJWzy"
+}

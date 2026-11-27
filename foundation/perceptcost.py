@@ -18,7 +18,7 @@ from __future__ import annotations
 import datetime as dt, json, statistics, subprocess, sys
 from pathlib import Path
 
-from . import repomap
+from . import cloudevents, repomap
 
 REPO = Path(__file__).resolve().parents[1]
 SET = "doctrine/replay-set.json"
@@ -80,11 +80,21 @@ def score(root=REPO, paths=None) -> dict:
             "min_saving": spec["min_saving"], "kill": saving is not None and saving < spec["min_saving"], "rows": rows}
 
 
+def envelope(result: dict) -> dict:
+    """The ledger row: a CloudEvents 1.0 envelope (OPEN-STANDARDS-1) around the reading. Refuses to build a row the standard rejects."""
+    e = cloudevents.event("perceptcost", "reading", "foundation/perceptcost", result, subject=result["date"], id=f"perceptcost-{result['date']}",
+                          time=result["date"] + "T00:00:00Z")
+    bad = cloudevents.conforms(e)
+    if bad:
+        raise ValueError("perception-cost row is not a conformant CloudEvent: " + "; ".join(bad))
+    return e
+
+
 def due(root=REPO, now=None) -> bool:
     p = root / LOG
     if not p.exists() or not p.read_text().strip():
         return True
-    last = json.loads(p.read_text().strip().splitlines()[-1])["date"]
+    last = cloudevents.unwrap(json.loads(p.read_text().strip().splitlines()[-1]))["date"]
     days = json.loads((root / SET).read_text())["interval_days"]
     return ((now or dt.date.today()) - dt.date.fromisoformat(last)).days >= days
 
@@ -109,7 +119,7 @@ def main(argv) -> int:
         if "--apply" in argv:
             (REPO / LOG).parent.mkdir(exist_ok=True)
             with open(REPO / LOG, "a") as f:
-                f.write(json.dumps(r, sort_keys=True) + "\n")
+                f.write(json.dumps(envelope(r), sort_keys=True) + "\n")  # checked before it is written
         return 0
     print(__doc__); return 2
 
