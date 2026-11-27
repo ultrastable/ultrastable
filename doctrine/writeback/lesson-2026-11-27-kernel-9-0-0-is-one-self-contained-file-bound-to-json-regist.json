@@ -4,10 +4,11 @@
   "kind": "lesson",
   "date": "2026-11-27",
   "title": "Kernel 9.0.0 is one self-contained file bound to JSON registries",
-  "body": "doctrine/kernel-9.0.0.md embeds registries, procedures, ledger and hook and refers to no other file; kernel9 --check fails on a URL or repo path in it and on drift from doctrine/step-repertoire.json and partitions.json.",
-  "probe": "grep:foundation/kernel9.py::UNITARY-1"
+  "body": "doctrine/kernel-9.0.0.md embeds registries, procedures, ledger and hook and refers to no other file; kernel9 --check fails on a URL or repo path in it and on drift from the registries.",
+  "probe": "grep:foundation/kernel9.py::UNITARY-1",
+  "session": "session_0156nqDv2LkwoVhTQKXeix15"
  },
  "kind": "lesson",
  "title": "Kernel 9.0.0 is one self-contained file bound to JSON registries",
- "session": ""
+ "session": "session_0156nqDv2LkwoVhTQKXeix15"
 }

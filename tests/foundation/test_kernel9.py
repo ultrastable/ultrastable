@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """Kernel 9.0.0 as code: clauses have enforcers, budgets hold, the repertoire vetoes irreversible classes, the hook blocks protected paths."""
 import json, subprocess, unittest
 from _repo import ROOT, copy_repo, edit

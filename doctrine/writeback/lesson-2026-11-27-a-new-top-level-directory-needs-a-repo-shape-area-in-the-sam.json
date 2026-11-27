@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-a-new-top-level-directory-needs-a-repo-shape-area-in-the-sam",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "A new top-level directory needs a repo-shape area in the same change",
+  "body": "PR 2764 failed REPO-SHAPE-1 because .claude was claimed by no area, and the write-back must cite the session. kernel9 does not own that check; reposhape --check and writeback check run before pushing.",
+  "probe": "grep:doctrine/repo-shape.json::.claude",
+  "session": "session_0156nqDv2LkwoVhTQKXeix15"
+ },
+ "kind": "lesson",
+ "title": "A new top-level directory needs a repo-shape area in the same change",
+ "session": "session_0156nqDv2LkwoVhTQKXeix15"
+}
