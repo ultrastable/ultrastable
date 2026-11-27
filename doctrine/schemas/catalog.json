@@ -1067,6 +1067,14 @@
       "url": "standing-order.schema.json"
     },
     {
+      "name": "state-sink.json",
+      "description": "Contract for doctrine/state-sink.json",
+      "fileMatch": [
+        "doctrine/state-sink.json"
+      ],
+      "url": "state-sink.schema.json"
+    },
+    {
       "name": "static-content.json",
       "description": "Contract for doctrine/static-content.json",
       "fileMatch": [

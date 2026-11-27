@@ -1,0 +1,9 @@
+{
+  "_doc": "STATE-SINK-1 (ZHC-R1): staged move of machine state out of git. Each state area of doctrine/repo-shape.json has a stage: git (today), dual (writer writes D1/R2 and git; readers prefer D1/R2), moved (writer stops writing git; files archived under refs/archive, never deleted). One area moves at a time, the canary first; an area advances only when its probe passes (readers and writers named in `statesink --inventory` all handle the stage). Read by foundation/statesink.py.",
+  "areas": {
+    "outreach/packets": {"stage": "git", "canary": true},
+    "docs/issues": {"stage": "git", "canary": false},
+    "ops": {"stage": "git", "canary": false}
+  },
+  "ratchet": {"enabled": false, "armed_when_share_at_most": 0.25}
+}
