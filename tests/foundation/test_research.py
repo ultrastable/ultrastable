@@ -159,7 +159,7 @@ class CyberneticsProgram(unittest.TestCase):
 
     def test_the_program_studies_are_present_and_valid(self):
         ids = {s["id"] for s in R.studies()}
-        for want in ("ashby-1952", "conant-ashby-1970", "ashby-1956", "beer-vsm-1972", "powers-1973", "ashby-journal-2026", "foerster-1974"):
+        for want in ("ashby-1952", "conant-ashby-1970", "ashby-1956", "beer-vsm-1972", "powers-1973", "ashby-journal", "foerster-1974"):
             self.assertIn(want, ids)
         self.assertEqual(R.validate(), [])
 
