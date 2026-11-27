@@ -171,6 +171,7 @@ jobs:
           python3 -m foundation livelinks --check  # LIVE-LINKS-1: the README names where the platform and every system run
           python3 -m foundation managers --check  # MANAGERS-1: every role is a loop with code, a clock, a probe and a settler; every loop has a manager; the seed carries every manager
           python3 -m foundation rulerefs --check  # RULE-REFS-1: every path, command, test, workflow and route the rule files name resolves
+          python3 -m foundation jobtrust --check  # JOB-TRUST-1: no job holds untrusted text, secrets and write access at once (R12)
           python3 -m foundation datagraph --check
           python3 -m foundation openstd --check  # OPEN-STANDARDS-1: registered open standards; no new bespoke format
           python3 -m foundation coldstart --check  # COLDSTART-1: the seed carries every capability a system owes from birth; named commands resolve; agent files agree
@@ -247,6 +248,7 @@ jobs:
           python3 -m foundation standards --check
           python3 -m foundation configschema --check  # CONFIG-SCHEMA-1: every config validates against its JSON Schema contract
           python3 -m foundation stdgen --check        # STANDARDS-1: Backstage catalog and CycloneDX SBOM match the registers
+          python3 seed/scripts/repoconform.py --check .  # REPO-CONFORM-2: every machine-readable file at the root is valid against its standard and equals its render
           (cd seed/worker && node --test --no-warnings test/*.test.js)
   tests-a:
     if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1

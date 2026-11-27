@@ -33,6 +33,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: python3 -m foundation redmerge
+      - name: State share and the next staged move (STATE-SINK-1)
+        run: python3 -m foundation statesink --check
       - name: Redeploy a Worker whose live code is behind main (DEPLOY-DRIFT-1)
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}

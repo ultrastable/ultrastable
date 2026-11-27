@@ -5,7 +5,8 @@
                                                                  --due skips unless the last row is older than interval_days
   python3 -m foundation perceptcost --check                     the replay set parses and every answer file exists
 
-Each question names keywords and the file that holds the answer. Without the map an agent greps the keywords and reads every
+Each question names keywords and the file that holds the answer.
+The map is the REPO-MAP-1 model (paths and symbols), so a keyword has to appear in a file path or an exported name to find it. Without the map an agent greps the keywords and reads every
 matching file: cost = tokens of all files containing a keyword. With the map it looks the keywords up in the REPO-MAP-1 cards
 and reads the cards plus the answer file; if the answer file is not among the cards the map missed and the cost is the without-map
 cost plus the cards. Tokens are characters / 4. This is a PROXY for perception cost, not an agent run: it says nothing about
@@ -48,19 +49,25 @@ def grep_cost(root, kws, paths) -> int:
     return total
 
 
-def map_hits(cards: dict, kws) -> dict:
-    return {p: c for p, c in cards.items() if any(k.lower() in (p + " " + c["purpose"] + " " + " ".join(c["defs"])).lower() for k in kws)}
+def map_hits(rows, kws) -> dict:
+    """path -> map line, for files whose path or symbols contain a keyword."""
+    out = {}
+    for r in rows:
+        line = f"{r['path']} {r['symbols'].replace(chr(10), ' ')}"
+        if any(k.lower() in line.lower() for k in kws):
+            out[r["path"]] = line
+    return out
 
 
 def score(root=REPO, paths=None) -> dict:
     spec = json.loads((root / SET).read_text())
-    cards, _ = repomap.build(root)
+    files = repomap.model(root, ":memory:").files()
     paths = paths if paths is not None else tracked(root)
     rows = []
     for q in spec["questions"]:
         base = grep_cost(root, q["keywords"], paths)
-        hits = map_hits(cards, q["keywords"])
-        card_tok = sum(tok(len(f"{p} {c['purpose']} {' '.join(c['defs'][:8])}")) for p, c in hits.items())
+        hits = map_hits(files, q["keywords"])
+        card_tok = sum(tok(len(line)) for line in hits.values())
         ans = root / q["answer"]
         ans_tok = tok(len(ans.read_text(errors="replace"))) if ans.is_file() else 0
         hit = q["answer"] in hits

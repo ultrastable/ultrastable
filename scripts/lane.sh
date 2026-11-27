@@ -169,11 +169,11 @@ if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
   if (cd "$root" && python3 -m foundation loopowner --adopt --apply); then
     # MEMORY-REFRESH-1: record merged work in the project memory before it goes stale and fails every pull request's memory check
     (cd "$root" && python3 scripts/memory_refresh.py) || echo "lane: memory refresh failed" >&2
-    if [ -n "$(git -C "$root" status --porcelain docs/issues docs/PROJECT-MEMORY.md ops/rules dashboard/snapshot.json)" ]; then
+    if [ -n "$(git -C "$root" status --porcelain docs/issues docs/PROJECT-MEMORY.md ops/rules ops/perception-cost.jsonl dashboard/snapshot.json)" ]; then
       git -C "$root" config user.name "ultrastable-lane"; git -C "$root" config user.email "actions@users.noreply.github.com"
       # LANE-DASHBOARD-1: the adoption items change the issue count the dashboard carries; rebuild it in the same commit, or main fails its own stale check
       (cd "$root" && python3 scripts/build_dashboard.py >/dev/null) || echo "lane: dashboard rebuild failed" >&2
-      git -C "$root" add docs/issues site/dashboard-data.js docs/PROJECT-MEMORY.md ops/rules dashboard/snapshot.json
+      git -C "$root" add docs/issues site/dashboard-data.js docs/PROJECT-MEMORY.md ops/rules ops/perception-cost.jsonl dashboard/snapshot.json
       git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS-1)"
       pushed=0
       for try in 1 2 3 4 5; do
@@ -183,7 +183,7 @@ if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
         git -C "$root" rebase --abort || echo "lane: no rebase to abort"
         git -C "$root" fetch -q origin main && git -C "$root" reset -q --hard origin/main || { echo "lane: reset to main failed" >&2; break; }
         (cd "$root" && python3 -m foundation loopowner --adopt --apply && python3 scripts/memory_refresh.py && python3 scripts/build_dashboard.py >/dev/null) || echo "lane: redo on fresh main failed" >&2
-        git -C "$root" add docs/issues site/dashboard-data.js docs/PROJECT-MEMORY.md ops/rules dashboard/snapshot.json
+        git -C "$root" add docs/issues site/dashboard-data.js docs/PROJECT-MEMORY.md ops/rules ops/perception-cost.jsonl dashboard/snapshot.json
         git -C "$root" diff --cached --quiet && { echo "lane: adoption already on main"; pushed=1; break; }
         git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS-1)"
         sleep $((try * 3))

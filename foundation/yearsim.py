@@ -211,42 +211,25 @@ def drill_credential_watch(root, today):
     return R("degrades", 0.5, False, True, ev, gate=True)
 
 
-def ecosystems(root) -> dict:
-    root = Path(root)
-    present = {"github-actions": ["/"]}
-    for p in sorted(root.glob("**/package.json")):
-        rel = p.parent.relative_to(root).as_posix()
-        if "node_modules" not in rel and not rel.startswith(("tests", "vendor")):
-            present.setdefault("npm", []).append("/" + ("" if rel == "." else rel))
-    return present
-
-
-def dependabot(root) -> dict:
-    p = Path(root) / ".github/dependabot.yml"
-    cov = {}
-    if p.is_file():
-        eco = None
-        for ln in p.read_text(encoding="utf-8").splitlines():
-            m = re.search(r"package-ecosystem:\s*\"?([\w-]+)", ln)
-            if m:
-                eco = m.group(1)
-            m = re.search(r"directory:\s*\"?([^\"\s]+)", ln)
-            if m and eco:
-                cov.setdefault(eco, []).append(m.group(1).rstrip("/") or "/")
-    return cov
-
-
 def drill_dependency_loop(root, today):
-    """Every dependency ecosystem in the repository is advanced by a server-side loop (Dependabot opens the change, the lane merges it green)."""
-    have, cov = ecosystems(root), dependabot(root)
-    missing = [f"{e}:{d}" for e, ds in have.items() for d in ds if (d.rstrip("/") or "/") not in cov.get(e, [])]
+    """Every dependency ecosystem in the repository is advanced by a server-side loop (Dependabot opens the change, the lane merges it green).
+    Coverage is read by the one reader every system carries, seed/scripts/deprot.py through foundation/deprot.py (USER-BACKEND-1)."""
+    from . import deprot
+    have: dict[str, int] = {}
+    base = deprot.baseline(root)
+    held = sorted(m for m in deprot.manifests(root) if m in base)
+    for e, d in deprot.manifests(root):
+        if (e, d) not in base:
+            have[e] = have.get(e, 0) + 1
+    missing = [f"{e}:{d}" for e, d in deprot.missing(root)]
     sw = Path(root) / "seed/worker/src/sweeper.js"
     m = re.search(r"CLIENT_PREFIX\s*=\s*\[([^\]]*)\]", sw.read_text(encoding="utf-8")) if sw.is_file() else None
     if not (m and "dependabot/" in m.group(1)):
         missing.append("merge lane: seed/worker/src/sweeper.js CLIENT_PREFIX does not take dependabot/ branches, so updates are opened and never merged")
     if missing:
         return R("degrades", 0.9, False, True, f"no loop advances: {', '.join(missing)}", missing=missing)
-    return R("recovers", 0.9, True, True, f"every ecosystem is advanced by Dependabot: {', '.join(f'{e} {len(d)}' for e, d in have.items())}")
+    return R("recovers", 0.9, True, True, f"every ecosystem is advanced by Dependabot: {', '.join(f'{e} {n}' for e, n in sorted(have.items()))}"
+             + (f"; {len(held)} manifest(s) on the shrink-only baseline doctrine/deprot.json" if held else ""))
 
 
 def node_pins(root) -> dict:
