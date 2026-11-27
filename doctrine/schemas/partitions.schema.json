@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/partitions.schema.json",
+  "title": "partitions (doctrine/partitions.json)",
+  "description": "Contract for doctrine/partitions.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "connectance_max": {
+      "type": "number"
+    },
+    "min_partitions_for_connectance": {
+      "type": "number"
+    },
+    "partitions": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "object"
+        },
+        "site": {
+          "type": "object"
+        },
+        "owner_coupling": {
+          "type": "object"
+        }
+      }
+    },
+    "joins": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "connectance_max",
+    "joins",
+    "min_partitions_for_connectance",
+    "partitions",
+    "version"
+  ]
+}

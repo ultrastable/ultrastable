@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/step-repertoire.schema.json",
+  "title": "step-repertoire (doctrine/step-repertoire.json)",
+  "description": "Contract for doctrine/step-repertoire.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "trial_ticks": {
+          "type": "number"
+        },
+        "budget_per_24h": {
+          "type": "number"
+        },
+        "cooldown_ticks": {
+          "type": "number"
+        },
+        "epsilon": {
+          "type": "number"
+        }
+      }
+    },
+    "veto_classes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "acts_on": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "partitions": {
+            "type": "array"
+          },
+          "predicts": {
+            "type": "object"
+          },
+          "undo": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "probes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "defaults",
+    "probes",
+    "steps",
+    "version",
+    "veto_classes"
+  ]
+}
