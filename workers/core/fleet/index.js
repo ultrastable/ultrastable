@@ -114,20 +114,49 @@ export function minutePhase(field) {
 const withPhase = (period, offset) => (period === 60 ? String(offset) : offset === 0 ? `*/${period}` : Array.from({ length: 60 / period }, (_, i) => offset + i * period).join(','));
 
 /**
- * US-11-R12: stagger the enabled schedules. A schedule whose minute field is periodic keeps its period and its other four fields and is
- * moved to the phase that shares the fewest minutes with the schedules already placed; a tie keeps the phase it has. Schedules are placed
- * in name order, so the result is the same on every run and a second run changes nothing. A single-minute schedule (`0 3 * * *`) names a
- * time of day and is moved only with `literals: true`. `apply` writes the rows (a schedule change is a row write, US-11-R04).
+ * US-11-R12: the one writer both stagger planners use for a move. It rewrites the schedule row (a row write, US-11-R04), keeps the period of
+ * the move (a schedule whose next old slot is still ahead next fires at the first new slot at or after that one, so it never fires twice in
+ * that period; one not yet fired stays due), moves the declared procedure with it so the dead-man check expects the new slots, and logs
+ * the rewrite in fleet_stagger_log. The two halves meet in fleet_stagger_skips (US-11-R08): the new-expression slots from the move up to
+ * the first firing it set get no record on purpose, so the dead-man check does not judge them; every slot from that firing on is judged.
+ */
+async function writeMove(ctx, row, to, { at, collisions_before, collisions_after }) {
+  await setCron(ctx, { name: row.name, expr: to, task_id: row.task_id, enabled: true });
+  // setCron clears next_fire, which reads as due: a schedule that had already fired this period would fire again at once.
+  const due = row.next_fire ? parseIso(row.next_fire) : null;
+  let first = null;
+  if (due !== null && due > nowMs(ctx)) {
+    const nf = nextFire(to, due - MINUTE);
+    if (nf !== null) { first = iso(nf); await run(ctx.db, `UPDATE fleet_crons SET next_fire = ? WHERE name = ?`, first, row.name); }
+  }
+  const proc = await run(ctx.db, `UPDATE fleet_procedures SET expr = ? WHERE name = ? AND expr = ?`, to, row.name, row.expr);
+  const log = await run(ctx.db, `INSERT INTO fleet_stagger_log (at, name, old_expr, new_expr, collisions_before, collisions_after) VALUES (?,?,?,?,?,?)`,
+    at, row.name, row.expr, to, collisions_before, collisions_after);
+  // a schedule still due (first null) fires at the next dispatch, so it leaves no slot unfired and nothing is skipped
+  if (first !== null && proc.meta.changes > 0)
+    await run(ctx.db, `INSERT INTO fleet_stagger_skips (log_id, procedure, expr, moved_at, first_fire) VALUES (?,?,?,?,?)`, log.meta.last_row_id, row.name, to, at, first);
+}
+
+/**
+ * US-11-R12, US-11-R18: stagger the enabled schedules over a day window. A schedule whose minute field is periodic keeps its period and its
+ * other four fields and is moved to the phase that shares the fewest minutes with the schedules already placed; a tie keeps the phase it has.
+ * Schedules are placed in name order, so the result is the same on every run and a second run changes nothing. A single-minute schedule
+ * (`0 3 * * *`) names a time of day and is moved only with `literals: true`; a name in `config.stagger_pin` is never moved. `apply` writes
+ * each move through `writeMove` (the row, next_fire, the declared procedure and the log).
  */
 export async function stagger(ctx, { from, to, apply = false, literals = false } = {}) {
   const start = from ?? Math.floor(nowMs(ctx) / (60 * MINUTE)) * 60 * MINUTE, end = to ?? start + 24 * 60 * MINUTE;
   const before = await collisions(ctx, { from: start, to: end });
-  const load = new Map(), changes = [], fixed = [];
+  const pin = new Set(cfg(ctx).stagger_pin || []);
+  const load = new Map(), changes = [], fixed = [], pinned = [];
   const place = slots => { for (const t of slots) load.set(t, (load.get(t) || 0) + 1); };
-  const rows = await all(ctx.db, `SELECT name, expr, task_id FROM fleet_crons WHERE enabled = 1 ORDER BY name`);
+  const rows = await all(ctx.db, `SELECT name, expr, task_id, next_fire FROM fleet_crons WHERE enabled = 1 ORDER BY name`);
   for (const c of rows) {
     const f = parseCron(c.expr), ph = f && minutePhase(f[0]);
-    if (!ph || (ph.period === 60 && !literals)) { fixed.push(c.name); place(expectedSlots(c.expr, start, end)); }
+    if (!ph || (ph.period === 60 && !literals) || pin.has(c.name)) {
+      fixed.push(c.name); if (ph && pin.has(c.name)) pinned.push(c.name);
+      place(expectedSlots(c.expr, start, end));
+    }
   }
   for (const c of rows) {
     if (fixed.includes(c.name)) continue;
@@ -143,9 +172,12 @@ export async function stagger(ctx, { from, to, apply = false, literals = false }
     place(best.slots);
     if (best.expr !== c.expr) changes.push({ name: c.name, from: c.expr, to: best.expr });
   }
-  if (apply) for (const ch of changes) { const c = rows.find(r => r.name === ch.name); await setCron(ctx, { name: c.name, expr: ch.to, task_id: c.task_id }); }
   const shared = [...load.values()].filter(n => n > 1);
-  return { from: iso(start), to: iso(end), applied: Boolean(apply), changes, fixed, collisions_before: before.collisions, max_per_minute_before: before.max_per_minute,
+  if (apply) {
+    const at = iso(nowMs(ctx));
+    for (const ch of changes) await writeMove(ctx, rows.find(r => r.name === ch.name), ch.to, { at, collisions_before: before.collisions, collisions_after: shared.length });
+  }
+  return { from: iso(start), to: iso(end), applied: Boolean(apply), changes, fixed, pinned, collisions_before: before.collisions, max_per_minute_before: before.max_per_minute,
     collisions_after: shared.length, max_per_minute_after: Math.max(0, ...load.values()) };
 }
 
@@ -567,6 +599,8 @@ export async function fireOnce(ctx, { procedure, scheduler, expr = null, trigger
 /**
  * For each declared procedure: expected slots from its cron expression, records per slot and per scheduler, an alert for
  * each fully elapsed slot with no record (`stop`), and a `single_path` label where one of several declared schedulers is silent.
+ * A slot a stagger move left unfired on purpose (fleet_stagger_skips: it ends after the move and starts before the first firing the move
+ * set) is not judged and not counted in reliability; it is reported as `skipped`.
  */
 export async function deadman(ctx, { from, to } = {}) {
   const c = cfg(ctx), now = nowMs(ctx);
@@ -581,9 +615,12 @@ export async function deadman(ctx, { from, to } = {}) {
   const out = { from: iso(start), to: iso(end), procedures: [], alerts: [] };
   for (const p of await all(ctx.db, `SELECT * FROM fleet_procedures ORDER BY name`)) {
     const declared = JSON.parse(p.schedulers);
-    const slots = expectedSlots(p.expr, start, end).map(s => ({ start: s, end: nextFire(p.expr, s) })).filter(s => s.end !== null && s.end <= now);
+    const elapsed = expectedSlots(p.expr, start, end).map(s => ({ start: s, end: nextFire(p.expr, s) })).filter(s => s.end !== null && s.end <= now);
+    const skips = (await all(ctx.db, `SELECT moved_at, first_fire FROM fleet_stagger_skips WHERE procedure = ? AND expr = ?`, p.name, p.expr))
+      .map(k => ({ after: parseIso(k.moved_at), before: parseIso(k.first_fire) }));
+    const slots = elapsed.filter(s => !skips.some(k => s.end > k.after && s.start < k.before));
     const rel = Object.fromEntries(declared.map(s => [s, { slots: slots.length, with_record: 0 }]));
-    const row = { procedure: p.name, slots: slots.length, stops: 0, single_path: 0, reliability: {} };
+    const row = { procedure: p.name, slots: slots.length, skipped: elapsed.length - slots.length, stops: 0, single_path: 0, reliability: {} };
     for (const s of slots) {
       const a = iso(s.start), b = iso(s.end);
       const recs = await all(ctx.db, `SELECT COALESCE(scheduler, '') AS scheduler, COUNT(*) AS n FROM fleet_runs WHERE cron_name = ? AND ts_start >= ? AND ts_start < ? GROUP BY 1`, p.name, a, b);
@@ -707,7 +744,7 @@ export async function reconcile(ctx) {
   return { ok: true, at, counts, states, ...detail };
 }
 
-// ---- event-triggered scheduling ----------------------------------------------------------------
+// ---- event-triggered scheduling (US-11-R23) ----------------------------------------------------
 
 export async function setTrigger(ctx, { id, event_kind, task_id, enabled = true }) {
   await run(ctx.db, `INSERT INTO fleet_triggers (id, event_kind, task_id, enabled) VALUES (?,?,?,?)
@@ -822,8 +859,9 @@ const collisionCount = occupied => [...occupied.values()].filter(n => n > 1).len
  * Spread the minutes at which enabled schedules fire. Only an expression whose minute field is a periodic or single minute set
  * (a star-slash-n form for n dividing 60, a literal, or the comma-list form of either) and whose other fields are `*` is moved; the firings per hour
  * never change. Greedy: the busiest schedule first, each taking the offset that adds the fewest collisions. A name in
- * `config.stagger_pin` keeps its minutes. `apply` rewrites the rows (`setCron`; next_fire moves to the first new slot at or after the old one, so a move never fires a schedule twice in its period), the matching procedure
- * expression and the stagger log; without it the plan is only returned.
+ * `config.stagger_pin` keeps its minutes. `apply` writes each move through `writeMove` (the row; next_fire moves to the first new slot at or
+ * after the old one, so a move never fires a schedule twice in its period; the matching procedure expression; the stagger log); without it
+ * the plan is only returned.
  */
 export async function staggerHourly(ctx, { apply = false } = {}) {
   const c = cfg(ctx), pin = new Set(c.stagger_pin || []);
@@ -856,19 +894,7 @@ export async function staggerHourly(ctx, { apply = false } = {}) {
   const result = { applied: false, collisions_before, collisions_after, changes: plan.filter(p => p.changed), unchanged: plan.filter(p => !p.changed).map(p => p.name), skipped };
   if (!apply) return result;
   const at = iso(nowMs(ctx));
-  for (const ch of result.changes) {
-    const cr = rows.find(r => r.name === ch.name);
-    await setCron(ctx, { name: ch.name, expr: ch.to, task_id: cr.task_id, enabled: true });
-    // setCron clears next_fire, which reads as due: a schedule that had already fired this period would fire again at once. A schedule
-    // whose next old slot is still ahead keeps that period: it next fires at the first new slot at or after the old one.
-    const due = cr.next_fire ? parseIso(cr.next_fire) : null;
-    if (due !== null && due > nowMs(ctx)) {
-      const nf = nextFire(ch.to, due - MINUTE);
-      if (nf !== null) await run(ctx.db, `UPDATE fleet_crons SET next_fire = ? WHERE name = ?`, iso(nf), ch.name);
-    }
-    await run(ctx.db, `UPDATE fleet_procedures SET expr = ? WHERE name = ? AND expr = ?`, ch.to, ch.name, ch.from); // the dead-man check must expect the new slots
-    await run(ctx.db, `INSERT INTO fleet_stagger_log (at, name, old_expr, new_expr, collisions_before, collisions_after) VALUES (?,?,?,?,?,?)`, at, ch.name, ch.from, ch.to, collisions_before, collisions_after);
-  }
+  for (const ch of result.changes) await writeMove(ctx, rows.find(r => r.name === ch.name), ch.to, { at, collisions_before, collisions_after });
   return { ...result, applied: true };
 }
 
@@ -901,10 +927,11 @@ export async function step(ctx) {
   const c = cfg(ctx);
   if (c.enabled === false) return { enabled: false };
   const out = {};
-  // US-11-R12: with `auto_stagger` on, schedules are moved apart before anything is dispatched; a staggered set is left as it is.
-  if (c.auto_stagger === true) { const g = await stagger(ctx, { apply: true, literals: c.stagger_literals === true }); out.staggered = g.changes.length; }
-  // The hour-minute planner (pin list, procedure sync, log) runs when `stagger_auto` is on.
-  if (c.stagger_auto === true) await staggerHourly(ctx, { apply: true });
+  // US-11-R12: schedules are moved apart before anything is dispatched; a staggered set is left as it is. One planner runs per tick: the
+  // day-window planner with `auto_stagger`, else the hour-minute planner with `stagger_auto`. Run together they undo each other's moves on
+  // every tick, because the hour-minute planner does not count the schedules that name a time of day.
+  if (c.auto_stagger === true) { const g = await stagger(ctx, { apply: true, literals: c.stagger_literals === true }); out.staggered = g.changes.length; out.stagger_planner = 'day'; }
+  else if (c.stagger_auto === true) { const g = await staggerHourly(ctx, { apply: true }); out.staggered = g.changes.length; out.stagger_planner = 'hour'; }
   Object.assign(out, { dispatch: await dispatch(ctx), reaped: (await reapStale(ctx)).reaped, deadman: (await deadman(ctx)).alerts.length });
   if (ctx.deployed) {
     const last = await first(ctx.db, `SELECT at FROM fleet_reconciliations ORDER BY id DESC LIMIT 1`);

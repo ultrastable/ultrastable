@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Tests for secret redaction in the pack host wrapper (US-21-R09): no secret value in any pack log, row, item or tick note.
+// Tests for secret redaction in the pack host wrapper (US-21-R09, US-21-R17): no secret value in any pack log, row, item or tick note.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync } from 'node:fs';
@@ -16,7 +16,7 @@ const T0 = Date.now() - 3600e3;  // relative: pack read probes use datetime('now
 const SECRET = 'Zq7-very-private-value-42';
 const SETTING_SECRET = 'hunter2-setting-value';
 
-test('redactor removes raw, URL-encoded and base64 forms, longest first, plus secret shapes', () => {
+test('US-21-R17: redactor removes raw, URL-encoded and base64 forms, longest first, plus secret shapes', () => {
   const r = createRedactor({ values: [SECRET, 'short'] });
   const b64 = Buffer.from(SECRET).toString('base64').replace(/=+$/, '');
   const out = r.redact(`a ${SECRET} b ${encodeURIComponent(SECRET + ' x')} c ${b64} d short e ghp_${'a'.repeat(30)} f Bearer ${'x'.repeat(30)}`);
@@ -30,7 +30,7 @@ test('redactor removes raw, URL-encoded and base64 forms, longest first, plus se
   assert.deepEqual(r.deep({ a: [SECRET, 1], b: { c: `x${SECRET}` } }), { a: [REDACTED, 1], b: { c: `x${REDACTED}` } });
 });
 
-test('secretValuesFor reads declared names from env and secret-looking settings', () => {
+test('US-21-R17: secretValuesFor reads declared names from env and secret-looking settings', () => {
   const m = { requires: { secrets: ['API_TOKEN', 'MISSING'] } };
   const v = secretValuesFor(m, { env: { API_TOKEN: SECRET, OTHER: 'nope-nope-nope' }, settings: { host: 'plain-host-value', creds: { password: SETTING_SECRET }, list: [{ token: 'tok-in-a-list-1' }] } });
   assert.deepEqual(v.sort(), [SECRET, SETTING_SECRET, 'tok-in-a-list-1'].sort());
@@ -66,7 +66,7 @@ const runStep = async (db, packs, env) => {
 };
 const everything = db => JSON.stringify(['packs_runs', 'items', 'guard_ledger', 'gate_cards'].map(t => db.raw.prepare(`SELECT * FROM ${t}`).all()));
 
-test('a loop that throws or notes a secret value leaves it out of the run row, the tick errors, the notes and the backlog item', async () => {
+test('US-21-R17: a loop that throws or notes a secret value leaves it out of the run row, the tick errors, the notes and the backlog item', async () => {
   const dir = evilPack(`export async function run({ ctx, settings }) {
     ctx.notes.push('connecting with ' + settings.api_key);
     throw new Error('401 for token ' + settings.api_key + ' and env value ${SECRET}');
@@ -82,7 +82,7 @@ test('a loop that throws or notes a secret value leaves it out of the run row, t
   assert.match(db.raw.prepare(`SELECT title FROM items WHERE id LIKE 'PACKFAIL-%'`).get().title, /\[redacted\]/);
 });
 
-test('secret shapes are redacted even when the value is not a declared secret', async () => {
+test('US-21-R17: secret shapes are redacted even when the value is not a declared secret', async () => {
   const dir = evilPack(`export async function run() { throw new Error('boom ghp_${'b'.repeat(32)} done'); }`);
   const { db, packs } = host();
   await enable(packs, dir);
@@ -90,7 +90,7 @@ test('secret shapes are redacted even when the value is not a declared secret', 
   assert.ok(!everything(db).includes('ghp_') && !ctx.errors.join('').includes('ghp_'));
 });
 
-test('a channel error that carries a secret is redacted in the guard ledger and the refusal reason', async () => {
+test('US-21-R17: a channel error that carries a secret is redacted in the guard ledger and the refusal reason', async () => {
   const channel = { send: async () => { throw new Error(`provider said bad key ${SECRET}`); } };
   const { db, packs } = host({ env: { EXAMPLE_TOKEN: SECRET }, channel });
   const dir = evilPack(`export async function run({ ctx, guard }) {

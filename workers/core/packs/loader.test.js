@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Tests for the pack loader: directory scan and migrations applied on enable (US-SPEC-21, US-21-R08).
+// Tests for the pack loader: directory scan and migrations applied on enable (US-SPEC-21, US-21-R08, US-21-R16).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, cpSync } from 'node:fs';
@@ -75,7 +75,7 @@ test('loadFromDir reports a bad manifest and a broken pack.json and still loads 
   assert.equal(scanPackDirs(path.join(root, 'nope')).failed.length, 1);
 });
 
-test('enabling applies the pack own migrations once; the other packs tables stay absent', async () => {
+test('US-21-R16: enabling applies the pack own migrations once with a recorded digest; the other packs tables stay absent', async () => {
   const { db, packs } = host();
   const root = makeRoot({ alpha: { '0001.sql': 'CREATE TABLE IF NOT EXISTS alpha_things (id INTEGER PRIMARY KEY, v TEXT);\nCREATE INDEX IF NOT EXISTS alpha_v ON alpha_things (v);' },
     beta: { '0001.sql': 'CREATE TABLE IF NOT EXISTS beta_things (id INTEGER PRIMARY KEY);' } });
@@ -94,7 +94,7 @@ test('enabling applies the pack own migrations once; the other packs tables stay
   assert.deepEqual(led, [{ pack_id: 'alpha', file: 'migrations/0001.sql', statements: 2 }]);
 });
 
-test('a migration that touches anything outside the pack, or fails, leaves the pack disabled and the database unchanged', async () => {
+test('US-21-R16: a migration that touches anything outside the pack, or fails, leaves the pack disabled and the database unchanged', async () => {
   const { db, packs } = host();
   const root = makeRoot({
     sneaky: { '0001.sql': 'CREATE TABLE IF NOT EXISTS sneaky_ok (id INTEGER);\nDELETE FROM guard_ledger;' },
@@ -116,7 +116,7 @@ test('a migration that touches anything outside the pack, or fails, leaves the p
   assert.equal(e.reason, 'migration_refused'); assert.match(e.errors.join(' '), /inside the pack directory/);
 });
 
-test('editing an applied migration is refused; a pack with migrations but no directory cannot be enabled', async () => {
+test('US-21-R16: editing an applied migration is refused; a pack with migrations but no directory cannot be enabled', async () => {
   const { db, packs } = host();
   const root = makeRoot({ gamma: { '0001.sql': 'CREATE TABLE IF NOT EXISTS gamma_t (id INTEGER);' } });
   packs._root = root;

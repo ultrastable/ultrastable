@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Earned trust for packs (US-21-R17, R12, R22). A pack's outcomes are recorded on the surface `pack:<id>` with the action class
+// Earned trust for packs (US-21-R29, R12, R22). A pack's outcomes are recorded on the surface `pack:<id>` with the action class
 // equal to the kind of action, exactly where the guard reads its rung. core/trust turns outcomes into a proposed rung change;
 // a different agent's merge applies it (US-06-R05, R06). The rung a pack acts at is then
 //     min(rung earned, class ceiling (guard.js rungCeilings), ceiling of the policy surface the class maps to)

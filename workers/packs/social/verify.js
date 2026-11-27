@@ -22,7 +22,7 @@ export async function verifyLoop({ db, ctx, now, settings, guard }) {
     if (post && post.state !== 'pending' && (post.text === undefined || norm(post.text) === norm(r.text))) {
       await run(db, `UPDATE social_queue SET verify_status = 'verified', verified_at = ?, verify_attempts = ?, url = COALESCE(?, url) WHERE id = ?`, iso(now()), attempts, post.url ?? null, r.id);
       ok++;
-      if (guard && guard.outcome) await guard.outcome({ kind: 'post', event: 'verified', ref: `social-${r.id}` });   // US-21-R17: earned trust
+      if (guard && guard.outcome) await guard.outcome({ kind: 'post', event: 'verified', ref: `social-${r.id}` });   // US-21-R29: earned trust
     } else if (attempts >= s.verify_attempts || (post && post.state === 'pending')) {
       await run(db, `UPDATE social_queue SET verify_status = 'failed', verify_attempts = ? WHERE id = ?`, attempts, r.id);
       await fileItem(db, `SOCIALVERIFY-${r.id}`, `Social post ${r.id} could not be verified after publishing${error ? ` (${error.slice(0, 80)})` : ''}`, `post ${r.id} read back through the channel, or removed from the record with the reason`);

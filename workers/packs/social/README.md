@@ -62,6 +62,7 @@ The console shows the manifest's `enable_gate` text as a decision card (what it 
 | Bluesky channel (createSession, createRecord, getPosts, deleteRecord, replies) | BUILT against fake fetch; not run on the network | `channels/bluesky.js` |
 | Scheduler channel (Buffer-style create, read, pending, delete) | BUILT against fake fetch; paths and base URL are configuration; no replies | `channels/scheduler.js` |
 | Verification and removal incident items | BUILT | `verify.js`, `metrics.js` |
-| Link cards (embed previews) | PLANNED | |
+| Link cards (embed previews) | BUILT in `channels/bluesky.js` (`post({ embed })`, host on `embedHosts` only) and `guardPort({ linkCard })`; the Python publisher `scripts/social_post.py` does the same | `channels.test.js` |
 | Media posts, follow-back, replies to strangers | NOT COVERED (out of scope by design) | |
-| Reading mentions or engagement from the scheduler beyond update statistics | NOT COVERED | |
+| Reading mentions or engagement from the scheduler beyond update statistics | NOT COVERED in this pack; the platform's own publisher reads replies and mentions for Bluesky and Mastodon in `seed/worker/src/humans.js` | |
+| Read-only channel probes | BUILT: `probe()` on the Bluesky and scheduler channels (US-21-R25) | `channels.test.js` |

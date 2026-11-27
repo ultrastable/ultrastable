@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Tests for earned trust for packs (US-21-R12, R17, R22): outcomes become trust on pack:<id>, a reviewed change applies the rung,
+// Tests for earned trust for packs (US-21-R12, R29, R22): outcomes become trust on pack:<id>, a reviewed change applies the rung,
 // and the rung a pack acts at is the minimum of earned, class ceiling and the ceiling of the policy surface its class maps to.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -37,7 +37,7 @@ async function climb(packs) {
   return { moved: true, row, applied: await packs.trust.apply(row.item, 'reviewer-agent') };
 }
 
-test('US-21-R17: twenty verified outcomes with a policy whose mapped surface allows execute raise the rung to the act rung and the next send is delivered, not queued', async () => {
+test('T21-11 US-21-R29: twenty verified outcomes with a policy whose mapped surface allows execute raise the rung to the act rung and the next send is delivered, not queued', async () => {
   const policy = clone(POLICY); policy.surfaces.outreach.max_permission = 'execute';
   const { db, packs, channel } = await setup({ policy });
   assert.equal((await send(packs, 'k0')).decision, 'queued_for_approval');                // a new pack starts at the lowest rung
@@ -49,7 +49,7 @@ test('US-21-R17: twenty verified outcomes with a policy whose mapped surface all
   assert.equal(r.decision, 'sent'); assert.equal(channel.sent.length, 1);
 });
 
-test('US-21-R17: with the shipped policy a class B pack never passes the act rung (outreach is propose) and keeps queueing', async () => {
+test('US-21-R29: with the shipped policy a class B pack never passes the act rung (outreach is propose) and keeps queueing', async () => {
   const { packs, channel } = await setup();
   await verified(packs, 30);
   assert.equal((await climb(packs)).applied.rung, 'assisted');                            // the policy ceiling for propose
@@ -58,7 +58,7 @@ test('US-21-R17: with the shipped policy a class B pack never passes the act run
   assert.equal(channel.sent.length, 0);
 });
 
-test('US-21-R17: a promotion needs a different agent than the one that opened the item; the same agent is refused', async () => {
+test('US-21-R29: a promotion needs a different agent than the one that opened the item; the same agent is refused', async () => {
   const policy = clone(POLICY); policy.surfaces.outreach.max_permission = 'execute';
   const { packs } = await setup({ policy });
   await verified(packs, 20);
@@ -69,7 +69,7 @@ test('US-21-R17: a promotion needs a different agent than the one that opened th
   assert.equal((await packs.trust.apply('not-a-ladder-item', 'x')).reason, 'not_a_pack_transition');
 });
 
-test('US-21-R17: a removed post (hidden failure) lowers the rung and the next send queues again', async () => {
+test('T21-11 US-21-R29: a removed post (hidden failure) lowers the rung and the next send queues again', async () => {
   const policy = clone(POLICY); policy.surfaces.outreach.max_permission = 'execute';
   const { packs, channel } = await setup({ policy });
   await verified(packs, 20); await climb(packs); await climb(packs);
@@ -92,7 +92,7 @@ test('US-21-R12: earned trust above the class ceiling is still clamped, and an u
 });
 
 test('US-21-R22: act_rungs {notice: autonomous} queues a notice at delegated while a default kind still acts at delegated', async () => {
-  const policy = clone(POLICY); policy.surfaces.outreach.max_permission = 'execute';        // a policy that allows the delegated rung the ledger below holds (US-21-R17)
+  const policy = clone(POLICY); policy.surfaces.outreach.max_permission = 'execute';        // a policy that allows the delegated rung the ledger below holds (US-21-R29)
   const { db, packs, channel } = await setup({ policy, config: { act_rungs: { notice: 'autonomous' } } });
   for (const kind of ['notice', 'update']) db.raw.prepare(`INSERT INTO trust_ledger (surface, action_class, rung, reliability, outcomes) VALUES ('pack:example',?, 'delegated',1,50)`).run(kind);
   const q = await send(packs, 'k1', 'notice');
@@ -101,7 +101,7 @@ test('US-21-R22: act_rungs {notice: autonomous} queues a notice at delegated whi
   assert.equal(channel.sent.length, 1);
 });
 
-test('US-21-R17: the policy overlay gives each pack a surface bounded by the surface its class maps to, and outcome kinds are stated', async () => {
+test('US-21-R29: the policy overlay gives each pack a surface bounded by the surface its class maps to, and outcome kinds are stated', async () => {
   const o = policyWithPacks(POLICY, [{ id: 'a1', class: 'A' }, { id: 'b1', class: 'B' }, { id: 'd1', class: 'D' }]);
   assert.equal(o.surfaces['pack:a1'].max_permission, POLICY.surfaces[DEFAULT_POLICY_SURFACE.A].max_permission);
   assert.equal(o.surfaces['pack:b1'].max_permission, 'propose');
@@ -110,7 +110,7 @@ test('US-21-R17: the policy overlay gives each pack a surface bounded by the sur
   assert.deepEqual(Object.keys(OUTCOMES).sort(), ['complaint', 'failed', 'hidden_failure', 'removed', 'silent_drop', 'verified']);
 });
 
-test('US-21-R17: a rung above the policy ceiling is clamped at send time: a ledger at delegated under the shipped policy (propose) queues, and a policy tightened after the rung was earned takes effect on the next send', async () => {
+test('T21-11 US-21-R29: a rung above the policy ceiling is clamped at send time: a ledger at delegated under the shipped policy (propose) queues, and a policy tightened after the rung was earned takes effect on the next send', async () => {
   const { db, packs, channel } = await setup();
   assert.equal(await packs.trust.policyCeiling('example'), 'assisted');
   db.raw.prepare(`INSERT INTO trust_ledger (surface, action_class, rung, reliability, outcomes) VALUES ('pack:example','notice','delegated',1,50)`).run();

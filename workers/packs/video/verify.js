@@ -19,7 +19,7 @@ export async function verifyLoop({ db, ctx, now, settings, guard }) {
     if (same) {
       await run(db, `UPDATE video_queue SET verify_status = 'verified', verified_at = ?, verify_attempts = ?, url = COALESCE(?, url) WHERE id = ?`, iso(now()), attempts, v.url ?? null, r.id);
       ok++;
-      if (guard && guard.outcome) await guard.outcome({ kind: 'video', event: 'verified', ref: `video-${r.id}` });   // US-21-R17: earned trust
+      if (guard && guard.outcome) await guard.outcome({ kind: 'video', event: 'verified', ref: `video-${r.id}` });   // US-21-R29: earned trust
     } else if (attempts >= s.verify_attempts || (v && v.state === 'processing') || (live && !same)) {
       await run(db, `UPDATE video_queue SET verify_status = 'failed', verify_attempts = ? WHERE id = ?`, attempts, r.id);
       await fileItem(db, `VIDEOVERIFY-${r.id}`, `Video ${r.id} could not be verified after publishing${live && !same ? ' (provenance hash differs)' : error ? ` (${error.slice(0, 80)})` : ''}`, `video ${r.id} read back with its provenance hash, or taken down and recorded with the reason`);

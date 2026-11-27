@@ -6,7 +6,7 @@ import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { first, run, iso } from '../kernel/util.js';
 import { sha256 } from './guard.js';
-import { stripSql } from './sandbox.js';
+import { stripSql, stringAsName, readRefusal } from './sandbox.js';
 
 // Split SQL text into statements on top-level semicolons (respects quoted strings and comments).
 export function splitStatements(sql) {
@@ -31,6 +31,10 @@ export function checkMigrationStatement(stmt, packId) {
   const own = `${packId}_`;
   const owns = t => t === packId || t.startsWith(own);   // the pack id itself, or <id>_*
   if (/["`\[]/.test(s)) return ['quoted identifiers are not allowed'];
+  if (stringAsName(s)) return ['a string literal in place of a table name is not allowed'];
+  // A view body or an INSERT ... SELECT reads under the sandbox's read rules, so a view the pack defines never reveals a table its reads are denied.
+  const rr = readRefusal(s);
+  if (rr) return [`touches host tables (${rr})`];
   const REF = '\\b(?:from|join|into|update|references|table|on)\\s+';
   if (new RegExp(`${REF}(?:(?:packs_|guard_|kernel_)\\w+|trust_ledger\\b|roles\\b)`, 'i').test(s)) return ['touches host tables'];
   let m;
