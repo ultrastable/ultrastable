@@ -507,6 +507,14 @@
       "url": "intent-yield.schema.json"
     },
     {
+      "name": "job-trust.json",
+      "description": "Contract for doctrine/job-trust.json",
+      "fileMatch": [
+        "doctrine/job-trust.json"
+      ],
+      "url": "job-trust.schema.json"
+    },
+    {
       "name": "kernel.json",
       "description": "Contract for doctrine/kernel.json",
       "fileMatch": [
