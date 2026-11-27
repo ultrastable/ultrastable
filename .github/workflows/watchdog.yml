@@ -29,6 +29,10 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+      - name: Redeploy a Worker whose live code is behind main (DEPLOY-DRIFT-1)
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 -m foundation deploydrift --redeploy
       - name: Probe, restart, escalate
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}

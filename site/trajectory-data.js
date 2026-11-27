@@ -38,14 +38,14 @@ export default {
     0,
     109467
    ],
-   "share_recent": 0.269,
-   "share_trend": 0.269,
+   "share_recent": 0.267,
+   "share_trend": 0.267,
    "total": 109467
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 44150,
+   "recent7": 45330,
    "series": [
     0,
     0,
@@ -76,16 +76,16 @@ export default {
     0,
     0,
     0,
-    44150
+    45330
    ],
-   "share_recent": 0.108,
-   "share_trend": 0.108,
-   "total": 44150
+   "share_recent": 0.111,
+   "share_trend": 0.111,
+   "total": 45330
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 43529,
+   "recent7": 43998,
    "series": [
     0,
     0,
@@ -116,11 +116,11 @@ export default {
     0,
     0,
     0,
-    43529
+    43998
    ],
    "share_recent": 0.107,
    "share_trend": 0.107,
-   "total": 43529
+   "total": 43998
   },
   {
    "area": "seed/worker",
@@ -165,7 +165,7 @@ export default {
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 28726,
+   "recent7": 29147,
    "series": [
     0,
     0,
@@ -196,16 +196,16 @@ export default {
     0,
     0,
     0,
-    28726
+    29147
    ],
    "share_recent": 0.071,
    "share_trend": 0.071,
-   "total": 28726
+   "total": 29147
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 26572,
+   "recent7": 26787,
    "series": [
     0,
     0,
@@ -236,11 +236,51 @@ export default {
     0,
     0,
     0,
-    26572
+    26787
    ],
    "share_recent": 0.065,
    "share_trend": 0.065,
-   "total": 26572
+   "total": 26787
+  },
+  {
+   "area": "doctrine/schemas",
+   "quiet_days": 0,
+   "recent7": 17648,
+   "series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    17648
+   ],
+   "share_recent": 0.043,
+   "share_trend": 0.043,
+   "total": 17648
   },
   {
    "area": "instances",
@@ -281,49 +321,9 @@ export default {
    "share_recent": 0.043,
    "share_trend": 0.043,
    "total": 17582
-  },
-  {
-   "area": "doctrine/schemas",
-   "quiet_days": 0,
-   "recent7": 17532,
-   "series": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    17532
-   ],
-   "share_recent": 0.043,
-   "share_trend": 0.043,
-   "total": 17532
   }
  ],
- "at": "2026-11-27T11:10:13Z",
+ "at": "2026-11-27T11:16:58Z",
  "days": 30,
  "findings": [
   {
@@ -395,16 +395,16 @@ export default {
    0,
    0,
    0,
-   30
+   41
   ],
-  "closed": 1394,
-  "opened": 1424
+  "closed": 1390,
+  "opened": 1431
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 22934,
+   "rows": 22972,
    "series": [
     0,
     0,
@@ -435,13 +435,13 @@ export default {
     2312,
     2535,
     5558,
-    2403
+    2441
    ]
   },
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 1562,
+   "rows": 1574,
    "series": [
     0,
     0,
@@ -472,7 +472,7 @@ export default {
     0,
     212,
     268,
-    168
+    180
    ]
   },
   {
@@ -552,7 +552,7 @@ export default {
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 624,
+   "rows": 627,
    "series": [
     0,
     0,
@@ -583,13 +583,13 @@ export default {
     55,
     88,
     189,
-    95
+    98
    ]
   },
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 608,
+   "rows": 609,
    "series": [
     0,
     0,
@@ -620,13 +620,13 @@ export default {
     55,
     62,
     154,
-    71
+    72
    ]
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 523,
+   "rows": 524,
    "series": [
     0,
     0,
@@ -657,13 +657,13 @@ export default {
     55,
     62,
     143,
-    62
+    63
    ]
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 522,
+   "rows": 523,
    "series": [
     0,
     0,
@@ -694,7 +694,7 @@ export default {
     55,
     62,
     143,
-    62
+    63
    ]
   }
  ],

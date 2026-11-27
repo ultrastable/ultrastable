@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/ashby-archive.schema.json",
+  "title": "ashby-archive (doctrine/ashby-archive.json)",
+  "description": "Contract for doctrine/ashby-archive.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "rule": {
+      "type": "string"
+    },
+    "_doc": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "archive": {
+          "type": "string"
+        },
+        "journal": {
+          "type": "string"
+        },
+        "bookshelf": {
+          "type": "string"
+        },
+        "index": {
+          "type": "string"
+        },
+        "summaries": {
+          "type": "string"
+        },
+        "robots_crawl_delay_s": {
+          "type": "number"
+        },
+        "copyright": {
+          "type": "string"
+        },
+        "stated_by_archive": {
+          "type": "object"
+        },
+        "fetched": {
+          "type": "string"
+        }
+      }
+    },
+    "max_items": {
+      "type": "number"
+    },
+    "systems_categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "not_applicable": {
+      "type": "object",
+      "properties": {}
+    },
+    "principles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "keywords": {
+            "type": "array"
+          },
+          "mechanisms": {
+            "type": "array"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "pages": {
+            "type": "array"
+          },
+          "probes": {
+            "type": "array"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "$schema",
+    "_doc",
+    "max_items",
+    "not_applicable",
+    "principles",
+    "rule",
+    "source",
+    "systems_categories"
+  ]
+}

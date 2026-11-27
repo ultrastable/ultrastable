@@ -1,0 +1,155 @@
+{
+  "schema": "research-study/1",
+  "id": "ashby-journal",
+  "order": 7,
+  "source_id": "canon:ashby-journal",
+  "paper_title": "The multistable system: what Ashby's journal says about letting many loops adapt at once",
+  "paper_frame": "Ashby kept a journal for 44 years: 7,189 pages, indexed by his own hand. Its entries on the multistable system, DAMS and society return again and again to one problem: many parts adapting at once, each judging its change by a common indicator, undo each other. We took the archive's index as data, stated each principle in our own words with Ashby's page numbers, checked every one against this system's code, and built what was missing: a disperser that lets only one trial run on a shared step-function, a reading of the collisions that happened before it, and a search whose noise grows with the deviation.",
+  "title": "Journal of W. Ross Ashby, with its keyword index and Other Index",
+  "authors": [
+    "W. Ross Ashby"
+  ],
+  "institution": "The W. Ross Ashby Digital Archive (The Estate of W. Ross Ashby)",
+  "kind": "journal archive",
+  "version": "journal 1928 to 1972, digital archive 2008",
+  "seeded_by": "owner, 2026-11-27 (\"Incorporate all information in Ultrastable systems code\")",
+  "source_url": "https://ashby.info/journal/index.html",
+  "data": "25 volumes, 7,189 pages, 678 primary keywords and an Other Index of subject categories, read from the archive's index pages at its stated crawl delay; the register is doctrine/ashby-archive.json.",
+  "summary": "Ashby's journal works out, page by page, how a system made of many parts can adapt: a multistable system whose parts adapt separately, kept apart by dispersion, testing the whole against the whole, losing versatility as step-functions are used up, and needing noise in proportion to how far an essential variable has strayed.",
+  "perspectives": [
+    "systems",
+    "reliability"
+  ],
+  "limits": [
+    "Reading. The register is built from the archive's index pages, not from the handwritten page images; each principle cites the pages its index entries name. The journal's wording is not copied: principles are stated in our own words.",
+    "Coverage. Every keyword and category carries a disposition (mapped, background, not applicable or pending); pending ones are filed as work a few per pass, most-referenced first, so the share triaged rises over time rather than being claimed at once.",
+    "Collision history. The collision share reads the last 7 days of the second loop's steps, most of which ran before the disperser existed, so it falls only as those steps leave the window."
+  ],
+  "findings": [
+    {
+      "id": "J1",
+      "concern": "Many parts adapting on one shared setting at once",
+      "claim": "Ashby: parts of a multistable system can adapt simultaneously provided channel width is adequate and a disperser is provided (p. 4641); separate clusters adapt in the way that gives minimal interaction (p. 4178); trials within a larger trial only if functionally disconnected while they run (p. 4547). Two variables trying changes on the same step-function at once each judge the other's change as their own.",
+      "where": "Other Index 3 (The Multistable System) and 2 (Society)",
+      "perspective": "systems",
+      "mechanisms": [
+        {
+          "rule": "MULTISTABLE-1",
+          "path": "foundation/ultrastability.py",
+          "how": "one trial per step-function at a time: a function under an unsettled trial holds every newcomer, and among newcomers the variable that has waited longest goes first"
+        }
+      ],
+      "metric": "second_loop_collision_share_7d",
+      "target": {
+        "op": "<=",
+        "value": 0
+      },
+      "prediction": "second_loop_collision_share_7d <= 0 within 168 h"
+    },
+    {
+      "id": "J2",
+      "concern": "Judging a change only by the variable it was made for",
+      "claim": "Ashby: in the multistable system each part is not tested against its own environment alone, but the whole against the whole (p. 2889); making one variable more self-stable can make the whole unstable (p. 2423); parts communicate through the environment (p. 4215).",
+      "where": "Other Index 3 and 6",
+      "perspective": "systems",
+      "mechanisms": [
+        {
+          "rule": "FREELY-ADAPTIVE-1",
+          "path": "foundation/freeadapt.py",
+          "how": "every settled action is read against every other essential variable of its scope"
+        }
+      ],
+      "metric": "efficiency_verdict_share",
+      "target": {
+        "op": ">=",
+        "value": 0.8
+      },
+      "prediction": "efficiency_verdict_share >= 0.8 within 168 h"
+    },
+    {
+      "id": "J3",
+      "concern": "Running out of step-functions",
+      "claim": "Ashby: some step-functions can be used only once, so the system tends gradually to lose versatility (p. 3436).",
+      "where": "Other Index 3",
+      "perspective": "reliability",
+      "mechanisms": [
+        {
+          "rule": "ASHBY-ARCHIVE-1",
+          "path": "foundation/ultrastability.py",
+          "how": "versatility counts the step-functions that can still move in a declared direction"
+        }
+      ],
+      "metric": "step_versatility_share",
+      "target": {
+        "op": ">=",
+        "value": 0.8
+      },
+      "prediction": "step_versatility_share >= 0.8 within 336 h"
+    },
+    {
+      "id": "J4",
+      "concern": "A search that ignores how far out the variable is",
+      "claim": "Ashby: an essential variable may inject noise proportional to its deviation (p. 3410), and specialised essential variables gain from using noise (p. 3383). A search that draws uniformly treats a near miss like a collapse.",
+      "where": "Other Index 4 (DAMS)",
+      "perspective": "reliability",
+      "mechanisms": [
+        {
+          "rule": "ASHBY-ARCHIVE-1",
+          "path": "foundation/ultrastability.py",
+          "how": "the search draws first within a window around the current value whose width grows with the deviation, then over the whole range"
+        }
+      ],
+      "metric": "second_loop_kept_share",
+      "target": {
+        "op": ">=",
+        "value": 0.25
+      },
+      "prediction": "second_loop_kept_share >= 0.25 within 720 h"
+    },
+    {
+      "id": "J5",
+      "concern": "Taking from an archive what is convenient",
+      "claim": "Ashby's index is the map of his journal; a system that says it has incorporated the journal has to account for every entry of that map, not only the ones it liked.",
+      "where": "Keyword index and Other Index",
+      "perspective": "systems",
+      "mechanisms": [
+        {
+          "rule": "ASHBY-ARCHIVE-1",
+          "path": "foundation/ashbyarchive.py",
+          "how": "every keyword and category gets a disposition; pending ones become work items a few per pass, most-referenced first"
+        }
+      ],
+      "metric": "archive_triaged_share",
+      "target": {
+        "op": ">=",
+        "value": 1.0
+      },
+      "prediction": "archive_triaged_share >= 1 within 2160 h"
+    },
+    {
+      "id": "J6",
+      "concern": "Principles that stay words",
+      "claim": "Ashby: 'knowing' means controlling (p. 4292); knowledge must mean control if it is to be objective (p. 4303). A principle taken from the journal counts only when it is code with a probe that finds it.",
+      "where": "Other Index 4 and 5 (Epistemology)",
+      "perspective": "systems",
+      "mechanisms": [
+        {
+          "rule": "ASHBY-ARCHIVE-1",
+          "path": "doctrine/ashby-archive.json",
+          "how": "each principle names the code that carries it and a probe; the check fails a built principle whose probe does not pass"
+        }
+      ],
+      "metric": "archive_principles_built_share",
+      "target": {
+        "op": ">=",
+        "value": 1.0
+      },
+      "prediction": "archive_principles_built_share >= 1 within 336 h"
+    }
+  ],
+  "misperception": {
+    "belief": "More feedback loops make an autonomous system more stable.",
+    "short": "More loops, more stability.",
+    "counter": "Loops that adapt at the same time on shared settings undo each other's work. Many loops are stable only when something keeps their trials apart and judges each change against the whole system."
+  }
+}

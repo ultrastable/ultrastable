@@ -18,7 +18,7 @@ Every reading, step and verdict is a row in ops/ultrastability.jsonl. Tests: tes
 """
 from __future__ import annotations
 import json, re, sys, urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from . import cloudevents
 
@@ -398,6 +398,8 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
     if held and apply:
         _common(root, c, sorted(held))
     targets = [t for t in targets if t[0] not in held]
+    busy = busy_functions(rows, {k: v for k, v, _ in targets})  # MULTISTABLE-1: a step-function under trial is not changed by a second variable
+    deferred = []
     for key, v, value in targets:
         if value is None:  # unmeasured is never in bounds and never a reason to act: one item names what cannot be read
             out["unmeasured"].append(key)
@@ -442,17 +444,13 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
                 pending = None if verdict else pending
         if not ok and not pending and consecutive >= c["patience_ticks"]:
             idx = next((i for i in range(len(v["ladder"])) if not _taken(episode, i)), None)
-            draw = _search(root, key, v, episode) if idx is None else None
+            draw = _search(root, key, v, episode, value) if idx is None else None
             if draw:  # ASHBY-SEARCH-1: the ladder is spent and the variable is still out; keep changing step-functions to a field not yet tried
                 sidx, val = draw
                 step = v["ladder"][sidx]
                 row = {"at": now, "ev": "step", "var": key, "idx": sidx, "kind": "param", "search": True, "value": value, "what": f"search: {step['path']} = {val} (untried in this episode)",
                        "id": f"{key}-s{len(episode)}-{now}", "n": len(hist) + 1, "consulted": v["first_order"], "prediction": f"{v['reading']} within bounds within {c['settle_ticks']} ticks"}
-                if apply:
-                    row["before"], row["after"] = _param(root, step, set_to=val)
-                    _append(root, c, row)
-                    _provenance(root, row, v, key)
-                out["steps"].append(row)
+                deferred.append({"key": key, "v": v, "row": row, "step": step, "set_to": val})
             elif idx is None:
                 inc = f"{c['item_prefix']}-{_slug(key)}-REDESIGN"
                 entry["exhausted"] = inc
@@ -464,18 +462,123 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
                 step = v["ladder"][idx]
                 row = {"at": now, "ev": "step", "var": key, "idx": idx, "kind": step["kind"], "value": value, "what": step["what"],
                        "id": f"{key}-{idx}-{now}", "n": len(hist) + 1, "consulted": v["first_order"], "prediction": f"{v['reading']} within bounds within {c['settle_ticks']} ticks"}
-                if apply:
-                    if step["kind"] == "param":
-                        row["before"], row["after"] = _param(root, step)
-                    else:
+                if step["kind"] == "param":
+                    deferred.append({"key": key, "v": v, "row": row, "step": step, "set_to": None})
+                else:
+                    if apply:
                         row["item"] = _item(root, c, key, v, idx, step, value)
-                    _append(root, c, row)
-                    _provenance(root, row, v, key)
-                out["steps"].append(row)
+                        _append(root, c, row)
+                        _provenance(root, row, v, key)
+                    out["steps"].append(row)
         out["variables"][key] = entry
         if apply:
             _append(root, c, {"at": now, "ev": "reading", "var": key, "value": value, "ok": ok})
+    out["dispersed"] = []
+    for d, held_by in disperse(deferred, busy, rows):
+        if held_by:  # waits for the next tick; its ladder position is not spent
+            hr = {"at": now, "ev": "dispersed", "var": d["key"], "fn": function_key(d["step"]), "held_by": held_by}
+            out["dispersed"].append(hr)
+            if apply:
+                _append(root, c, hr)
+            continue
+        row = d["row"]
+        if apply:
+            row["before"], row["after"] = _param(root, d["step"], set_to=d["set_to"])
+            _append(root, c, row)
+            _provenance(root, row, d["v"], d["key"])
+        out["steps"].append(row)
     return out
+
+
+def function_key(step) -> str | None:
+    """MULTISTABLE-1: a param step's step-function is the value it changes (file and path); two variables whose ladders name it are joined there."""
+    return f"{step['file']}::{step['path']}" if step.get("kind") == "param" else None
+
+
+def busy_functions(rows, vmap) -> dict:
+    """Step-functions under a trial that has no verdict yet: {function: holding step id}."""
+    verdicts = {r.get("step_id") for r in rows if r.get("ev") == "verdict"}
+    busy = {}
+    for r in rows:
+        if r.get("ev") != "step" or r.get("kind") != "param" or r.get("id") in verdicts:
+            continue
+        v = vmap.get(r.get("var"))
+        if v and 0 <= r.get("idx", -1) < len(v["ladder"]):
+            fn = function_key(v["ladder"][r["idx"]])
+            if fn:
+                busy[fn] = r["id"]
+    return busy
+
+
+def disperse(deferred, busy, rows) -> list:
+    """MULTISTABLE-1 (Ashby's journal, multistable system: parts can adapt simultaneously only when a disperser is provided, p. 4641; separate
+    clusters adapt in the way that gives minimal interaction, p. 4178). One trial per step-function at a time: a function already under trial
+    holds every newcomer; among newcomers the variable whose last step is oldest (never stepped first) goes, the rest wait a tick. Steps on
+    different functions all go, so independent parts still adapt in parallel. Returns [(deferred, held_by or None)]."""
+    last = {}
+    for r in rows:
+        if r.get("ev") == "step":
+            last[r.get("var")] = r.get("at") or ""
+    out, by = [], {}
+    for d in deferred:
+        by.setdefault(function_key(d["step"]), []).append(d)
+    for fn, ds in by.items():
+        if fn in busy:
+            out += [(d, f"pending {busy[fn]}") for d in ds]
+            continue
+        ds = sorted(ds, key=lambda d: (last.get(d["key"], ""), d["key"]))
+        out.append((ds[0], None))
+        out += [(d, ds[0]["key"]) for d in ds[1:]]
+    return out
+
+
+def collisions(root=REPO, days=7, now=None) -> dict:
+    """MULTISTABLE-1 reading: share of param steps in the last `days` that changed a step-function another variable's step was already trying
+    (same tick, or still without a verdict). Each such step's verdict is confounded with the other's."""
+    c = load(root)
+    vmap = {}
+    for scope in ("platform", "tenant"):
+        for v in c["scopes"][scope]["variables"]:
+            vmap[(scope, v["id"])] = v
+    rows = _rows(root, c)
+    vtime = {r.get("step_id"): r.get("at") for r in rows if r.get("ev") == "verdict"}
+    steps = []
+    for r in rows:
+        if r.get("ev") != "step" or r.get("kind") != "param":
+            continue
+        var = r.get("var", "")
+        v = vmap.get(("tenant", var.split(":", 1)[1]) if ":" in var else ("platform", var))
+        if v and 0 <= r.get("idx", -1) < len(v["ladder"]):
+            steps.append((r["at"], vtime.get(r["id"]) or "9999", function_key(v["ladder"][r["idx"]]), var))
+    end = now or (max((s[0] for s in steps), default=None))
+    if not end:
+        return {"value": None, "n": 0}
+    end_t = datetime.fromisoformat(str(end).replace("Z", "+00:00")) if isinstance(end, str) else end
+    cut = (end_t - timedelta(days=days)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    recent = [s for s in steps if s[0] >= cut]
+    hit = sum(1 for s in recent if any(o is not s and o[2] == s[2] and o[3] != s[3] and o[0] <= s[0] < (o[1] if o[0] < s[0] else "9999") for o in steps))
+    return {"value": round(hit / len(recent), 3) if recent else None, "n": len(recent)}
+
+
+def versatility(root=REPO) -> dict:
+    """Ashby's journal p. 3436: some step-functions can be used only once, so the system gradually loses versatility. Share of declared param
+    step-functions whose current value can still move in the direction of their step (not pinned at the bound they step toward)."""
+    c = load(root)
+    fns = {}
+    for scope in ("platform", "tenant"):
+        for v in c["scopes"][scope]["variables"]:
+            for st in v["ladder"]:
+                if st.get("kind") == "param":
+                    fns.setdefault(function_key(st), []).append(st)
+    free = read = 0
+    for sts in fns.values():
+        try:
+            cur = _jget(json.loads((Path(root) / sts[0]["file"]).read_text(encoding="utf-8")), sts[0]["path"])
+        except (OSError, KeyError, ValueError, StopIteration):
+            continue  # unreadable: unmeasured, neither free nor spent
+        read += 1
+        free += any(cur != (st["max"] if st.get("delta", 0) > 0 else st["min"]) for st in sts)  # spent only when no declared step can move it
+    return {"value": round(free / read, 3) if read else None, "n": read}
 
 
 def gap(v: dict, value):
@@ -527,12 +630,26 @@ def _taken(episode, idx) -> bool:
     return any(s["idx"] == idx and not s.get("search") for s in episode)
 
 
-def _search(root, key, v, episode):
+def deviation(v, value) -> float:
+    """How far out of limits, as a share of the scale of the limits (0 inside, 1 at or beyond one full scale)."""
+    g = gap(v, value)
+    if not g:
+        return 0.0
+    lo, hi = v.get("min"), v.get("max")
+    scale = (hi - lo) if lo is not None and hi is not None and hi > lo else max(abs(lo or 0), abs(hi or 0), 1e-9)
+    return min(1.0, g / scale)
+
+
+def _search(root, key, v, episode, value=None):
     """Ashby's step-function search after the ladder: a value for one of the variable's parameters, drawn at random (seeded by the variable and the
     episode, so a run is reproducible) from its declared range, never one this episode already tried. None when every value has been tried, or the
-    variable has no parameter to change: only then does the loop file a redesign item."""
+    variable has no parameter to change: only then does the loop file a redesign item.
+    AJ-NOISE (Ashby's journal pp. 3410, 3057: an essential variable injects noise in proportion to its deviation): the draw is first made inside a
+    window around the current value whose width grows with how far the variable is out of its limits (at least one step); only when that window is
+    spent does the draw cover the whole declared range, so nothing in the search space is lost."""
     import random
-    cands = []
+    dev = deviation(v, value) if value is not None else 1.0
+    cands, near = [], []
     for i, st in enumerate(v["ladder"]):
         if st.get("kind") != "param":
             continue
@@ -543,10 +660,13 @@ def _search(root, key, v, episode):
         tried = {cur} | {s.get("after") for s in episode if s["idx"] == i} | {s.get("before") for s in episode if s["idx"] == i}
         step = abs(st.get("delta") or 1)
         n = int(round((st["max"] - st["min"]) / step))
-        cands += [(i, st["min"] + k * step) for k in range(n + 1) if st["min"] + k * step not in tried]
+        free = [(i, st["min"] + k * step) for k in range(n + 1) if st["min"] + k * step not in tried]
+        width = max(step, dev * (st["max"] - st["min"]))
+        cands += free
+        near += [c for c in free if isinstance(cur, (int, float)) and abs(c[1] - cur) <= width]
     if not cands:
         return None
-    return random.Random(f"{key}|{len(episode)}").choice(cands)
+    return random.Random(f"{key}|{len(episode)}").choice(near or cands)
 
 
 def ashby(root=REPO) -> dict:
