@@ -6560,6 +6560,14 @@
    "body": "On 2026-11-27 glm-4.7-flash returned 502 and the ladder marked all Workers AI down, so working models were never asked; executor failed 14 of 15 runs. Sessions made 302 of 349 merges in the week before. down_keys now scopes a 5xx to the model.",
    "probe": "grep:foundation/agent_ladder.py::def down_keys",
    "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-sweeper-refreshes-behind-prs-only-on-strict-bases",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Sweeper refreshes behind PRs only on strict bases",
+   "body": "Non-strict main ruleset merges behind PRs as is; update-branch restarted CI on every main merge (ZHC-R3 #2668).",
+   "probe": "grep:seed/worker/src/sweeper.js::strictRepos.includes"
   }
  ]
 }

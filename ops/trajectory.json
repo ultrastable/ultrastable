@@ -44,7 +44,7 @@
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 43616,
+   "recent7": 43634,
    "series": [
     0,
     0,
@@ -75,12 +75,12 @@
     0,
     0,
     0,
-    43616
+    43634
    ],
    "share_recent": 0.109,
    "share_trend": 0.109,
-   "slope": 281.3935,
-   "total": 43616
+   "slope": 281.5097,
+   "total": 43634
   },
   {
    "area": "foundation",
@@ -126,7 +126,7 @@
   {
    "area": "seed/worker",
    "quiet_days": 0,
-   "recent7": 30425,
+   "recent7": 30435,
    "series": [
     0,
     0,
@@ -157,17 +157,17 @@
     0,
     0,
     0,
-    30425
+    30435
    ],
    "share_recent": 0.076,
    "share_trend": 0.076,
-   "slope": 196.2903,
-   "total": 30425
+   "slope": 196.3548,
+   "total": 30435
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 28185,
+   "recent7": 28149,
    "series": [
     0,
     0,
@@ -198,12 +198,12 @@
     0,
     0,
     0,
-    28185
+    28149
    ],
    "share_recent": 0.07,
    "share_trend": 0.07,
-   "slope": 181.8387,
-   "total": 28185
+   "slope": 181.6065,
+   "total": 28149
   },
   {
    "area": "tests/foundation",
@@ -823,7 +823,7 @@
   {
    "area": "docs",
    "quiet_days": 0,
-   "recent7": 2020,
+   "recent7": 2022,
    "series": [
     0,
     0,
@@ -854,12 +854,12 @@
     0,
     0,
     0,
-    2020
+    2022
    ],
    "share_recent": 0.005,
    "share_trend": 0.005,
-   "slope": 13.0323,
-   "total": 2020
+   "slope": 13.0452,
+   "total": 2022
   },
   {
    "area": "agents",
@@ -1026,7 +1026,7 @@
    "total": 1500
   }
  ],
- "at": "2026-11-27T08:05:14Z",
+ "at": "2026-11-27T08:10:04Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1099,9 +1099,9 @@
    0,
    0,
    0,
-   40
+   32
   ],
-  "closed": 1363,
+  "closed": 1371,
   "opened": 1403
  },
  "loops": [
@@ -1640,7 +1640,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 346,
+   "rows": 347,
    "series": [
     0,
     0,
@@ -1671,9 +1671,9 @@
     1,
     153,
     109,
-    13
+    14
    ],
-   "slope": 1.8799
+   "slope": 1.8863
   },
   {
    "loop": "resilience",
@@ -1830,7 +1830,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 587,
+   "rows": 588,
    "series": [
     0,
     0,
@@ -1861,9 +1861,9 @@
     55,
     88,
     189,
-    58
+    59
    ],
-   "slope": 3.1464
+   "slope": 3.1528
   },
   {
    "loop": "ultrastability",
