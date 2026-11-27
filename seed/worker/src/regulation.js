@@ -3,15 +3,15 @@
 // ASHBY-KERNEL-1: the law of requisite variety read from the system's own work queue (the law itself is in ashby.js, J.4658 and J.4846).
 // Every fix item a detector files is one disturbance class (BREACH-<metric>, FM-<mode>, MISSED-<loop>, IGNITE-<stage>, GOAL-<goal> ...).
 // A class is regulated when its item closed on evidence inside the window; it is let through when its item has stood open past the grace
-// period, because no response the system has was able to hold it. The reading is the builtin metric unregulated_disturbances_14d, the goal
-// core.adapt.variety keeps it at 0, and the classes it names are where the regulator needs more variety.
+// period, because no response the system has was able to hold it. The reading is the builtin metric unregulated_disturbances_14d. No
+// step-function can move it, so the goal loop files the lever as work (VARIETY-DEFICIT, naming the classes) and closes it by the same reading.
 // Two indexed reads (status, updated_at and status, priority), kept for an hour in one org row, so a tick costs one row.
 import { requisiteVariety } from './ashby.js';
 import { OWN_SQL, tenantOf } from './tenant.js';
 
-// The item the goal loop files when this very reading is off target. It is the remedy for the reading, not a disturbance: counted, it would keep the
-// reading above 0 for as long as it stood open and the goal could never close it.
-export const OWN_ITEM = 'GOAL-core.adapt.variety';
+// The item the goal loop files when this very reading is above 0. It is the remedy for the reading, not a disturbance: counted, it would keep the
+// reading above 0 for as long as it stood open and nothing could ever close it.
+export const OWN_ITEM = 'VARIETY-DEFICIT';
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
 const ms = s => { const t = Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(String(s)) ? s : String(s).replace(' ', 'T') + 'Z'); return Number.isFinite(t) ? t : null; };
 

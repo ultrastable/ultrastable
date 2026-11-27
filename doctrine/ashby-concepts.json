@@ -102,14 +102,14 @@
     {
       "id": "requisite-variety",
       "url": "https://ashby.info/journal/index/index.html#requisite",
-      "summary": "Only variety in the regulator can force down the variety disturbances pass to the outcomes. The kernel reads it from its own work queue: every fix item a detector files is a disturbance class, one that closed on evidence was regulated, and one that stood open past 72 hours is variety let through. The goal core.adapt.variety keeps that count at 0.",
+      "summary": "Only variety in the regulator can force down the variety disturbances pass to the outcomes. The kernel reads it from its own work queue: every fix item a detector files is a disturbance class, one that closed on evidence was regulated, and one that stood open past 72 hours is variety let through. While that count is above 0 the goal loop keeps the item VARIETY-DEFICIT open, naming the classes that need a different response.",
       "mechanisms": [
         "seed/worker/src/selfaudit.js::FM-",
         "seed/worker/src/unknowns.js::export",
         "foundation/blindspots.py::def ",
         "seed/worker/src/ashby.js::export function requisiteVariety",
         "seed/worker/src/regulation.js::export async function varietyReading",
-        "seed/autonomy/goals.json::core.adapt.variety"
+        "seed/worker/src/goals.js::async function regulatorItems"
       ],
       "status": "implemented",
       "pages": [4658, 4846, 4850, 5242]
@@ -260,13 +260,13 @@
       "id": "reducibility",
       "url": "https://ashby.info/journal/index/index.html#reducibility",
       "pages": [1381, 4564, 5430, 5606],
-      "summary": "A whole that splits into parts which can each come right and stay right adapts in a time that grows with the number of parts, not exponentially with it. The kernel reads its goals and knobs as connected components and the goal core.adapt.joint keeps the largest at eight step-functions or fewer.",
+      "summary": "A whole that splits into parts which can each come right and stay right adapts in a time that grows with the number of parts, not exponentially with it. The kernel reads its goals and knobs as connected components and files JOINT-TOO-LARGE while any component holds more than eight step-functions.",
       "mechanisms": [
         "seed/worker/src/ashby.js::export function reducibility",
         "seed/worker/src/ashby.js::export function components",
         "seed/worker/src/ashby.js::export const MAX_JOINT",
         "seed/worker/src/goals.js::export const largestJoint",
-        "seed/autonomy/goals.json::core.adapt.joint"
+        "seed/worker/src/goals.js::export const JOINT_ITEM"
       ],
       "status": "implemented",
       "keywords": ["decomposable", "iterated"]

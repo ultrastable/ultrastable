@@ -15,7 +15,7 @@ import { record } from './auditchain.js';
 import { beatStats24h } from './beatstats.js';  // READ-BUDGET-9
 import { dampedCooldown, errorBudget } from './control.js';  // CONTROL-1: knob damping, goal error budgets
 import { nextTrial, upsets, accessibility, reducibility, searchBudget, jointRest, cylindrance, protocol, variety, transmission } from './ashby.js';  // ASHBY-KERNEL-1
-import { varietyReading } from './regulation.js';  // ASHBY-KERNEL-1: requisite variety read from the work queue
+import { varietyReading, OWN_ITEM } from './regulation.js';  // ASHBY-KERNEL-1: requisite variety read from the work queue
 export const DDL = [
   `CREATE TABLE IF NOT EXISTS goals (id TEXT PRIMARY KEY, tenant TEXT NOT NULL DEFAULT 'core', parent_id TEXT, level TEXT NOT NULL, statement TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'none', spec TEXT, unit TEXT, op TEXT, target REAL, deadline TEXT, status TEXT NOT NULL DEFAULT 'active', origin TEXT NOT NULL DEFAULT 'seed', last_value REAL, last_at INTEGER, met INTEGER NOT NULL DEFAULT 0, streak INTEGER NOT NULL DEFAULT 0, achieved_at INTEGER, stretch_id TEXT, missed_at INTEGER, retired_reason TEXT, created_at INTEGER NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS goals_tenant ON goals (tenant, status)`,
@@ -292,7 +292,31 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
       }
     }
   }
+  if (ensureItem) out.regulator = await regulatorItems(db, ctx, now, ensureItem).catch(e => ({ error: String(e && e.message).slice(0, 120) }));
   await run(db, 'DELETE FROM goal_samples WHERE at < ?', now - c.keep_samples_days * 86400e3);
+  return out;
+}
+
+// ---- ASHBY-KERNEL-1: two readings of the regulator itself ----
+// Neither has a step-function that could move it, so neither is a goal: each files its lever as work and closes it by the same reading.
+// VARIETY-DEFICIT: disturbance classes no response held (requisite variety). JOINT-TOO-LARGE: more step-functions than can come right together.
+export const JOINT_ITEM = 'JOINT-TOO-LARGE';
+async function regulatorItems(db, ctx, now, ensureItem) {
+  const nowIso = ctx.nowIso || new Date(now).toISOString(), out = {};
+  const settle = async (id, bad, item, fixed) => {
+    if (bad) { await run(db, `UPDATE items SET status='ready', disposition=NULL, updated_at=? WHERE id=? AND status='done'`, nowIso, id); if (await ensureItem(db, { id, kind: 'fix', priority: 6, ...item })) out[id] = 'filed'; }
+    else { const r = await run(db, `UPDATE items SET status='done', disposition=?, updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, fixed, nowIso, id); if (r && r.meta && r.meta.changes) out[id] = 'closed'; }
+  };
+  const v = await varietyReading(db, now);
+  await settle(OWN_ITEM, v.uncovered_n > 0, { owner_role: 'portfolio-manager', surface: 'goals',
+    title: `${v.uncovered_n} disturbance classes met no response that held within ${v.grace_h} h: ${v.uncovered.slice(0, 8).join(', ')}. What was tried did not hold, so trying it again will not: give each class a different response (requisite variety).`.slice(0, 400),
+    done_check: `no fix item a detector filed stands open past ${v.grace_h} h`, closing_probe: `SELECT CASE WHEN COUNT(*)=0 THEN 1 ELSE 0 END FROM items WHERE kind='fix' AND id != '${OWN_ITEM}' AND status IN ('open','ready','claimed','blocked') AND datetime(created_at) < datetime('now','-${v.grace_h} hours')` },
+    'fixed: every disturbance class of the window met a response that held');
+  const red = reducibility((await jointLinks(db, now)).links), big = red.irreducible[0] || [];
+  await settle(JOINT_ITEM, red.irreducible.length > 0, { owner_role: 'product-manager', surface: 'goals',
+    title: `${big.length} step-functions can only be judged together (${big.slice(0, 6).join(', ')}): more than ${red.max_joint} that must come right at once adapt too slowly. Split the goal into parts that each keep their own knobs.`.slice(0, 400),
+    done_check: `no set of more than ${red.max_joint} knobs is joined through its goals`, closing_probe: `SELECT CASE WHEN COALESCE(MAX(n),0) <= ${red.max_joint} THEN 1 ELSE 0 END FROM (SELECT COUNT(*) AS n FROM goal_knobs GROUP BY goal_id)` },
+    `fixed: the largest joint set is ${red.largest_joint} step-functions`);
   return out;
 }
 

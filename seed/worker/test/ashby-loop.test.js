@@ -170,6 +170,30 @@ test('requisite variety from the work queue: a fix item open past the grace peri
   assert.equal(await METRICS.unregulated_disturbances_14d(db, now + 10 * 60e3), 2, 'the reading is kept for an hour');
   assert.equal(await METRICS.unregulated_disturbances_14d(db, now + 61 * 60e3), 1);
   assert.equal((await varietyReading(makeDb(), now)).regulated_share, null, 'an empty queue is unmeasured');
-  const db3 = makeDb(); db3.raw.prepare(`INSERT INTO items (id, title, kind, owner_role, done_check, status, created_at, updated_at) VALUES ('GOAL-core.adapt.variety','x','fix','product-manager','x','ready',?,?)`).run(iso(now - 9 * DAY), iso(now - 9 * DAY));
-  assert.equal((await varietyReading(db3, now)).uncovered_n, 0, 'the item filed for this reading is its remedy, not a disturbance: counted, the goal could never close it');
+  const db3 = makeDb(); db3.raw.prepare(`INSERT INTO items (id, title, kind, owner_role, done_check, status, created_at, updated_at) VALUES ('VARIETY-DEFICIT','x','fix','portfolio-manager','x','ready',?,?)`).run(iso(now - 9 * DAY), iso(now - 9 * DAY));
+  assert.equal((await varietyReading(db3, now)).uncovered_n, 0, 'the item filed for this reading is its remedy, not a disturbance: counted, nothing could ever close it');
+});
+
+test('the two readings of the regulator have no knob, so the goal loop files the lever as work and closes it by the same reading', async () => {
+  const db = makeDb(), iso = ms => new Date(ms).toISOString(), filed = []; vals.a = 0.9; vals.b = 0.9;
+  const ensure = async (d, it) => { if (await d.prepare('SELECT id FROM items WHERE id=?').bind(it.id).first()) return false; filed.push(it.id); await d.prepare(`INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, status) VALUES (?,?,?,?,?,?,'ready')`).bind(it.id, it.title, it.kind, it.owner_role, it.done_check, it.closing_probe).run(); return true; };
+  const run = (now, c = cfg) => goalsStep(db, { now, nowIso: iso(now), config: {} }, c, { builtins, ensureItem: ensure });
+  assert.deepEqual((await run(t0)).regulator, {}, 'nothing to file while both readings are clean');
+  db.raw.prepare(`INSERT INTO items (id, title, kind, owner_role, done_check, status, created_at, updated_at) VALUES ('FM-stuck','x','fix','operations','x','ready',?,?)`).run(iso(t0 - 5 * DAY), iso(t0 - 5 * DAY));
+  const r = await run(t0 + 2 * H);  // past the hour the reading is kept for
+  assert.deepEqual(r.regulator, { 'VARIETY-DEFICIT': 'filed' });
+  const it = db.raw.prepare("SELECT * FROM items WHERE id='VARIETY-DEFICIT'").get();
+  assert.match(it.title, /1 disturbance classes met no response that held within 72 h: FM-stuck/); assert.equal(it.owner_role, 'portfolio-manager');
+  assert.equal(db.raw.prepare(it.closing_probe).get()[Object.keys(db.raw.prepare(it.closing_probe).get())[0]], 0, 'its closing probe is red while the class stands open');
+  db.raw.prepare("UPDATE items SET status='done', updated_at=? WHERE id='FM-stuck'").run(iso(t0 + 3 * H));
+  assert.deepEqual((await run(t0 + 4 * H)).regulator, { 'VARIETY-DEFICIT': 'closed' });
+  assert.match(db.raw.prepare("SELECT disposition FROM items WHERE id='VARIETY-DEFICIT'").get().disposition, /^fixed: /);
+  db.raw.prepare(`INSERT INTO items (id, title, kind, owner_role, done_check, status, created_at, updated_at) VALUES ('BREACH-again','x','fix','operations','x','blocked',?,?)`).run(iso(t0 - 5 * DAY), iso(t0 - 5 * DAY));
+  await run(t0 + 6 * H);
+  assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='VARIETY-DEFICIT'").get().status, 'ready', 'the same item is reopened when the reading rises again');
+  const many = { goals: cfg.goals, knobs: Array.from({ length: 9 }, (_, i) => ({ id: 'core.j' + i, goal_id: 'core.a', value: 2, min: 1, max: 3, step: 1, effect: 1 })) };
+  assert.equal((await run(t0 + 7 * H, many)).regulator['JOINT-TOO-LARGE'], 'filed');
+  assert.match(db.raw.prepare("SELECT title FROM items WHERE id='JOINT-TOO-LARGE'").get().title, /^10 step-functions can only be judged together/);
+  db.raw.prepare("DELETE FROM goal_knobs WHERE id IN ('core.j7','core.j8')").run();
+  assert.equal((await run(t0 + 8 * H, { goals: cfg.goals, knobs: many.knobs.slice(0, 7) })).regulator['JOINT-TOO-LARGE'], 'closed');
 });
