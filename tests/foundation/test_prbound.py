@@ -16,8 +16,8 @@ class Bound(unittest.TestCase):
         self.assertEqual(close, []); self.assertEqual([n for n, _ in stale], [6])
     def test_live_state_decides_a_conflict_close(self):
         """PR-BOUND-3: a stale `conflict` label never closes a PR that merges cleanly now; an unknown state waits."""
-        live = {1: "MERGEABLE", 2: "UNKNOWN", 3: "CONFLICTING"}
-        close, _ = prbound.read([pr(n, 50, 1, "conflict") for n in (1, 2, 3)], NOW, mergeable=live.get)
-        self.assertEqual([n for n, _ in close], [3])
+        live = {1: "MERGEABLE", 2: "UNKNOWN", 3: "CONFLICTING"}  # 4 cannot be read: the label decides
+        close, _ = prbound.read([pr(n, 50, 1, "conflict") for n in (1, 2, 3, 4)], NOW, mergeable=live.get)
+        self.assertEqual([n for n, _ in close], [3, 4])
         self.assertEqual(prbound.read.cleared, [1])
 if __name__ == "__main__": unittest.main()

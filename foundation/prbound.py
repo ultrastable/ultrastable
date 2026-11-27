@@ -8,7 +8,7 @@ bounded the wait. This runs model-free from the lane after its merge pass:
   --check  exits 1 while any open PR is older than max_open_h (detector `pr-age-bound`, failure mode fm-pr-stale).
 A PR labelled `hold` is never closed. Read failures are unmeasured, never passed.
 PR-BOUND-3 (2026-11-27): the `conflict` label is a past reading. Before a conflict close, the live mergeable state is read from GitHub: a PR that
-merges cleanly now has the stale label removed and stays open; an unknown state (GitHub still computing) waits for the next pass. #2615 was
+merges cleanly now has the stale label removed and stays open; an unknown state (GitHub still computing) waits for the next pass; an unreadable one leaves the label to decide. #2615 was
 closed twice on a label set at 02:50 while its branch merged cleanly with main, the second time 11 seconds after it was reopened."""
 import json, os, subprocess, sys, time
 from datetime import datetime, timezone
@@ -30,8 +30,8 @@ def read(prs, now=None, conf=CONF, mergeable=None):
         if "hold" in labels: continue
         upd = _age_min(p["createdAt"], now)   # PR-BOUND-2
         if "conflict" in labels and upd >= conf["conflict_min"]:
-            live = mergeable(p["number"]) if mergeable else "CONFLICTING"
-            if live == "CONFLICTING":
+            live = mergeable(p["number"]) if mergeable else None
+            if live in ("CONFLICTING", None):  # None: GitHub could not be read, so the label decides, as before PR-BOUND-3
                 close.append((p["number"], f"merge conflict with main unresolved for {int(upd)} min"))
             elif live == "MERGEABLE":
                 close_cleared.append(p["number"])  # the label outlived the conflict: drop it, keep the PR open
@@ -43,13 +43,14 @@ def read(prs, now=None, conf=CONF, mergeable=None):
     return close, stale
 
 
-def live_mergeable(n, repo) -> str:
-    """GitHub's live answer for one PR; anything unreadable is UNKNOWN, never CONFLICTING."""
+def live_mergeable(n, repo):
+    """GitHub's live answer for one PR: MERGEABLE, CONFLICTING or UNKNOWN (still computing). None when it cannot be read at all, so the
+    label decides as it did before PR-BOUND-3 (an unreadable state is neither proof of a conflict nor of a clean merge)."""
     try:
-        return json.loads(_gh("pr", "view", str(n), "-R", repo, "--json", "mergeable")).get("mergeable") or "UNKNOWN"
+        return json.loads(_gh("pr", "view", str(n), "-R", repo, "--json", "mergeable")).get("mergeable") or None
     except Exception as e:
-        print(f"#{n} mergeable unreadable: {e}")
-        return "UNKNOWN"
+        print(f"#{n} mergeable unreadable, the label decides: {e}")
+        return None
 def main(argv):
     repo = os.environ.get("GITHUB_REPOSITORY", "ultrastable/ultrastable")
     try:
