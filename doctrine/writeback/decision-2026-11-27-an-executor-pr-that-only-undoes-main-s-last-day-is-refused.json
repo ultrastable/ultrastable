@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-an-executor-pr-that-only-undoes-main-s-last-day-is-refused",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "An executor PR that only undoes main's last day is refused",
+  "body": "CHURN-GUARD-1 (ZHC-R13 #2678): checks runs churn --gate --executor; a change whose every file returns to a pre-commit state of the last 24 h fails. redmain repairs and non-executor PRs are not gated.",
+  "probe": "grep:.github/workflows/checks.yml::foundation churn --gate",
+  "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+ },
+ "kind": "decision",
+ "title": "An executor PR that only undoes main's last day is refused",
+ "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+}

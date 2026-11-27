@@ -1,5 +1,5 @@
 {
- "at": "2026-11-27T08:48:29Z",
+ "at": "2026-11-27T09:11:08Z",
  "gaps": 6,
  "match_share": 0.989,
  "sources": {
@@ -1109,7 +1109,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 115.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 115.6 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
