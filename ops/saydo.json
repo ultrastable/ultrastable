@@ -1,7 +1,7 @@
 {
- "at": "2026-11-27T10:19:23Z",
- "gaps": 6,
- "match_share": 0.989,
+ "at": "2026-11-27T10:47:20Z",
+ "gaps": 7,
+ "match_share": 0.988,
  "sources": {
   "changes": [
    {
@@ -935,10 +935,12 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation docs_audit --check: research/papers/conant-ashby-1970.md: tells a person to act (1 lines, baseline 0): 'Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of "
+    ],
     "id": "DOC-CONSUMED-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -1118,7 +1120,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 116.7 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 117.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1198,7 +1200,7 @@
    "total": 1
   },
   "rules": {
-   "gaps": 4,
+   "gaps": 5,
    "total": 107
   },
   "year": {
