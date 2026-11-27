@@ -6834,6 +6834,33 @@
    "title": "The spinoff headroom read hit the retired account",
    "body": "ops/free-tier.json stayed at 2026-11-17 because the repo's Cloudflare secret names the retired account and every read since 2026-11-20 got an authz error. foundation/ideas.py now reads the tick's samples through the OIDC route, and the roadmap's spinoff section carries its own date (site/edge.js), so a stale section marks the page stale.",
    "probe": "grep:foundation/ideas.py::FREE-TIER-ROUTE-1"
+  },
+  {
+   "id": "decision-2026-11-27-health-gate-1-deploy-fails-when-tick-health-is-unreachable",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "HEALTH-GATE-1 deploy fails when tick health is unreachable",
+   "body": "deploy-oidc.mjs exits 1 when the tick /health does not answer after a deploy.",
+   "probe": "grep:deploy/deploy-oidc.mjs::HEALTH-GATE-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "lesson-2026-11-27-two-studies-on-one-canon-source-are-one-study-ashby-journal-",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Two studies on one canon source are one study: ashby-journal carries the concept-binding finding as J7",
+   "body": "Tests pass and research --check verified 13 studies: a second study with the same source_id as the canon study was folded into it, so each source has one paper.",
+   "probe": "grep:research/studies/ashby-journal.json::ashby_concepts_bound_share",
+   "session": "session_0156nqDsxJd4poRv2mkbug9e"
+  },
+  {
+   "id": "lesson-2026-11-27-the-backup-site-deploy-script-must-ship-the-stamped-entry-mo",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "The backup site deploy script must ship the stamped entry module",
+   "body": "deploy/deploy-site.mjs uploaded site/worker.js directly, so a deploy through it would have dropped the recency stamp that lives in site/edge.js. It now collects modules from site/edge.js and takes main_module and the VERSION check from the collected modules.",
+   "probe": "grep:deploy/deploy-site.mjs::site/edge.js",
+   "session": "session_0156nqDtsm3xWA5HrxzuWq8X"
   }
  ]
 }

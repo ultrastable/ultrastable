@@ -206,6 +206,11 @@
         "url": null,
         "perspective": "oversight"
       }
-    ]
+    ],
+    "sla": {
+      "study_h": 168,
+      "live_h": 48,
+      "social_h": 240
+    }
   }
 }
