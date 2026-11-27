@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: fix: carry the round-one fixes the early slices merged without (RC, WD1) (#2606)
+- 2026-11-27: test: the workers' ratchets and specification-citing tests (WK) (#2605)
 - 2026-11-27: test: the foundation's specification-citing tests (FT) (#2600)
 - 2026-11-27: feat(seed): the specification run's seed tests and the fixes they prove (SW+FX) (#2595)
 - 2026-11-27: ZERO-MINUTES-1: worker merged #2596
