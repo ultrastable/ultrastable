@@ -1,0 +1,15 @@
+{
+ "_doc": "PERCEPT-COST-1 replay set, read by foundation/perceptcost.py. Each answer file was checked by hand to hold the answer. Add questions from real sessions; never edit one to make the map look better. min_saving is a starting guess for the kill criterion, to tune from the rows the loop records.",
+ "interval_days": 7,
+ "min_saving": 0.15,
+ "questions": [
+  {"id": "protected-paths", "keywords": ["PROTECTED"], "answer": "scripts/protected_paths.py"},
+  {"id": "pr-size-limit", "keywords": ["max_files"], "answer": "seed/autonomy/prsize.json"},
+  {"id": "churn-gate", "keywords": ["churn", "revert"], "answer": "foundation/churn.py"},
+  {"id": "merge-audit", "keywords": ["merge audit", "mergeaudit"], "answer": "foundation/mergeaudit.py"},
+  {"id": "essential-variables", "keywords": ["essential variable", "ultrastab"], "answer": "foundation/ultrastability.py"},
+  {"id": "checks-in-session", "keywords": ["checksrun"], "answer": "foundation/checksrun.py"},
+  {"id": "lane-script", "keywords": ["mergeaudit --apply"], "answer": "scripts/lane.sh"},
+  {"id": "worker-tick", "keywords": ["runTick"], "answer": "workers/core/src/tick.js"}
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "_doc": "CONCLUSION-CACHE-1: read by foundation/conclusions.py",
+ "entries": [
+  {
+   "answer": "Add an _av[:1] branch in foundation/__main__.py that imports the module and calls its main(argv)",
+   "evidence": {
+    "foundation/__main__.py": "f0be3d3a62bbcb50"
+   },
+   "key": "how is a new foundation command registered",
+   "question": "How is a new foundation command registered?"
+  },
+  {
+   "answer": "seed/autonomy/prsize.json: max_files and max_lines; measure with seed/scripts/prsize.py",
+   "evidence": {
+    "seed/autonomy/prsize.json": "0fd682934bb19cd1",
+    "seed/scripts/prsize.py": "9b42cbd127473c88"
+   },
+   "key": "what is the pr size limit",
+   "question": "What is the PR size limit?"
+  },
+  {
+   "answer": "scripts/protected_paths.py, the PROTECTED tuple (plus FOLDED and LOCAL)",
+   "evidence": {
+    "scripts/protected_paths.py": "495dbb4e8c2da610"
+   },
+   "key": "where are protected paths defined",
+   "question": "Where are protected paths defined?"
+  }
+ ]
+}
