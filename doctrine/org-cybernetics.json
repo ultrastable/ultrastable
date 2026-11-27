@@ -1,22 +1,122 @@
 {
   "$schema": "./schemas/org-cybernetics.schema.json",
   "id": "ORG-CYBERNETICS-1",
-  "_doc": "Cybernetic organization theory mapped onto the managers and staff a system runs. The exact text 'Organizational Theory: A Cybernetic Approach' could not be located (2026-11-27 searches), so the map uses the closest primary sources: Stafford Beer's Viable System Model (Brain of the Firm, 1972) and Ashby's law of requisite variety (An Introduction to Cybernetics, 1956). Summaries are ours; sources are linked. Every function names the roles that carry it (each a switched-on manager in seed/autonomy/managers.json) and the code that does the work. Checked by python3 -m foundation orgcyber --check.",
+  "_doc": "Beer's Viable System Model (Brain of the Firm, 1972) and Ashby's law of requisite variety (An Introduction to Cybernetics, 1956) mapped onto the managers and staff a system runs. Juan Antonio Perez Lopez's 1974 paper 'Organizational Theory: A Cybernetic Approach' is implemented separately, as the Ashby spec's doctrine_guard step (issue 2620); this map does not restate it. Summaries are ours; sources are linked. Every function names the roles that carry it (each a switched-on manager in seed/autonomy/managers.json) and the code that does the work. Checked by python3 -m foundation orgcyber --check.",
   "sources": [
     "https://archive.org/download/brain-of-the-firm-reclaimed-v-1/Brain%20of%20the%20Firm%20-%20Stafford%20Beer.pdf",
     "https://en.wikipedia.org/wiki/Management_cybernetics",
     "https://en.wikipedia.org/wiki/An_Introduction_to_Cybernetics"
   ],
   "functions": [
-    {"id": "s1-operations", "summary": "The units that do the actual work; each is itself a viable system.", "roles": ["staff", "project-manager"], "mechanisms": ["seed/worker/src/executor.js::export", "seed/worker/src/tick.js::execute"]},
-    {"id": "s2-coordination", "summary": "Damps oscillation between operating units so they do not fight over the same thing.", "roles": ["program-manager", "operations"], "mechanisms": ["seed/worker/src/tick.js::reap_claims", "seed/worker/src/lane.js::realRed"]},
-    {"id": "s3-control", "summary": "Allocates resources across the units and holds them to account here and now.", "roles": ["portfolio-manager", "project-manager"], "mechanisms": ["seed/worker/src/tick.js::dispatch", "seed/worker/src/sla.js::export"]},
-    {"id": "s3star-audit", "summary": "Direct, sporadic audit of the units, bypassing their own reports.", "roles": ["reviewer"], "mechanisms": ["seed/worker/src/selfaudit.js::export"]},
-    {"id": "s4-intelligence", "summary": "Looks outside and ahead: the environment, competitors, what to become next.", "roles": ["product-manager", "research-publisher"], "mechanisms": ["foundation/scout.py::def ", "foundation/rnd.py::def "]},
-    {"id": "s5-policy", "summary": "Identity and policy; balances present control against future intelligence.", "roles": ["portfolio-manager", "org-designer"], "mechanisms": ["seed/autonomy/policy.json::interrupt", "seed/doctrine/constitution.json::identity"]},
-    {"id": "algedonic-channel", "summary": "An alarm that skips the normal hierarchy when something goes badly wrong.", "roles": ["project-manager"], "mechanisms": ["seed/worker/src/tick.js::age_sla"]},
-    {"id": "variety-attenuation", "summary": "Filters incoming variety so a regulator is not swamped.", "roles": ["project-manager"], "mechanisms": ["seed/worker/src/flowbalance.js::export"]},
-    {"id": "variety-amplification", "summary": "Multiplies a regulator's own variety so it can match what it faces.", "roles": ["staff"], "mechanisms": ["seed/worker/src/orchestrate.js::export"]},
-    {"id": "recursion", "summary": "Every viable system contains, and is contained in, viable systems of the same shape.", "roles": ["org-designer"], "mechanisms": ["seed/worker/src/tenant.js::export"]}
+    {
+      "id": "s1-operations",
+      "summary": "The units that do the actual work; each is itself a viable system.",
+      "roles": [
+        "staff",
+        "project-manager"
+      ],
+      "mechanisms": [
+        "seed/worker/src/executor.js::export",
+        "seed/worker/src/tick.js::execute"
+      ]
+    },
+    {
+      "id": "s2-coordination",
+      "summary": "Damps oscillation between operating units so they do not fight over the same thing.",
+      "roles": [
+        "program-manager",
+        "operations"
+      ],
+      "mechanisms": [
+        "seed/worker/src/tick.js::reap_claims",
+        "seed/worker/src/lane.js::realRed"
+      ]
+    },
+    {
+      "id": "s3-control",
+      "summary": "Allocates resources across the units and holds them to account here and now.",
+      "roles": [
+        "portfolio-manager",
+        "project-manager"
+      ],
+      "mechanisms": [
+        "seed/worker/src/tick.js::dispatch",
+        "seed/worker/src/sla.js::export"
+      ]
+    },
+    {
+      "id": "s3star-audit",
+      "summary": "Direct, sporadic audit of the units, bypassing their own reports.",
+      "roles": [
+        "reviewer"
+      ],
+      "mechanisms": [
+        "seed/worker/src/selfaudit.js::export"
+      ]
+    },
+    {
+      "id": "s4-intelligence",
+      "summary": "Looks outside and ahead: the environment, competitors, what to become next.",
+      "roles": [
+        "product-manager",
+        "research-publisher"
+      ],
+      "mechanisms": [
+        "foundation/scout.py::def ",
+        "foundation/rnd.py::def "
+      ]
+    },
+    {
+      "id": "s5-policy",
+      "summary": "Identity and policy; balances present control against future intelligence.",
+      "roles": [
+        "portfolio-manager",
+        "org-designer"
+      ],
+      "mechanisms": [
+        "seed/autonomy/policy.json::interrupt",
+        "seed/doctrine/constitution.json::identity"
+      ]
+    },
+    {
+      "id": "algedonic-channel",
+      "summary": "An alarm that skips the normal hierarchy when something goes badly wrong.",
+      "roles": [
+        "project-manager"
+      ],
+      "mechanisms": [
+        "seed/worker/src/tick.js::age_sla"
+      ]
+    },
+    {
+      "id": "variety-attenuation",
+      "summary": "Filters incoming variety so a regulator is not swamped.",
+      "roles": [
+        "project-manager"
+      ],
+      "mechanisms": [
+        "seed/worker/src/flowbalance.js::export"
+      ]
+    },
+    {
+      "id": "variety-amplification",
+      "summary": "Multiplies a regulator's own variety so it can match what it faces.",
+      "roles": [
+        "staff"
+      ],
+      "mechanisms": [
+        "seed/worker/src/orchestrate.js::export"
+      ]
+    },
+    {
+      "id": "recursion",
+      "summary": "Every viable system contains, and is contained in, viable systems of the same shape.",
+      "roles": [
+        "org-designer"
+      ],
+      "mechanisms": [
+        "seed/worker/src/tenant.js::export"
+      ]
+    }
   ]
 }
