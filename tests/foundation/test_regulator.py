@@ -1,14 +1,15 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 import os
-import tempfile
 import unittest
+
+from _repo import scratch
 
 from foundation.regulator import (Store, RepoModel, ConclusionCache, EssentialVariable, Registry,
                        affected_tests, ActionLedger)
 
 
 def make_repo(files):
-    d = tempfile.mkdtemp()
+    d = str(scratch())
     for rel, body in files.items():
         p = os.path.join(d, rel)
         os.makedirs(os.path.dirname(p), exist_ok=True)
