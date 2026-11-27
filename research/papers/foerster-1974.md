@@ -38,7 +38,7 @@ To apply this to your own system, one step per problem:
 1. A research program that grades itself generously. Put in place: every metric is read from the system's own ledgers. Check it with one number, share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1), and set a limit for it (>= 0.5 is the limit we use).
 2. Instructions the observer can misread. Put in place: the intake gate. Check it with one number, share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py), and set a limit for it (>= 0.9 is the limit we use).
 
-In our own system, 1 of 2 of these checks pass today. Share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1) reads 0.564 (n = 55; source: research/studies, each finding measured as above). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.511 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes.
+In our own system, 1 of 2 of these checks pass today. Share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1) reads 0.564 (n = 55; source: research/studies, each finding measured as above). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.525 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes.
 
 ## 4. Trade-offs and limits
 
