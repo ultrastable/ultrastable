@@ -99,7 +99,10 @@ export async function evaluateDecision(db, id, { now = Date.now(), guard_toleran
   else { status = 'reverted'; outcome = blocked.length && matched ? `blocked_by_guard: ${blocked.join(',')}` : blocked.length ? `missed and guard: ${blocked.join(',')}` : 'missed'; }
 
   let itemId = null;
-  if (status === 'reverted') {
+  // US-05-R16: a decision that is not kept is never left applied and unverified: a missed or guard-blocked one is reverted, an
+  // unmeasured one keeps the status 'unmeasured' (nothing says it failed) and still files its revert item, whose closing probe
+  // reads the metric back, so the change is reverted or confirmed by a later reading and never ends without a disposition.
+  if (status === 'reverted' || status === 'unmeasured') {
     itemId = `REVERT-${id}`;
     await ensureItem(db, {
       id: itemId, title: `Revert decision ${id}: ${outcome}`, owner_role: 'operations', priority: blocked.length ? 0 : 5,

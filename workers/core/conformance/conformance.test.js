@@ -53,7 +53,7 @@ test('tests are matched to requirements by the ids their titles cite, in full or
   assert.equal(c['US-90-R05'], undefined);
 });
 
-test('US-00-R01, US-00-R02 and US-00-R12: the declaration names the level, each specification version and every requirement not met, with its reason', () => {
+test('US-00-R01, US-00-R02 and US-00-R13: the declaration names the level, each specification version and every requirement not met, with its reason', () => {
   const m = buildManifest({ specs: [SPEC], tests: TESTS, declared: 'L2', reasons: { 'US-90-R05': 'needs a live account' } });
   const d = declaration(m);
   assert.equal(d.level, 'L2'); assert.deepEqual(d.spec_versions, { 'US-SPEC-90': '0.3.0 (draft)' });
@@ -65,7 +65,7 @@ test('US-00-R01, US-00-R02 and US-00-R12: the declaration names the level, each 
   assert.equal(buildManifest({ specs: [SPEC], tests: [] }).requirements.every(r => r.status === 'deviation' && r.reason), true);
 });
 
-test('US-00-R03 and US-00-R12: the checker rejects an overstated manifest: a met with no test, a test file that is gone, a test that no longer cites it, a deviation with no reason', () => {
+test('US-00-R03 and US-00-R13: the checker rejects an overstated manifest: a met with no test, a test file that is gone, a test that no longer cites it, a deviation with no reason', () => {
   const m = buildManifest({ specs: [SPEC], tests: TESTS, declared: 'L2', reasons: { 'US-90-R05': 'needs a live account' } });
   const files = Object.fromEntries(TESTS.map(t => [t.path, t.text]));
   assert.deepEqual(check(m, { files, specs: [SPEC], tests: TESTS }), { ok: true, problems: [], stale: [], unverified: [] });

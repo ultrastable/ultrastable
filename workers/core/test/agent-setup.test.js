@@ -14,7 +14,7 @@ import { createServer, loadConfig } from '../../adapters/gcp/server.js';
 const read = (p) => readFileSync(fileURLToPath(new URL(`../../${p}`, import.meta.url)), 'utf8');
 const MIG = fileURLToPath(new URL('../migrations', import.meta.url));
 
-test('the skill has the Agent Skills front matter and the rules that protect a non-coder', () => {
+test('US-19-R12 / US-19-R13 the skill has the Agent Skills front matter, says an agent is needed only to start, and carries the rules that protect a non-coder', () => {
   const s = read('agent-setup/SKILL.md');
   const fm = /^---\nname: ([a-z0-9-]+)\ndescription: (.+)\n---\n/.exec(s);
   assert.ok(fm, 'front matter with name and description');
@@ -89,7 +89,7 @@ test('verify fails loudly when the console is open to strangers or the tick endp
   bad.close();
 });
 
-test('verify never reads a Cloudflare challenge page, or a foreign address, as a refusal (trial finding)', async () => {
+test('US-19-R14 verify never reads a Cloudflare challenge page, or a foreign address, as a refusal (trial finding)', async () => {
   const challenge = http.createServer((req, res) => { res.writeHead(403, { 'cf-mitigated': 'challenge', 'content-type': 'text/html' }); res.end('<title>Just a moment...</title>'); });
   const foreign = http.createServer((req, res) => { res.writeHead(403); res.end('forbidden'); });
   await Promise.all([challenge, foreign].map(s => new Promise(r => s.listen(0, r))));
@@ -101,4 +101,43 @@ test('verify never reads a Cloudflare challenge page, or a foreign address, as a
   assert.equal(b.ok, false); assert.equal(b.inconclusive, true);
   assert.equal(b.checks.some(c => /refuses/.test(c.name) && c.ok), false, 'no refusal check may pass on a foreign 403');
   challenge.close(); foreign.close();
+});
+
+const section = (text, from, to) => text.slice(text.indexOf(from), to ? text.indexOf(to) : undefined);
+
+test('US-19-R15 the skill states what a temporary account cannot do before it gives Path A\'s commands', () => {
+  const a = section(read('agent-setup/SKILL.md'), '**Path A', '**Path B');
+  const limits = a.indexOf('what this path can and cannot do');
+  const command = a.indexOf('python bootstrap/bootstrap.py');
+  assert.ok(limits > -1 && command > limits, 'limits come before the command');
+  for (const must of ['no cron triggers', 'alarm', 'bot challenge until the account is claimed', 'not verified', 'about 60 minutes'])
+    assert.ok(a.includes(must), `Path A must say: ${must}`);
+  assert.ok(!/cannot run scheduled ticks/.test(a), 'the old claim that no tick can run is gone: the alarm ticks it');
+});
+
+test('US-19-R20 / US-19-R22 neither the skill nor the launcher page promises a platform other than Workers', async () => {
+  const skill = read('agent-setup/SKILL.md');
+  const { launcherPage } = await import('../../apps/launcher/src/page.js');
+  const page = launcherPage({ bundleSha256: 'a'.repeat(64) });
+  const c = section(skill, '**Path C', '## Step 5');
+  assert.match(c, /supports Cloudflare Workers only/);
+  assert.match(c, /not a supported path/);
+  assert.ok(!/is supported by the Cloud Run adapter/.test(skill));
+  for (const text of [skill, page]) {
+    for (const line of text.split('\n')) {
+      if (/\b(AWS|Amazon|Azure|Microsoft|self-hosted)\b/.test(line)) assert.ok(/not|only|instead|elsewhere/i.test(line), `a line that names another platform must not offer it: ${line.slice(0, 120)}`);
+    }
+  }
+});
+
+test('US-19-R04 the skill states scope, the platform and why, the cost, and that an agent is needed only to start, before any step', () => {
+  const s = read('agent-setup/SKILL.md');
+  const upfront = section(s, '## Be upfront', '## Rules you must follow');
+  assert.match(upfront, /does \*\*not\*\* write business plans/);
+  assert.match(upfront, /Cloudflare Workers/);
+  assert.match(upfront, /stops at its daily limits instead of billing/);
+  assert.match(upfront, /docs\/why-cloudflare\.md/);
+  assert.match(upfront, /model spending stays at zero unless the person approves/);
+  assert.match(upfront, /needed to \*\*start\*\*/);
+  assert.ok(s.indexOf('## Be upfront') < s.indexOf('## Step 1'));
 });

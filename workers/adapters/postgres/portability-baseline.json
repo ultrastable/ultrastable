@@ -1,0 +1,49 @@
+{
+ "$comment": "US-14-R07, R14: SQLite-only constructs that still reach a module's static SQL, found by scanning backtick, single-quoted and double-quoted statements (a template expression is replaced by a stand-in, see adapters/postgres/portability.test.js). A finding that is gone must be removed; a new one fails. `refused: rowid` means the Postgres shim refuses the statement (rowid has no Postgres form). Entries name the cluster that owns the file: those files are not edited from adapters/postgres.",
+ "migrations": {},
+ "modules": {
+  "adapters/docdb/index.js": {
+   "kinds": [
+    "refused: rowid"
+   ],
+   "reason": "importFromStore reads a SQLite source in insertion order (ORDER BY rowid) to seed the document store; the source is always a SQLite handle, so it is not sent to Postgres"
+  },
+  "core/governance/amend.js": {
+   "kinds": [
+    "refused: rowid"
+   ],
+   "reason": "orders the lineage by rowid as a tie-break after adopted_at; the fix is an ordering column in the module (cluster C owns the file; an integration request names it)"
+  },
+  "core/kernel/failure.js": {
+   "kinds": [
+    "refused: rowid"
+   ],
+   "reason": "reads the last closed remediation by rowid and keeps the newest per failure mode with MAX(rowid); the fix is an id column in kernel_remediations (cluster D owns the file)"
+  },
+  "core/migrations/selfmigrate.js": {
+   "kinds": [
+    "refused: INSERT OR REPLACE key"
+   ],
+   "reason": "the ledger table is a template expression in the statement (the _migrations table), so the scan's stand-in has no primary key to learn; at run time the shim learns the key from the ledger's CREATE TABLE. A scan artefact, recorded so the list stays complete (cluster A owns the file)"
+  },
+  "core/remediation/index.js": {
+   "kinds": [
+    "json_type",
+    "refused: rowid"
+   ],
+   "reason": "reads a sighting's rowid to key its log rows; the fix is the signature column the table already has (cluster D owns the file). Also json_type: it has no one-to-one Postgres form (jsonb_typeof names 'string' and 'boolean' where json_type names 'text', 'true' and 'false'), so the JSON-error probe needs a module-side change"
+  },
+  "core/signals/index.js": {
+   "kinds": [
+    "refused: rowid"
+   ],
+   "reason": "orders realised-effort rows by recorded_at with rowid as the tie-break; the fix is the primary key as the tie-break (cluster G owns the file)"
+  },
+  "core/src/console.js": {
+   "kinds": [
+    "refused: rowid"
+   ],
+   "reason": "the table browser pages by rowid (SELECT rowid AS _rowid ... WHERE rowid > ?), which the Postgres shim refuses; the fix is a keyset page on the table's primary key (cluster I owns the file; an integration request names it)"
+  }
+ }
+}

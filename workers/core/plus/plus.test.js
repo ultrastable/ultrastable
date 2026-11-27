@@ -125,6 +125,24 @@ test('US-04-T03, US-04-R10: the worked example. +13.7% with a better guard is ke
   assert.equal((await proposePlus(db, plus({ title: 'Faster first paint', angle: 'load time', now: NOW + 15 * DAY }))).kind, 'plus');
 });
 
+test('US-04-R20, US-04-T08, US-04-R09: a plus that moved nothing from a baseline of 0 is not kept, a strict move off 0 is, and a negative baseline is measured by its magnitude', async () => {
+  const run1 = async (dir, base, after, o = {}) => {
+    const db = makeDb([MIGRATIONS_DIR]); await product(db); await read(db, base, 0.8, NOW);
+    const a = await proposePlus(db, plus({ now: NOW, prediction: { metric: 'requests_per_day', direction: dir, size: 0.10 } })); await shipPlus(db, a.id, { evidence: 'deployed', now: NOW });
+    await read(db, after, 0.8, NOW + 7 * DAY);
+    return decidePlus(db, a.id, { now: NOW + 7 * DAY, ...o });
+  };
+  const z = await run1('up', 0, 0);
+  assert.deepEqual([z.status, z.verdict, z.misses_in_row], ['reverted', 'missed', 1]);                              // 0 to 0 is no gain, never a pass
+  assert.equal((await run1('down', 0, 0)).verdict, 'missed');
+  assert.equal((await run1('up', 0, 5)).status, 'kept');                                                           // a strict move off 0 is a gain
+  assert.equal((await run1('down', 10, 0)).status, 'kept');
+  assert.equal((await run1('up', -10, -10.4)).verdict, 'missed');                                                  // -10.4 is worse than -10: the threshold is -9.5 (5% of 10)
+  assert.equal((await run1('up', -10, -8)).status, 'kept');
+  assert.equal((await run1('down', -10, -12)).status, 'kept');
+  assert.equal((await run1('up', 100, 100)).verdict, 'missed');
+});
+
 test('US-04-R08: a gain in the outcome with a worse guard is reverted at priority 0, not kept', async () => {
   const db = makeDb([MIGRATIONS_DIR]); await product(db); await read(db, 1000, 0.8, NOW);
   const a = await proposePlus(db, plus({ now: NOW })); await shipPlus(db, a.id, { evidence: 'deployed', now: NOW });
@@ -390,6 +408,20 @@ test('US-04-T06, US-04-R16: the daily cap counts plus rows created today, indepe
   assert.match(cyc[2].skipped, /daily cap of 2/);
   const next = await runCycle(db, { now: NOW + DAY, config: { daily_cap: 2 }, propose });                           // a new day: the count restarts
   assert.equal(next.filter(r => r.skipped).length, 0 + next.filter(r => r.skipped).length); assert.ok(calls >= 3);
+});
+
+test('US-04-R16, US-04-T06: a plus written onto a seed row counts on the day it is filed, so the cap holds across ticks even when every product has an old seed', async () => {
+  const db = makeDb([MIGRATIONS_DIR]), names = ['a', 'b', 'c', 'd', 'e'];
+  for (const n of names) {
+    await registerProduct(db, { product: n, program: 'P', usage_metric: 'requests_per_day', quality_measure: 'error_page_rate', now: NOW - 30 * DAY }); await read(db, 100, 0.5, NOW, n);
+    db.raw.prepare(`INSERT INTO plus_ledger (product, kind, title, status, seeded_from, created_at) VALUES (?, 'plus', 'Build on: earlier', 'proposed', 1, ?)`).run(n, ts(NOW - 8 * DAY));   // proposed eight days ago
+  }
+  const propose = async ({ product }) => plus({ title: `plus for ${product}`, angle: product });
+  const first = await runCycle(db, { now: NOW, config: { daily_cap: 3 }, propose });
+  const again = await runCycle(db, { now: NOW + HOUR, config: { daily_cap: 3 }, propose });                         // the next tick, the same day
+  assert.equal([...first, ...again].filter(r => r.issue_id).length, 3, 'three pluses in the day, not one per product');
+  assert.equal(one(db, `SELECT COUNT(*) AS n FROM plus_ledger WHERE kind = 'plus' AND status = 'filed' AND substr(created_at, 1, 10) = '2026-11-09'`).n, 3);
+  assert.ok([...first, ...again].filter(r => r.skipped).every(r => /daily cap of 3/.test(r.skipped)));
 });
 
 test('US-04-R17: a kept plus seeds the next proposal and the next plus is written onto that seed row', async () => {

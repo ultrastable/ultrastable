@@ -118,7 +118,7 @@ test('US-01-R10: a decision is stored with its prediction, authority and revert 
   assert.equal(stored.due_at, '2026-11-27 10:00:00', 'the window is part of the stored prediction');
 });
 
-test('US-00-R14: a test that pins a calendar date and loads code that reads a window relative to the real clock is found; an injected clock, a bare default and a plain test are not', () => {
+test('US-00-R15: a test that pins a calendar date and loads code that reads a window relative to the real clock is found; an injected clock, a bare default and a plain test are not', () => {
   const root = mkdtempSync(path.join(tmpdir(), 'us-timebomb-'));
   try {
     mkdirSync(path.join(root, 'a'));
@@ -133,7 +133,7 @@ test('US-00-R14: a test that pins a calendar date and loads code that reads a wi
   assert.deepEqual(scan(path.join(path.dirname(fileURLToPath(import.meta.url)), '../..')).filter(f => !base.has(f.test)), [], 'this repository has none outside the shrink-only baseline');
 });
 
-test('US-00-R15: the suites run from one list, all of them even when one fails, and a suite that cannot start fails with its reason, never skipped', () => {
+test('US-00-R16: the suites run from one list, all of them even when one fails, and a suite that cannot start fails with its reason, never skipped', () => {
   const fake = (results) => (cmd, args) => { const r = results[args[1]]; return typeof r === 'function' ? r() : r; };
   const spawn = fake({ ok: { status: 0 }, bad: { status: 2, stderr: 'line1\nline2\nthree failed' }, gone: { status: null, error: new Error('spawn sh ENOENT') } });
   const res = runAll([{ name: 'a', cmd: 'ok' }, { name: 'b', cmd: 'bad' }, { name: 'c', cmd: 'gone' }, { name: 'd', cmd: 'ok' }], null, spawn);

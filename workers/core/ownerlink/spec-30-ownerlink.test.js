@@ -131,7 +131,21 @@ test('US-30-R48: Mastodon and Bluesky are linked with a state bound to the brows
   assert.deepEqual((await takeState(ctx, s1, 'mastodon')).data, { x: 1 }); assert.equal(await takeState(ctx, s1, 'mastodon'), null, 'and it is taken once');
 });
 
-test('US-30-R49: an owner action may also be a settings page declared as data, open until its probe passes, or (off by default) a pull request waiting on a human reviewer; a probe or a list that cannot be read changes nothing', async () => {
+test('US-30-R49: a settings-page probe that answers 5xx after a pass leaves the completed action completed, and a dismissed one dismissed', async () => {
+  let status = 403;
+  const f = async () => resp(status, {});
+  const { ctx, ol } = await mk(f, { static_actions: [{ id: 'models', title: 'Turn on Models', link: 'https://github.com/o/settings/models', probe: { url: 'https://models.example/catalog' } }] });
+  const statusOf = () => ctx.db.raw.prepare("SELECT status FROM ownerlink_actions WHERE id = 's:models'").get().status;
+  await ol.step(); assert.equal(statusOf(), 'open', 'a refused probe opens the action');
+  status = 200; await ol.step(); assert.equal(statusOf(), 'done'); assert.deepEqual((await openActions(ctx)).map(a => a.id), []);
+  status = 502; assert.deepEqual((await ol.step()).fixed, { open: 0, done: 0, unknown: 1 });
+  assert.equal(statusOf(), 'done', 'a transient 5xx does not reopen what the probe already completed'); assert.deepEqual((await openActions(ctx)).map(a => a.id), []);
+  status = 403; await ol.step(); assert.equal(statusOf(), 'open', 'a probe that reads the setting off again reopens it');
+  ctx.db.raw.prepare("UPDATE ownerlink_actions SET status = 'dismissed' WHERE id = 's:models'").run();
+  status = 502; await ol.step(); assert.equal(statusOf(), 'dismissed', 'an unreadable probe leaves a dismissed action dismissed');
+});
+
+test('US-30-R49: an owner action may also be a settings page declared as data, open until its probe passes, or (off by default) a pull request waiting on a human reviewer; a probe that cannot be read leaves an open action open, and a list that cannot be read completes nothing', async () => {
   let status = 403, calls = 0;
   const f = async url => { calls++; assert.equal(String(url), 'https://models.example/catalog'); return resp(status, {}); };
   const { ctx, ol } = await mk(f, { static_actions: [{ id: 'models', title: 'Turn on Models', why: 'The org setting is off.', link: 'https://github.com/o/settings/models', probe: { url: 'https://models.example/catalog' } },

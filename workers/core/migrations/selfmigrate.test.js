@@ -141,3 +141,14 @@ test('US-01-R04: with batch(), a destructive file and its ledger row land togeth
   assert.ok(!ledgered(bad.db, 'c_half.sql'));
   assert.equal((await bad.exporter.ledger())[0].verified, 1, 'the verified export of the table stays as the proof it was taken');
 });
+
+test('US-01-R04: files refused for want of an exporter do not spend the per-run cap, so additive migrations behind them still apply', async () => {
+  const { applyPending } = await import('./selfmigrate.js');
+  const { db } = world();
+  const files = { d1: 'DELETE FROM org;', d2: 'DELETE FROM org;', d3: 'DELETE FROM org;', d4: 'DELETE FROM org;', z_add: 'CREATE TABLE IF NOT EXISTS extra_notes (id INTEGER PRIMARY KEY);' };
+  const allow = ['d1', 'd2', 'd3', 'd4', 'z_add'];
+  const r = await applyPending(db, files, allow, 't1', 'applied_migrations', { max: 4 });
+  assert.deepEqual(r.map(x => [x.name, x.ok, Boolean(x.refused)]), [['d1', false, true], ['d2', false, true], ['d3', false, true], ['d4', false, true], ['z_add', true, false]]);
+  assert.ok(ledgered(db, 'z_add'), 'the additive file behind four refused ones is applied in the same run');
+  assert.ok(has(db, 'org'));
+});

@@ -140,3 +140,51 @@ test('US-27-R60: each candidate is explained in plain sentences from the system\
   assert.match(D.explain({ type: 'frontier', members: ['p:x'], via: 's:nets', sims: { nearest_solution: 0.2 } }, label), /^No known solution comes close to "p:x" \(the nearest, "Bed nets", is 20% alike\): an open question\.$/);
   assert.equal(D.explain({ type: 'frontier', members: ['p:x'], via: 'a', sims: { nearest_solution: 0 } }), 'No known solution comes close to "p:x" (the nearest, "a", is 0% alike): an open question.', 'the label function defaults to the id');
 });
+
+// A packed index built straight from unit-ish vectors, so a test controls every similarity.
+const indexOf = vs => D.unpack(D.pack(Object.entries(vs).map(([id, v]) => ({ id, q: D.quantize(v).q }))));
+const unitAt = (cos, dim = 8) => { const v = new Array(dim).fill(0); v[0] = cos; v[1] = Math.sqrt(1 - cos * cos); return v; };
+
+test('US-27-R57: the defaults are the ones the specification states', () => {
+  assert.deepEqual([D.DEFAULTS.k, D.DEFAULTS.pct, D.DEFAULTS.minSim, D.DEFAULTS.comboLow, D.DEFAULTS.comboHigh, D.DEFAULTS.crossBoost, D.DEFAULTS.perType, D.DEFAULTS.perMember, D.DEFAULTS.dropAfter, D.DEFAULTS.keep, D.DEFAULTS.promoteAt],
+    [8, 0.9, 0.55, 0.35, 0.82, 1.25, 25, 3, 3, 600, 20000]);
+});
+
+test('US-27-R57: with the defaults at most 25 candidates of a type are kept, and no item is in more than three of one type', () => {
+  // forty solutions, each proven on its own problem, each problem with a near twin: forty transfers whose members are all distinct
+  const nodes = [], edges = [], vs = {}, DIM = 64;
+  for (let i = 0; i < 40; i++) {
+    const base = new Array(DIM).fill(0); base[i] = 1;
+    const twin = base.slice(); twin[(i + 1) % DIM] = 0.05;
+    for (const [id, kind, v] of [[`s${i}`, 'solution', base.map((x, j) => (j === (i + 20) % DIM ? 1 : 0))], [`p${i}`, 'problem', base], [`q${i}`, 'problem', twin]]) { nodes.push({ id, kind, label: id }); vs[id] = v; }
+    edges.push({ src: `s${i}`, rel: 'addresses', dst: `p${i}` });
+  }
+  const r = D.discover({ nodes, edges, M: indexOf(vs) });
+  assert.equal(r.candidates.filter(c => c.type === 'transfer').length, 25, 'forty were found, 25 are kept');
+  // one rich solution with many look-alike problems: only three of its transfers are kept
+  const rich = [{ id: 's', kind: 'solution', label: 's' }, { id: 'p0', kind: 'problem', label: 'p0' }], rv = { s: unitAt(0.2), p0: unitAt(1) };
+  for (let i = 1; i <= 8; i++) { rich.push({ id: `q${i}`, kind: 'problem', label: `q${i}` }); rv[`q${i}`] = unitAt(1 - i / 100); }
+  const one = D.discover({ nodes: rich, edges: [{ src: 's', rel: 'addresses', dst: 'p0' }], M: indexOf(rv) }).candidates.filter(c => c.type === 'transfer' && c.members[0] === 's');
+  assert.equal(one.length, 3, 'eight look-alike problems, three kept for one solution');
+});
+
+test('US-27-R57: two solutions that mean nearly the same (above 0.82) are not a combination, two that differ and are related are, scored by the problems\' similarity times how much they differ', () => {
+  const build = cos => { const nodes = [{ id: 'a', kind: 'solution', label: 'a' }, { id: 'b', kind: 'solution', label: 'b' }, { id: 'p', kind: 'problem', label: 'p' }];
+    return D.discover({ nodes, edges: [{ src: 'a', rel: 'addresses', dst: 'p' }, { src: 'b', rel: 'addresses', dst: 'p' }], M: indexOf({ a: unitAt(1), b: unitAt(cos), p: unitAt(0.5) }) }).candidates.filter(c => c.type === 'combination'); };
+  assert.deepEqual(build(0.9), [], 'too alike: a restatement, not a combination');
+  assert.deepEqual(build(0.2), [], 'too far apart: unrelated');
+  const [c] = build(0.7); assert.ok(c, 'related but distinct');
+  assert.ok(c.sims.solutions > 0.35 && c.sims.solutions < 0.82);
+  assert.ok(Math.abs(c.score - c.sims.problems * (1 - c.sims.solutions) * 2 * (c.cross ? 1.25 : 1)) < 1e-3, `score ${c.score}`);
+});
+
+test('US-27-R58: the ledger keeps 600 entries by default and counts what it retires, so entered stays equal to kept plus retired', () => {
+  const cands = Array.from({ length: 700 }, (_, i) => ({ id: `transfer:c${String(i).padStart(3, '0')}`, type: 'transfer', members: [`s${i}`, `q${i}`], score: 0.5, novelty: 'none', cross: false }));
+  const first = { candidates: cands, tau: 0.5, stats: { nodes: 1400 } }, empty = { candidates: [], tau: 0.5, stats: { nodes: 1400 } }, DAY = 86400000;
+  let { ledger } = D.mergeLedger(null, first, { now: 0 });
+  assert.equal(Object.keys(ledger.entries).length, 700, 'open entries are never retired, however many');
+  for (let i = 1; i <= 3; i++) ({ ledger } = D.mergeLedger(ledger, empty, { now: i * DAY }));
+  assert.equal(Object.keys(ledger.entries).length, 600, 'after three runs unranked all 700 are dropped, and the oldest 100 leave');
+  assert.deepEqual(ledger.retired, { dropped: 100 });
+  assert.equal(ledger.totals.entered, 700); assert.equal(ledger.totals.dropped, 700);
+});

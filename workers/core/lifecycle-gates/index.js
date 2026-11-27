@@ -65,6 +65,12 @@ export function checkForm(mode, kind, content) {
     if (c.roadmap.length > 5) problems.push('more than five roadmap features');
     c.roadmap.forEach((r, i) => { const m = ['size', 'goal', 'user', 'success_metric', 'closing_probe'].filter(f => !filled(r?.[f])); if (m.length) problems.push(`roadmap feature ${i + 1} lacks ${m.join(', ')}`); });
   }
+  // The communication plan's period is read as hours by setCommunicationPlan: a period that is not a positive number fails the form here, so the
+  // artifact is never stored as passing its done check while the call that sets the plan throws.
+  if (kind === 'A-PLN-9' && filled(c.period_h)) {
+    const n = typeof c.period_h === 'number' || (typeof c.period_h === 'string' && c.period_h.trim() !== '') ? Number(c.period_h) : NaN;
+    if (!(Number.isFinite(n) && n > 0)) problems.push('period_h is not a positive number of hours');
+  }
   return { ok: !missing.length && !problems.length, missing, problems, weight: spec.weight };
 }
 // Submit an artifact with its content; the done check is the form check for the project's mode.
@@ -384,12 +390,14 @@ export async function refreshMonitoring(db, { now = Date.now(), config } = {}) {
 }
 
 // ---- US-15-R12, T15-4: the scope gate ----
-// The default rules restate the out-of-scope table of SCOPE.md. config.scope_rules replaces them.
+// The default rules restate the out-of-scope table of SCOPE.md. config.scope_rules replaces them. A rule that has a twin in the console's
+// OUT_OF_SCOPE table (core/src/console.js) carries no word boundary at either end, as its twin has none, so the classifier matches every inflected form
+// the console refuses (US-15-R21): "business plans", "patented", "file patents".
 export const SCOPE_RULES = [
-  { rule: 'business-plan', pack: 'business-plan', why: 'a business plan, financial model, pitch or funding application is a different product', re: /\b(business plan|financial model|pitch deck|investor pitch|funding application|funding round|grant application|fundrais\w*|investors?)\b/i },
-  { rule: 'legal-filing', pack: 'legal', why: 'filing a legal instrument needs an identity-bound signature', re: /\b(file|register)\b.{0,40}\b(trademark|patent|incorporation|legal (document|instrument))\b|\bpatent( application)?\b|\btrademark\b|\bcopyright (filing|registration)\b/i },
-  { rule: 'advice', pack: 'advice', why: 'legal, tax, investment and medical advice are not what the system is designed or tested for', re: /\b(legal|tax|investment|medical) advice\b/i },
-  { rule: 'marketing', pack: 'outreach', why: 'outbound contact with other people needs consent and a policy of its own', re: /\b(marketing campaign|ad campaign|run (the |our |my )?(marketing|sales|outreach)|cold (email|outreach)|social media (account|campaign|posts?))\b/i },
+  { rule: 'business-plan', pack: 'business-plan', why: 'a business plan, financial model, pitch or funding application is a different product', re: /business plan|financial model|pitch deck|investor|funding (application|round)|grant application|fundrais/i },
+  { rule: 'legal-filing', pack: 'legal', why: 'filing a legal instrument needs an identity-bound signature', re: /\b(file|register)\b.{0,40}\b(incorporation|legal (document|instrument))|patent|trademark|copyright (filing|registration)/i },
+  { rule: 'advice', pack: 'advice', why: 'legal, tax, investment and medical advice are not what the system is designed or tested for', re: /(legal|tax|investment|medical) advice/i },
+  { rule: 'marketing', pack: 'outreach', why: 'outbound contact with other people needs consent and a policy of its own', re: /marketing campaign|ad campaign|\brun (the |our |my )?(marketing|sales|outreach)|cold (email|outreach)|social media (account|campaign|post)/i },
   { rule: 'money', pack: 'payments', why: 'hiring, paying, contracting and moving money are irreversible and identity-bound', re: /\b(hire (a|an|the)\b|pay (the|an?|our)\b.{0,30}\b(invoice|contractor|vendor)|wire (the )?money|sign (the|a) contract)\b/i },
   { rule: 'research', pack: 'research', why: 'research and paper writing for the person is a separate product', re: /\b(write (a|the|my) (research )?paper|literature review|do (the |my )?research)\b/i },
 ];

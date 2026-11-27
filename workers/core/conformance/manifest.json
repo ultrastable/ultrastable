@@ -305,20 +305,7 @@
   {
    "id": "US-03-T07",
    "spec": "US-SPEC-03",
-   "tests": [
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-R19 and US-03-T07 (issue #173 execute): a dispatched item whose probe passes ends done with evidence in the same tick"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-R19 and US-03-T07 (issue #173 execute): a failing probe parks the item with a reason, and it closes by itself when the probe passes"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-R19 and US-03-T07 (issue #173 execute): an item with no machine-readable probe keeps its claim for an outside executor; a worked claim is not touched"
-    }
-   ]
+   "tests": []
   },
   {
    "id": "US-03-T08",
@@ -338,16 +325,7 @@
   {
    "id": "US-03-T10",
    "spec": "US-SPEC-03",
-   "tests": [
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-T10, US-03-R09 and US-03-R18: with a configuration that omits every limit a role is never given more than three claims and no step fails"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-T10, US-03-R03 and US-03-R18, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted"
-    }
-   ]
+   "tests": []
   },
   {
    "id": "US-04-T01",
@@ -414,6 +392,10 @@
     {
      "file": "core/plus/plus.test.js",
      "name": "US-04-T06, US-04-R16: the daily cap counts plus rows created today, independent of the managers' origination cap"
+    },
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-R16, US-04-T06: a plus written onto a seed row counts on the day it is filed, so the cap holds across ticks even when every product has an old seed"
     }
    ]
   },
@@ -1492,17 +1474,31 @@
   {
    "id": "T18-1",
    "spec": "US-SPEC-18",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/test/console.test.js",
+     "name": "T18-1, T18-2, US-18-R09 and US-18-R13: console is off without a token, refuses a wrong key, and refuses cross-origin writes"
+    }
+   ]
   },
   {
    "id": "T18-2",
    "spec": "US-SPEC-18",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/test/console.test.js",
+     "name": "T18-1, T18-2, US-18-R09 and US-18-R13: console is off without a token, refuses a wrong key, and refuses cross-origin writes"
+    }
+   ]
   },
   {
    "id": "T18-3",
    "spec": "US-SPEC-18",
    "tests": [
+    {
+     "file": "core/test/console.test.js",
+     "name": "US-18-R05 and T18-3: five open decision cards show three, say exactly \"and 2 more\", count five in the headline, and a typed \"what do you need\" counts five"
+    },
     {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "T18-3 and US-18-R05: with 7 working, 7 stuck and 9 finished every list shows three (five finished) and an exact count of the rest"
@@ -1516,12 +1512,21 @@
   {
    "id": "T18-4",
    "spec": "US-SPEC-18",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/test/console.test.js",
+     "name": "T18-4 and US-18-R09: a manual card closes by button and the press is recorded; a secret card cannot be closed by button"
+    }
+   ]
   },
   {
    "id": "T18-5",
    "spec": "US-SPEC-18",
    "tests": [
+    {
+     "file": "core/test/console.test.js",
+     "name": "T18-5 and US-18-R03: a typed request becomes a work item with the words kept verbatim; out-of-scope requests are held"
+    },
     {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "US-18-R03 and T18-5: typed text is stored verbatim and becomes a work item; an out-of-scope request is held and is not dispatchable (US-00-R09)"
@@ -1532,6 +1537,10 @@
    "id": "T18-6",
    "spec": "US-SPEC-18",
    "tests": [
+    {
+     "file": "core/test/console.test.js",
+     "name": "T18-6 and US-18-R05: three screens are small and say what needs the person"
+    },
     {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "US-18-R08 and T18-6: the same facts the screens show are served as records at GET /api/console, to a person or an agent alike"
@@ -1930,17 +1939,32 @@
   {
    "id": "US-24-T01",
    "spec": "US-SPEC-24",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T01 US-24-R10 US-24-R11 US-24-R12: a workflow without permissions, concurrency and timeout-minutes gives W01, W02, W03"
+    }
+   ]
   },
   {
    "id": "US-24-T02",
    "spec": "US-SPEC-24",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T02 US-24-R14 US-24-R16 US-24-R41: schedule, pull_request_target, @main, a macOS runner and an unguarded secret give W04, W05, W06, W08, W07"
+    }
+   ]
   },
   {
    "id": "US-24-T03",
    "spec": "US-SPEC-24",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T03 US-24-R19: the repository real workflows lint clean"
+    }
+   ]
   },
   {
    "id": "US-24-T04",
@@ -1949,6 +1973,10 @@
     {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-T04 US-24-R23 US-24-R24 US-24-R26: 250, 400 then 500 of 500 give warn50 exit 1, warn80 exit 1, over exit 2 with cards and disabled workflows"
+    },
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T04 US-24-R23 US-24-R24 US-24-R26: the Python watchdog gives exit 1, 1, 2 at 250, 400, 500 of 500 with the non-essential workflows listed"
     }
    ]
   },
@@ -1965,7 +1993,12 @@
   {
    "id": "US-24-T06",
    "spec": "US-SPEC-24",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T06 US-24-R34: the settings script prints the commands and runs nothing without --apply"
+    }
+   ]
   },
   {
    "id": "US-24-T07",
@@ -2005,7 +2038,12 @@
   {
    "id": "US-24-T11",
    "spec": "US-SPEC-24",
-   "tests": []
+   "tests": [
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-T11 US-24-R22 a renamed usage field is shape drift, files an item and keeps the last decision"
+    }
+   ]
   }
  ],
  "requirements": [
@@ -2020,7 +2058,7 @@
    "tests": [
     {
      "file": "core/conformance/conformance.test.js",
-     "name": "US-00-R01, US-00-R02 and US-00-R12: the declaration names the level, each specification version and every requirement not met, with its reason"
+     "name": "US-00-R01, US-00-R02 and US-00-R13: the declaration names the level, each specification version and every requirement not met, with its reason"
     }
    ]
   },
@@ -2035,7 +2073,7 @@
    "tests": [
     {
      "file": "core/conformance/conformance.test.js",
-     "name": "US-00-R01, US-00-R02 and US-00-R12: the declaration names the level, each specification version and every requirement not met, with its reason"
+     "name": "US-00-R01, US-00-R02 and US-00-R13: the declaration names the level, each specification version and every requirement not met, with its reason"
     }
    ]
   },
@@ -2162,11 +2200,11 @@
     },
     {
      "file": "core/test/tick.test.js",
-     "name": "US-03-T10, US-03-R03 and US-03-R18, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted"
+     "name": "US-03-T13, US-03-R03 and US-03-R23, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted"
     },
     {
      "file": "core/test/tick.test.js",
-     "name": "US-00-R07 and US-03-R18: a configured value overrides the default, an undefined value does not, and the caller configuration object is not changed"
+     "name": "US-00-R07 and US-03-R23: a configured value overrides the default, an undefined value does not, and the caller configuration object is not changed"
     }
    ]
   },
@@ -2250,14 +2288,6 @@
     {
      "file": "../tests/foundation/test_spec_00_ids.py",
      "name": "test US-00-R12 a built line that names a file that is not there is found"
-    },
-    {
-     "file": "core/conformance/conformance.test.js",
-     "name": "US-00-R01, US-00-R02 and US-00-R12: the declaration names the level, each specification version and every requirement not met, with its reason"
-    },
-    {
-     "file": "core/conformance/conformance.test.js",
-     "name": "US-00-R03 and US-00-R12: the checker rejects an overstated manifest: a met with no test, a test file that is gone, a test that no longer cites it, a deviation with no reason"
     }
    ]
   },
@@ -2896,7 +2926,7 @@
     },
     {
      "file": "core/test/tick.test.js",
-     "name": "US-03-T10, US-03-R03 and US-03-R18, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted"
+     "name": "US-03-T13, US-03-R03 and US-03-R23, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted"
     }
    ]
   },
@@ -2915,7 +2945,7 @@
     },
     {
      "file": "core/test/tick.test.js",
-     "name": "US-03-R04 and US-03-R19 (issue #173 execute): a TICKFAIL item closes when a later tick completes the step, and an unreadable SELECT probe parks instead of throwing"
+     "name": "US-03-R04 and US-03-R24 (issue #173 execute): a TICKFAIL item closes when a later tick completes the step, and an unreadable SELECT probe parks instead of throwing"
     },
     {
      "file": "core/test/tick.test.js",
@@ -3010,7 +3040,7 @@
     },
     {
      "file": "core/test/tick.test.js",
-     "name": "US-03-T10, US-03-R09 and US-03-R18: with a configuration that omits every limit a role is never given more than three claims and no step fails"
+     "name": "US-03-T13, US-03-R09 and US-03-R23: with a configuration that omits every limit a role is never given more than three claims and no step fails"
     }
    ]
   },
@@ -3169,18 +3199,6 @@
     {
      "file": "../tests/foundation/test_spec_03_kernel_steps.py",
      "name": "test US-03-R18 the deferral constants the specification states are the code values"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-T10, US-03-R09 and US-03-R18: with a configuration that omits every limit a role is never given more than three claims and no step fails"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-T10, US-03-R03 and US-03-R18, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-00-R07 and US-03-R18: a configured value overrides the default, an undefined value does not, and the caller configuration object is not changed"
     }
    ]
   },
@@ -3196,22 +3214,6 @@
     {
      "file": "../seed/worker/test/spec-03-tick.test.js",
      "name": "US-03-R19: a step that throws on a missing table or column is retried once after migrate runs again, with no TICKFAIL; any other error still files one"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-R19 and US-03-T07 (issue #173 execute): a dispatched item whose probe passes ends done with evidence in the same tick"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-R19 and US-03-T07 (issue #173 execute): a failing probe parks the item with a reason, and it closes by itself when the probe passes"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-R19 and US-03-T07 (issue #173 execute): an item with no machine-readable probe keeps its claim for an outside executor; a worked claim is not touched"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-R04 and US-03-R19 (issue #173 execute): a TICKFAIL item closes when a later tick completes the step, and an unreadable SELECT probe parks instead of throwing"
     }
    ]
   },
@@ -3227,14 +3229,6 @@
     {
      "file": "../seed/worker/test/spec-03-tick.test.js",
      "name": "US-03-R20 and US-03-T09: health judges the newest finished tick, so a tick in flight does not fail it, and an unfinished tick older than five minutes does"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-R20 and issue #173: a claim released with no work is recorded, and the item is parked after max_unworked_releases"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-R20 and issue #173: a claim that was heartbeated is released without an unworked outcome"
     }
    ]
   },
@@ -3455,6 +3449,10 @@
     },
     {
      "file": "core/plus/plus.test.js",
+     "name": "US-04-R20, US-04-T08, US-04-R09: a plus that moved nothing from a baseline of 0 is not kept, a strict move off 0 is, and a negative baseline is measured by its magnitude"
+    },
+    {
+     "file": "core/plus/plus.test.js",
      "name": "US-04-T04, US-04-R09: a stale or failed usage reading at the window end is recorded unmeasured (null), never 0, and is not kept"
     },
     {
@@ -3464,10 +3462,6 @@
     {
      "file": "core/plus/plus.test.js",
      "name": "US-04-R09, US-04-R13: plusProbe reports the plus loop from its own tables, read-only, with unmeasured products counted as unmeasured, not as zero"
-    },
-    {
-     "file": "core/plus/readers.test.js",
-     "name": "US-04-R14, US-04-R09: the first-party reader counts human pageviews in the window, labels them, and stores null when the table is missing"
     }
    ]
   },
@@ -3597,6 +3591,10 @@
     {
      "file": "core/plus/plus.test.js",
      "name": "US-04-T06, US-04-R16: the daily cap counts plus rows created today, independent of the managers' origination cap"
+    },
+    {
+     "file": "core/plus/plus.test.js",
+     "name": "US-04-R16, US-04-T06: a plus written onto a seed row counts on the day it is filed, so the cap holds across ticks even when every product has an old seed"
     }
    ]
   },
@@ -6680,6 +6678,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/graph/fleet-graph.test.js",
+     "name": "US-12-R15: the scan reads JS, TS and Python files and skips vendored directories and other file types"
+    },
+    {
      "file": "core/graph/graph.test.js",
      "name": "US-12-R15: no single route: a failing source is reported, the other still builds the graph"
     },
@@ -6702,6 +6704,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/graph/fleet-graph.test.js",
+     "name": "US-12-R16: the command line prints what depends on a change, across languages, and a declared edge joins the graph"
+    },
     {
      "file": "core/graph/graph.test.js",
      "name": "US-12-R16: blast radius is transitive and cycle safe"
@@ -7215,16 +7221,24 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "adapters/postgres/portability.test.js",
+     "name": "US-14-R07: every migration under core/ and adapters/ translates; the only SQLite-only leftovers are in the baseline"
+    },
+    {
+     "file": "adapters/postgres/portability.test.js",
+     "name": "US-14-R07 and R14: every static SQL statement in core/ and adapters/ translates to Postgres; refusals and leftovers are in the baseline"
+    },
+    {
+     "file": "adapters/postgres/portability.test.js",
+     "name": "US-14-R07: the sources of Postgres-only forms: sqlite_master and julianday and json_extract no longer reach the output"
+    },
+    {
      "file": "adapters/shared/store-suite.test.js",
      "name": "US-14-T01 and US-14-R07: the L1 tick suite passes over the SQLite adapter's own handle"
     },
     {
      "file": "adapters/shared/store-suite.test.js",
      "name": "US-14-T01 and US-14-R07: the same suite passes with every statement also translated by the Postgres shim, and the translations are Postgres"
-    },
-    {
-     "file": "core/conformance/l1.test.js",
-     "name": "US-14-T01 and US-14-R07: the L1 tick runs every step over the adapter store handle and dispatches in priority order"
     }
    ]
   },
@@ -7342,9 +7356,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "adapters/shared/purity.test.js",
+     "name": "US-14-R12: no core module outside the baseline imports a platform, and the baseline only shrinks"
+    },
+    {
+     "file": "adapters/shared/purity.test.js",
+     "name": "US-14-R12: the scanner sees each kind of platform call"
+    }
+   ]
   },
   {
    "id": "US-15-R01",
@@ -7430,6 +7453,10 @@
     {
      "file": "core/kernel/lifecycle.test.js",
      "name": "US-15-R05: phase theater: an artifact that fails its done check, is chat, or is empty does not satisfy the gate"
+    },
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R10, US-15-R05: a communication plan whose period is not a positive number of hours fails its form check and is stored as failing, with no plan set and no thrown error"
     },
     {
      "file": "core/lifecycle-gates/lifecycle-gates.test.js",
@@ -7522,6 +7549,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/lifecycle-gates/lifecycle-gates.test.js",
+     "name": "US-15-R10, US-15-R05: a communication plan whose period is not a positive number of hours fails its form check and is stored as failing, with no plan set and no thrown error"
+    },
     {
      "file": "core/lifecycle-gates/lifecycle-gates.test.js",
      "name": "US-15-R10: the status report is four lines with metric values against targets and predicted versus actual, produced on the communication plan's period"
@@ -7627,11 +7658,11 @@
     },
     {
      "file": "core/lifecycle-gates/lifecycle-gates.test.js",
-     "name": "US-15-R10, US-15-R15, US-15-R18: the lifecycle step adopts outcomes, files gate items, closes and archives, and reports each in the tick notes without erroring"
+     "name": "US-15-R15: the compliance report of project A closes only A's own findings, never those of a project whose id starts with A- (A-B)"
     },
     {
      "file": "core/lifecycle-gates/lifecycle-gates.test.js",
-     "name": "US-15-R10, US-15-R15: lifecycleProbe reports the lifecycle from its own tables, read-only, and answers on an empty store"
+     "name": "US-15-R10, US-15-R15, US-15-R18: the lifecycle step adopts outcomes, files gate items, closes and archives, and reports each in the tick notes without erroring"
     }
    ]
   },
@@ -8132,6 +8163,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R01: every erroring run still writes its hit row"
+    },
+    {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-R01 / R03 / R04: the standard detectors register with severity and a full contract, and each run writes one hit row"
     }
@@ -8201,6 +8236,10 @@
      "name": "a failure mode without a detector, severity or contract field cannot be registered (US-17-R03/R04)"
     },
     {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R04: without the state tables a relapse inside the same clock hour opens a new remediation under a fresh item id"
+    },
+    {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-R01 / R03 / R04: the standard detectors register with severity and a full contract, and each run writes one hit row"
     }
@@ -8237,6 +8276,10 @@
     {
      "file": "core/kernel/failure.test.js",
      "name": "the consumer books exactly one bucket per scanned item and closes only when the closing probe passes (US-17-R05/R06)"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R06: a doer that throws leaves its message in the remediation evidence"
     }
    ]
   },
@@ -8258,6 +8301,10 @@
      "name": "an interrupt-eligible item goes through the gate card after max_attempts (US-17-R07)"
     },
     {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R07: when no alternate doer remains an ESCALATE item is filed once and the remediation is exhausted"
+    },
+    {
      "file": "core/kernel/kernel.test.js",
      "name": "exhausted contract: interrupt-eligible goes to a gate card, otherwise is reassigned (US-17-R07)"
     },
@@ -8277,6 +8324,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R08: a failed half-open probe doubles the interval, a failure recorded before the half-open time does not"
+    },
+    {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-T03 / R08: a ledger whose writer has no breaker gets one; 26 hourly identical failures become 3 attempts"
     }
@@ -8294,6 +8345,18 @@
     {
      "file": "core/kernel/failure.test.js",
      "name": "US-17-R09: a detector mostly refuted by verification goes to probation and stops opening items"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R09: ten firings whose verify_probe passes (the problem was not there) put the detector in probation without any manual confirmFiring call"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R09: firings whose verify_probe still fails are confirmed and the detector stays armed"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R09: a probation detector keeps writing hit rows and opens no item"
     }
    ]
   },
@@ -8383,9 +8446,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R14: two consecutive runs of a detector over a missing table open DETECTOR-BROKEN-<id> once"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R14: one erroring run followed by a good run opens nothing"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R14: the item closes with a disposition when the detector returns a value again, and reopens if it breaks again"
+    }
+   ]
   },
   {
    "id": "US-17-R15",
@@ -8393,9 +8469,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R15: with due_only a detector with interval_h 1 run twice 10 minutes apart writes one hit row; 61 minutes later it writes a second"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R15: without due_only every call writes a row as before"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R15: a due_only run that skipped everything still lets detectStaleDetectors fire after 2 intervals of silence"
+    }
+   ]
   },
   {
    "id": "US-17-R16",
@@ -8403,9 +8492,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R16: a closed remediation whose detector fires again is reopened and counts one relapse"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R16: a closure outside the relapse window is a new remediation, not a reopen"
+    }
+   ]
   },
   {
    "id": "US-17-R17",
@@ -8423,6 +8521,10 @@
     {
      "file": "../tests/foundation/test_spec_17_failure_ladder.py",
      "name": "test US-17-R17 a relapsed item needs more than one consecutive pass"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R17: after three relapses closure needs two consecutive passes of the closing probe"
     }
    ]
   },
@@ -8435,6 +8537,14 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R18: after 3 failures, a success and one new failure inside the window the breaker stays closed"
+    },
+    {
+     "file": "core/kernel/failure.test.js",
+     "name": "US-17-R18: a changed source_hash re-arms an open breaker and the next attempt is allowed"
+    },
     {
      "file": "core/remediation/remediation.test.js",
      "name": "US-17-R18: breakerFromLedger passes a row source_hash so a changed source re-arms the writer retry"
@@ -8512,6 +8622,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/test/console-ui.test.js",
+     "name": "US-18-R02 and US-18-R11: the page opens on the step the server reports and every step of the first screen is completable by pressing buttons"
+    },
+    {
+     "file": "core/test/console-ui.test.js",
+     "name": "US-18-R11 and US-18-R02: an Ask step shows every option, Not sure and Tell me more as buttons; Tell me more asks for no confirmation; an answer does"
+    },
+    {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "US-18-R02: every walkthrough step can be completed with no typing: suggestions on the first question, buttons on every card, Not sure on free-text ones"
     }
@@ -8527,16 +8645,24 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/test/console-ui.test.js",
+     "name": "US-18-R04 and US-18-R03: a suggestion is answered from the records and switches to the screen that shows it; typed words are sent whole"
+    },
+    {
+     "file": "core/test/console.test.js",
+     "name": "T18-5 and US-18-R03: a typed request becomes a work item with the words kept verbatim; out-of-scope requests are held"
+    },
+    {
+     "file": "core/test/console.test.js",
+     "name": "US-18-R03 and R19: a request that only contains question words is stored and becomes work; the standing questions, however punctuated, are answered and create none"
+    },
+    {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "US-18-R03 and T18-5: typed text is stored verbatim and becomes a work item; an out-of-scope request is held and is not dispatchable (US-00-R09)"
     },
     {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "US-18-R03: a 3000-character request is stored verbatim; 4001 is refused with a message and nothing is stored"
-    },
-    {
-     "file": "core/walkthrough/console-rules.test.js",
-     "name": "US-18-R03 and US-18-R04: typing a question the screens already answer returns the answer from the records, is stored verbatim as a question and creates no item; anything else still becomes work"
     }
    ]
   },
@@ -8549,6 +8675,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/test/console-ui.test.js",
+     "name": "US-18-R04 and US-18-R03: a suggestion is answered from the records and switches to the screen that shows it; typed words are sent whole"
+    },
     {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "US-18-R04: the prompt box comes with at most three suggested requests"
@@ -8573,16 +8703,24 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/test/console-ui.test.js",
+     "name": "US-18-R05: every cut list says how many are left; the composed numbers and the autonomy list use the person's words"
+    },
+    {
+     "file": "core/test/console.test.js",
+     "name": "T18-6 and US-18-R05: three screens are small and say what needs the person"
+    },
+    {
+     "file": "core/test/console.test.js",
+     "name": "US-18-R05 and T18-3: five open decision cards show three, say exactly \"and 2 more\", count five in the headline, and a typed \"what do you need\" counts five"
+    },
+    {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "T18-3 and US-18-R05: with 7 working, 7 stuck and 9 finished every list shows three (five finished) and an exact count of the rest"
     },
     {
      "file": "core/walkthrough/console-rules.test.js",
      "name": "US-18-R05: compose at brief detail keeps counts equal to what it removed; nothing is dropped silently"
-    },
-    {
-     "file": "core/walkthrough/walkthrough.test.js",
-     "name": "US-18-R05 and T18-3 with a profile: Ask cards join Needs you, no open decision card is hidden, lists hold at most three and extras become a count"
     }
    ]
   },
@@ -8608,11 +8746,15 @@
    "tagged": false,
    "must": true,
    "status": "met",
-   "proof": "test file cites it",
+   "proof": "named test",
    "tests": [
     {
-     "file": "core/walkthrough/walkthrough.test.js",
-     "name": null
+     "file": "core/test/console-ui.test.js",
+     "name": "US-18-R07: an Ask card in Needs you states what happens if the person does nothing and carries its options, not I did it or Use the default"
+    },
+    {
+     "file": "core/test/console.test.js",
+     "name": "US-18-R07: every decision card says what happens if the person does nothing, on the data and on the page"
     }
    ]
   },
@@ -8653,16 +8795,16 @@
      "name": "US-18-R09: steps a person must do are decision cards that close when the step is observed done, never by the console setting anything"
     },
     {
-     "file": "core/walkthrough/console-rules.test.js",
-     "name": "T18-8 and US-18-R09: pressing I did it or Use the default on an elicit gate card changes nothing, explains, and only answering the need closes the card"
+     "file": "core/test/console-ui.test.js",
+     "name": "US-18-R09: an explain press asks no confirmation, a change does; a card with an owner link offers one button for it and an unsafe link is not drawn"
     },
     {
-     "file": "core/walkthrough/console-rules.test.js",
-     "name": "US-18-R09: explain on every card kind returns plain text and writes no console_actions row, even when signed in with a session"
+     "file": "core/test/console.test.js",
+     "name": "T18-4 and US-18-R09: a manual card closes by button and the press is recorded; a secret card cannot be closed by button"
     },
     {
-     "file": "core/walkthrough/console-rules.test.js",
-     "name": "US-18-R21 and US-18-R09: a card with an open owner link carries it and the page renders one button for it; a link with an unsafe scheme is not offered; without the table the card is unchanged"
+     "file": "core/test/console.test.js",
+     "name": "T18-1, T18-2, US-18-R09 and US-18-R13: console is off without a token, refuses a wrong key, and refuses cross-origin writes"
     }
    ]
   },
@@ -8680,6 +8822,14 @@
      "name": "the page escapes every stored value and loads nothing from another host (US-18-R10)"
     },
     {
+     "file": "core/test/console-ui.test.js",
+     "name": "US-18-R10: the page script only ever requests paths on its own origin"
+    },
+    {
+     "file": "core/test/console.test.js",
+     "name": "US-18-R10: the console page loads nothing from another host, inserts text only with textContent and carries a strict content policy"
+    },
+    {
      "file": "core/walkthrough/walkthrough.test.js",
      "name": "the read-back screen: defaults marked, options as buttons, every value escaped, nothing loaded from another host (US-18-R10)"
     }
@@ -8694,6 +8844,14 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/test/console-ui.test.js",
+     "name": "US-18-R02 and US-18-R11: the page opens on the step the server reports and every step of the first screen is completable by pressing buttons"
+    },
+    {
+     "file": "core/test/console-ui.test.js",
+     "name": "US-18-R11 and US-18-R02: an Ask step shows every option, Not sure and Tell me more as buttons; Tell me more asks for no confirmation; an answer does"
+    },
     {
      "file": "core/walkthrough/walkthrough.test.js",
      "name": "US-18-R11: the walkthrough is resumable from the records and does not block on any card; unanswered cards fall to their defaults after their time"
@@ -8710,6 +8868,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/test/console-ui.test.js",
+     "name": "US-18-R12: the final step lists what runs and what does not yet and can be dismissed; the read-back step offers Read it and This is right"
+    },
+    {
      "file": "core/walkthrough/walkthrough.test.js",
      "name": "US-18-R12: the walkthrough ends by stating exactly what runs and what does not yet, read from the records"
     }
@@ -8721,9 +8883,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/console.test.js",
+     "name": "T18-1, T18-2, US-18-R09 and US-18-R13: console is off without a token, refuses a wrong key, and refuses cross-origin writes"
+    }
+   ]
   },
   {
    "id": "US-19-R01",
@@ -8786,6 +8953,10 @@
     {
      "file": "apps/launcher/test/spec19.test.mjs",
      "name": "US-19-R04: before the first question the page states scope, the platform and why, what it costs, and that it is needed only to start"
+    },
+    {
+     "file": "core/test/agent-setup.test.js",
+     "name": "US-19-R04 the skill states scope, the platform and why, the cost, and that an agent is needed only to start, before any step"
     }
    ]
   },
@@ -8964,9 +9135,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/agent-setup.test.js",
+     "name": "US-19-R12 / US-19-R13 the skill has the Agent Skills front matter, says an agent is needed only to start, and carries the rules that protect a non-coder"
+    }
+   ]
   },
   {
    "id": "US-19-R13",
@@ -8974,9 +9150,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/agent-setup.test.js",
+     "name": "US-19-R12 / US-19-R13 the skill has the Agent Skills front matter, says an agent is needed only to start, and carries the rules that protect a non-coder"
+    }
+   ]
   },
   {
    "id": "US-19-R14",
@@ -8990,6 +9171,10 @@
     {
      "file": "apps/launcher/test/spec19.test.mjs",
      "name": "T19-4 / T19-7 / US-19-R03 / US-19-R14 / US-19-R32: a challenge page or a foreign address is never \"verified\"; the door says \"not verified\""
+    },
+    {
+     "file": "core/test/agent-setup.test.js",
+     "name": "US-19-R14 verify never reads a Cloudflare challenge page, or a foreign address, as a refusal (trial finding)"
     }
    ]
   },
@@ -8999,9 +9184,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/agent-setup.test.js",
+     "name": "US-19-R15 the skill states what a temporary account cannot do before it gives Path A's commands"
+    }
+   ]
   },
   {
    "id": "US-19-R16",
@@ -9086,6 +9276,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/test/docs.test.js",
+     "name": "US-19-R19 relative markdown links in every markdown file of this repository resolve to files"
+    },
+    {
      "file": "tests/test_req_ids.py",
      "name": "test US-19-R19 a cited id that no specification defines is reported with its files"
     },
@@ -9100,10 +9294,6 @@
     {
      "file": "tests/test_req_ids.py",
      "name": "test US-19-R19 a missing specification directory is an error not a pass"
-    },
-    {
-     "file": "tests/test_req_ids.py",
-     "name": "test US-19-R19 this repository cites only defined ids"
     }
    ]
   },
@@ -9113,9 +9303,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/agent-setup.test.js",
+     "name": "US-19-R20 / US-19-R22 neither the skill nor the launcher page promises a platform other than Workers"
+    }
+   ]
   },
   {
    "id": "US-19-R21",
@@ -9123,9 +9318,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/docs.test.js",
+     "name": "US-19-R21 the platform statement is made in the scope page and the skill, links docs/why-cloudflare.md, and that document has its limits and its not-the-right-choice sections"
+    }
+   ]
   },
   {
    "id": "US-19-R22",
@@ -9133,9 +9333,14 @@
    "level": "L2",
    "tagged": false,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/test/agent-setup.test.js",
+     "name": "US-19-R20 / US-19-R22 neither the skill nor the launcher page promises a platform other than Workers"
+    }
+   ]
   },
   {
    "id": "US-19-R23",
@@ -10523,9 +10728,30 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R03 the board mirrors open ledger items and writes nothing back into the ledger"
+    },
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R03 a field changed on the board is reported as drift and the ledger value is re-asserted"
+    },
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R03 an item leaves the board only after its ledger item is closed with a disposition; an unreadable board is unmeasured"
+    },
+    {
+     "file": "core/ghcost/projects-graphql.test.js",
+     "name": "US-24-R03 the GraphQL adapter adds a draft issue per open ledger item, sets its three fields and reads them back as a pass"
+    },
+    {
+     "file": "core/ghcost/projects-graphql.test.js",
+     "name": "US-24-R03 a field edited on the board is drift and the ledger value is written again; an item leaves only after its ledger item closes with a disposition"
+    }
+   ]
   },
   {
    "id": "US-24-R04",
@@ -10588,9 +10814,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T01 US-24-R10 US-24-R11 US-24-R12: a workflow without permissions, concurrency and timeout-minutes gives W01, W02, W03"
+    }
+   ]
   },
   {
    "id": "US-24-R11",
@@ -10601,6 +10832,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T01 US-24-R10 US-24-R11 US-24-R12: a workflow without permissions, concurrency and timeout-minutes gives W01, W02, W03"
+    },
     {
      "file": "tests/test_workflow_lint.py",
      "name": "test US-24-R11 pull request concurrency without cancel in progress is w12"
@@ -10616,6 +10851,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T01 US-24-R10 US-24-R11 US-24-R12: a workflow without permissions, concurrency and timeout-minutes gives W01, W02, W03"
+    },
     {
      "file": "tests/test_workflow_lint.py",
      "name": "test US-24-T10 US-24-R12 allow timeout raises the cap to 60 and needs a reason"
@@ -10643,9 +10882,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T02 US-24-R14 US-24-R16 US-24-R41: schedule, pull_request_target, @main, a macOS runner and an unguarded secret give W04, W05, W06, W08, W07"
+    }
+   ]
   },
   {
    "id": "US-24-R15",
@@ -10671,6 +10915,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T02 US-24-R14 US-24-R16 US-24-R41: schedule, pull_request_target, @main, a macOS runner and an unguarded secret give W04, W05, W06, W08, W07"
+    },
     {
      "file": "tests/test_workflow_lint.py",
      "name": "test US-24-R16 self hosted and larger runners are w13"
@@ -10702,6 +10950,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-R18: --sha-report lists the tag pins and exits 0, and --require-sha fails on a tag"
+    },
+    {
      "file": "tests/test_workflow_sha_pin.py",
      "name": "test US-24-R18 tag passes by default and is w09 when sha is required"
     },
@@ -10716,10 +10968,6 @@
     {
      "file": "tests/test_workflow_sha_pin.py",
      "name": "test US-24-R18 cli gate and report"
-    },
-    {
-     "file": "tests/test_workflow_sha_pin.py",
-     "name": "test US-24-R18 real workflows have no branch refs and the report runs"
     }
    ]
   },
@@ -10730,11 +10978,11 @@
    "tagged": true,
    "must": true,
    "status": "met",
-   "proof": "test file cites it",
+   "proof": "named test",
    "tests": [
     {
-     "file": "../tests/foundation/test_lint_workflows.py",
-     "name": null
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T03 US-24-R19: the repository real workflows lint clean"
     }
    ]
   },
@@ -10763,6 +11011,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R21 normalizeBudget accepts the platform actions-budget.json keys unchanged"
+    },
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R21 paused: true in the budget is the kill switch: every non-essential workflow is disabled and read back"
+    },
+    {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-R21 one ledger row per repository and month, published once when the month is over"
     },
@@ -10773,10 +11029,6 @@
     {
      "file": "tests/test_actions_budget.py",
      "name": "test US-24-R21 the platform budget schema loads"
-    },
-    {
-     "file": "tests/test_actions_budget.py",
-     "name": "test US-24-R21 the shipped roster names every workers workflow"
     }
    ]
   },
@@ -10790,12 +11042,24 @@
    "proof": "named test",
    "tests": [
     {
-     "file": "core/ghcost/ghcost.test.js",
-     "name": "US-24-R22 the watchdog reads the field set of the billing usage endpoint (figures observed 2026-11-11: 567 minutes, 508 in one repository)"
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R22 a sample keeps keys and types and hashes organization and repository names"
+    },
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-T11 US-24-R22 a renamed usage field is shape drift, files an item and keeps the last decision"
+    },
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R22 a unit type that is no longer Minutes is blocking drift; an added field is only reported"
+    },
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R22 a stored sample replays to the same decision"
     },
     {
      "file": "core/ghcost/ghcost.test.js",
-     "name": "US-24-R22 an unreadable usage endpoint is unmeasured, never ok, and files an item after three runs"
+     "name": "US-24-R22 the watchdog reads the field set of the billing usage endpoint (figures observed 2026-11-11: 567 minutes, 508 in one repository)"
     }
    ]
   },
@@ -10815,6 +11079,10 @@
     {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-R23 a card of an earlier month closes when the new month reads ok; workflows this module disabled are enabled again"
+    },
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T04 US-24-R23 US-24-R24 US-24-R26: the Python watchdog gives exit 1, 1, 2 at 250, 400, 500 of 500 with the non-essential workflows listed"
     }
    ]
   },
@@ -10838,6 +11106,10 @@
     {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-R24 a disable that does not read back is a priority-0 item, not an assumed success"
+    },
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T04 US-24-R23 US-24-R24 US-24-R26: the Python watchdog gives exit 1, 1, 2 at 250, 400, 500 of 500 with the non-essential workflows listed"
     },
     {
      "file": "tests/test_actions_budget.py",
@@ -10880,6 +11152,10 @@
     {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-R26 the watchdog runs as a tick step, only when enabled and on its interval"
+    },
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T04 US-24-R23 US-24-R24 US-24-R26: the Python watchdog gives exit 1, 1, 2 at 250, 400, 500 of 500 with the non-essential workflows listed"
     }
    ]
   },
@@ -10889,9 +11165,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R30 the probe fails when the default token is write and passes on read with approvals off"
+    },
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R30 an unreadable settings endpoint is unknown and a refused write is recorded, left as a gate card and not retried"
+    },
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R30 the settings probe rides the watchdog step on its interval and adds no tick step"
+    }
+   ]
   },
   {
    "id": "US-24-R31",
@@ -10899,9 +11188,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R31 the probe reads the fork approval policy"
+    }
+   ]
   },
   {
    "id": "US-24-R32",
@@ -10909,9 +11203,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R32 the probe fails on a repository that allows merge commits and names the fields"
+    }
+   ]
   },
   {
    "id": "US-24-R33",
@@ -10919,9 +11218,18 @@
    "level": "L2",
    "tagged": true,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R33 discussions are judged only when the configuration states a wish (a MAY)"
+    },
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-R33: Discussions are off unless asked: the default commands do not set has_discussions and --discussions does"
+    }
+   ]
   },
   {
    "id": "US-24-R34",
@@ -10929,9 +11237,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R34 settingsApply changes nothing without apply and reads every change back with it"
+    },
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T06 US-24-R34: the settings script prints the commands and runs nothing without --apply"
+    }
+   ]
   },
   {
    "id": "US-24-R40",
@@ -10954,9 +11271,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "core/ghcost/tools-bridge.test.js",
+     "name": "US-24-T02 US-24-R14 US-24-R16 US-24-R41: schedule, pull_request_target, @main, a macOS runner and an unguarded secret give W04, W05, W06, W08, W07"
+    }
+   ]
   },
   {
    "id": "US-24-R42",
@@ -10998,6 +11320,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R44 the dead-man route needs no tick and no workflow schedule: the module still does not import the tick"
+    },
+    {
      "file": "tests/test_workflow_lint.py",
      "name": "test US-24-R44 require second route flag"
     }
@@ -11028,6 +11354,14 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-T12 US-24-R51 the dead-man route refuses an unauthenticated caller"
+    },
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-T12 US-24-R51 an authorized call after a three-slot gap opens one item and reports missed_slots 3, and the route closes it once a tick is recorded"
+    },
+    {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-R51 the dead-man check opens one item for a missing tick slot and closes it when a tick is recorded"
     },
@@ -11046,6 +11380,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "core/ghcost/ghcost-ext.test.js",
+     "name": "US-24-R52 the shipped budget file leaves no active workers workflow unrostered"
+    },
     {
      "file": "core/ghcost/ghcost.test.js",
      "name": "US-24-R52 the census measures every workflow and runner user; a member missing from the roster that ran is active"

@@ -120,7 +120,8 @@ export async function complianceReport(db, { project_id, now = Date.now(), statu
   const now_slugs = new Set(findings.map(f => `COMPLIANCE-${project_id}-${slug(f.slug)}`)), filed = [];
   for (const f of findings) { const id = `COMPLIANCE-${project_id}-${slug(f.slug)}`; if (await ensureItem(db, { id, title: f.text, owner_role: f.owner, project: project_id, priority: 25, done_check: f.text, closing_probe: `the compliance report of ${project_id} no longer lists it` })) filed.push(id); }
   const prefix = `COMPLIANCE-${project_id}-`, closed = [];
-  for (const it of await all(db, `SELECT id FROM items WHERE substr(id, 1, ?) = ? AND status NOT IN ${TERMINAL_SQL}`, prefix.length, prefix)) {
+  // The prefix alone is not the project: with projects A and A-B, `COMPLIANCE-A-` also starts A-B's findings. The item's own project column decides.
+  for (const it of await all(db, `SELECT id FROM items WHERE substr(id, 1, ?) = ? AND project = ? AND status NOT IN ${TERMINAL_SQL}`, prefix.length, prefix, project_id)) {
     if (now_slugs.has(it.id)) continue;
     await run(db, `UPDATE items SET status = 'done', disposition = 'done: the finding cleared', updated_at = ? WHERE id = ?`, iso(now), it.id); closed.push(it.id);
   }

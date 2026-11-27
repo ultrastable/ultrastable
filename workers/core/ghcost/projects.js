@@ -4,7 +4,8 @@
 // never reads a value from the board into the ledger. A field changed on the board is reported as drift and the ledger value
 // is asserted again; an item leaves the board only after its ledger item is closed with a disposition.
 // Ports: ctx.github.projectItems(project) -> [{ id, itemId, fields }], upsertProjectItem({ project, itemId, fields }),
-// deleteProjectItem({ project, id }). The live GraphQL adapter for these three is not in this repository (PLANNED).
+// deleteProjectItem({ project, id }). The live GraphQL adapter for these three is ./projects-graphql.js (composed into githubPort in
+// ./github.js; tested against a fake GraphQL server only, no live board has been read).
 import { iso, nowMs, all, cfg, recordProbe } from './util.js';
 
 const TERMINAL = new Set(['done', 'superseded', 'cancelled']);

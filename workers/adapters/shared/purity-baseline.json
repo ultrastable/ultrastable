@@ -1,0 +1,149 @@
+{
+ "$comment": "US-14-R12: core files that still reach a platform. A finding that is gone must be removed; a new finding is a failure. Rules: node-import, process, caches, cloudflare-import, env-db, adapter-import.",
+ "entries": {
+  "core/_shared/testdb.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "test helper: builds the in-memory store through core/test/d1shim.js storeFor; never shipped to a host"
+  },
+  "core/conformance/cli.js": {
+   "rules": [
+    "node-import",
+    "process"
+   ],
+   "reason": "command-line entry point: reads the specification directory and exits with a status"
+  },
+  "core/describe/load.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "reads its own data files at load time through node:fs, node:path or node:url (a readFile port would remove it); recorded so the list only shrinks"
+  },
+  "core/kernel/index.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "reads its own data files at load time through node:fs, node:path or node:url (a readFile port would remove it); recorded so the list only shrinks"
+  },
+  "core/kernel/testkit.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "test helper: reads the migration files for kernel tests; never shipped"
+  },
+  "core/ladder/cli-floor-guard.js": {
+   "rules": [
+    "node-import",
+    "process"
+   ],
+   "reason": "command-line entry point: reads the working tree and the environment to guard the cost floor"
+  },
+  "core/lifecycle-gates/index.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "reads its own data files at load time through node:fs, node:path or node:url (a readFile port would remove it); recorded so the list only shrinks"
+  },
+  "core/modelport/cli.js": {
+   "rules": [
+    "node-import",
+    "process"
+   ],
+   "reason": "command-line entry point: reads one config file, reads key presence from the environment and exits with a status (US-14-R10 at deploy time)"
+  },
+  "core/org/surfaces.js": {
+   "rules": [
+    "adapter-import"
+   ],
+   "reason": "composition root: the one core file allowed to wire adapters (github tracker, slot guard); it takes them from here and hands ports to the modules"
+  },
+  "core/packs/index.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "reads its own data files at load time through node:fs, node:path or node:url (a readFile port would remove it); recorded so the list only shrinks"
+  },
+  "core/packs/loader.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "reads its own data files at load time through node:fs, node:path or node:url (a readFile port would remove it); recorded so the list only shrinks"
+  },
+  "core/packs/sandbox.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "reads its own data files at load time through node:fs, node:path or node:url (a readFile port would remove it); recorded so the list only shrinks"
+  },
+  "core/packs/static-check.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "reads its own data files at load time through node:fs, node:path or node:url (a readFile port would remove it); recorded so the list only shrinks"
+  },
+  "core/plus/index.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "reads its own data files at load time through node:fs, node:path or node:url (a readFile port would remove it); recorded so the list only shrinks"
+  },
+  "core/principles/enforcement.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "reads its own data files at load time through node:fs, node:path or node:url (a readFile port would remove it); recorded so the list only shrinks"
+  },
+  "core/principles/index.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "reads its own data files at load time through node:fs, node:path or node:url (a readFile port would remove it); recorded so the list only shrinks"
+  },
+  "core/principles/render.js": {
+   "rules": [
+    "node-import",
+    "process"
+   ],
+   "reason": "build-time renderer: reads the principle files and writes the rendered instruction files"
+  },
+  "core/runner/testkit.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "test helper: fake VCS and model fixtures for runner tests; never shipped"
+  },
+  "core/src/console.js": {
+   "rules": [
+    "env-db"
+   ],
+   "reason": "the console is served by the Worker entry and reads the Worker env shape (env.DB); a port-shaped handle is the planned fix"
+  },
+  "core/src/first-run.js": {
+   "rules": [
+    "env-db"
+   ],
+   "reason": "the first-run door reads the Worker env shape (env.DB); a port-shaped handle is the planned fix"
+  },
+  "core/staff/index.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "reads its own data files at load time through node:fs, node:path or node:url (a readFile port would remove it); recorded so the list only shrinks"
+  },
+  "core/test/console-conformance.js": {
+   "rules": [
+    "node-import"
+   ],
+   "reason": "test helper for the console conformance tests (cluster A owns it); never shipped to a host"
+  },
+  "core/test/d1shim.js": {
+   "rules": [
+    "node-import",
+    "adapter-import",
+    "process"
+   ],
+   "reason": "test helper: builds the in-memory store on the adapter handle (wrapSqlite) and the Postgres recording wrapper; never shipped to a host"
+  }
+ }
+}

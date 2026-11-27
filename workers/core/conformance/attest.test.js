@@ -90,3 +90,27 @@ test('US-00-R03: canonical JSON does not depend on key order, and an undefined v
   assert.equal(canonical({ b: 1, a: [2, { d: undefined, c: 3 }] }), '{"a":[2,{"c":3}],"b":1}');
   assert.equal(await sha256Hex('abc'), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
 });
+
+test('US-00-R03: an attestation that omits a digest pins nothing there and is not certified, even when it is signed over the omission', async () => {
+  const { att } = await make();
+  for (const drop of [['specs'], ['tests'], ['manifest'], ['claims'], ['specs', 'tests']]) {
+    const bare = structuredClone(att); for (const k of drop) delete bare.digests[k];
+    const r = await verifyAttestation(await sign(bare), { specs: [SPEC], tests: TESTS, verifySignature });
+    assert.equal(r.ok, false, `without ${drop.join(' and ')}`); assert.equal(r.certified, false);
+    assert.ok(r.problems.some(p => new RegExp(drop[0]).test(p)), `a problem names the missing ${drop[0]} digest`);
+  }
+  const noDigests = structuredClone(att); delete noDigests.digests;
+  const none = await verifyAttestation(await sign(noDigests), { specs: [SPEC], tests: TESTS, verifySignature });
+  assert.equal(none.certified, false); assert.ok(none.problems.some(p => /carries no digests/.test(p)));
+  // the case the omission opened: a MUST weakened to MAY and a test file gutted, over an attestation with both digest objects removed
+  const weak = structuredClone(att); delete weak.digests.specs; delete weak.digests.tests;
+  const r = await verifyAttestation(await sign(weak), { specs: [{ ...SPEC, text: SPEC.text.replace('SHOULD do the third', 'MAY do the third') }], tests: [TESTS[0], { ...TESTS[1], text: `${TESTS[1].text}\n// gutted` }], verifySignature });
+  assert.equal(r.certified, false); assert.equal(r.ok, false);
+});
+
+test('US-00-R03: a test file that proves a requirement and has no digest in the attestation is reported', async () => {
+  const { att } = await make();
+  const partial = structuredClone(att); delete partial.digests.tests['core/b/b.test.js'];
+  const r = await verifyAttestation(await sign(partial), { specs: [SPEC], tests: TESTS, verifySignature });
+  assert.equal(r.certified, false); assert.ok(r.problems.some(p => /core\/b\/b\.test\.js proves a requirement and is not covered/.test(p)));
+});
