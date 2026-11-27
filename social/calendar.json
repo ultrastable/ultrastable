@@ -590,6 +590,27 @@
    "arm": "shipped",
    "kind": "event",
    "tag": "EVENT"
+  },
+  {
+   "id": "paper:safety-by-limits-2026:4of6:2026-11-27",
+   "date": "2026-11-27",
+   "text": "Common belief: AI is safe only if a person approves every step.\nOur records: 4 of 6 tests met.\nMeasured: share of declared essential variables that have limits = 1.0 (n = 18).\nUltrastable runs on Ultrastable and writes these papers itself. https://ultrastable.io/research/safety-by-limits-2026",
+   "texts": {
+    "bluesky": "Common belief: AI is safe only if a person approves every step.\nOur records: 4 of 6 tests met.\nMeasured: share of declared essential variables that have limits = 1.0 (n = 18).\nUltrastable runs on Ultrastable and writes these papers itself. https://ultrastable.io/research/safety-by-limits-2026",
+    "mastodon": "Common belief: The way to keep AI safe is to have a person approve every step.\n\nWhat this system's own records show: 4 of 6 tests met; every miss is an open work item. Measured: share of declared essential variables that have limits = 1.0 (n = 18).\n\nUltrastable runs on Ultrastable: it writes, measures and republishes these papers from its own records. Practical Solutions is one system it runs. https://ultrastable.org\n\nhttps://ultrastable.io/research/safety-by-limits-2026",
+    "linkedin": "Safety by limits, not by approval: testing an AI system that has no approval queue\n\nA common belief: The way to keep AI safe is to have a person approve every step.\n\nApproval of every step does not scale and is not the same as safety. Limits on what matters, checks that can fail, live verification and automatic revert can be measured, and a person stays the gate only for acts that cannot be undone.\n\nWhat the system's own records show (window of 7.85 days, 360 merged changes):\n• Share of declared essential variables that have limits: 1.0 (n = 18) against a target of >= 1.0 (met).\n• Commits on main whose subject starts with Revert, per merged pull request in the window: 0.0 (n = 360) against a target of <= 0.05 (met).\n• Share of uploaded deploys proven live against their commit: 0.999 (n = 720) against a target of >= 0.95 (met).\n• Share of second-order steps that brought the variable back inside its limits and were kept: 0.0 (n = 138) against a target of >= 0.25 (not met yet).\n\n4 of 6 tests met; every miss is an open work item. The paper regenerates itself from the records after every change, limits included.\n\nWhy this is on my feed: Ultrastable runs on Ultrastable. Its fixes, deploys and these white papers are produced and checked by the system itself, from its own records. Practical Solutions is one example of a system it runs: a free, evidence-based catalogue of fixes for global problems that keeps its own evidence current. The subject is the example; the point is what a self-running system can do for your own work. https://ultrastable.org\n\nFull paper, method and limits: https://ultrastable.io/research/safety-by-limits-2026"
+   },
+   "channels": [
+    "bluesky",
+    "mastodon",
+    "linkedin"
+   ],
+   "kind": "paper",
+   "arm": "paper",
+   "paper": "safety-by-limits-2026",
+   "state": "4of6",
+   "source": "site/research-data.js",
+   "url": "https://ultrastable.io/research/safety-by-limits-2026"
   }
  ]
 }
