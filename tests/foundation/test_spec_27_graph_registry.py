@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 """US-SPEC-27 (knowledge graph, vector space and connection engine): the platform check `python3 -m foundation datagraph` as a requirement of the specification.
 
-US-27-R61 every system has a registry row, R60 the vendored copy, the migration and the wiring cannot drift, R61 a deploy is confirmed live by reading the graph."""
+US-27-R61 every system has a registry row; US-27-R62 the vendored copy, the migration and the wiring cannot drift; US-27-R63 a deploy is confirmed live by reading the graph."""
 import json, shutil, unittest
 from pathlib import Path
 import _repo  # noqa: E402  (tests/foundation is on sys.path under discover)
@@ -35,6 +35,7 @@ class Spec27Registry(unittest.TestCase):
         return datagraph.check(self.tmp)
 
     def test_us_27_r61_the_repository_passes_and_every_live_system_has_a_row(self):
+        """US-27-R61: the repository passes and every live system has a row."""
         self.assertEqual(datagraph.check(REPO), [])
         progress = {s["id"] for s in json.loads((REPO / "instances/ultrastable/progress.json").read_text()).get("systems", [])}
         tenants = {k for k, v in json.loads((REPO / "doctrine/tenant-repos.json").read_text()).get("tenants", {}).items() if v.get("state") not in ("planned", "retired")}
@@ -43,6 +44,7 @@ class Spec27Registry(unittest.TestCase):
             self.assertIn(row["state"], ("seed-step", "pending", "built"))
 
     def test_us_27_r61_a_system_without_a_row_a_bad_state_or_a_pending_row_without_an_item_fails(self):
+        """US-27-R61: a system without a row, a bad state or a pending row without its item fails."""
         self.edit_json(datagraph.POLICY, lambda d: d["systems"].pop("unlearn"))
         self.assertTrue(any("system unlearn has no row" in b for b in self.bad()))
         self.edit_json(datagraph.POLICY, lambda d: d["systems"].update({"unlearn": {"state": "someday"}}))
@@ -53,12 +55,14 @@ class Spec27Registry(unittest.TestCase):
         self.assertTrue(any("system newbie has no row" in b and "pending row with a queue item" in b for b in self.bad()))
 
     def test_us_27_r61_a_built_system_on_the_shared_engine_must_vendor_it_where_its_row_says(self):
+        """US-27-R61: a built system on the shared engine must vendor it where its row says."""
         self.edit_json("doctrine/tenant-repos.json", lambda d: d["tenants"]["unlearn"]["vendor"].update({"seed/worker/src/knowledge.js": "vendor/elsewhere.js"}))
         self.assertTrue(any("unlearn: doctrine/tenant-repos.json does not vendor seed/worker/src/knowledge.js to vendor/ultrastable/knowledge.js" in b for b in self.bad()))
         (self.tmp / "seed/worker/src/knowledge.js").unlink()
         self.assertTrue(any("engine seed/worker/src/knowledge.js is missing" in b for b in self.bad()))
 
     def test_us_27_r62_the_seed_copy_of_the_core_module_is_byte_identical_under_one_vendored_header(self):
+        """US-27-R62: the seed copy of the core module is byte-identical under one vendored header."""
         vend = self.tmp / POL["seed_vendor"]
         head, _, body = vend.read_text().partition("\n")
         self.assertTrue(head.startswith(datagraph.VENDOR_HEAD))
@@ -71,6 +75,7 @@ class Spec27Registry(unittest.TestCase):
         self.assertEqual(self.bad(), [f"{POL['core_module']} is missing"])
 
     def test_us_27_r62_the_migration_holds_every_statement_of_the_workers_own_ddl_and_is_listed(self):
+        """US-27-R62: the migration holds every statement of the Worker's own DDL and is listed."""
         self.edit_text(POL["migration"], lambda t: t.replace("CREATE TABLE IF NOT EXISTS kg_runs", "CREATE TABLE IF NOT EXISTS kg_runs_renamed"))
         self.assertTrue(any("does not hold every statement of DATAGRAPH_DDL" in b for b in self.bad()))
         self.edit_text(POL["migration"], lambda t: t.replace("CREATE TABLE IF NOT EXISTS kg_runs_renamed", "CREATE TABLE IF NOT EXISTS kg_runs"))
@@ -81,6 +86,7 @@ class Spec27Registry(unittest.TestCase):
         self.assertTrue(any(f"{POL['migration']} is missing" in b for b in self.bad()))
 
     def test_us_27_r62_the_tick_loop_and_every_public_route_are_wired_and_the_rule_and_research_are_carried(self):
+        """US-27-R62: the tick loop and every public route are wired, and the rule and the research record are carried."""
         self.edit_text("seed/worker/src/index.js", lambda t: t.replace("b('knowledge-graph', () => datagraphStep(", "b('kg-off', () => datagraphStep("))
         self.assertTrue(any("does not run the knowledge-graph step" in b for b in self.bad()))
         for ep in POL["endpoints"]:
@@ -94,6 +100,7 @@ class Spec27Registry(unittest.TestCase):
         self.assertTrue(any(f"{datagraph.RESEARCH} is missing" in b for b in self.bad()))
 
     def test_us_27_r63_a_probe_reading_is_live_only_with_a_200_a_true_flag_and_nodes(self):
+        """US-27-R63: a probe reading is live only with a 200, a true flag and nodes."""
         ok = lambda s, b: datagraph.reading(s, b)[0]
         self.assertTrue(ok(200, '{"ok": true, "nodes": 357, "last_run_hours_ago": 1}'))
         self.assertFalse(ok(503, '{"ok": false, "nodes": 357}'), "a stale graph answers 503 with nodes: not live")
@@ -107,6 +114,7 @@ class Spec27Registry(unittest.TestCase):
         self.assertEqual(datagraph.reading(200, "[1]")[1], "HTTP 200, unexpected JSON")
 
     def test_us_27_r63_every_system_is_read_through_its_probe_or_public_api_and_one_with_neither_is_not_live(self):
+        """US-27-R63: every system is read through its probe or public API, and one with neither is not live."""
         urls = []
         rows = datagraph.live(REPO, get=lambda url: urls.append(url) or (200, '{"ok": true, "nodes": 1}'))
         self.assertEqual({r["id"] for r in rows}, set(POL["systems"]))

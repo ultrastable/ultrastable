@@ -8,8 +8,12 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-26
+Last updated: 2026-11-27
 
+- 2026-11-27: feat(seed): the specification run's seed tests and the fixes they prove (SW+FX) (#2595)
+- 2026-11-27: ZERO-MINUTES-1: worker merged #2596
+- 2026-11-27: queue: closing-probe verdicts for 25 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci] (#2596)
+- 2026-11-26: queue: closing-probe verdicts for 25 item(s) (QUEUE-PERSIST-1) (part 1/2) [skip ci]
 - 2026-11-26: feat: the steward, principles enforcement and GitHub pull helpers (WI) (#2594)
 - 2026-11-26: feat: the workers tools, gaplint and loop closer (W09) (#2593)
 - 2026-11-26: feat: the adapters and launcher (W08) (#2588)

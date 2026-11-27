@@ -3,7 +3,7 @@
 """US-SPEC-29 (visible progress, content stickiness and substantive change): the Python half of the substance rule, `python3 -m foundation substance`.
 
 US-29-R08 the Python classifier returns every shared vector, US-29-R09 a diff is parsed and classified, US-29-R10 the gate, US-29-R11 the deploy gate,
-US-29-R12 the seven-day report, US-29-R13 the targets and the config check."""
+US-29-R12 the seven-day report, US-29-R13 the targets and the config check, US-29-R76 every missing key of the config named without a crash."""
 import json, os, subprocess, sys, tempfile, unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -217,6 +217,36 @@ class Report(Repo):
         errs = substance.check(self.d)
         self.assertTrue(any("missing targets" in e for e in errs))
         self.assertTrue(any(e.startswith("vector ") for e in errs))
+
+    def _without(self, key):
+        cfg = json.loads((self.d / substance.CONFIG).read_text(encoding="utf-8"))
+        del cfg[key]
+        (self.d / substance.CONFIG).write_text(json.dumps(cfg), encoding="utf-8")
+
+    def _whole(self):
+        (self.d / substance.CONFIG).write_text((ROOT / substance.CONFIG).read_text(encoding="utf-8"), encoding="utf-8")
+
+    def test_us_29_r13_a_missing_deploy_key_is_named_and_a_missing_doc_keys_is_named_and_shows_as_the_vectors_it_breaks(self):
+        self._without("deploy")
+        self.assertEqual(substance.check(self.d), [f"{substance.CONFIG}: missing deploy"])
+        self._whole()
+        self._without("doc_keys")
+        errs = substance.check(self.d)
+        self.assertIn(f"{substance.CONFIG}: missing doc_keys", errs)
+        self.assertTrue(any(e.startswith("vector ") and "expected comment" in e for e in errs), errs)
+
+    # Changed deliberately with the fix of check(): the earlier test pinned the defect (a KeyError for these four keys); it now pins the named result.
+    def test_us_29_r76_a_missing_classifier_key_is_named_in_the_result_and_does_not_raise(self):
+        for key in substance.CLASSIFIER_KEYS:
+            with self.subTest(key):
+                self._whole()
+                self._without(key)
+                errs = substance.check(self.d)
+                self.assertEqual(errs, [f"{substance.CONFIG}: missing {key}"], "the key is named and no vector is classified without it")
+        self._whole()
+        self._without("code_ext"); cfg = json.loads((self.d / substance.CONFIG).read_text(encoding="utf-8")); del cfg["targets"]
+        (self.d / substance.CONFIG).write_text(json.dumps(cfg), encoding="utf-8")
+        self.assertEqual(substance.check(self.d), [f"{substance.CONFIG}: missing code_ext", f"{substance.CONFIG}: missing targets"], "every missing key is named")
 
 
 if __name__ == "__main__":
