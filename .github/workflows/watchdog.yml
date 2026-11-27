@@ -29,6 +29,10 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+      - name: A red merge to main in 7 days is a failure to fix (RED-MERGE-1)
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 -m foundation redmerge
       - name: Redeploy a Worker whose live code is behind main (DEPLOY-DRIFT-1)
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}

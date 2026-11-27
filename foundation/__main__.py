@@ -497,6 +497,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["selfcode"]:
         from . import selfcode
         return selfcode.main(_av[1:])
+    if _av[:1] == ["redmerge"]:  # RED-MERGE-1: foundation/redmerge.py
+        from . import redmerge
+        return redmerge.main(_av[1:])
     if _av[:1] == ["deploydrift"]:  # DEPLOY-DRIFT-1: foundation/deploydrift.py
         from . import deploydrift
         return deploydrift.main(_av[1:])
