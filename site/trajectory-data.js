@@ -45,7 +45,7 @@ export default {
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 43552,
+   "recent7": 43561,
    "series": [
     0,
     0,
@@ -76,11 +76,11 @@ export default {
     0,
     0,
     0,
-    43552
+    43561
    ],
    "share_recent": 0.109,
    "share_trend": 0.109,
-   "total": 43552
+   "total": 43561
   },
   {
    "area": "foundation",
@@ -125,7 +125,7 @@ export default {
   {
    "area": "seed/worker",
    "quiet_days": 0,
-   "recent7": 30394,
+   "recent7": 30425,
    "series": [
     0,
     0,
@@ -156,16 +156,16 @@ export default {
     0,
     0,
     0,
-    30394
+    30425
    ],
    "share_recent": 0.076,
    "share_trend": 0.076,
-   "total": 30394
+   "total": 30425
   },
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 28203,
+   "recent7": 28158,
    "series": [
     0,
     0,
@@ -196,11 +196,11 @@ export default {
     0,
     0,
     0,
-    28203
+    28158
    ],
    "share_recent": 0.07,
    "share_trend": 0.07,
-   "total": 28203
+   "total": 28158
   },
   {
    "area": "tests/foundation",
@@ -323,7 +323,7 @@ export default {
    "total": 17310
   }
  ],
- "at": "2026-11-27T04:58:48Z",
+ "at": "2026-11-27T05:15:49Z",
  "days": 30,
  "findings": [
   {
@@ -395,16 +395,16 @@ export default {
    0,
    0,
    0,
-   41
+   40
   ],
-  "closed": 1357,
-  "opened": 1398
+  "closed": 1360,
+  "opened": 1400
  },
  "loops": [
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 21564,
+   "rows": 21603,
    "series": [
     0,
     0,
@@ -435,13 +435,13 @@ export default {
     2312,
     2535,
     5558,
-    1033
+    1072
    ]
   },
   {
    "loop": "deploys",
    "quiet_days": 0,
-   "rows": 1454,
+   "rows": 1466,
    "series": [
     0,
     0,
@@ -472,7 +472,7 @@ export default {
     0,
     212,
     268,
-    60
+    72
    ]
   },
   {
@@ -552,7 +552,7 @@ export default {
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 567,
+   "rows": 569,
    "series": [
     0,
     0,
@@ -583,13 +583,13 @@ export default {
     55,
     88,
     189,
-    38
+    40
    ]
   },
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 563,
+   "rows": 564,
    "series": [
     0,
     0,
@@ -620,13 +620,13 @@ export default {
     55,
     62,
     154,
-    26
+    27
    ]
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 487,
+   "rows": 488,
    "series": [
     0,
     0,
@@ -657,13 +657,13 @@ export default {
     55,
     62,
     143,
-    26
+    27
    ]
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 486,
+   "rows": 487,
    "series": [
     0,
     0,
@@ -694,7 +694,7 @@ export default {
     55,
     62,
     143,
-    26
+    27
    ]
   }
  ],
