@@ -1,0 +1,12 @@
+{
+  "id": "Q-AUDIT-2706",
+  "title": "Q-AUDIT-2706: audit merged PR #2706",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation sampleaudit --probe 2706\n**Status:** open\n\nSAMPLE-AUDIT-1: PR #2706 (feat(deploy): read live Workers against main (R6)) merged at 2026-11-27T10:16:16Z was picked for audit (protected path).\n\nRead the merged diff with a clean context; the reviewer is not the author. Write `\"verdict\": \"clean\"` or `\"verdict\": \"defect\"` and a `\"reason\"` into this file. A defect also gets its own fix item.",
+  "merged_at": "2026-11-27T10:16:16Z",
+  "labels": [
+    "role:staff",
+    "audit"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

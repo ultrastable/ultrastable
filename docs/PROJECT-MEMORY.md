@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: Add repo map, conclusion cache, impact tests and sampled audit (#2746)
+- 2026-11-27: foundation: add CODE-REGULATOR-1 (repo model, conclusion cache, essential-variable step-changes, impact selection) (#2742)
+- 2026-11-27: feat(research): server-side probes for the paper pipeline (CANON-2) (#2751)
+- 2026-11-27: Deploy the backup site script from site/edge.js (#2748)
 - 2026-11-27: CYBERNETICS-DEDUP-1: one paper per canon source (#2744)
 - 2026-11-27: feat(deploy): health gate after deploy (R6) (#2740)
 - 2026-11-27: Live recency probe, per-section dates, and unstick the spinoff headroom refresh (#2739)
