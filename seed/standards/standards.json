@@ -339,9 +339,12 @@
       "body": "Agentic AI Foundation (contributed by OpenAI)",
       "status": "de-facto",
       "tracked": "plain markdown convention",
-      "why": "Every coding agent (Claude Code, Codex, Copilot and others) reads it first; one file replaces per-vendor instruction files.",
+      "why": "Every coding agent (Claude Code, Codex, Copilot and others) reads it first; one file replaces per-vendor instruction files. The file has to be short to be read: Codex stops at 32 KiB of project instructions and Claude Code's guidance is under 200 lines per file.",
       "support": "supported",
       "how": [
+        "AGENTS.md",
+        "seed/AGENTS.md",
+        "seed/scripts/agentrules.py",
         "seed/agents/AGENTS.md",
         "seed/worker/src/agentic/acl/discovery.js"
       ],
@@ -358,18 +361,42 @@
           "url": "https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation",
           "published": "2025-12-09",
           "accessed": "2026-11-11"
+        },
+        {
+          "title": "AGENTS.md: a simple, open format for guiding coding agents",
+          "url": "https://agents.md/",
+          "accessed": "2026-11-27"
+        },
+        {
+          "title": "Codex: custom instructions with AGENTS.md (project_doc_max_bytes, 32 KiB)",
+          "url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md",
+          "accessed": "2026-11-27"
+        },
+        {
+          "title": "Claude Code: how Claude remembers your project (CLAUDE.md size, imports, path-scoped rules)",
+          "url": "https://code.claude.com/docs/en/memory",
+          "accessed": "2026-11-27"
+        },
+        {
+          "title": "Evaluating AGENTS.md: are repository-level context files helpful for coding agents?",
+          "url": "https://arxiv.org/abs/2602.11988",
+          "accessed": "2026-11-27"
         }
       ],
       "decision": "adopt-now",
       "adoption": "adopted",
-      "conformance": "Nothing: AGENTS.md is the one instruction file; CLAUDE.md and the Copilot file import it.",
+      "conformance": "Nothing: AGENTS.md at the root is the one short entry (AGENT-ENTRY-1), CLAUDE.md is the single line that loads it, and the standing rules in agents/AGENTS.md are fetched by path instead of loaded.",
       "cost": "none",
       "probes": [
         "file:AGENTS.md",
         "file:seed/AGENTS.md",
-        "grep:CLAUDE.md::@agents/AGENTS.md"
+        "grep:CLAUDE.md::^@AGENTS\\.md$",
+        "grep:seed/CLAUDE.md::^@AGENTS\\.md$",
+        "file:doctrine/agent-entry.json",
+        "file:seed/autonomy/agent-entry.json",
+        "grep:seed/scripts/agentrules.py::max_closure_bytes"
       ],
-      "audited": "2026-11-25"
+      "audited": "2026-11-27"
     },
     {
       "id": "llms-txt",

@@ -6658,6 +6658,15 @@
    "body": "The fast job of checks regenerated files and pushed them onto the pull request. Main regenerated the same files minutes later, so the pull request conflicted; the Worker's resolver knew generated files only by a hand-written list that missed newer papers and ledgers, so it reported a code conflict; each bot push cancelled the run in progress, so no run finished; and the closer shut the pull request after its bound (#2664 after 35 minutes, #2615 three times). The regenerate step now works in the run's workspace and pushes nothing, the Worker and the Python resolver treat papers, site data modules and ops ledgers as classes of generator-owned files, the post-merge generators also own the kit's SYSTEM.md and claims file, and the fast job's limit is above its measured duration.",
    "probe": "grep:seed/worker/src/generated.js::GENERATED_PATTERNS",
    "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
+  },
+  {
+   "id": "decision-2026-11-27-rollback-1-deploy-workers-rolls-back-a-drifted-deploy",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "ROLLBACK-1: deploy-workers rolls back a drifted deploy",
+   "body": "A deploy whose live code does not match the commit is rolled back with wrangler rollback and the ops/deploys.jsonl row records rolled_back. Not yet exercised against production.",
+   "probe": "grep:deploy/deploy-workers.mjs::ROLLBACK-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
   }
  ]
 }

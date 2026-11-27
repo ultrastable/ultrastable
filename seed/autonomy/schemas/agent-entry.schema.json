@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/seed/autonomy/agent-entry.schema.json",
+  "title": "agent-entry (seed/autonomy/agent-entry.json)",
+  "description": "Contract for seed/autonomy/agent-entry.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "_doc": {
+      "type": "string"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rules": {
+      "type": "string"
+    },
+    "path_prefix": {
+      "type": "string"
+    },
+    "max_closure_bytes": {
+      "type": "number"
+    },
+    "max_lines": {
+      "type": "number"
+    },
+    "min_rules": {
+      "type": "number"
+    },
+    "must_name": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "must_say": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "$schema",
+    "_doc",
+    "entries",
+    "max_closure_bytes",
+    "max_lines",
+    "min_rules",
+    "must_name",
+    "must_say",
+    "path_prefix",
+    "rules"
+  ]
+}

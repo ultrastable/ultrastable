@@ -7,7 +7,8 @@ import { runCodeAgent } from './codeagent.js';
 import { tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: the D1 lane takes only this runtime's own needs-code items
 
 const API = 'https://api.github.com';
-export const PROTECTED = ['.github/', 'autonomy/', 'doctrine/server-side.json'];
+// KILL-SWITCH-GUARD-1: the two kill switches are data a model must never rewrite (#2661 replaced actions-budget.json with an unrelated config)
+export const PROTECTED = ['.github/', 'autonomy/', 'doctrine/server-side.json', 'actions-budget.json', 'ops/halt.json'];
 export const MAX_FILES = 3, MAX_BYTES = 60000, CANDIDATES = 6;
 
 export function guard(files) {

@@ -3,6 +3,14 @@
   "version": 1,
   "schemas": [
     {
+      "name": "agent-entry.json",
+      "description": "Contract for seed/autonomy/agent-entry.json",
+      "fileMatch": [
+        "seed/autonomy/agent-entry.json"
+      ],
+      "url": "agent-entry.schema.json"
+    },
+    {
       "name": "balance.json",
       "description": "Contract for seed/autonomy/balance.json",
       "fileMatch": [

@@ -6,8 +6,8 @@
   "skill_lines": 500
  },
  "baseline": {
-  "agents/AGENTS.md": 155135,
-  "agents/PROJECT-INSTRUCTIONS.md": 103792,
-  "seed/agents/AGENTS.md": 153605
+  "agents/AGENTS.md": 155116,
+  "agents/PROJECT-INSTRUCTIONS.md": 103750,
+  "seed/agents/AGENTS.md": 153591
  }
 }

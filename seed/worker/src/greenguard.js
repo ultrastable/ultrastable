@@ -9,7 +9,14 @@ export const REQUIRED = { 'ultrastable/ultrastable': ['checks'] };
 export async function notGreen(f, token, repo, sha, call) {
   const r = await call(f, token, 'GET', `/repos/${repo}/commits/${sha}/check-runs?per_page=100`);
   if (!r.ok) return `check-runs ${r.status}`;
-  const runs = ((r.json && r.json.check_runs) || []).filter(c => c.name !== 'lane');
+  // SKIPPED-NOT-GREEN-1: one verdict per check name, the newest run's. A head can carry a dispatched run and a pull_request run of the same
+  // name, or a re-run; an old failure a newer run replaced does not hold the merge, and an old success does not hide a newer failure.
+  const byName = new Map();
+  for (const c of ((r.json && r.json.check_runs) || []).filter(c => c.name !== 'lane')) {
+    const seen = byName.get(c.name);
+    if (!seen || String(c.started_at || '') >= String(seen.started_at || '')) byName.set(c.name, c);
+  }
+  const runs = [...byName.values()];
   // NO-RUNS-NOT-GREEN-1: an empty list is not green. ultrastable/what-works#8 was merged 7 s after it opened, before its `ci` and
   // `citations` runs existed, and `citations` then failed. With no runs yet, a check suite still queued, or a head pushed inside
   // FRESH_MS with no suite at all, holds; the check_suite event merges it once the runs report.
@@ -28,6 +35,7 @@ export async function notGreen(f, token, repo, sha, call) {
   if (open) return `${open.name} still running`;
   const red = runs.find(c => !['success', 'neutral', 'skipped'].includes(c.conclusion));
   if (red) return `${red.name} ${red.conclusion}`;
+  // a skipped job is not a verdict for a required check: GitHub reads it as passed (#2661), this guard does not
   for (const need of REQUIRED[repo] || []) {
     if (!runs.some(c => c.name === need && c.conclusion === 'success')) return `${need} has not passed on ${String(sha).slice(0, 7)}`;
   }
