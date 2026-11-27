@@ -1,7 +1,7 @@
 {
   "$schema": "./schemas/org-cybernetics.schema.json",
   "id": "ORG-CYBERNETICS-1",
-  "_doc": "Beer's Viable System Model (Brain of the Firm, 1972) and Ashby's law of requisite variety (An Introduction to Cybernetics, 1956) mapped onto the managers and staff a system runs. Juan Antonio Perez Lopez's 1974 paper 'Organizational Theory: A Cybernetic Approach' is implemented separately, as the Ashby spec's doctrine_guard step (issue 2620); this map does not restate it. Summaries are ours; sources are linked. Every function names the roles that carry it (each a switched-on manager in seed/autonomy/managers.json) and the code that does the work. Checked by python3 -m foundation orgcyber --check.",
+  "_doc": "Beer's Viable System Model (Brain of the Firm, 1972) and Ashby's law of requisite variety (An Introduction to Cybernetics, 1956) mapped onto the managers and staff a system runs. Juan Antonio Perez Lopez's 1974 paper 'Organizational Theory: A Cybernetic Approach' (IESE Working Paper No. 5, https://www.iese.edu/media/research/pdfs/DI-0005-E.pdf) is implemented separately in seed/scripts/perezlopez.py (issue 2620); this map does not restate it. Summaries are ours; sources are linked. Every function names the roles that carry it (each a switched-on manager in seed/autonomy/managers.json) and the code that does the work. Checked by python3 -m foundation orgcyber --check.",
   "sources": [
     "https://archive.org/download/brain-of-the-firm-reclaimed-v-1/Brain%20of%20the%20Firm%20-%20Stafford%20Beer.pdf",
     "https://en.wikipedia.org/wiki/Management_cybernetics",
