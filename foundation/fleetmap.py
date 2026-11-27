@@ -163,6 +163,9 @@ def check(root=REPO) -> list[str]:
         name = p.name + ("/" if p.is_dir() else "")
         if p.name not in SKIP and name not in known:
             errs.append(f"seed/{name} is not listed in template_contents.belongs: decide whether it belongs in the template")
+    from . import kernellock  # KERNEL-LOCK-1 (R8): a kernel.lock row per live tenant
+    if (Path(root) / "doctrine" / "kernel-lock.json").exists() or (Path(root) / "foundation").is_dir():
+        errs += kernellock.check(root)  # a bare fixture tree has neither
     return errs
 
 
