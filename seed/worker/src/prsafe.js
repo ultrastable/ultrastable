@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
 // Copyright (c) Ultrastable
 // PR-NEVER-LOSE-1 (2026-11-27): automation never discards unmerged work. PR #2615 was closed on a stale `conflict` reading although its branch merged cleanly with main.
