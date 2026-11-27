@@ -12,7 +12,7 @@ for g in "python3 -m foundation publication --fix" "python3 -m foundation claims
          "python3 -m foundation research --page --apply" "python3 -m foundation trajectory --page" "python3 -m foundation verify --data --apply" \
          "python3 -m foundation ultrastability --data --apply" "python3 -m foundation admit --apply" "python3 -m foundation owndb --write" "python3 -m foundation tenantcontrols --write" \
          "python3 -m foundation upstream contract --apply" "env -C seed python3 -m plugins self --write" \
-         "python3 seed/scripts/claims.py --apply --fix" "python3 seed/scripts/system.py --write"; do  # KIT-REGEN-1: the kit's README counts and SYSTEM.md follow a change under seed/
+         "python3 seed/scripts/claims.py --apply --fix" "python3 seed/scripts/system.py --write" "python3 seed/scripts/surfaces.py --render --root ."; do  # KIT-REGEN-1: the kit's README counts and SYSTEM.md follow a change under seed/
    # REGEN-RESEARCH-1: the lane resolves site/research-data.js to main's side, so a PR that adds a study must get its papers rebuilt here
   if ! out=$($g 2>&1); then echo "::warning::REGEN-1 generator failed: $g: ${out: -300}"; rc=1; fi
 done

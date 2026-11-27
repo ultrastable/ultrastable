@@ -15,16 +15,6 @@ All notable changes, in the Keep a Changelog 1.1 format; versions follow Semanti
 ### Changed
 
 - OPEN-STANDARDS-1: open standards registry and gate (#2260)
-
-### Fixed
-
-- the kit passes its own suites as a standalone template; a shelved item keeps its lesson tracked (#2365)
-- bounded self-migration, write routes answer a read with 405, the org's security policy meets the repository standard (#2355)
-
-## [0.1.0] - 2026-11-25
-
-### Changed
-
 - OPEN-STANDARDS-1: registry of open standards, JSON Schema and CloudEvents gate, shrink-only baseline
 - Second loop reads itself: owner interventions, keep rate, spec gate, research in code (#2233)
 - BOOTPROOF-1: seed kernel closure audit and daily scratch bootstrap probe (#2237)
@@ -36,3 +26,8 @@ All notable changes, in the Keep a Changelog 1.1 format; versions follow Semanti
 - Write the papers as white papers, link them everywhere, and check fleet discoverability (#2224)
 - ZERO-MINUTES-1: worker merged #2222
 - Make the white papers findable and posted in turn (#2222)
+
+### Fixed
+
+- the kit passes its own suites as a standalone template; a shelved item keeps its lesson tracked (#2365)
+- bounded self-migration, write routes answer a read with 405, the org's security policy meets the repository standard (#2355)
