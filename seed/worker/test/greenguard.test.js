@@ -25,3 +25,14 @@ test('NO-RUNS-NOT-GREEN-1: no runs yet is not green (what-works#8 merged 7 s aft
   // a repository with no CI at all: an hour-old head with no suites is not held forever
   assert.equal(await notGreen(null, 't', 'o/r', 'abc1234', route({ 'check-runs': { check_runs: [] }, 'check-suites': { check_suites: [] }, '/commits/abc1234': commit(old) })), null);
 });
+
+test('SKIPPED-NOT-GREEN-1: the newest run of each check name gives the verdict, and a skipped `checks` is not a pass (#2661)', async () => {
+  const run = (name, conclusion, started_at) => ({ name, status: 'completed', conclusion, started_at });
+  // #2661: the dispatched run failed, then a re-run of the draft-time pull_request run skipped every job; GitHub read that as passed and merged it
+  const incident = [run('checks', 'failure', '2026-11-27T06:13:00Z'), run('tests-a', 'failure', '2026-11-27T06:08:00Z'), run('checks', 'skipped', '2026-11-27T06:18:00Z'), run('tests-a', 'skipped', '2026-11-27T06:18:00Z')];
+  assert.match(await notGreen(null, 't', 'ultrastable/ultrastable', 'e544d5e', call(incident)), /checks has not passed/);
+  // a newer green run replaces an older red one of the same name
+  assert.equal(await notGreen(null, 't', 'ultrastable/ultrastable', 'abc1234', call([run('checks', 'failure', '2026-11-27T06:00:00Z'), run('checks', 'success', '2026-11-27T06:30:00Z')])), null);
+  // and a newer red run is not hidden by an older green one
+  assert.match(await notGreen(null, 't', 'ultrastable/ultrastable', 'abc1234', call([run('checks', 'success', '2026-11-27T06:00:00Z'), run('checks', 'failure', '2026-11-27T06:30:00Z')])), /checks failure/);
+});

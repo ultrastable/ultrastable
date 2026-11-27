@@ -23,8 +23,10 @@ class VisionTests(unittest.TestCase):
         self.assertEqual(v, (ROOT / "seed/doctrine/VISION.md").read_text(encoding="utf-8"), "seed copy must match")
         for must in ("system test", "not for", "proportion rule"):
             self.assertIn(must, v.lower())
-        self.assertIn("VISION.md", (ROOT / "CLAUDE.md").read_text(encoding="utf-8"))
-        self.assertIn("VISION.md", (ROOT / "seed/CLAUDE.md").read_text(encoding="utf-8"))
+        # AGENT-ENTRY-1: CLAUDE.md loads the short entry (AGENTS.md), and the entry names the vision for the work that needs it
+        for entry in ("AGENTS.md", "seed/AGENTS.md"):
+            self.assertEqual((ROOT / entry).with_name("CLAUDE.md").read_text(encoding="utf-8").strip(), "@AGENTS.md")
+            self.assertIn("VISION.md", (ROOT / entry).read_text(encoding="utf-8"))
         self.assertIn("## 0. Qualify", (ROOT / "docs/BOOTSTRAP-PROMPT.md").read_text(encoding="utf-8"))
         self.assertIn("# System test", (ROOT / "seed/IDEA.md").read_text(encoding="utf-8"))
 

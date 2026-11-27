@@ -218,7 +218,11 @@ def check(root: Path = SEED, platform: Path | None = None, instruction_files: li
         errs.append(f"{PROSE} is stale: run python3 scripts/constitution.py --render")
     claude = _read(root, "CLAUDE.md")
     if claude is not None and IMPORT_LINE not in claude.splitlines():
-        errs.append(f"CLAUDE.md does not import {IMPORT_LINE}: a session would start without the constitution")
+        import sys as _sys
+        _sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import agentrules  # AGENT-ENTRY-1: the entry names the constitution; an agent fetches it when the task needs it
+        if IMPORT_LINE.lstrip("@") not in agentrules.named(root, "CLAUDE.md"):
+            errs.append(f"CLAUDE.md neither imports nor names {IMPORT_LINE.lstrip('@')}: a session could not find the constitution")
 
     # a standing rule written into the instructions needs an entry here (the shrink-only baseline lists those not yet mapped)
     if baseline is None:

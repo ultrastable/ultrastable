@@ -1,0 +1,25 @@
+{
+ "$schema": "./schemas/agent-entry.schema.json",
+ "_doc": "AGENT-ENTRY-1: what an agent loads before it starts, and its budget. Codex stops reading project instructions at 32 KiB and Claude Code's guidance is under 200 lines per file; an @import loads the whole imported file. Read by scripts/agentrules.py (python3 scripts/agentrules.py --check).",
+ "entries": [
+  "CLAUDE.md",
+  "AGENTS.md"
+ ],
+ "rules": "agents/AGENTS.md",
+ "path_prefix": "seed/",
+ "max_closure_bytes": 16384,
+ "max_lines": 200,
+ "min_rules": 100,
+ "must_name": [
+  "agents/AGENTS.md",
+  "SYSTEM.md",
+  "doctrine/SYSTEM.md",
+  "doctrine/VISION.md",
+  "doctrine/CONSTITUTION.md",
+  "doctrine/GUIDING-DIRECTIVE.md",
+  "autonomy/policy.json"
+ ],
+ "must_say": [
+  "agentrules.py --for"
+ ]
+}
