@@ -22,7 +22,7 @@ test('install counts the global fetch and restores it', async () => {
   restore(); assert.equal(typeof g.fetch, 'function'); assert.equal(g.__subreq, undefined);
 });
 
-test('guarded: a loop that no longer fits, or hits the cap with nothing done, is deferred and carried, never failed', async () => {
+test('US-09-R20: guarded: a loop that no longer fits, or hits the cap with nothing done, is deferred and carried, never failed', async () => {
   const m = createMeter({ cap: 12, reserve: 4 }), d = new Set(), g = guarded(m, d, failed, { big: 20, small: 1 });
   let r = await g('big', async () => assert.fail('must not start'));
   assert.equal(r.status, 'deferred'); assert.ok(d.has('big')); assert.equal(failed(r), null);

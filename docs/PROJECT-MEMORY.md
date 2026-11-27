@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: feat(seed): tick Worker holds, criticality ratio, health fields and spec tests (#2819)
+- 2026-11-27: Kernel check fails when a pinned signature escapes the recognition lint (#2818)
 - 2026-11-27: Pin Kernel 9.1.0 text with doctrine/kernel.lock (#2755)
 - 2026-11-27: feat(kit): the system definition names what machine-readable by birth means; one tenant repository standard (REPO-CONFORM-2 3/3) (#2801)
 - 2026-11-27: foundation: CODE-REGULATOR-1 failure-mode hardening (stacked on #2766) (#2768)

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // US-SPEC-24 requirements whose implementation is the platform's workflows and the seed's pulse, named by requirement id:
-// R58 (every workflow job honours the halt), R61 (a beat before the body, judged against expected slots, a second route watching).
+// R65 (every workflow job honours the halt), R66 (a beat before the body, judged against expected slots, a second route watching).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
@@ -22,7 +22,7 @@ function haltCoverage(text) {
   return { jobs: ids.length, guarded };
 }
 
-test('US-24-R58: every job of every workflow of the kit, and of the platform when present, skips when the repository variable HALT is 1, and a job without the guard is detected', () => {
+test('US-24-R65: every job of every workflow of the kit, and of the platform when present, skips when the repository variable HALT is 1, and a job without the guard is detected', () => {
   const bad = [];
   let files = 0;
   for (const dir of [KIT_WORKFLOWS, ...(existsSync(PLATFORM_WORKFLOWS) ? [PLATFORM_WORKFLOWS] : [])]) {
@@ -44,7 +44,7 @@ test('US-24-R58: every job of every workflow of the kit, and of the platform whe
   assert.deepEqual(haltCoverage(compound), { jobs: 2, guarded: 1 }, 'a halt clause beside other conditions guards its job; a condition without it does not');
 });
 
-test('US-24-R61: a loop writes its beat before its body, so a run that never returns is visible, and the second route runs a tick when the newest is older than two intervals', async () => {
+test('US-24-R66: a loop writes its beat before its body, so a run that never returns is visible, and the second route runs a tick when the newest is older than two intervals', async () => {
   const db = makeDb();
   let seen = null;
   await beat(db, 'lane', async () => { seen = await db.prepare(`SELECT loop, started_at, finished_at FROM loop_beats WHERE loop='lane'`).first(); return { status: 'ok' }; }, { now: () => T0 });

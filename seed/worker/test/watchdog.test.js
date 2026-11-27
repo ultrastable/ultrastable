@@ -19,7 +19,7 @@ test('a fresh GitHub watchdog is left alone', async () => {
   assert.equal(r.status, 'fresh'); assert.equal(calls.length, 1);
 });
 
-test('a stalled GitHub watchdog is dispatched again (stall recovery)', async () => {
+test('US-24-R58 US-24-T11: a stalled GitHub watchdog is dispatched again (stall recovery)', async () => {
   const calls = [];
   const r = await watchGithub({ token: 't', repo: 'o/r', fetchImpl: api('2026-11-16T09:00:00Z', 204, calls), now: () => NOW });
   assert.equal(r.status, 'dispatched'); assert.deepEqual(calls[1][0], 'POST'); assert.match(calls[1][1], /watchdog\.yml\/dispatches$/);
@@ -31,7 +31,7 @@ test('a watchdog that never ran is dispatched', async () => {
   assert.equal(r.status, 'dispatched'); assert.equal(r.why, 'never ran');
 });
 
-test('a refused dispatch and a missing token are failures, never healthy', async () => {
+test('US-24-R58 US-24-T11: a refused dispatch and a missing token are failures, never healthy', async () => {
   const bad = await watchGithub({ token: 't', repo: 'o/r', fetchImpl: api('2026-11-10T00:00:00Z', 403), now: () => NOW });
   assert.ok(failed(bad)); assert.match(bad.status, /HTTP 403/);
   assert.ok(failed(await watchGithub({ repo: 'o/r' })));

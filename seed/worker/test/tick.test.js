@@ -89,7 +89,7 @@ test('a hidden failure demotes', async () => {
   assert.ok(db.raw.prepare("SELECT id FROM items WHERE id LIKE 'LADDER-repo-merge_pr_green-delegated'").get());
 });
 
-test('US-06-R07: a severe outcome older than the stated window no longer demotes, and one inside it does', async () => {
+test('US-06-R07, US-06-T07: a severe outcome older than the stated window no longer demotes, and one inside it does', async () => {
   const days = policy.ladder.promote_when.no_hidden_failure_days;
   const at = (d) => new Date(T0 - d * 864e5).toISOString().slice(0, 19).replace('T', ' ');
   const db = makeDb(); seed(db);
@@ -111,7 +111,7 @@ test('US-06-R07: a severe outcome older than the stated window no longer demotes
   assert.ok(db2.raw.prepare("SELECT id FROM items WHERE id = 'LADDER-repo-merge_pr_green-delegated'").get());
 });
 
-test('US-06-R05: a crossing that repeats after its ladder item closed opens a new dated item; the rung is still not changed by the tick', async () => {
+test('US-06-R05, US-06-R20, US-06-T08: a crossing that repeats after its ladder item closed opens a new dated item; the rung is still not changed by the tick', async () => {
   const db = makeDb(); seed(db);
   db.raw.exec("INSERT INTO trust_ledger (surface,action_class,rung,reliability) VALUES ('repo','merge_pr_green','autonomous',0.9)");
   db.raw.exec("INSERT INTO items (id,title,kind,owner_role,done_check,status,disposition) VALUES ('LADDER-repo-merge_pr_green-delegated','old','ladder','operations','x','done','fixed: earlier demotion merged')");
@@ -192,7 +192,7 @@ test('a breached D1 budget skips the non-essential steps, records the breach and
 });
 
 // CONNECTOR-HEALTH-1
-test('connector health: last_ok and expires_at each tick; two failed refreshes raise one reconnect card that closes when the connector is ok', async () => {
+test('US-06-R22: connector health: last_ok and expires_at each tick; two failed refreshes raise one reconnect card that closes when the connector is ok', async () => {
   const { ensureSchema } = await import('../src/auth/store.js');
   const db = makeDb(); seed(db); await ensureSchema(db);
   const now = Date.parse('2026-11-20T12:00:00Z'), env = { PUBLIC_ORIGIN: 'https://example.test/' };
@@ -270,7 +270,7 @@ test('US-04-R02 window: only the 20 most recently closed items are read, and ano
 });
 
 // US-SPEC-08 (US-08-R17): nothing ages silently in the seed tick.
-test('US-08-R17: an item open or ready past 120 minutes is raised to priority 5 and one AGE-120M item a day names the cause to find; a younger or more urgent item is left alone', async () => {
+test('US-08-R17, US-08-T08: an item open or ready past 120 minutes is raised to priority 5 and one AGE-120M item a day names the cause to find; a younger or more urgent item is left alone', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO items (id,title,owner_role,done_check,priority,status,created_at) VALUES
     ('OLD','old','nobody','x',40,'ready','2026-11-09 21:00:00'), ('URGENT','urgent','nobody','x',1,'ready','2026-11-09 21:00:00'),

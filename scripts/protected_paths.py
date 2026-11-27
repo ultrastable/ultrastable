@@ -12,7 +12,9 @@ PLACEHOLDER = re.compile(r"[<\[].*[>\]]|todo|tbd|\.\.\.|-", re.I)  # the record 
 # The guards written for the standalone workers repository sit under workers/ since it was folded in (REPOS-1); both spellings are protected.
 FOLDED = ("workers/tools/selfhost_check.py", "workers/tools/spec_truth.py", "workers/core/test/no-qnfo.test.js", "workers/agents/CONTRACT.md")
 LOCAL = ("scripts/protected_paths.py", "scripts/spec_truth.py", "scripts/spec_ids.py")
-PROTECTED = ("autonomy/", ".github/workflows/", "actions-budget.json", "ops/halt.json", "SCOPE.md", "LICENSE", "AGENTS.md", "CLAUDE.md", "tools/selfhost_check.py", "tools/spec_truth.py", "core/test/no-qnfo.test.js") + FOLDED + LOCAL
+# KERNEL-9 E1/S2/P2: the owner-owned registries. The fast loop and the executor never edit them; a change carries a Protected-change line and passes the replay gate.
+OWNER_OWNED = ("seed/autonomy/", "doctrine/step-repertoire.json", "doctrine/partitions.json", "doctrine/kernel9.json", "doctrine/kernel.lock", "doctrine/kernel-9.")
+PROTECTED = ("autonomy/", ".github/workflows/", "actions-budget.json", "ops/halt.json", "SCOPE.md", "LICENSE", "AGENTS.md", "CLAUDE.md", "tools/selfhost_check.py", "tools/spec_truth.py", "core/test/no-qnfo.test.js") + FOLDED + LOCAL + OWNER_OWNED
 GUARDS = ("tools/selfhost_check.py", "tools/spec_truth.py", "core/test/no-qnfo.test.js") + FOLDED + LOCAL
 
 

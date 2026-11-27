@@ -55,7 +55,7 @@ test('merges a clean PR, holds a HOLD one, dispatches an unclaimed issue', async
 });
 
 // GITHUB-BUDGET-1: count GitHub calls per tick, stop at the cap, and honour Retry-After / x-ratelimit-reset on 403 and 429.
-test('a mocked 429 with Retry-After stops the lane for the tick and records why', async () => {
+test('US-24-R60 US-24-T10: a mocked 429 with Retry-After stops the lane for the tick and records why', async () => {
   const calls = [];
   const f = async (url, o) => { calls.push((o.method || 'GET') + ' ' + url); return { ok: false, status: 429, headers: new Headers({ 'Retry-After': '120' }), text: async () => '{"message":"secondary rate limit"}' }; };
   const budget = githubBudget();
@@ -65,14 +65,14 @@ test('a mocked 429 with Retry-After stops the lane for the tick and records why'
   assert.equal(budget.take(), false, 'the budget stays stopped for the rest of the tick (handoffs share it)');
 });
 
-test('a 403 with an exhausted x-ratelimit window stops; a plain 403 does not', async () => {
+test('US-24-R60: a 403 with an exhausted x-ratelimit window stops; a plain 403 does not', async () => {
   const b = githubBudget(150, () => 1_000_000_000);
   b.observe({ status: 403, headers: new Headers({ 'x-ratelimit-remaining': '7' }) }, 'GET /x'); assert.equal(b.stopped, false, 'a permission 403 is not a quota');
   b.observe({ status: 403, headers: new Headers({ 'x-ratelimit-remaining': '0', 'x-ratelimit-reset': String(1_000_000 + 300) }) }, 'GET /y');
   assert.equal(b.stopped, true); assert.equal(b.retry_after_s, 300);
 });
 
-test('the lane stops at the per-tick call cap (default 40)', async () => {
+test('US-24-R60: the lane stops at the per-tick call cap (default 40)', async () => {
   assert.equal(githubBudget().cap, 40);
   const { f, calls } = fake({ 'GET /repos/a/b/pulls?': [200, [{ number: 1, labels: [] }, { number: 2, labels: [] }]], 'GET /repos/a/b/pulls/': [200, { draft: false, mergeable_state: 'dirty' }], 'GET /repos/a/b/issues/': [200, []] });
   const r = await runLane({ token: 't', repos: ['a/b'], fetch: f, issueWorkflow: null, budget: githubBudget(3) });

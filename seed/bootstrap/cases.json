@@ -11,7 +11,7 @@
      "routes": [
        {"step": "Apply as an individual where the programme allows it (open-source funders, research grants); mark entity-only programmes as deferred in the registry with the reason", "probe": "every deferred packet names the missing prerequisite"},
        {"step": "Keep packets drafted so they ship the day an entity exists", "probe": "funding_packet.py reports drafted, none stale"}],
-     "owner_card": {"id": "ENTITY", "what": "Choose and register the owning entity and assign the IP to it", "why": "a legal act with the owner's identity and money", "default": "projects run in the owner's own name; entity-only programmes stay deferred", "probe": "entity name set in LICENSE and applicant.json"}},
+     "owner_card": {"id": "ENTITY", "what": "Choose and register the owning entity and assign the IP to it", "say": "Choose the legal owner of your work (you or a company you set up)", "why": "a legal act with the owner's identity and money", "default": "projects run in the owner's own name; entity-only programmes stay deferred", "say_default": "your work stays in your own name and programmes that need a company wait", "probe": "entity name set in LICENSE and applicant.json"}},
     {"id": "BC-4", "title": "No domain e-mail address for the project",
      "when": {"has_domain_email": false},
      "routes": [
@@ -23,20 +23,20 @@
      "routes": [
        {"step": "Draft every post and application, run the guards, keep them queued in dry-run", "probe": "social and outreach dry-run logs show queued items"},
        {"step": "Use channels that need no account first: the repo, the open-source registry listings that accept a pull request, public mailing lists with a published route", "probe": "at least one no-account route is queued"}],
-     "owner_card": {"id": "ACCOUNTS", "what": "Sign in to the listed services on the system's own connect page", "connect": "/connect", "why": "creating an account in the owner's name is an identity-bound act", "default": "posting and portal submissions stay dry-run", "probe": "the first run logs posted or sent"}},
+     "owner_card": {"id": "ACCOUNTS", "what": "Sign in to the listed services on the system's own connect page", "say": "Sign in to the listed services so the system can post for you", "connect": "/connect", "why": "creating an account in the owner's name is an identity-bound act", "default": "posting and portal submissions stay dry-run", "say_default": "the system posts and submits nothing for you", "probe": "the first run logs posted or sent"}},
     {"id": "BC-6", "title": "No org-admin credential",
      "when": {"has_org_admin_token": false},
      "routes": [
        {"step": "Probe every surface in order and record what each returned: the device session's own login and scopes, the platform connector, the Actions token, a GitHub App manifest", "probe": "boot-log surfaces section lists each route as ok or blocked with reason"},
        {"step": "Treat an admin:org scope found on any surface as the org-admin credential", "probe": "org-manage probe succeeds"},
        {"step": "Work in the one repository that accepts writes until a credential exists", "probe": "monorepo is canonical in docs/BOOTSTRAP-GAPS.md"}],
-     "owner_card": {"id": "ORG-TOKEN", "what": "Allow the system to set up its GitHub organization", "connect": "/connect/github-admin", "why": "approving access to the owner's organization is identity-bound", "default": "holding page only; profile content staged in the repo", "probe": "org-manage probe passes"}},
+     "owner_card": {"id": "ORG-TOKEN", "what": "Allow the system to set up its GitHub organization", "say": "Allow the system to set up your code-host organization", "connect": "/connect/github-admin", "why": "approving access to the owner's organization is identity-bound", "default": "holding page only; profile content staged in the repo", "say_default": "the organization's public profile is prepared but not published", "probe": "org-manage probe passes"}},
     {"id": "BC-7", "title": "No sender identity for outreach e-mail",
      "when": {"has_sender_identity": false},
      "routes": [
        {"step": "Run outreach in dry-run: queue and guard everything; form-route targets go into one consolidated card per profile", "probe": "outreach/STATUS.md lists queued and awaiting-owner targets"},
        {"step": "Never send from the owner's personal mailbox", "probe": "gate.json sender.registered stays false until the card closes"}],
-     "owner_card": {"id": "OUT-SENDER", "what": "Connect one mailbox for outreach on the system's own connect page", "connect": "/connect", "why": "creating a sending identity is the owner's act", "default": "dry-run", "probe": "a run logs sent for an e-mail-route target"}},
+     "owner_card": {"id": "OUT-SENDER", "what": "Connect one mailbox for outreach on the system's own connect page", "say": "Connect one mailbox the system may send introductions from", "connect": "/connect", "why": "creating a sending identity is the owner's act", "default": "dry-run", "say_default": "the system sends no introductions", "probe": "a run logs sent for an e-mail-route target"}},
     {"id": "BC-9", "title": "Research programme with no institution behind it",
      "when": {"has_institution": false},
      "routes": [

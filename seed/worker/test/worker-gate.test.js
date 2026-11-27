@@ -102,7 +102,7 @@ test('Q-GATE-403: a 403 on every pull request is one named condition and one gat
   assert.equal(stubLines([{ filename: 'seed/worker/src/worker-gate.js', patch: '@@\n+// ... existing code ...\n+const a = 1;' }]).length, 1);
   assert.equal(stubLines([{ filename: 'a.js', patch: '@@\n-// ... existing code ...\n+const a = 1;' }]).length, 0, 'a removed placeholder is not a finding');
 });
-test('GATE-STUB-1: the gate fails a model branch that adds a placeholder', async () => {
+test('GATE-STUB-1 (US-07-R22): the gate fails a model branch that adds a placeholder', async () => {
   const pr = { number: 9, head: { sha: 's9', ref: 'worker/rm-1-202611200040' }, base: { sha: 'b' }, body: '' };
   const src = 'class C:\n    def go(self):\n        # implement go logic here\n        pass\n';
   const { f, calls } = fake({ 'GET /repos/o/r/pulls?state=open': [200, [pr]], 'GET /repos/o/r/commits/': [200, []], 'GET /repos/o/r/pulls/9/files': [200, [{ filename: 'c.py', status: 'added', patch: '@@\n+' + src.split('\n').join('\n+') }]],

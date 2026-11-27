@@ -31,7 +31,7 @@ test('parseHandoff reads the block and stops at the next heading', () => {
   assert.equal(parseVerify('curl http://insecure'), null, 'only https probes run');
 });
 
-test('open PR -> registered -> merged -> deployed -> verified closes the item', async () => {
+test('US-07-R19: open PR -> registered -> merged -> deployed -> verified closes the item', async () => {
   const db = makeDb(); seedItem(db);
   const st = { prs: [{ number: 7, title: 'Fix', body: BODY, head: { sha: 'aaa' }, labels: [] }], detail: { merged: false, state: 'open', mergeable_state: 'clean' } };
   const { f, calls } = gh(st);
@@ -68,7 +68,7 @@ test('a PR merged before any tick saw it open is still owned by the server', asy
   assert.equal(again.registered.length, 0, 'not re-registered once known');
 });
 
-test('a red probe rolls the deploy back and puts the item back to ready', async () => {
+test('US-07-R19, US-07-T08: a red probe rolls the deploy back and puts the item back to ready', async () => {
   const db = makeDb(); seedItem(db);
   const st = { prs: [{ number: 7, title: 'Fix', body: BODY, head: { sha: 'aaa' }, labels: [] }], detail: { merged: true, merge_commit_sha: 'mmm', state: 'closed' } };
   const { f, calls } = gh(st); const rolled = [];
@@ -161,7 +161,7 @@ test('meetsVersion: min_version for dotted versions, inequality for opaque deplo
   assert.equal(meetsVersion({ reported: null, before: 'dep-a' }).ok, false, 'no reported version is not a verified deploy');
 });
 
-test('a deploy whose live deployment did not change is rolled back through the rollback path', async () => {
+test('US-07-R20: a deploy whose live deployment did not change is rolled back through the rollback path', async () => {
   const db = makeDb(); seedItem(db);
   const st = { prs: [{ number: 7, title: 'Fix', body: BODY, head: { sha: 'aaa' }, labels: [] }], detail: { merged: true, merge_commit_sha: 'mmm', state: 'closed' } };
   const { f, calls } = gh(st);

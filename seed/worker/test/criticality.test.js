@@ -121,7 +121,7 @@ test('ignition from nothing: the queue never empties, every closed item emits a 
   assert.ok(maxQueue < 60, `bounded queue, saw ${maxQueue}`);
 });
 
-test('control rod: above k_max no successors are emitted', async () => {
+test('US-04-R15: control rod: above k_max no successors are emitted', async () => {
   const db = makeDb();
   db.raw.exec("INSERT INTO items (id,title,owner_role,done_check,status,disposition) VALUES ('X','x','operations','x','done','fixed')");
   await addSample(db, { source: 'github-runs', deploys_ok: 500, spend_units: 1 }, '2026-11-09 00:00:00');

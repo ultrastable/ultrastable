@@ -3667,7 +3667,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 185 Python and 1118 Worker tests",
+   "claim": "seed-tests: 185 Python and 1140 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3676,7 +3676,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 1118 Worker tests",
+   "claim": "seed-worker-tests: 1140 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3712,7 +3712,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1607",
+   "claim": "live-deploys: 1621",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",

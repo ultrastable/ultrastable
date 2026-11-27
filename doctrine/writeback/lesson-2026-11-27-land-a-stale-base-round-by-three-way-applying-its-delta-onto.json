@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-land-a-stale-base-round-by-three-way-applying-its-delta-onto",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "Land a stale-base round by three-way applying its delta onto main",
+  "body": "Round 2 of the spec run was built on a base far behind main. Rebasing its 340-file snapshot would have replayed stale history, so its delta (base to snapshot, minus test-run ledgers) was applied with git apply --3way onto a fresh worktree at origin/main. Of the 19 conflicts, generated files (READMEs, claims data, papers, self and research data, conformance manifest) were cleared to main and regenerated from the merged tree; hand-merged files kept main's newer behaviour and added round 2's on top (goals.js keeps ASHBY-KERNEL-1 and adds the US-26-R78 burn page; the halt test keeps main's kit-and-platform body and runs in the standalone seed again). A round-2 test written before PR-NEVER-LOSE-1 was brought up to it instead of weakening the guard. Evidence: seed Worker tests 1122, 0 fail, all pass (and 964 pass, 0 fail in a seed-only copy); workers core and packs 2136 pass, 0 fail; seed Python 155 tests pass; 246 foundation test files, 2116 tests, 0 fail apart from three already red on pristine main (actions-budget.json schema); every named foundation check passes.",
+  "probe": "grep:seed/worker/src/goals.js::BURN_RULES",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "lesson",
+ "title": "Land a stale-base round by three-way applying its delta onto main",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}

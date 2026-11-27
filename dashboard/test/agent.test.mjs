@@ -39,7 +39,7 @@ const seedHits = e => { const now = Math.floor(Date.now() / 1000); const ins = e
   for (let i = 0; i < 3; i++) ins.run(now - 200 - i, "ultrastable.io", "/pilot", "", "NL", "m", 0, "w" + i, "pageview");
   for (let i = 0; i < 9; i++) ins.run(now - 300 - i, "ultrastable.io", "/proof", "", "", "", 1, "b" + i, "pageview"); }; // bots must not count
 
-test("safeSelect allows one bounded SELECT over the allow-list and nothing else", () => {
+test("US-18-R13: safeSelect allows one bounded SELECT over the allow-list and nothing else", () => {
   assert.equal(safeSelect("SELECT path, COUNT(*) FROM hits GROUP BY path").sql.endsWith("LIMIT 100"), true);
   assert.match(safeSelect("select * from hits limit 5000").sql, /LIMIT 100$/);
   assert.match(safeSelect("SELECT * FROM tasks LIMIT 3;").sql, /LIMIT 3$/);
@@ -53,7 +53,7 @@ test("parseAction reads a tool call, a final answer, plain text, and nothing", (
   assert.deepEqual(parseAction("   "), { empty: true });
 });
 
-test("a plain-English question is answered from real rows, with its steps, read-only", async () => {
+test("US-18-R13: a plain-English question is answered from real rows, with its steps, read-only", async () => {
   const q = '{"tool":"sql","args":{"query":"SELECT path, COUNT(*) AS n FROM hits WHERE bot=0 AND name=\'pageview\' GROUP BY path ORDER BY n DESC"}}';
   const e = mkenv([q, '{"answer":"| Page | Views |\\n|---|---|\\n| /proof | 5 |\\n| /pilot | 3 |"}']); seedHits(e);
   const ck = await login(e);
@@ -75,7 +75,7 @@ test("the agent cannot write or read other tables through sql", async () => {
   assert.equal(e.db.prepare("SELECT COUNT(*) c FROM tasks").get().c, before);
 });
 
-test("a changing command needs a fresh code; with one it runs through the audited, undoable path", async () => {
+test("US-18-R13: a changing command needs a fresh code; with one it runs through the audited, undoable path", async () => {
   const e = mkenv(['{"tool":"command","args":{"line":"done gh-22"}}', '{"answer":"I need a fresh code to do that."}']);
   const ck = await login(e); lapse(e);
   let r = await ask(e, ck, "mark gh-22 as done");
@@ -90,7 +90,7 @@ test("a changing command needs a fresh code; with one it runs through the audite
   assert.equal(e2.db.prepare("SELECT state FROM tasks WHERE id='gh-22'").get().state, "open", "and it can be undone");
 });
 
-test("a model that returns nothing never produces an empty answer", async () => {
+test("US-18-R13: a model that returns nothing never produces an empty answer", async () => {
   const q = '{"tool":"sql","args":{"query":"SELECT COUNT(*) AS n FROM tasks"}}';
   const e = mkenv([q, "", "", "", ""]); const ck = await login(e);      // a tool call, then no answer (the router tries the second model too), then no synthesis
   let r = await ask(e, ck, "how many tasks are there");
@@ -110,14 +110,14 @@ test("every model failing is reported in words, not as a crash", async () => {
   const r = await ask(e, ck, "please show me the status"); assert.equal(r.ok, false); assert.match(r.out, /no model answered/);
 });
 
-test("without the AI binding an unknown line says what is missing; real commands still work", async () => {
+test("US-18-R13: without the AI binding an unknown line says what is missing; real commands still work", async () => {
   const e = mkenv([], false); const ck = await login(e);
   const res = await call(e, "/api/owner/run", { cmd: "which pages are rising" }, ck); assert.equal(res.status, 404);
   assert.match((await res.json()).out, /AI binding/);
   assert.equal((await ask(e, ck, "help")).ok, true);
 });
 
-test("plain-English requests are capped per hour", async () => {
+test("US-18-R13: plain-English requests are capped per hour", async () => {
   const e = mkenv(['{"answer":"ok"}']); const ck = await login(e);
   const ins = e.db.prepare("INSERT INTO audit(at,cmd,ok,result) VALUES(?,?,1,'x')");
   for (let i = 0; i < 60; i++) ins.run(Date.now() - 1000, "ask: q" + i);
@@ -147,7 +147,7 @@ test("the owner page: a stacked form, named chips, an answer thread, and an answ
   assert.ok(!/innerHTML\s*=\s*[^;]*\bmd\(/.test(js), "answers are never written through innerHTML");
 });
 
-test("Q-BUDGET-SURFACES: past the budget the console crawls (at most one model call an hour) and still answers", async () => {
+test("US-18-R13 and Q-BUDGET-SURFACES: past the budget the console crawls (at most one model call an hour) and still answers", async () => {
   const e = mkenv(["{\"answer\":\"model answer\"}"]);
   await ensureLedger(e.DB);
   await e.DB.prepare("INSERT INTO budget_ledger (day, kind, units, calls, refused) VALUES (?1,'ai_neurons',1000000000,1,0)").bind(new Date().toISOString().slice(0, 10)).run();

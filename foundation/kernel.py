@@ -54,9 +54,30 @@ def check_lock(root=REPO) -> list[str]:
     return []
 
 
+def pinned_signatures(root=REPO) -> list[str]:
+    """Quoted signatures in the pinned kernel's RECOGNITIONS section (9.2.0 section 5)."""
+    root = Path(root)
+    lock = json.loads((root / "doctrine/kernel.lock").read_text(encoding="utf-8"))
+    md = (root / lock["file"]).read_text(encoding="utf-8")
+    m = re.search(r"^## \d+\. RECOGNITIONS.*?(?=^## )", md, re.M | re.S)
+    out = []
+    for ln in (m.group(0).splitlines() if m else []):
+        if "Signature:" in ln:
+            head = re.split(r"\b(Meaning|Redirect):", ln.split("Signature:", 1)[1])[0]
+            out += ["Is it done?" if q == "?" else q for q in re.findall(r'"([^"]+)"', head)]
+    return out
+
+
+def check_recognitions(root=REPO) -> list[str]:
+    """Section 5 says the recognitions run as a transcript lint: every quoted signature must be caught by it."""
+    k = load(root)
+    return [f"recognition lint misses the pinned kernel signature {s!r}" for s in pinned_signatures(root) if not lint(s + "\n", k)]
+
+
 def check(root=REPO) -> list[str]:
     root, bad = Path(root), []
     bad += check_lock(root)
+    bad += check_recognitions(root)
     k = load(root)
     md = (root / k["text"]).read_text(encoding="utf-8")
     for c in k["commitments"]:

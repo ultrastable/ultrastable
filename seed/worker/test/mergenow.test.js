@@ -47,7 +47,7 @@ test('a run waiting for approval is approved instead of left pending', async () 
   const r = await mergeNow({ token: 't', repo: 'o/r', numbers: [7], fetch: f, wait: async () => {} });
   assert.deepEqual(r.approved, ['o/r#7']); assert.ok(calls.some(c => c.startsWith('POST /repos/o/r/actions/runs/99/approve')));
 });
-test('a conflict on generated files and claim values is reconciled, then main is merged into the branch', async () => {
+test('US-07-R23: a conflict on generated files and claim values is reconciled, then main is merged into the branch', async () => {
   const gen = GENERATED[0];
   const pr = { ...base, mergeable_state: 'dirty' };
   const st = { pr, files: [{ filename: gen, status: 'modified' }, { filename: 'README.md', status: 'modified', patch: '-<!-- claim:n -->1<!-- /claim -->' }, { filename: 'src/a.js', status: 'modified' }],
@@ -61,7 +61,7 @@ test('a conflict on generated files and claim values is reconciled, then main is
   assert.ok(!tree.includes('src/a.js'), 'hand-written code is untouched');
   assert.ok(calls.some(c => c.startsWith('POST /repos/o/r/merges') && c.includes('"base":"claude/x"')));
 });
-test('a real code conflict is reported, never forced', async () => {
+test('US-07-R23: a real code conflict is reported, never forced', async () => {
   const { f } = fake({ pr: { ...base, mergeable_state: 'dirty' }, files: [{ filename: 'src/a.js' }], contents: {}, mergesStatus: 409 });
   const r = await reconcile(makeGh(f, 't'), 'o/r', { ...base });
   assert.equal(r.result, 'code-conflict');

@@ -95,11 +95,12 @@ test("the owner page renders the pill ask bar and the connections panel", async 
 
 test("connections panel: reads /auth/connectors from the tick Worker, passes no secret material on, links each unlinked service, and degrades in plain words", async () => {
   const seen = [];
-  const TICK = { fetch: async req => { seen.push(new URL(req.url).pathname); return Response.json({ linked: [{ provider: "github-app", status: "active", expires_at: 1, last_error: null, meta: "secret-ish" }, { provider: "oauth:google", status: "active", last_error: "invalid_grant: token abc" }],
+  const TICK = { fetch: async req => { seen.push(new URL(req.url).pathname); return Response.json({ linked: [{ provider: "github-app", status: "ok", expires_at: 1, last_error: null, meta: "secret-ish" }, { provider: "oauth:google", status: "ok", last_error: "invalid_grant: token abc" }],
     available: [{ id: "github", title: "GitHub", type: "github-app", connect: "/connect/github", ready: true, linked: true }, { id: "mastodon", title: "Mastodon", type: "oauth", ready: true, linked: false }, { id: "google", title: "Google", type: "oauth", ready: false, linked: false, needs: "oauth-apps" }] }); } };
   const p = await connectorsPanel({ TICK }, "https://ultrastable.io");
   assert.deepEqual(seen, ["/auth/connectors"]);
-  assert.deepEqual(p.linked, [{ provider: "github-app", status: "active", expires_at: 1, reconnect: false }, { provider: "oauth:google", status: "active", expires_at: null, reconnect: true }]);
+  // the statuses are the ones the seed's credential store writes (ok, pending, failed: seed/worker/src/auth/store.js)
+  assert.deepEqual(p.linked, [{ provider: "github-app", status: "ok", expires_at: 1, reconnect: false }, { provider: "oauth:google", status: "ok", expires_at: null, reconnect: true }]);
   assert.ok(!JSON.stringify(p).includes("invalid_grant") && !JSON.stringify(p).includes("secret-ish"), "raw backend text and metadata stay on the server");
   assert.equal(p.available.find(a => a.id === "mastodon").connect, "https://ultrastable.io/connect/mastodon");
   const down = await connectorsPanel({ TICK: { fetch: async () => new Response("x", { status: 503 }) } }, "https://ultrastable.io");

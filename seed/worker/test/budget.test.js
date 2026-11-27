@@ -55,7 +55,7 @@ test('modes: normal, lean above 90% of the day, crawl (never frozen) at the cap 
   assert.equal(decide(a, { ai_neurons_today: 1000, ai_usd_month_to_date: 0 }).hourly, true);
 });
 
-test('every call is metered in the ledger; past the day cap calls are refused within the tick and then trickle one an hour (SPEND-SOFT-1)', async () => {
+test('US-09-R05 US-09-R18: every call is metered in the ledger; past the day cap calls are refused within the tick and then trickle one an hour (SPEND-SOFT-1)', async () => {
   const { raw, db } = mkdb(); const ai = fakeAI();
   const g = await governedAI(db, ai, { config: { budget: { usd_per_month: 0 } }, now: NOW });
   assert.equal(g.state.mode, 'normal');
@@ -122,7 +122,7 @@ test('REPLY-GATE-1: empty, truncated and repeated replies are rejected before us
   assert.equal(replyProblem({}, '{"action":"done","evidence":"tests pass"}'), null);
 });
 
-test('ORIGINATE-CAP-1: the system files at most ORIGINATE_MAX_PER_DAY items of its own a day', async () => {
+test('US-09-R22 ORIGINATE-CAP-1: the system files at most ORIGINATE_MAX_PER_DAY items of its own a day', async () => {
   const { raw, db } = mkdb();
   raw.exec("CREATE TABLE items (id TEXT PRIMARY KEY, title TEXT, kind TEXT, owner_role TEXT, done_check TEXT, closing_probe TEXT, priority INTEGER, status TEXT, surface TEXT, action_class TEXT)");
   const { ensureItem } = await import('../src/tick.js');
@@ -171,7 +171,7 @@ test('D1-LIMIT-503: /health and /api/budget answer 503 with a code when D1 refus
   } finally { if (made) rmSync(cfg); }
 });
 
-test('HALT-1: the worker variable wins over the committed file, and a halted tick runs nothing but its beat', async () => {
+test('US-09-R16 HALT-1: the worker variable wins over the committed file, and a halted tick runs nothing but its beat', async () => {
   const { halted } = await import('../src/budget.js');
   assert.equal(halted({ halt: { halted: true } }, {}), true);
   assert.equal(halted({ halt: { halted: true } }, { HALT: '0' }), false, 'HALT=0 resumes without a deploy');

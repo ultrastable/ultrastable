@@ -20,7 +20,7 @@ function seed(db, items) {
   for (const i of items) ins.run(i.id, i.title, i.owner_role || 'staff', i.done_check || 'x', i.closing_probe || null, i.priority ?? 10, i.created_at || '2026-11-13 00:00:00');
 }
 
-test('owner-only items are parked behind one gate card and never re-dispatched', async () => {
+test('US-08-R20, US-08-T07: owner-only items are parked behind one gate card and never re-dispatched', async () => {
   const db = makeDb();
   seed(db, [{ id: 'FN-2', title: 'FN-2: Google for Startups Cloud Program application', done_check: 'Submission confirmation' }]);
   await runTick(db, { config, now: T0 });
@@ -33,7 +33,7 @@ test('owner-only items are parked behind one gate card and never re-dispatched',
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM dispatches WHERE item_id='FN-2'").get().n, 1, 'not dispatched again');
 });
 
-test('the owner gate closes itself when no owner-only item is left', async () => {
+test('US-08-R20: the owner gate closes itself when no owner-only item is left', async () => {
   const db = makeDb();
   seed(db, [{ id: 'FN-3', title: 'FN-3: Cloudflare for Startups application', done_check: 'Submission confirmation' }]);
   await runTick(db, { config, now: T0 });
@@ -42,7 +42,7 @@ test('the owner gate closes itself when no owner-only item is left', async () =>
   assert.equal(db.raw.prepare("SELECT status FROM gate_cards WHERE id='GATE-OWNER-ITEMS'").get().status, 'closed');
 });
 
-test('a TICKFAIL item closes when a later tick completed the step', async () => {
+test('US-08-R16, US-08-T07: a TICKFAIL item closes when a later tick completed the step', async () => {
   const db = makeDb();
   seed(db, [{ id: 'TICKFAIL-measure-2026-11-13T08', title: 'Tick step measure failed', owner_role: 'operations', done_check: 'next tick completes step measure', priority: 0 }]);
   db.raw.exec("INSERT INTO tick_runs (started_at, finished_at, steps_total, steps_completed) VALUES ('2026-11-13 09:00:00','2026-11-13 09:00:05',10,10)");
@@ -52,7 +52,7 @@ test('a TICKFAIL item closes when a later tick completed the step', async () => 
   assert.equal(db.raw.prepare("SELECT result FROM outcomes WHERE item_id='TICKFAIL-measure-2026-11-13T08'").get().result, 'verified');
 });
 
-test('a LOOPBREAK item unblocks its target and closes; the target then reaches the doer', async () => {
+test('US-08-R18: a LOOPBREAK item unblocks its target and closes; the target then reaches the doer', async () => {
   const db = makeDb();
   seed(db, [{ id: 'LOOPBREAK-BIZ-1', title: 'Dispatch of BIZ-1 failed', owner_role: 'operations', done_check: 'item BIZ-1 has an outcome', priority: 0 }]);
   db.raw.exec("INSERT INTO items (id,title,owner_role,done_check,priority,status,blocker) VALUES ('BIZ-1','BIZ-1: Choose owning entity','staff','Entity named',10,'blocked','loop-breaker: dispatched 28 times with no outcome')");
@@ -96,7 +96,7 @@ test('generic items are triaged by the model and parked with verdict and first s
   assert.equal(s.status, 'blocked'); assert.match(s.blocker, /^needs-research: needs market data/);
 });
 
-test('without the AI binding a generic item waits with its claim kept (loop-breaker still applies)', async () => {
+test('US-08-R16, US-08-T07: without the AI binding a generic item waits with its claim kept (loop-breaker still applies)', async () => {
   const db = makeDb();
   seed(db, [{ id: 'PR-1', title: 'PR-1: Positioning', done_check: 'see roadmap' }]);
   await runTick(db, { config, now: T0 });
@@ -113,7 +113,7 @@ test('model calls per tick are capped', async () => {
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE status='claimed'").get().n, 1);
 });
 
-test('claims_released_unworked_24h counts reaper releases of unworked claims', async () => {
+test('US-08-R19: claims_released_unworked_24h counts reaper releases of unworked claims', async () => {
   const db = makeDb();
   seed(db, [{ id: 'PR-3', title: 'PR-3: case study', done_check: 'Page on the site' }]);
   await runTick(db, { config, now: T0 });
