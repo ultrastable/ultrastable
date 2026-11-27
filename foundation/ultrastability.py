@@ -442,7 +442,9 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
                     _append(root, c, vr)
                     _settle(root, pending, verdict, value, v)
                 pending = None if verdict else pending
-        if not ok and not pending and consecutive >= c["patience_ticks"]:
+        if not ok and not pending and consecutive >= c["patience_ticks"] and over_budget(rows, key, c, now):
+            entry["deferred_budget"] = True  # kernel 9.0.0 S2: the partition spent its steps for 24 hours; the variable waits, the next tick reads it again
+        elif not ok and not pending and consecutive >= c["patience_ticks"]:
             idx = next((i for i in range(len(v["ladder"])) if not _taken(episode, i)), None)
             draw = _search(root, key, v, episode, value) if idx is None else None
             if draw:  # ASHBY-SEARCH-1: the ladder is spent and the variable is still out; keep changing step-functions to a field not yet tried
@@ -717,6 +719,29 @@ def _settle(root, step, verdict, value, v):
         provenance.settle(root, pid, verdict, f"{v['reading']}={value}", v["reading"])
 
 
+MIN_EVS = 3
+
+
+def partition(key: str) -> str:
+    """platform variables are keyed by id; a tenant's by `slug:id`, and each tenant is its own partition."""
+    return key.split(":", 1)[0] if ":" in key else "platform"
+
+
+def over_budget(rows, key, c, now) -> bool:
+    """Kernel 9.0.0 S2: steps this partition took in the 24 hours before `now` against step_budget_per_24h (absent: no budget)."""
+    b = c.get("step_budget_per_24h") or {}
+    part = partition(key)
+    limit = b.get("platform" if part == "platform" else "tenant")
+    if not limit:
+        return False
+    try:
+        t = datetime.strptime(now, "%Y-%m-%dT%H:%M:%SZ")
+    except (TypeError, ValueError):
+        return False
+    since = (t - timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return sum(1 for r in rows if r.get("ev") == "step" and partition(str(r.get("var", ""))) == part and since <= str(r.get("at", "")) <= now) >= limit
+
+
 def check(root=REPO) -> list[str]:
     root, errs = Path(root), []
     c = load(root)
@@ -730,6 +755,8 @@ def check(root=REPO) -> list[str]:
         s = c["scopes"].get(scope)
         if not s or not s.get("variables"):
             errs.append(f"scope {scope} declares no essential variables"); continue
+        if len(s["variables"]) < MIN_EVS:  # kernel 9.0.0 E2 (Ashby, journal p. 4015): essential variables must be multiple for adaptation to be progressive
+            errs.append(f"scope {scope} declares {len(s['variables'])} essential variables; at least {MIN_EVS} (kernel 9.0.0 E2)")
         for v in s["variables"]:
             for k in ("id", "name", "reading", "min", "max", "first_order", "ladder", "why"):
                 if k not in v:

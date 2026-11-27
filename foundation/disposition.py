@@ -4,6 +4,7 @@
 
   python3 -m foundation disposition --check     every executor row maps to a known result; every `done` row carries its verifier
   python3 -m foundation disposition --summary   counts per disposition over ops/executor-log.jsonl and the evidence branch (JSON)
+  python3 -m foundation disposition --recall    failure_recall: share of failed items whose failures the next prompt carries (M1; exit 1 below 0.9)
 
 done              the change merged on main: the lane merged it after CI passed, so the merge commit is the independent check (F1)
 flagged           the item contradicts itself or cannot be done as specified; nothing was applied (F2, foundation/executor.Flagged)
@@ -79,7 +80,35 @@ def summary(root=REPO, rs=None) -> dict:
     return {k: c.get(k, 0) for k in (*KINDS, "in_progress", "unknown", "done_unverified")}
 
 
+def recall(item, rs, n: int = 3) -> list[str]:
+    """M1 (kernel 9.0.0; Pérez López's "pride", WP 5 p. 11): the last `n` failures of this item stay in the evoked set when it is tried again.
+    An outage (no-route) is not the item's failure and is left out; a pull request the lane closed unmerged is."""
+    out = []
+    for r in rs:
+        if str(r.get("issue")) != str(item):
+            continue
+        try:
+            kind = classify(r)[0]
+        except KeyError:
+            continue
+        if kind == "failed" or kind == "flagged":
+            out.append(f"{r.get('at', '?')} {r.get('result')}: {str(r.get('detail') or r.get('pr') or '')[:400]}")
+    return out[-n:]
+
+
+def recall_rate(rs) -> float | None:
+    """Share of items with a recorded failure whose failures `recall` returns (the failure_recall probe; target 1.0). None when no item has failed."""
+    items = {str(r.get("issue")) for r in rs if r.get("result") in ("failed", "pr-closed", "flagged")}
+    if not items:
+        return None
+    return round(sum(1 for i in items if recall(i, rs)) / len(items), 3)
+
+
 def main(argv) -> int:
+    if "--recall" in argv:
+        rate = recall_rate(rows())
+        print(json.dumps({"failure_recall": rate}))
+        return 0 if rate is None or rate >= 0.9 else 1
     if "--summary" in argv:
         print(json.dumps(summary(), indent=1))
         return 0

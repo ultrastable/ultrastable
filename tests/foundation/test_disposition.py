@@ -40,6 +40,16 @@ class Disposition(unittest.TestCase):
         with self.assertRaises(sqlite3.IntegrityError):
             db.execute("INSERT INTO disposition(item,tick,kind,evidence_uri,verifier) VALUES('d',1,'yes','r2://z','v')")
 
+    def test_recall_keeps_failures_and_skips_outages(self):
+        rs = [{"issue": "Q-1", "result": "failed", "detail": "test_x broke", "at": "a"},
+              {"issue": "Q-1", "result": "no-route", "detail": "502", "at": "b"},
+              {"issue": "Q-1", "result": "pr-closed", "pr": "https://x/pull/9", "at": "c"},
+              {"issue": "Q-2", "result": "failed", "detail": "other", "at": "d"}]
+        got = disposition.recall("Q-1", rs)
+        self.assertEqual(len(got), 2)
+        self.assertIn("test_x broke", got[0]); self.assertIn("pull/9", got[1])
+        self.assertEqual(disposition.recall_rate(rs), 1.0)
+
     def test_repo_passes(self):
         self.assertEqual(disposition.check(REPO), [])
 

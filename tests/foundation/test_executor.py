@@ -358,6 +358,24 @@ class FlaggedDisposition(unittest.TestCase):
         from foundation import disposition
         self.assertEqual(disposition.classify(row)[0], "deferred_budget")
 
+    def test_the_prompt_recalls_earlier_failures_of_the_item(self):
+        import subprocess
+        from unittest import mock
+        d = scratch()
+        (d / "docs/issues").mkdir(parents=True)
+        body = "\n".join(["**Owner:** executor", "**Trigger:** tick", "**Done check:** file:x", "**Status:** open", "", "work"])
+        (d / "docs/issues/Q-1.json").write_text(json.dumps({"id": "Q-1", "title": "one", "body": body, "labels": ["p1"]}))
+        for c in (["init", "-q"], ["add", "-A"], ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "i"]):
+            subprocess.run(["git", *c], cwd=d, check=True, capture_output=True)
+        seen = []
+        def flag(prompt):
+            seen.append(prompt); return {"flag": "stop", "files": []}
+        past = [{"issue": "Q-1", "result": "failed", "detail": "test_unique_marker failed", "at": "2026-11-26T00:00:00Z"}]
+        with mock.patch.dict(os.environ, {"EXECUTOR_SOURCE": "queue"}), mock.patch.object(executor.qmod, "executor_rows", return_value=past):
+            row = executor.run("o/r", apply=True, issue_no="Q-1", root=d, model_call=flag, checks=[])
+        self.assertIn("test_unique_marker failed", seen[0])
+        self.assertEqual(row["recalled_failures"], 1)
+
     def test_a_reply_with_edits_is_not_a_flag(self):
         from foundation import agents
         out = agents.parse_json("<<<FLAG>>>\nx\n<<<END>>>\n<<<FILE a.py>>>\nx = 1\n<<<END>>>")

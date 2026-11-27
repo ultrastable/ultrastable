@@ -682,7 +682,12 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             model_call = mechfix.call_for(issue, root)
             if model_call:
                 row["models"] = ["mechfix"]
-        base_prompt = lambda: build_prompt(issue, tree) + (repair["context"] if repair else "")
+        from . import disposition  # M1 FAILURE-RECALL-1: earlier runs' failures on this item are in the prompt, so a retry does not repeat them blind
+        past = disposition.recall(n, qmod.executor_rows(lroot))
+        recall_txt = ("\n\nEARLIER RUNS ON THIS ITEM FAILED; do not repeat these:\n" + "\n".join(past)) if past else ""
+        if past:
+            row["recalled_failures"] = len(past)
+        base_prompt = lambda: build_prompt(issue, tree) + recall_txt + (repair["context"] if repair else "")
         prompt, failed, files, out = base_prompt(), [], [], {}
         for attempt in range(REPAIRS + 1):  # REPAIR-1: a failed check is fed back to the model; the change is only abandoned after the last try
             if attempt and time_left() < REPAIR_MIN_S:  # EXEC-WATCHDOG-2: end with the real reasons rather than be cut off by the watchdog mid-attempt

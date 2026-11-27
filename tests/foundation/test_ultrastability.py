@@ -295,3 +295,25 @@ class SettleProgress(unittest.TestCase):
         self.assertEqual(u.settle_verdict(".", c, step, False, 3, v, 0.1), "reverted")
         self.assertIsNone(u.settle_verdict(".", c, step, False, 1, v, 0.3))
         self.assertEqual(u.settle_verdict(".", c, {"kind": "param", "value": None}, False, 3, v, 0.3), "reverted")
+
+
+class MinimumVariables(unittest.TestCase):
+    def test_a_scope_needs_three_variables(self):
+        from unittest import mock
+        doc = json.loads((REPO / "doctrine/ultrastability.json").read_text())
+        doc["scopes"]["tenant"]["variables"] = doc["scopes"]["tenant"]["variables"][:2]
+        with mock.patch.object(u, "load", return_value=doc):
+            self.assertTrue(any("at least 3 (kernel 9.0.0 E2)" in e for e in u.check(REPO)))
+
+
+class StepBudget(unittest.TestCase):
+    def test_partition_budget_defers_the_next_step(self):
+        c = {"step_budget_per_24h": {"platform": 2, "tenant": 1}}
+        rows = [{"ev": "step", "var": "spend", "at": "2026-11-27T10:00:00Z"}, {"ev": "step", "var": "uptime", "at": "2026-11-27T11:00:00Z"},
+                {"ev": "step", "var": "app:uptime", "at": "2026-11-26T09:00:00Z"}]
+        self.assertTrue(u.over_budget(rows, "claims_drift", c, "2026-11-27T12:00:00Z"))
+        self.assertFalse(u.over_budget(rows, "claims_drift", c, "2026-11-28T10:30:00Z"))  # the first step left the window
+        self.assertFalse(u.over_budget(rows, "app:spend", c, "2026-11-27T12:00:00Z"))      # yesterday's step is outside 24 h
+        self.assertTrue(u.over_budget(rows, "app:spend", c, "2026-11-26T20:00:00Z"))
+        self.assertFalse(u.over_budget(rows, "spend", {}, "2026-11-27T12:00:00Z"))
+

@@ -41,9 +41,10 @@
    "status": "partial",
    "enforced_by": [
     "foundation/testguard.py",
-    "scripts/protected_paths.py"
+    "scripts/protected_paths.py",
+    ".claude/hooks/guard.py"
    ],
-   "missing": "no PreToolUse hook (.claude/hooks/guard.sh); doctrine/ is agent-editable here"
+   "missing": "EV limits in doctrine/ultrastability.json are still agent-editable (the E1 conflict); the hook blocks kill switches, the kernel text, --no-verify, force-push and push to main"
   },
   {
    "id": "R5",
@@ -68,11 +69,12 @@
   {
    "id": "E2",
    "says": ">=3 EVs per partition; a missing or stale reading is a breach",
-   "status": "partial",
+   "status": "built",
    "enforced_by": [
-    "foundation/ultrastability.py"
+    "foundation/ultrastability.py",
+    "foundation/regulator/essential.py"
    ],
-   "missing": "missing-as-breach is in foundation/regulator/essential.py; >=3 per scope is not checked"
+   "missing": ""
   },
   {
    "id": "E3",
@@ -160,11 +162,12 @@
   {
    "id": "S2",
    "says": "one vetted reversible step: snapshot, apply, trial, commit or roll back; budgeted",
-   "status": "partial",
+   "status": "built",
    "enforced_by": [
-    "foundation/ultrastability.py"
+    "foundation/ultrastability.py",
+    "doctrine/ultrastability.json"
    ],
-   "missing": "ladder and settle_ticks exist; no per-24h step budget or epsilon"
+   "missing": ""
   },
   {
    "id": "S3",
@@ -215,11 +218,13 @@
   {
    "id": "M1",
    "says": "failure records are never filtered out of retrieval",
-   "status": "partial",
+   "status": "built",
    "enforced_by": [
-    "seed/scripts/perezlopez.py"
+    "foundation/disposition.py",
+    "foundation/executor.py",
+    "foundation/kernel.py"
    ],
-   "missing": "failure_recall() exists; no scheduled probe"
+   "missing": ""
   },
   {
    "id": "M2",
