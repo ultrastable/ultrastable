@@ -512,6 +512,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["sampleaudit"]:  # SAMPLE-AUDIT-1: foundation/sampleaudit.py
         from . import sampleaudit
         return sampleaudit.main(_av[1:])
+    if _av[:1] == ["tokenlog"]:  # TOKEN-LOG-1: foundation/tokenlog.py
+        from . import tokenlog
+        return tokenlog.main(_av[1:])
     if _av[:1] == ["repomap"]:  # REPO-MAP-1: foundation/repomap.py
         from . import repomap
         return repomap.main(_av[1:])
