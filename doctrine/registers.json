@@ -852,6 +852,18 @@
       "status": "controlled",
       "cadence_ticks": 1,
       "probe": "grep:tests/foundation/test_directive.py::def test_lint_flags_owner_handback"
+    },
+    {
+      "id": "fm-repo-nonconformant",
+      "trigger": "a repository's machine-readable file is missing, fails its standard, or differs from what its ultrastable.json renders",
+      "symptom": "agents and tools that read the repository (coding agents, software catalogs, citation and licence scanners, Dependabot, dev containers) get a file they cannot parse or that states something else, while a substring check reads it as present",
+      "blast_radius": "every repository in doctrine/fleet-map.json and every system made from the seed",
+      "detection": "detector repo-conform: python3 seed/scripts/repoconform.py --fleet doctrine/fleet-map.json, daily in failure-audit.yml, reads every repository through the GitHub contents API with a named validator per file; an unreadable repository or file is unmeasured, never ok",
+      "root_cause": "REPO-CONFORM-1 matched one substring per file and ran only against the kit itself, so junk passed and no loop read the other repositories",
+      "remediation": "named stdlib validators per file in seed/scripts/repoconform.py (rows in seed/autonomy/repo-conformance.json), render equality for every file scripts/surfaces.py generates, and the fleet reading filed as Q-AUDIT-repo-conform and closed by the same reading",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:seed/tests/test_repoconform.py::def test_junk_repo_fails_every_row"
     }
   ],
   "controls": [

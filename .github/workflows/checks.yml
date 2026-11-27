@@ -247,6 +247,7 @@ jobs:
           python3 -m foundation standards --check
           python3 -m foundation configschema --check  # CONFIG-SCHEMA-1: every config validates against its JSON Schema contract
           python3 -m foundation stdgen --check        # STANDARDS-1: Backstage catalog and CycloneDX SBOM match the registers
+          python3 seed/scripts/repoconform.py --check .  # REPO-CONFORM-2: every machine-readable file at the root is valid against its standard and equals its render
           (cd seed/worker && node --test --no-warnings test/*.test.js)
   tests-a:
     if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1

@@ -1115,6 +1115,21 @@
       "root_cause": "a loop's clock has no reading in the published record (no route that can read its beats from this host)",
       "owner": "operations",
       "remedy": "Give the clock a route this host can read (a health field, a workflow, a token), so /demo and /live show its real status."
+    },
+    {
+      "id": "repo-conform",
+      "failure_mode": "fm-repo-nonconformant",
+      "kind": "command",
+      "run": [
+        "python3",
+        "seed/scripts/repoconform.py",
+        "--fleet",
+        "doctrine/fleet-map.json"
+      ],
+      "timeout": 300,
+      "root_cause": "a repository in the fleet map carries a machine-readable file (AGENTS.md, llms.txt, LICENSE and LICENSES/, REUSE.toml, CITATION.cff, publiccode.yml, catalog-info.yaml, ultrastable.json, EditorConfig, Dependabot, devcontainer, CHANGELOG, CONTRIBUTING, SECURITY) that is missing, fails its own standard or differs from what its manifest renders, or the repository cannot be read",
+      "owner": "operations",
+      "remedy": "Read python3 seed/scripts/repoconform.py --fleet doctrine/fleet-map.json (the platform command for the same reader is python3 -m foundation repoconform, foundation/repoconform.py): each line names the repository, the file, its validator and why. The last line lists each repository that does not conform with its file score and failing files. Fix the file in that repository's own pull request: render the generated ones with the kit's surfaces.py --render (scripts/surfaces.py in a seeded system, vendor/ultrastable/tools/surfaces.py in a tenant, seed/scripts/surfaces.py in the core; each failing line names the one for its repository), fix the manifest or generator for the rest. An unmeasured repository needs a read route (the lane's token for a private one), never a pass. Never relax a validator to clear a reading."
     }
   ]
 }

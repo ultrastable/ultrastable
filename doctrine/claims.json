@@ -1989,11 +1989,11 @@
       "surface": "agents/AGENTS.md",
       "text": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
       "probe": [
+        "file:AGENTS.md",
         "file:seed/SYSTEM.md",
         "file:docs/doctrine/GUIDING-DIRECTIVE.md",
         "file:doctrine/kernel-8.2.1.md",
         "file:docs/PROJECT-MEMORY.md",
-        "file:agents/PROJECT-INSTRUCTIONS.md",
         "file:docs/BOOTSTRAP-NO-MEMORY.md"
       ],
       "bound_by": "cited"
@@ -2368,9 +2368,9 @@
         "file:doctrine/fleet-map.json",
         "file:ultrastable.json",
         "file:seed/standards/system.schema.json",
+        "file:publiccode.yml",
         "file:seed/scripts/surfaces.py",
-        "file:doctrine/tenant-repos.json",
-        "file:tests/foundation/test_fleetmap.py"
+        "file:doctrine/tenant-repos.json"
       ],
       "bound_by": "cited"
     },
@@ -2583,7 +2583,7 @@
         "file:doctrine/coldstart.json",
         "file:seed/worker/src/visibility.js",
         "file:docs/doctrine/SYSTEM.md",
-        "file:CLAUDE.md",
+        "file:AGENTS.md",
         "file:doctrine/schemas/coldstart.schema.json",
         "file:foundation/coldstart.py"
       ],
@@ -3192,11 +3192,11 @@
       "surface": "seed/agents/AGENTS.md",
       "text": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
       "probe": [
+        "file:AGENTS.md",
         "file:seed/SYSTEM.md",
         "file:docs/doctrine/GUIDING-DIRECTIVE.md",
         "file:doctrine/kernel-8.2.1.md",
         "file:docs/PROJECT-MEMORY.md",
-        "file:agents/PROJECT-INSTRUCTIONS.md",
         "file:docs/BOOTSTRAP-NO-MEMORY.md"
       ],
       "bound_by": "mirror",
@@ -3577,9 +3577,9 @@
         "file:doctrine/fleet-map.json",
         "file:ultrastable.json",
         "file:seed/standards/system.schema.json",
+        "file:publiccode.yml",
         "file:seed/scripts/surfaces.py",
-        "file:doctrine/tenant-repos.json",
-        "file:tests/foundation/test_fleetmap.py"
+        "file:doctrine/tenant-repos.json"
       ],
       "bound_by": "mirror",
       "of": "cited-f35cd86e2e"
@@ -3821,7 +3821,7 @@
         "file:doctrine/coldstart.json",
         "file:seed/worker/src/visibility.js",
         "file:docs/doctrine/SYSTEM.md",
-        "file:CLAUDE.md",
+        "file:AGENTS.md",
         "file:doctrine/schemas/coldstart.schema.json",
         "file:foundation/coldstart.py"
       ],
