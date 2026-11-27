@@ -163,6 +163,8 @@ def check(root=REPO) -> list[str]:
         name = p.name + ("/" if p.is_dir() else "")
         if p.name not in SKIP and name not in known:
             errs.append(f"seed/{name} is not listed in template_contents.belongs: decide whether it belongs in the template")
+    from . import kernellock  # KERNEL-LOCK-1 (R8): a kernel.lock row per live tenant
+    errs += kernellock.check(root)
     return errs
 
 

@@ -1,0 +1,13 @@
+{
+  "_doc": "KERNEL-LOCK-1 (ZHC-R8, R9): the platform writes the kernel (seed/) once; every tenant pins the kernel it runs by a row here. `pin` is the git tree hash of seed/ at a platform commit, or null while the tenant is not yet pinned. The canary tenant is bumped first; a bump to the rest follows only after the canary's pin has merged and its probe passed. Read by foundation/kernellock.py; fleetmap --check fails a live tenant without a row.",
+  "canary": "practical-solutions",
+  "tenants": {
+    "practical-solutions": {"pin": null},
+    "unlearn": {"pin": null},
+    "what-works": {"pin": null},
+    "replication-ledger": {"pin": null},
+    "base-rates": {"pin": null},
+    "did-it-work": {"pin": null},
+    "open-questions": {"pin": null}
+  }
+}

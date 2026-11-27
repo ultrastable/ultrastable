@@ -523,6 +523,14 @@
       "url": "job-trust.schema.json"
     },
     {
+      "name": "kernel-lock.json",
+      "description": "Contract for doctrine/kernel-lock.json",
+      "fileMatch": [
+        "doctrine/kernel-lock.json"
+      ],
+      "url": "kernel-lock.schema.json"
+    },
+    {
       "name": "kernel.json",
       "description": "Contract for doctrine/kernel.json",
       "fileMatch": [

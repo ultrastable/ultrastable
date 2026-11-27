@@ -507,6 +507,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["jobtrust"]:  # JOB-TRUST-1: foundation/jobtrust.py
         from . import jobtrust
         return jobtrust.main(_av[1:])
+    if _av[:1] == ["kernellock"]:  # KERNEL-LOCK-1: foundation/kernellock.py
+        from . import kernellock
+        return kernellock.main(_av[1:])
     if _av[:1] == ["deploydrift"]:  # DEPLOY-DRIFT-1: foundation/deploydrift.py
         from . import deploydrift
         return deploydrift.main(_av[1:])

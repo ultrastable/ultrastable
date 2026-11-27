@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/kernel-lock.schema.json",
+  "title": "kernel-lock (doctrine/kernel-lock.json)",
+  "description": "Contract for doctrine/kernel-lock.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "_doc": {
+      "type": "string"
+    },
+    "canary": {
+      "type": "string"
+    },
+    "tenants": {
+      "type": "object",
+      "properties": {
+        "practical-solutions": {
+          "type": "object"
+        },
+        "unlearn": {
+          "type": "object"
+        },
+        "what-works": {
+          "type": "object"
+        },
+        "replication-ledger": {
+          "type": "object"
+        },
+        "base-rates": {
+          "type": "object"
+        },
+        "did-it-work": {
+          "type": "object"
+        },
+        "open-questions": {
+          "type": "object"
+        }
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "_doc",
+    "canary",
+    "tenants"
+  ]
+}
