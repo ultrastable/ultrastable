@@ -7,7 +7,7 @@ A tripwire, not a security boundary: the boundary is branch protection, the lane
 right for an agent: editing the owner's kill switches or the pinned kernel text, skipping hooks, force-pushing, and pushing to main. Protected
 paths such as .github/ stay editable with a Protected-change line (AGENTS.md); this hook does not replace that rule.
 """
-import json, re, sys
+import json, os, re, subprocess, sys
 
 NEVER_EDIT = re.compile(r"(^|/)(actions-budget\.json|ops/halt\.json|kernel/kernel\.lock|doctrine/kernel-9\.0\.0\.md|doctrine/kernel-8\.2\.1\.md)$")
 NEVER_RUN = re.compile(r"--no-verify|\bgit\s+push\b[^\n;&|]*(\s-f\b|--force(?!-with-lease)|\s\+\S)|\bgit\s+push\b[^\n;&|]*\s(origin\s+)?(main|master)(\s|$)|"
@@ -21,6 +21,26 @@ def verdict(event: dict) -> str | None:
         return f"BLOCKED (kernel 9.0.0 R4): {path} is the owner's kill switch or the pinned kernel text. Record the change you need as a flagged item instead."
     if tool == "Bash" and NEVER_RUN.search(str(inp.get("command", ""))):
         return "BLOCKED (kernel 9.0.0 R4/F3): skipping hooks, force-pushing, pushing to main or removing a kill switch. Push a branch and open a pull request; the lane merges."
+    if tool == "Bash":
+        hit = clobbers(str(inp.get("command", "")), event.get("cwd") or os.environ.get("CLAUDE_PROJECT_DIR") or ".")
+        if hit:
+            return (f"BLOCKED (NO-CLOBBER-1): `>` would overwrite {hit}, a file git already tracks. Read it and change it with Edit, or pick a new name; "
+                    "a shell redirect skips the read-before-write check (2026-11-27: a new test file replaced an existing one this way).")
+    return None
+
+
+REDIRECT = re.compile(r"(?<![>&\d])>(?!>|&)\s*([^\s;&|<>]+)")
+
+
+def clobbers(cmd: str, cwd: str) -> str | None:
+    """The first `> FILE` target in the command that git tracks under cwd (appends `>>`, fd redirects and /dev/null are fine)."""
+    for t in REDIRECT.findall(cmd):
+        t = t.strip("'\"")
+        if not t or t.startswith(("/dev/", "/tmp/", "$")):
+            continue
+        r = subprocess.run(["git", "-C", cwd, "ls-files", "--error-unmatch", "--", t], capture_output=True, text=True)
+        if r.returncode == 0:
+            return t
     return None
 
 

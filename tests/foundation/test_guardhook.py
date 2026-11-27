@@ -28,6 +28,14 @@ class GuardHook(unittest.TestCase):
                    {"tool_name": "Read", "tool_input": {"file_path": "ops/halt.json"}}):
             self.assertIsNone(guard.verdict(ev), ev)
 
+    def test_redirect_onto_a_tracked_file_is_blocked(self):
+        ev = lambda c: {"tool_name": "Bash", "tool_input": {"command": c}, "cwd": str(REPO)}
+        self.assertIsNotNone(guard.verdict(ev("cat > tests/foundation/test_guardhook.py <<'EOF'")))
+        self.assertIsNotNone(guard.verdict(ev("echo x >foundation/kernel.py")))
+        for ok in ("cat > tests/foundation/test_brand_new_name.py <<'EOF'", "echo x >> foundation/kernel.py", "make 2>/dev/null", "ls > /tmp/x",
+                   "python3 x.py 2>&1 | tail", "test 1 -gt 0"):
+            self.assertIsNone(guard.verdict(ev(ok)), ok)
+
     def test_exit_code_two_blocks(self):
         r = subprocess.run([sys.executable, str(HOOK)], input=json.dumps({"tool_name": "Bash", "tool_input": {"command": "git push origin main"}}),
                            capture_output=True, text=True)
