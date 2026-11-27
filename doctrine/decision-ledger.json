@@ -6738,6 +6738,15 @@
    "body": "PR-NO-GENERATED-1 stopped pull requests carrying generated files. The PR-time list (scripts/regen_generated.sh) lacked six pure generators that the post-merge list runs: ultrastability data, admit, owndb, tenantcontrols, upstream contract, plugins self. A pull request that changed one of their sources failed its freshness check and had no way to pass: #2615 added an essential variable and failed on site/ultrastability-data.js. Now the six run at PR time, the eight generators that record an event or read the network are named in POST_MERGE_ONLY with a reason each, and a test fails any generator that is in neither place. Two lists of the same thing need a test that compares them.",
    "probe": "grep:scripts/regen_generated.py::POST_MERGE_ONLY",
    "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
+  },
+  {
+   "id": "lesson-2026-11-27-a-study-s-summary-must-not-address-the-reader-with-an-instru",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "A study's summary must not address the reader with an instruction, because the docs audit reads the generated paper",
+   "body": "The Conant and Ashby study summary said 'you must model it'. The generated paper carried the line, docs_audit --check read it as telling a person to act, and main went red for every pull request. The summary now states the same idea without addressing a reader. Study text is generated into papers and read by the same audit as any document.",
+   "probe": "grep:research/studies/conant-ashby-1970.json::requires a model",
+   "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
   }
  ]
 }
