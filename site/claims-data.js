@@ -3694,7 +3694,11 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
+<<<<<<< HEAD
    "claim": "seed-tests: 134 Python and 1077 Worker tests",
+=======
+   "claim": "seed-tests: 129 Python and 1077 Worker tests",
+>>>>>>> 738cc352ade71de1ed1fe099bbb8263c310142aa
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
