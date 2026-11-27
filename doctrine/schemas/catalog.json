@@ -611,6 +611,14 @@
       "url": "open-standards.schema.json"
     },
     {
+      "name": "org-cybernetics.json",
+      "description": "Contract for doctrine/org-cybernetics.json",
+      "fileMatch": [
+        "doctrine/org-cybernetics.json"
+      ],
+      "url": "org-cybernetics.schema.json"
+    },
+    {
       "name": "orphans-baseline.json",
       "description": "Contract for doctrine/orphans-baseline.json",
       "fileMatch": [
