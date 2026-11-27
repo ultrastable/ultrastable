@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-executor-closed-q-ultra-free-tier-meter-spend-redesign-imple",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "Executor closed Q-ULTRA-free-tier-meter-spend-REDESIGN: Implement active hard-limit regulation in free-tier meter config to automatically di",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: actions-budget.json.",
+  "probe": "file:actions-budget.json"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-ULTRA-free-tier-meter-spend-REDESIGN: Implement active hard-limit regulation in free-tier meter config to automatically di",
+ "session": ""
+}

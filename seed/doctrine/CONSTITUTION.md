@@ -43,9 +43,10 @@ Tick steps, in order:
 15. `check_plus_share`: a share of capacity goes to improvements
 16. `age_sla`: an item past its SLA is escalated, never ignored
 17. `cost_probe`: spend is sampled against the budget
-18. `criticality`: k_eff is computed from verified deploys over cost and human touches
-19. `pulse`: the system publishes what it did, from its own tables
-20. `ignition`: the system reads its own stage from bootstrap to self-sustaining
+18. `second_goal`: an objective measured only by its own target is filed; a breached guard under a healthy target is repaired first
+19. `criticality`: k_eff is computed from verified deploys over cost and human touches
+20. `pulse`: the system publishes what it did, from its own tables
+21. `ignition`: the system reads its own stage from bootstrap to self-sustaining
 
 Detectors: every failure mode has a read-only probe (1 = healthy); a red probe files FM-<id> that closes only when the probe is green.
 Executor: work is taken in driver order, built on a branch, opened as a pull request and merged by the server when its checks are green; a client session only produces.
@@ -155,6 +156,9 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **every-essential-variable-holds-a-veto** (Rowan, 2026-11-27): A change the second loop makes is judged by every essential variable, not only the one it was made for: a step that knocks a variable that was holding out of its limits is undone, and the undo is read as a trial. The search for a value that holds goes on past a knob's declared direction, and the regulator reads its own variety and structure from its own tables. The mechanisms are taken from W. Ross Ashby's journal and cite its pages.
   - detector: `worker/src/ashby.js`, `worker/src/regulation.js`
   - remediation: `worker/src/goals.js`, `worker/src/ashby.js`
+- **second-goal-in-code** (Rowan, 2026-11-27): The explicit goal is subordinate to the essential variables. Every objective with a target carries a guard its target does not move; a breached guard under a healthy target is repaired before the goal is pursued; a step is drawn only from untried, reversible candidates and kept only when the variables held; a task that harms the one who does it is not prescribed, and past failures are always recalled.
+  - detector: `worker/src/secondloop.js`, `autonomy/secondloop.json`
+  - remediation: `worker/src/secondloop.js`, `worker/src/organization.js`
 - **automation-never-discards-work** (Rowan, 2026-11-27): Automation never closes a pull request on a label, a cached state or an unknown state: it reads the pull request live, tries to update its branch, and pins the head under refs/archive before any close. A pull request automation closed that main still lacks is reopened.
   - detector: `worker/src/prsafe.js`
   - remediation: `worker/src/prsafe.js`, `worker/src/sweeper.js`

@@ -6516,6 +6516,15 @@
    "body": "The kernel reviewed a knob change against the goal it was made for and kept it when that goal moved, whatever it did to the others. Ashby's journal (J.5307, J.5360) gives every part a veto and shows that correcting many reactions without one settles at a fixed share correct. goals.js undoes such a step and reads the undo as a trial. Evidence: node --test seed/worker/test/ashby-loop.test.js in the session, 6 tests pass; not yet deployed, so no live reading exists.",
    "probe": "grep:seed/worker/src/goals.js::async function vetoers",
    "session": "session_0156nqDvC5egisoaWX278iM6"
+  },
+  {
+   "id": "decision-2026-11-27-ashby-kernel-1-ashby-s-concepts-are-kernel-code-with-model-g",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "SECOND-LOOP-KERNEL-1: Ashby's concepts are kernel code, with model-guided search",
+   "body": "seed/worker/src/secondloop.js and organization.js carry the concepts as pure functions; the tick step ashby enforces the second goal from the metrics table. Blind random re-draw is not copied: the homeostat test shows the fully joined search growing far faster than the gated one. The archive forbids reproduction, so seed/autonomy/secondloop.json keeps page numbers and our own statements only.",
+   "probe": "grep:seed/worker/src/secondloop.js::export async function secondGoalStep",
+   "session": "session_0156nqDsxJd4poRv2mkbug9e"
   }
  ]
 }

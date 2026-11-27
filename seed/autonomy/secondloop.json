@@ -1,0 +1,417 @@
+{
+ "$schema": "./schemas/secondloop.schema.json",
+ "_doc": "SECOND-LOOP-KERNEL-1 (Rowan, 2026-11-27): the concepts of W. Ross Ashby's journal and concept index and of Perez Lopez's 1974 paper built on them, that run as code in seed/worker/src/secondloop.js and seed/worker/src/organization.js. One row per concept: the exports that implement it, our own statement of it, where it comes from, and how it fails. Read by seed/worker/test/secondloop.test.js and seed/worker/test/organization.test.js, which fails when a concept names no export, an export is named by no concept, or a journal page is not a four-digit page number. verified = the page numbers were read on ashby.info index pages; false = taken from a secondary source.",
+ "id": "secondloop",
+ "version": "1.1.0",
+ "marker": "SECOND-LOOP-KERNEL-1",
+ "code": "worker/src/secondloop.js",
+ "tick_step": "second_goal",
+ "item": "EV-COVERAGE",
+ "archive": {
+  "home": "https://ashby.info/index.html",
+  "journal": "https://ashby.info/journal/index.html",
+  "index": "https://ashby.info/journal/index/index.html",
+  "page_pattern": "https://ashby.info/journal/page/{NNNN}.html",
+  "volume_pattern": "https://ashby.info/journal/volume/{NN}.html",
+  "other_index_pattern": "https://ashby.info/journal/index/other/{category}.html",
+  "store": "references-only",
+  "licence_note": "The archive's About page reserves all rights and forbids reproducing the site or making derivatives of it. This register therefore holds page numbers, addresses and our own statements; no image and no transcription is stored or embedded."
+ },
+ "helpers": [
+  "rng",
+  "STEP_DEFAULTS",
+  "COVERAGE_ITEM"
+ ],
+ "concepts": [
+  {
+   "id": "essential-variables",
+   "module": "ev_registry",
+   "exports": [
+    "inLimits",
+    "bounded",
+    "breached"
+   ],
+   "statement": "A system is adapted while every essential variable stays inside its limits; there must be several of them, and a reading that is missing counts as outside.",
+   "sources": [
+    {
+     "journal_pages": [
+      "3500",
+      "3603",
+      "4015",
+      "4167",
+      "4284"
+     ],
+     "url": "https://ashby.info/journal/index/index.html",
+     "verified": true
+    },
+    {
+     "work": "Perez Lopez, Organizational Theory: A Cybernetic Approach, IESE WP 5 (1974), ch. I",
+     "url": "https://www.iese.edu/media/research/pdfs/DI-0005-E.pdf",
+     "verified": true
+    }
+   ],
+   "failure_mode": "The system chooses its own essential variables, or a probe fails silently and reads as in limits.",
+   "code": "worker/src/secondloop.js"
+  },
+  {
+   "id": "step-mechanism",
+   "module": "step_mech",
+   "exports": [
+    "selectStep",
+    "stepDecision",
+    "settle"
+   ],
+   "statement": "The second feedback changes a parameter in one discrete jump only when an essential variable is out of limits, and keeps the change only if the variables then hold.",
+   "sources": [
+    {
+     "journal_pages": [
+      "0995",
+      "1041",
+      "2004",
+      "3523",
+      "3436",
+      "5775"
+     ],
+     "url": "https://ashby.info/journal/index/thumbs/step.html",
+     "verified": true
+    },
+    {
+     "work": "Ashby, Design for a Brain (1952; 2nd ed. 1960), ch. 7 and 8",
+     "verified": true
+    }
+   ],
+   "failure_mode": "Thrash (endless re-draws), a spent repertoire, a stable but bad configuration, or a trial of something that cannot be undone.",
+   "code": "worker/src/secondloop.js"
+  },
+  {
+   "id": "multistable-gating",
+   "module": "partition_mgr",
+   "exports": [
+    "gate",
+    "interference"
+   ],
+   "statement": "Each separate good gets an ultrastable part of its own; only the part whose own variable is out of limits adapts, so one adaptation does not undo another.",
+   "sources": [
+    {
+     "journal_pages": [
+      "5436",
+      "5345",
+      "5360",
+      "5304",
+      "5369",
+      "5371",
+      "5410",
+      "2958",
+      "4831",
+      "3924"
+     ],
+     "url": "https://ashby.info/journal/index/other/multistable_system.html",
+     "verified": true
+    }
+   ],
+   "failure_mode": "Parts are coupled through something they share in the environment (a quota, a key, a rate limit) that no declared coupling shows.",
+   "code": "worker/src/secondloop.js"
+  },
+  {
+   "id": "coupling-limit",
+   "module": "coupling_guard",
+   "exports": [
+    "connectance",
+    "spectralAbscissa",
+    "couplingGuard"
+   ],
+   "statement": "Join parts with few, simple couplings; a randomly joined system loses stability sharply as the share of possible couplings in use rises.",
+   "sources": [
+    {
+     "journal_pages": [
+      "1849",
+      "1905"
+     ],
+     "url": "https://ashby.info/journal/volume/08.html",
+     "verified": true
+    },
+    {
+     "work": "Gardner and Ashby, Nature 228:784 (1970), doi:10.1038/228784a0",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/5472974/",
+     "verified": true
+    },
+    {
+     "work": "May, Nature 238:413 (1972), doi:10.1038/238413a0",
+     "verified": true
+    }
+   ],
+   "failure_mode": "The limit comes from random linear systems; an agent loop is neither random nor linear, so a graph can pass the guard and still oscillate.",
+   "code": "worker/src/secondloop.js"
+  },
+  {
+   "id": "requisite-variety",
+   "module": "variety_ledger",
+   "exports": [
+    "varietyBound",
+    "varietyLedger"
+   ],
+   "statement": "Only variety in the regulator can absorb variety in disturbances: outcomes cannot be held to less than the difference between the two.",
+   "sources": [
+    {
+     "work": "Ashby, An Introduction to Cybernetics (1956), ch. 11",
+     "url": "https://ashby.info/Ashby-Introduction-to-Cybernetics.pdf",
+     "verified": true
+    }
+   ],
+   "failure_mode": "Counting tools, prompts or agents as variety when they answer the same disturbance.",
+   "code": "worker/src/secondloop.js"
+  },
+  {
+   "id": "regulator-model",
+   "module": "world_model",
+   "exports": [
+    "calibration"
+   ],
+   "statement": "A regulator that succeeds behaves as a model of what it regulates; here the model is scored against outcomes before the search may follow it.",
+   "sources": [
+    {
+     "journal_pages": [
+      "3499",
+      "4292"
+     ],
+     "url": "https://ashby.info/journal/index/other/oddments.html",
+     "verified": true
+    },
+    {
+     "work": "Conant and Ashby, Int. J. Systems Science 1(2):89 (1970)",
+     "verified": true
+    }
+   ],
+   "failure_mode": "The theorem is weaker than its slogan: a trivial mapping satisfies it, so a passing score on few outcomes proves little.",
+   "code": "worker/src/secondloop.js"
+  },
+  {
+   "id": "habituation",
+   "module": "habituation",
+   "exports": [
+    "sensitivity"
+   ],
+   "statement": "A disturbance that repeats without harm draws a smaller response each time.",
+   "sources": [
+    {
+     "journal_pages": [
+      "3706",
+      "4529",
+      "3860"
+     ],
+     "url": "https://ashby.info/journal/index/other/dams.html",
+     "verified": true
+    }
+   ],
+   "failure_mode": "Habituating to a variable that is drifting slowly toward its limit.",
+   "code": "worker/src/secondloop.js"
+  },
+  {
+   "id": "two-goal-structure",
+   "module": "doctrine_guard",
+   "exports": [
+    "twoGoal",
+    "lexicographic",
+    "secondGoalStep"
+   ],
+   "statement": "The explicit goal is pursued through main variables and is subordinate to keeping the essential variables in limits; a system judged by its goal alone is a stable system, not an ultrastable one.",
+   "sources": [
+    {
+     "work": "Perez Lopez, IESE WP 5 (1974), ch. II",
+     "url": "https://www.iese.edu/media/research/pdfs/DI-0005-E.pdf",
+     "verified": true
+    },
+    {
+     "work": "Ashby, Design for a Brain (1960), p. 98 as cited there",
+     "verified": true
+    }
+   ],
+   "failure_mode": "The guard metric is itself moved by the target, so the pair measures one thing twice.",
+   "code": "worker/src/secondloop.js"
+  },
+  {
+   "id": "consistency-of-action",
+   "module": "doctrine_guard",
+   "exports": [
+    "actionEval",
+    "negativeLearning",
+    "failureRecall"
+   ],
+   "statement": "An action has effectiveness (what it does for its goal), efficiency (what it does to the actor's other needs, learnt by doing) and consistency (how efficiency changes with experience); experience does not by itself produce good learning, and forgetting one's failures defeats it.",
+   "sources": [
+    {
+     "work": "Perez Lopez, IESE WP 5 (1974), ch. III",
+     "url": "https://www.iese.edu/media/research/pdfs/DI-0005-E.pdf",
+     "verified": true
+    }
+   ],
+   "failure_mode": "Efficiency is not measured at all, so every action looks consistent.",
+   "code": "worker/src/secondloop.js"
+  },
+  {
+   "id": "homeostat",
+   "module": "sim/homeostat",
+   "exports": [
+    "homeostat"
+   ],
+   "statement": "Coupled units each re-draw their own input weights from a stepping switch whenever their needle leaves its limits, until the whole settles; joined completely, the search time grows far faster than the size.",
+   "sources": [
+    {
+     "journal_pages": [
+      "2094",
+      "2432",
+      "2433",
+      "2434",
+      "2435",
+      "3662"
+     ],
+     "url": "https://ashby.info/journal/index/thumbs/homeostat.html",
+     "verified": true
+    },
+    {
+     "work": "Ashby, Design for a Brain (1960), ch. on the fully-joined system and on iterated systems",
+     "verified": true
+    }
+   ],
+   "failure_mode": "The harness is linear; it calibrates budgets and windows and proves nothing about a real agent fleet.",
+   "code": "worker/src/secondloop.js"
+  },
+  {
+   "id": "three-values-of-action",
+   "module": "organization",
+   "code": "worker/src/organization.js",
+   "exports": [
+    "actionValues",
+    "learningKind"
+   ],
+   "statement": "An action is valued for the consequences sought (effectiveness), for what it does to the actor's other needs (efficiency), and for how experience changes that (consistency). Experience teaches either that the model was wrong or that it left something out.",
+   "sources": [
+    {
+     "work": "Perez Lopez, Organizational Theory: A Cybernetic Approach, IESE WP 5 (1974), ch. III",
+     "url": "https://www.iese.edu/media/research/pdfs/DI-0005-E.pdf",
+     "verified": true
+    }
+   ],
+   "failure_mode": "Efficiency is self-reported by the actor being judged."
+  },
+  {
+   "id": "control-system-three-levels",
+   "module": "organization",
+   "code": "worker/src/organization.js",
+   "exports": [
+    "controlSystem"
+   ],
+   "statement": "A control system is tasks and their rewards. The organisation exists only while it is effective (brings more than it spends to motivate), attractive (members choose to cooperate) and consistent (learning does not erode that choice).",
+   "sources": [
+    {
+     "work": "Perez Lopez, Organizational Theory: A Cybernetic Approach, IESE WP 5 (1974), ch. IV and V",
+     "url": "https://www.iese.edu/media/research/pdfs/DI-0005-E.pdf",
+     "verified": true
+    }
+   ],
+   "failure_mode": "The three levels are folded into one score, which silently defines a purpose."
+  },
+  {
+   "id": "inconsistency-horizon",
+   "module": "organization",
+   "code": "worker/src/organization.js",
+   "exports": [
+    "horizon"
+   ],
+   "statement": "An inconsistent organisation lasts only while it can offset lost attractiveness with larger rewards; the offset consumes the margin, and there is a period after which motivating costs more than cooperation brings.",
+   "sources": [
+    {
+     "work": "Perez Lopez, Organizational Theory: A Cybernetic Approach, IESE WP 5 (1974), ch. V",
+     "url": "https://www.iese.edu/media/research/pdfs/DI-0005-E.pdf",
+     "verified": true
+    }
+   ],
+   "failure_mode": "Drift is assumed linear; real erosion can be sudden."
+  },
+  {
+   "id": "organisational-values",
+   "module": "organization",
+   "code": "worker/src/organization.js",
+   "exports": [
+    "prescribe"
+   ],
+   "statement": "Values are a hypothesis about a future cause: forbid any task that does not satisfy the needs of the one who performs it, even when the reward would get it done and the performer cannot yet know.",
+   "sources": [
+    {
+     "work": "Perez Lopez, Organizational Theory: A Cybernetic Approach, IESE WP 5 (1974), ch. V (the closing theorem)",
+     "url": "https://www.iese.edu/media/research/pdfs/DI-0005-E.pdf",
+     "verified": true
+    }
+   ],
+   "failure_mode": "The floor is set by the party that profits from the task."
+  },
+  {
+   "id": "evoked-set",
+   "module": "organization",
+   "code": "worker/src/organization.js",
+   "exports": [
+    "evoke"
+   ],
+   "statement": "A freely adaptive system acts on a selected part of its memory; selecting away the records of its own mistakes is the failure the paper names pride.",
+   "sources": [
+    {
+     "work": "Perez Lopez, Organizational Theory: A Cybernetic Approach, IESE WP 5 (1974), ch. III, footnote 3",
+     "url": "https://www.iese.edu/media/research/pdfs/DI-0005-E.pdf",
+     "verified": true
+    }
+   ],
+   "failure_mode": "Failures are recorded under a different action class than the one proposed, so they are never evoked."
+  },
+  {
+   "id": "minimum-organisation",
+   "module": "organization",
+   "code": "worker/src/organization.js",
+   "exports": [
+    "coupledPair"
+   ],
+   "statement": "The smallest organisation is two coupled ultrastable systems, each with essential variables of its own.",
+   "sources": [
+    {
+     "work": "Perez Lopez, Organizational Theory: A Cybernetic Approach, IESE WP 5 (1974), ch. I",
+     "url": "https://www.iese.edu/media/research/pdfs/DI-0005-E.pdf",
+     "verified": true
+    }
+   ],
+   "failure_mode": "Only one party's variables are sensed, so equilibrium is declared from one side."
+  }
+ ],
+ "not_yet_code": [
+  {
+   "id": "dispersion",
+   "item": "Q-ASHBY-dispersion",
+   "why": "routing a disturbance to different parts by its kind (journal 3851, 2988, 4418) needs the disturbance classes the variety ledger will record first"
+  },
+  {
+   "id": "observer-disturbance",
+   "item": "Q-ASHBY-observer",
+   "why": "ultrastability is shown only under an injected disturbance (journal 4160); a scheduled fault per partition is the next step"
+  },
+  {
+   "id": "adaptation-ledger",
+   "item": "Q-ASHBY-ledger",
+   "why": "step trials, commits and rollbacks need their own table before interference and failure recall can be read from live data (journal 5410, 5592, 5601, 5775)"
+  },
+  {
+   "id": "journal-index",
+   "item": "Q-ASHBY-index",
+   "why": "the 678 keywords and the Other Index as page-number metadata; the two DAMS categories and the archive's copyright page were not read in this pass"
+  },
+  {
+   "id": "dams",
+   "item": null,
+   "why": "kept as the anti-pattern: Ashby's own multistable machine was too small to show multistability (journal 3637) and was taken down (3509); blind search is not copied"
+  },
+  {
+   "id": "organisation-live-readings",
+   "item": "Q-ASHBY-org-live",
+   "why": "controlSystem, prescribe and evoke run on rows passed to them; reading them from the fleet's own outcomes and spend per role each tick is the next step"
+  }
+ ],
+ "platform_map": "doctrine/ashby-concepts.json (platform) is not bound to this module in this change: PR 2622 rewrites that file, and the binding follows it (Q-ASHBY-index)",
+ "work_record": "ultrastable/ultrastable issue 2620 (ASHBY-SPEC-1): this kernel is the pure logic for its steps 4 and 6 to 10; the Python reference harness is seed/scripts/homeostat.py (HOMEOSTAT-1) and homeostat() here is its JavaScript twin for the Worker's tests; PR 2622 adds seed/worker/src/ashby.js (variety, entropy, reducibility, search budget) to the goal loop and holds the rule id ASHBY-KERNEL-1, so this module is named secondloop and carries what that one does not"
+}

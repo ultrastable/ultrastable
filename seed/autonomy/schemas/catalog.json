@@ -35,6 +35,14 @@
       "url": "default-policy-pack.schema.json"
     },
     {
+      "name": "essential-variables.json",
+      "description": "Contract for seed/autonomy/essential-variables.json",
+      "fileMatch": [
+        "seed/autonomy/essential-variables.json"
+      ],
+      "url": "essential-variables.schema.json"
+    },
+    {
       "name": "failure-modes.json",
       "description": "Contract for seed/autonomy/failure-modes.json",
       "fileMatch": [
@@ -121,6 +129,14 @@
         "seed/autonomy/retention.json"
       ],
       "url": "retention.schema.json"
+    },
+    {
+      "name": "secondloop.json",
+      "description": "Contract for seed/autonomy/secondloop.json",
+      "fileMatch": [
+        "seed/autonomy/secondloop.json"
+      ],
+      "url": "secondloop.schema.json"
     },
     {
       "name": "seed-lifecycle.json",

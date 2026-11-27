@@ -96,6 +96,7 @@
       "check_plus_share": "a share of capacity goes to improvements",
       "age_sla": "an item past its SLA is escalated, never ignored",
       "cost_probe": "spend is sampled against the budget",
+      "second_goal": "an objective measured only by its own target is filed; a breached guard under a healthy target is repaired first",
       "criticality": "k_eff is computed from verified deploys over cost and human touches",
       "pulse": "the system publishes what it did, from its own tables",
       "ignition": "the system reads its own stage from bootstrap to self-sustaining"
@@ -1005,6 +1006,35 @@
         {
           "file": "worker/src/ashby.js",
           "has": "export function nextTrial"
+        }
+      ]
+    },
+    {
+      "id": "second-goal-in-code",
+      "rule": "The explicit goal is subordinate to the essential variables. Every objective with a target carries a guard its target does not move; a breached guard under a healthy target is repaired before the goal is pursued; a step is drawn only from untried, reversible candidates and kept only when the variables held; a task that harms the one who does it is not prescribed, and past failures are always recalled.",
+      "source": "Rowan, 2026-11-27",
+      "covers": [
+        "SECOND-LOOP-KERNEL-1",
+        "ORG-THEORY-1"
+      ],
+      "detector": [
+        {
+          "file": "worker/src/secondloop.js",
+          "has": "export function twoGoal"
+        },
+        {
+          "file": "autonomy/secondloop.json",
+          "has": "references-only"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "worker/src/secondloop.js",
+          "has": "export async function secondGoalStep"
+        },
+        {
+          "file": "worker/src/organization.js",
+          "has": "export function prescribe"
         }
       ]
     },

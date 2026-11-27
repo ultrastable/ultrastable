@@ -1,0 +1,9 @@
+{
+  "_doc": "ESSENTIAL-VARIABLES-1 (Ashby step 2, issue 2620): the essential variables of this system, one row each, with the goal that reads it and its limit. The tick's goals step reads them first and holds every other knob while one is outside its limit (PEREZ-LOPEZ-1, control.essential in goals.json must equal this list). A variable with no reading counts as outside its limit. This file changes only by pull request; scripts/evregistry.py --check fails when it and goals.json disagree.",
+  "variables": [
+    {"id": "silent_drops", "goal": "core.close.drops", "metric": "silent_drops_7d", "op": "<=", "limit": 0},
+    {"id": "metrics_in_breach", "goal": "core.close.breaches", "metric": "metrics_in_breach", "op": "<=", "limit": 0},
+    {"id": "cost", "goal": "core.cost.peak", "metric": "free_tier_peak_share", "op": "<=", "limit": 0.6},
+    {"id": "unattended_horizon", "goal": "core.year.unattended", "metric": "unattended_horizon_p10", "op": ">=", "limit": 365}
+  ]
+}
