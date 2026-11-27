@@ -7151,6 +7151,15 @@
    "body": "Round 2 of the spec run was built on a base far behind main. Rebasing its 340-file snapshot would have replayed stale history, so its delta (base to snapshot, minus test-run ledgers) was applied with git apply --3way onto a fresh worktree at origin/main. Of the 19 conflicts, generated files (READMEs, claims data, papers, self and research data, conformance manifest) were cleared to main and regenerated from the merged tree; hand-merged files kept main's newer behaviour and added round 2's on top (goals.js keeps ASHBY-KERNEL-1 and adds the US-26-R78 burn page; the halt test keeps main's kit-and-platform body and runs in the standalone seed again). A round-2 test written before PR-NEVER-LOSE-1 was brought up to it instead of weakening the guard. Evidence: seed Worker tests 1122, 0 fail, all pass (and 964 pass, 0 fail in a seed-only copy); workers core and packs 2136 pass, 0 fail; seed Python 155 tests pass; 246 foundation test files, 2116 tests, 0 fail apart from three already red on pristine main (actions-budget.json schema); every named foundation check passes.",
    "probe": "grep:seed/worker/src/goals.js::BURN_RULES",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-27-each-slice-of-a-split-stack-regenerates-its-own-generated-fi",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Each slice of a split stack regenerates its own generated files",
+   "body": "A stack cut from one large tree is merged in order and CI runs on every prefix, so a generated file copied from the final tree is wrong in every slice but the last: the conformance manifest would name test titles a prefix does not carry and the claim counts (seed test totals in the READMEs and claims data) would not match the prefix's tests. Each slice was built by taking its own files from the final tree and then running the generators (conformance --write, claims --fix --apply in the root and the seed); the last slice then equals the final tree byte for byte, which proves the generators are deterministic.",
+   "probe": "grep:workers/core/conformance/cli.js::--write",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
