@@ -1,595 +1,595 @@
 {
-  "id": "WORDS-MATCH-CODE-1",
-  "rule": "A published statement is true only if code makes it true, and code checks that on every change. A line on a public surface that states a number, a cadence, a guarantee or an automatic behaviour is bound to a probe (registered claim: exact quote + probe file + string the probe must contain) or sits in the shrink-only baseline that the executor drains. Tenant pages render statements from config with core/statements (probed at runtime and in CI).",
-  "owner": "Rowan, 2026-11-17",
-  "scan_globs": [
-    "site/*.js",
-    "site/**/*.html",
-    "seed/site/**/*.js",
-    "seed/site/**/*.html",
-    "README.md",
-    "agents/AGENTS.md"
-  ],
-  "skip": [
-    "\\.test\\.",
-    "/test/",
-    "STAGED",
-    "node_modules",
-    "self-data\\.js",
-    "research-data\\.js",
-    "temporal-data\\.js",
-    "yearfail-data\\.js",
-    "saydo-data\\.js",
-    "yearsim-data\\.js",
-    "trajectory-data\\.js",
-    "intent-yield-data\\.js",
-    "feed-data\\.js"
-  ],
-  "min_len": 40,
-  "claim_patterns": [
-    "\\bevery \\d+ (minutes?|hours?|days?)\\b",
-    "\\b\\d[\\d,]*(\\.\\d+)? ?(%|percent)",
-    "\\b\\d[\\d,]* (draws|checks|probes|tests|sources|repositories|workers|tenants|loops|agents|roles)\\b",
-    "\\b(100%|always|never|automatically|guarantee[sd]?|every (change|deploy|merge|claim|statement|page))\\b",
-    "\\bwithin \\d+ ?(minutes?|hours?|seconds?|days?)\\b",
-    "\\bevery (two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|fifty|hundred) (minutes?|hours?|days?|weeks?)\\b",
-    "\\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|fifty|hundred) (policy )?(areas|sources|indexes|indices|programmes|programs|channels|tenants|systems|loops|workers|repositories|checks|probes)\\b"
-  ],
-  "claims": [
-    {
-      "id": "agents-word-claims-example",
-      "source": "agents/AGENTS.md",
-      "quote": "Counts and cadences written in words (\"five policy areas\", \"every six hours\") are claims too",
-      "probe": {
-        "file": "tests/foundation/test_claimcode.py",
-        "contains": "every six hours from public data"
-      }
-    },
-    {
-      "id": "readme-plus-share",
-      "source": "README.md",
-      "quote": "A protected share of capacity (20% by default)",
-      "probe": {
-        "file": "seed/ultrastable.json",
-        "contains": "\"plus_share\": 0.2"
-      }
-    },
-    {
-      "id": "audit-chain-seal",
-      "source": "agents/AGENTS.md",
-      "quote": "after 7 days the chain is sealed into gzip NDJSON segments",
-      "probe": {
-        "file": "seed/worker/src/auditchain.js",
-        "contains": "gzip"
-      }
-    },
-    {
-      "id": "agent-md-maintains-itself",
-      "source": "site/worker.js",
-      "quote": "it now maintains itself",
-      "probe": {
-        "file": ".github/workflows/executor.yml",
-        "contains": "name: executor"
-      }
-    },
-    {
-      "id": "front-backed-freshness",
-      "source": "agents/AGENTS.md",
-      "quote": "returns 503 when one is older",
-      "probe": {
-        "file": "site/live.js",
-        "contains": "status: d.freshness.ok ? 200 : 503"
-      }
-    },
-    {
-      "id": "live-stale-banner",
-      "source": "site/live.js",
-      "quote": "older than its cadence; the freshness probe in the transparency workflow fails and files the repair",
-      "probe": {
-        "file": ".github/workflows/transparency.yml",
-        "contains": "api/freshness"
-      }
-    },
-    {
-      "id": "no-open-items",
-      "source": "agents/AGENTS.md",
-      "quote": "The Ultrastable system shall never allow 'Not done, needs you'",
-      "probe": {
-        "file": "foundation/openloops.py",
-        "contains": "banned_phrases"
-      }
-    },
-    {
-      "id": "unattended-sessions-never-count",
-      "source": "agents/AGENTS.md",
-      "quote": "it never counts toward the target and no loop may depend on one",
-      "probe": {
-        "file": "doctrine/unattended.json",
-        "contains": "never counts"
-      }
-    },
-    {
-      "id": "progress-last-visit-local",
-      "source": "site/progress.js",
-      "quote": "Your last visit is kept only in this browser and is never sent anywhere.",
-      "probe": {
-        "file": "workers/core/progress/progress.test.js",
-        "contains": "assert.doesNotMatch(s, /cookie|fetch\\(|XMLHttpRequest/)"
-      }
-    },
-    {
-      "id": "visible-progress",
-      "source": "agents/AGENTS.md",
-      "quote": "Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).",
-      "probe": {
-        "file": "seed/worker/src/progress.js",
-        "contains": "export async function progressStep("
-      }
-    },
-    {
-      "id": "runway-agents",
-      "source": "agents/AGENTS.md",
-      "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
-      "probe": {
-        "file": "foundation/runway.py",
-        "contains": "target_days is below the owner's minimum of 365"
-      }
-    },
-    {
-      "id": "runway-seed",
-      "source": "seed/agents/AGENTS.md",
-      "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
-      "probe": {
-        "file": "foundation/runway.py",
-        "contains": "target_days is below the owner's minimum of 365"
-      }
-    },
-    {
-      "id": "runway-agents-pi",
-      "source": "agents/PROJECT-INSTRUCTIONS.md",
-      "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
-      "probe": {
-        "file": "foundation/runway.py",
-        "contains": "target_days is below the owner's minimum of 365"
-      }
-    },
-    {
-      "id": "decisions-outreach-segment-predict",
-      "source": "site/decisions-data.js",
-      "quote": "the segment's mean reward so far, or 0 for a segment never tried",
-      "probe": {
-        "file": "foundation/outreach.py",
-        "contains": "top[\"mean_reward\"] if top[\"mean_reward\"] is not None else 0.0"
-      }
-    },
-    {
-      "id": "failure-resolve-coverage",
-      "source": "agents/AGENTS.md",
-      "quote": "a mode nothing watches, or a recorded failure with no open queue item, fails `python3 -m foundation failure_audit --check`",
-      "probe": {
-        "file": "foundation/failure_audit.py",
-        "contains": "no live detector in"
-      }
-    },
-    {
-      "id": "template-code-only",
-      "source": "agents/AGENTS.md",
-      "quote": "fails a change that brings admin material back",
-      "probe": {
-        "file": "foundation/template.py",
-        "contains": "admin material is back in the template"
-      }
-    },
-    {
-      "id": "pathfinder-exhaustion",
-      "source": "agents/AGENTS.md",
-      "quote": "An ask without an exhaustion proof fails `python3 -m foundation pathfinder --check`",
-      "probe": {
-        "file": "foundation/pathfinder.py",
-        "contains": "owner ask without exhaustion proof"
-      }
-    },
-    {
-      "id": "flow-balance-site",
-      "source": "site/balance.js",
-      "quote": "a merged duplicate lowers new issues and never counts as closed",
-      "probe": {
-        "file": "seed/scripts/balance.py",
-        "contains": "never_closure"
-      }
-    },
-    {
-      "id": "flow-balance-rule",
-      "source": "agents/AGENTS.md",
-      "quote": "Superseded items lower net inflow and never count as closures",
-      "probe": {
-        "file": "seed/scripts/balance.py",
-        "contains": "never_closure"
-      }
-    },
-    {
-      "id": "verify-page-coverage",
-      "source": "site/verification.js",
-      "quote": "guarantees are model-checked and tied to the deployed code",
-      "probe": {
-        "file": "foundation/verify.py",
-        "contains": "def check(init, succ, invariants, goal"
-      }
-    },
-    {
-      "id": "verify-route-description",
-      "source": "site/worker.js",
-      "quote": "Guarantees model-checked and tied to the deployed code",
-      "probe": {
-        "file": "foundation/verify.py",
-        "contains": "tied_to_code"
-      }
-    },
-    {
-      "id": "year-saydo-every-watchdog",
-      "source": "site/year.js",
-      "quote": "are checked against the code on every watchdog pass",
-      "probe": {
-        "file": "foundation/ultrastability.py",
-        "contains": "importlib.import_module(\"foundation.\" + name).run(REPO, apply=True)"
-      }
-    },
-    {
-      "id": "yearsim-saydo-every-watchdog",
-      "source": "agents/AGENTS.md",
-      "quote": "Both run on every watchdog pass",
-      "probe": {
-        "file": "foundation/ultrastability.py",
-        "contains": "importlib.import_module(\"foundation.\" + name).run(REPO, apply=True)"
-      }
-    },
-    {
-      "id": "seedadmit-year-target",
-      "source": "agents/PROJECT-INSTRUCTIONS.md",
-      "quote": "the seeded year reaches 365 days at the 10th percentile in normal and strict mode",
-      "probe": {
-        "file": "seed/autonomy/kit.json",
-        "contains": "\"target_days\": 365"
-      }
-    },
-    {
-      "id": "seedadmit-expiry",
-      "source": "agents/PROJECT-INSTRUCTIONS.md",
-      "quote": "expires after 8 days",
-      "probe": {
-        "file": "seed/autonomy/kit.json",
-        "contains": "\"max_age_days\": 8"
-      }
-    },
-    {
-      "id": "tenant-promo-no-cold",
-      "source": "agents/AGENTS.md",
-      "quote": "a tenant never creates an account, never posts from the owner's personal account and never sends a cold message to a person",
-      "probe": {
-        "file": "seed/worker/src/promoqueue.js",
-        "contains": "@[a-z0-9_]"
-      }
-    },
-    {
-      "id": "seed-autonomy-stage",
-      "source": "agents/AGENTS.md",
-      "quote": "that is below `looping` 48 hours after its first live deploy",
-      "probe": {
-        "file": "tests/foundation/test_seedadmit.py",
-        "contains": "def test_autonomy_is_read_from_the_seed"
-      }
-    },
-    {
-      "id": "improve-loop-agents",
-      "source": "agents/AGENTS.md",
-      "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
-      "probe": {
-        "file": "tests/foundation/test_improve.py",
-        "contains": "def test_frontend_and_backend_lanes_every_pass"
-      }
-    },
-    {
-      "id": "improve-loop-seed",
-      "source": "seed/agents/AGENTS.md",
-      "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
-      "probe": {
-        "file": "tests/foundation/test_improve.py",
-        "contains": "def test_frontend_and_backend_lanes_every_pass"
-      }
-    },
-    {
-      "id": "improve-loop-agents-pi",
-      "source": "agents/PROJECT-INSTRUCTIONS.md",
-      "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
-      "probe": {
-        "file": "tests/foundation/test_improve.py",
-        "contains": "def test_frontend_and_backend_lanes_every_pass"
-      }
-    },
-    {
-      "id": "datagraph-agents",
-      "source": "agents/AGENTS.md",
-      "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
-      "probe": {
-        "file": "seed/worker/test/datagraph.test.js",
-        "contains": "a pass builds the graph from every table with no configuration"
-      }
-    },
-    {
-      "id": "datagraph-seed-agents",
-      "source": "seed/agents/AGENTS.md",
-      "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
-      "probe": {
-        "file": "seed/worker/test/datagraph.test.js",
-        "contains": "a pass builds the graph from every table with no configuration"
-      }
-    },
-    {
-      "id": "datagraph-agents-pi",
-      "source": "agents/PROJECT-INSTRUCTIONS.md",
-      "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
-      "probe": {
-        "file": "seed/worker/test/datagraph.test.js",
-        "contains": "a pass builds the graph from every table with no configuration"
-      }
-    },
-    {
-      "id": "sync-both-ways-agents-agents",
-      "source": "agents/AGENTS.md",
-      "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
-      "probe": {
-        "file": "tests/foundation/test_improve.py",
-        "contains": "class SyncBothWays"
-      }
-    },
-    {
-      "id": "sync-both-ways-seed-agents-agents",
-      "source": "seed/agents/AGENTS.md",
-      "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
-      "probe": {
-        "file": "tests/foundation/test_improve.py",
-        "contains": "class SyncBothWays"
-      }
-    },
-    {
-      "id": "sync-both-ways-agents-project-instructions",
-      "source": "agents/PROJECT-INSTRUCTIONS.md",
-      "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
-      "probe": {
-        "file": "tests/foundation/test_improve.py",
-        "contains": "class SyncBothWays"
-      }
-    },
-    {
-      "id": "directory-daily-listing",
-      "source": "site/worker.js",
-      "quote": "checks in once a day",
-      "probe": {
-        "file": "seed/worker/src/discover.js",
-        "contains": "now.getUTCHours() === 3"
-      }
-    },
-    {
-      "id": "directory-recheck-daily",
-      "source": "site/worker.js",
-      "quote": "rechecks it daily",
-      "probe": {
-        "file": "site/directory.js",
-        "contains": "20 * 3600e3"
-      }
-    },
-    {
-      "id": "directory-drop-three",
-      "source": "agents/AGENTS.md",
-      "quote": "three failed days",
-      "probe": {
-        "file": "site/directory.js",
-        "contains": "row.fails + 1 >= 3"
-      }
-    },
-    {
-      "id": "directory-heartbeat-daily-agents",
-      "source": "agents/AGENTS.md",
-      "quote": "a daily heartbeat",
-      "probe": {
-        "file": "seed/worker/src/discover.js",
-        "contains": "now.getUTCHours() === 3"
-      }
-    },
-    {
-      "id": "directory-recheck-agents",
-      "source": "agents/AGENTS.md",
-      "quote": "rechecks daily",
-      "probe": {
-        "file": "site/directory.js",
-        "contains": "20 * 3600e3"
-      }
-    },
-    {
-      "id": "admit-1-bootstrap",
-      "source": "agents/AGENTS.md",
-      "quote": "everything has to work together automatically and seamlessly from the beginning",
-      "probe": {
-        "file": "scripts/regen_generated.py",
-        "contains": "\"admit\", \"--apply\""
-      }
-    },
-    {
-      "id": "no-fabrication-agents-agents.md",
-      "source": "agents/AGENTS.md",
-      "quote": "No made-up numbers (NO-FABRICATION-1",
-      "probe": {
-        "file": "foundation/claimcode.py",
-        "contains": "claim_patterns"
-      }
-    },
-    {
-      "id": "no-fabrication-seed-agents-agents.md",
-      "source": "seed/agents/AGENTS.md",
-      "quote": "No made-up numbers (NO-FABRICATION-1",
-      "probe": {
-        "file": "foundation/claimcode.py",
-        "contains": "claim_patterns"
-      }
-    },
-    {
-      "id": "no-fabrication-agents-project-instructions.md",
-      "source": "agents/PROJECT-INSTRUCTIONS.md",
-      "quote": "No made-up numbers (NO-FABRICATION-1",
-      "probe": {
-        "file": "foundation/claimcode.py",
-        "contains": "claim_patterns"
-      }
-    },
-    {
-      "id": "platform-statement-claims",
-      "source": "site/contract.js",
-      "quote": "Every statement on this site is bound to a probe in the code, and the result of each probe is served as data.",
-      "probe": {
-        "file": "site/worker.js",
-        "contains": "case \"/api/claims\""
-      }
-    },
-    {
-      "id": "platform-statement-audit",
-      "source": "site/contract.js",
-      "quote": "Every deploy and decision is a row in a hash chain whose head is public.",
-      "probe": {
-        "file": "seed/worker/src/index.js",
-        "contains": "/api/audit/head"
-      }
-    },
-    {
-      "id": "fleet-contract-daily-agents",
-      "source": "agents/AGENTS.md",
-      "quote": "daily in `tenant-repos.yml`, and the failure-audit detector `fleet-contract`",
-      "probe": {
-        "file": ".github/workflows/tenant-repos.yml",
-        "contains": "python3 -m foundation fleetcontract --live"
-      }
-    },
-    {
-      "id": "readme-live-core-deploy",
-      "source": "README.md",
-      "quote": "deployed from this repository's `main` on every merge that changes them",
-      "probe": {
-        "file": ".github/workflows/deploy-ultrastable.yml",
-        "contains": "branches: [main]"
-      }
-    },
-    {
-      "id": "controlplane-tick-cron",
-      "source": "site/controlplane.js",
-      "quote": "cron is every 10 minutes",
-      "probe": {
-        "file": "seed/ultrastable.json",
-        "contains": "\"tick_cron\": \"*/10 * * * *\""
-      }
-    },
-    {
-      "id": "oauth-code-single-use",
-      "source": "site/oauth.js",
-      "quote": "single use, burned before any check so a replay can never succeed",
-      "probe": {
-        "file": "site/oauth.test.mjs",
-        "contains": "a failed attempt burns the code"
-      }
-    },
-    {
-      "id": "roadmap-plus-share",
-      "source": "site/roadmap-data.js",
-      "quote": "A protected share of capacity (default 20%)",
-      "probe": {
-        "file": "seed/ultrastable.json",
-        "contains": "\"plus_share\": 0.2"
-      }
-    },
-    {
-      "id": "orchestrate-one-phase-a-tick",
-      "source": "agents/AGENTS.md",
-      "quote": "advances it one phase a tick",
-      "probe": {
-        "file": "seed/worker/src/orchestrate.js",
-        "contains": "One tick, one phase of the oldest unfinished run"
-      }
-    },
-    {
-      "id": "ashby-search-never-retries-a-failed-value",
-      "source": "agents/AGENTS.md",
-      "quote": "never retries a value that failed in the same episode",
-      "probe": {
-        "file": "seed/worker/test/ashby.test.js",
-        "contains": "assert.deepEqual(order, [3, 5, 2, 6, 1, 7, 8]);"
-      }
-    },
-    {
-      "id": "pr-never-lose-unknown-is-not-conflict",
-      "source": "agents/AGENTS.md",
-      "quote": "A label, a cached state or an unknown state is never a reason to close a pull request",
-      "probe": {
-        "file": "tests/foundation/test_prsafe.py",
-        "contains": "def test_unknown_state_is_not_a_conflict"
-      }
-    },
-    {
-      "id": "pr-never-lose-unknown-is-not-conflict-seed",
-      "source": "seed/agents/AGENTS.md",
-      "quote": "A label, a cached state or an unknown state is never a reason to close a pull request",
-      "probe": {
-        "file": "tests/foundation/test_prsafe.py",
-        "contains": "def test_unknown_state_is_not_a_conflict"
-      }
-    },
-    {
-      "id": "recency-page-schedule",
-      "source": "site/edge.js",
-      "quote": "Rebuilt after every merge and live within 26 hours",
-      "probe": {
-        "file": "site/recency.test.mjs",
-        "contains": "assert.equal(j.recency.max_age_s, 26 * 3600)"
-      }
-    },
-    {
-      "id": "recency-live-schedule",
-      "source": "site/live.js",
-      "quote": "Republished by the transparency loop at least every 26 hours",
-      "probe": {
-        "file": "site/recency.test.mjs",
-        "contains": "assert.match(r.schedule, /26 hours/)"
-      }
-    }
-  ],
-  "baseline": [
-    "site/agentdata.js::f88bf585a47d",
-    "site/dashboard-data.js::18b59115f563",
-    "site/dashboard-data.js::4e3eebe32437",
-    "site/dashboard-data.js::7b3fe3667cbd",
-    "site/dashboard-data.js::9919b359d0c5",
-    "site/dashboard-data.js::d8b08106b61d",
-    "site/feed-data.js::830d0643fe27",
-    "site/feed-data.js::b8ddf219e4c1",
-    "site/platformbrief.js::10b3d56fb934",
-    "site/platformbrief.js::33a3f68eaf07",
-    "site/platformbrief.js::6079cb307527",
-    "site/platformbrief.js::679cd7845747",
-    "site/platformbrief.js::a1643684c5ce",
-    "site/stakeholders.js::234a2a8c3dfb",
-    "site/stakeholders.js::4efb6f692137",
-    "site/stakeholders.js::921904b57ebd",
-    "site/stakeholders.js::e4426faa78a2",
-    "site/userpath.js::d3a8370d7865",
-    "site/userpath.js::eac0cdb7b2e4"
-  ],
-  "closing_probe": "python3 -m foundation claimcode --check",
-  "skip_reasons": {
-    "self-data\\.js": "SELF-MODEL-1: a generated mirror of the loop registry, clocks and boundary declarations (the code's own statements about itself), kept equal to them by `foundation selfmodel --check`; it authors no statement of its own.",
-    "research-data\\.js": "RESEARCH-1: generated by foundation/research.py. Its numbers are either measurements computed from the ledgers by `measures()` (tests/foundation/test_research.py) or figures quoted from a study file in research/studies, and its mechanism lines name paths `research --check` proves exist; it authors no statement of its own.",
-    "temporal-data\\.js": "TEMPORAL-1: generated by foundation/temporal.py from the repository's own history and ledgers (series, findings, predictions it computed); it authors no statement of its own, and site/temporal.js renders it.",
-    "yearfail-data\\.js": "YEARFAIL-1: generated by foundation/yearfail.py from a real run on every weekly run; each cell is a measured result or the quoted evidence of a detector, and the page labels what was simulated; it authors no statement of its own (tests/foundation/test_yearfail.py).",
-    "saydo-data\\.js": "SAY-DO-1: generated by foundation/saydo.py from ops/saydo.json; its lines quote the gaps the say-do check measured (statement and probe output) and author no statement of their own; `saydo --check` fails when it is stale.",
-    "yearsim-data\\.js": "YEAR-SIM-1: generated by foundation/yearsim.py from ops/yearsim.json; every number is a simulation output and every evidence line is a drill result; `yearsim --check` fails when it is stale.",
-    "trajectory-data\\.js": "TRAJECTORY-1: generated by foundation/trajectory.py from ops/trajectory.json; every number is read from git and the ops ledgers and it authors no statement of its own; `trajectory --check` fails when stale.",
-    "intent-yield-data\\.js": "INTENT-YIELD-1: generated by foundation/intentyield.py. Its titles are the owner's own directive titles copied from agents/AGENTS.md (already scanned there) and its numbers are verdicts computed by running each directive's own probe; it authors no statement of its own.",
-    "feed-data\\.js": "CONTENT-DRIFT-1: generated by foundation/reach.py write_feed from ops/changelog.json; each entry is the title of a merged change and the date and parts it touched, quoted from the public changelog (a record of what merged, judged by foundation/contentdrift.py), so it authors no statement of its own."
+ "id": "WORDS-MATCH-CODE-1",
+ "rule": "A published statement is true only if code makes it true, and code checks that on every change. A line on a public surface that states a number, a cadence, a guarantee or an automatic behaviour is bound to a probe (registered claim: exact quote + probe file + string the probe must contain) or sits in the shrink-only baseline that the executor drains. Tenant pages render statements from config with core/statements (probed at runtime and in CI).",
+ "owner": "Rowan, 2026-11-17",
+ "scan_globs": [
+  "site/*.js",
+  "site/**/*.html",
+  "seed/site/**/*.js",
+  "seed/site/**/*.html",
+  "README.md",
+  "agents/AGENTS.md"
+ ],
+ "skip": [
+  "\\.test\\.",
+  "/test/",
+  "STAGED",
+  "node_modules",
+  "self-data\\.js",
+  "research-data\\.js",
+  "temporal-data\\.js",
+  "yearfail-data\\.js",
+  "saydo-data\\.js",
+  "yearsim-data\\.js",
+  "trajectory-data\\.js",
+  "intent-yield-data\\.js",
+  "feed-data\\.js"
+ ],
+ "min_len": 40,
+ "claim_patterns": [
+  "\\bevery \\d+ (minutes?|hours?|days?)\\b",
+  "\\b\\d[\\d,]*(\\.\\d+)? ?(%|percent)",
+  "\\b\\d[\\d,]* (draws|checks|probes|tests|sources|repositories|workers|tenants|loops|agents|roles)\\b",
+  "\\b(100%|always|never|automatically|guarantee[sd]?|every (change|deploy|merge|claim|statement|page))\\b",
+  "\\bwithin \\d+ ?(minutes?|hours?|seconds?|days?)\\b",
+  "\\bevery (two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|fifty|hundred) (minutes?|hours?|days?|weeks?)\\b",
+  "\\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|fifty|hundred) (policy )?(areas|sources|indexes|indices|programmes|programs|channels|tenants|systems|loops|workers|repositories|checks|probes)\\b"
+ ],
+ "claims": [
+  {
+   "id": "agents-word-claims-example",
+   "source": "agents/AGENTS.md",
+   "quote": "Counts and cadences written in words (\"five policy areas\", \"every six hours\") are claims too",
+   "probe": {
+    "file": "tests/foundation/test_claimcode.py",
+    "contains": "every six hours from public data"
+   }
+  },
+  {
+   "id": "readme-plus-share",
+   "source": "README.md",
+   "quote": "A protected share of capacity (20% by default)",
+   "probe": {
+    "file": "seed/ultrastable.json",
+    "contains": "\"plus_share\": 0.2"
+   }
+  },
+  {
+   "id": "audit-chain-seal",
+   "source": "agents/AGENTS.md",
+   "quote": "after 7 days the chain is sealed into gzip NDJSON segments",
+   "probe": {
+    "file": "seed/worker/src/auditchain.js",
+    "contains": "gzip"
+   }
+  },
+  {
+   "id": "agent-md-maintains-itself",
+   "source": "site/worker.js",
+   "quote": "it now maintains itself",
+   "probe": {
+    "file": ".github/workflows/executor.yml",
+    "contains": "name: executor"
+   }
+  },
+  {
+   "id": "front-backed-freshness",
+   "source": "agents/AGENTS.md",
+   "quote": "returns 503 when one is older",
+   "probe": {
+    "file": "site/live.js",
+    "contains": "status: d.freshness.ok ? 200 : 503"
+   }
+  },
+  {
+   "id": "live-stale-banner",
+   "source": "site/live.js",
+   "quote": "older than its cadence; the freshness probe in the transparency workflow fails and files the repair",
+   "probe": {
+    "file": ".github/workflows/transparency.yml",
+    "contains": "api/freshness"
+   }
+  },
+  {
+   "id": "no-open-items",
+   "source": "agents/AGENTS.md",
+   "quote": "The Ultrastable system shall never allow 'Not done, needs you'",
+   "probe": {
+    "file": "foundation/openloops.py",
+    "contains": "banned_phrases"
+   }
+  },
+  {
+   "id": "unattended-sessions-never-count",
+   "source": "agents/AGENTS.md",
+   "quote": "it never counts toward the target and no loop may depend on one",
+   "probe": {
+    "file": "doctrine/unattended.json",
+    "contains": "never counts"
+   }
+  },
+  {
+   "id": "progress-last-visit-local",
+   "source": "site/progress.js",
+   "quote": "Your last visit is kept only in this browser and is never sent anywhere.",
+   "probe": {
+    "file": "workers/core/progress/progress.test.js",
+    "contains": "assert.doesNotMatch(s, /cookie|fetch\\(|XMLHttpRequest/)"
+   }
+  },
+  {
+   "id": "visible-progress",
+   "source": "agents/AGENTS.md",
+   "quote": "Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).",
+   "probe": {
+    "file": "seed/worker/src/progress.js",
+    "contains": "export async function progressStep("
+   }
+  },
+  {
+   "id": "runway-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
+   "probe": {
+    "file": "foundation/runway.py",
+    "contains": "target_days is below the owner's minimum of 365"
+   }
+  },
+  {
+   "id": "runway-seed",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
+   "probe": {
+    "file": "foundation/runway.py",
+    "contains": "target_days is below the owner's minimum of 365"
+   }
+  },
+  {
+   "id": "runway-agents-pi",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
+   "probe": {
+    "file": "foundation/runway.py",
+    "contains": "target_days is below the owner's minimum of 365"
+   }
+  },
+  {
+   "id": "decisions-outreach-segment-predict",
+   "source": "site/decisions-data.js",
+   "quote": "the segment's mean reward so far, or 0 for a segment never tried",
+   "probe": {
+    "file": "foundation/outreach.py",
+    "contains": "top[\"mean_reward\"] if top[\"mean_reward\"] is not None else 0.0"
+   }
+  },
+  {
+   "id": "failure-resolve-coverage",
+   "source": "agents/AGENTS.md",
+   "quote": "a mode nothing watches, or a recorded failure with no open queue item, fails `python3 -m foundation failure_audit --check`",
+   "probe": {
+    "file": "foundation/failure_audit.py",
+    "contains": "no live detector in"
+   }
+  },
+  {
+   "id": "template-code-only",
+   "source": "agents/AGENTS.md",
+   "quote": "fails a change that brings admin material back",
+   "probe": {
+    "file": "foundation/template.py",
+    "contains": "admin material is back in the template"
+   }
+  },
+  {
+   "id": "pathfinder-exhaustion",
+   "source": "agents/AGENTS.md",
+   "quote": "An ask without an exhaustion proof fails `python3 -m foundation pathfinder --check`",
+   "probe": {
+    "file": "foundation/pathfinder.py",
+    "contains": "owner ask without exhaustion proof"
+   }
+  },
+  {
+   "id": "flow-balance-site",
+   "source": "site/balance.js",
+   "quote": "a merged duplicate lowers new issues and never counts as closed",
+   "probe": {
+    "file": "seed/scripts/balance.py",
+    "contains": "never_closure"
+   }
+  },
+  {
+   "id": "flow-balance-rule",
+   "source": "agents/AGENTS.md",
+   "quote": "Superseded items lower net inflow and never count as closures",
+   "probe": {
+    "file": "seed/scripts/balance.py",
+    "contains": "never_closure"
+   }
+  },
+  {
+   "id": "verify-page-coverage",
+   "source": "site/verification.js",
+   "quote": "guarantees are model-checked and tied to the deployed code",
+   "probe": {
+    "file": "foundation/verify.py",
+    "contains": "def check(init, succ, invariants, goal"
+   }
+  },
+  {
+   "id": "verify-route-description",
+   "source": "site/worker.js",
+   "quote": "Guarantees model-checked and tied to the deployed code",
+   "probe": {
+    "file": "foundation/verify.py",
+    "contains": "tied_to_code"
+   }
+  },
+  {
+   "id": "year-saydo-every-watchdog",
+   "source": "site/year.js",
+   "quote": "are checked against the code on every watchdog pass",
+   "probe": {
+    "file": "foundation/ultrastability.py",
+    "contains": "importlib.import_module(\"foundation.\" + name).run(REPO, apply=True)"
+   }
+  },
+  {
+   "id": "yearsim-saydo-every-watchdog",
+   "source": "agents/AGENTS.md",
+   "quote": "Both run on every watchdog pass",
+   "probe": {
+    "file": "foundation/ultrastability.py",
+    "contains": "importlib.import_module(\"foundation.\" + name).run(REPO, apply=True)"
+   }
+  },
+  {
+   "id": "seedadmit-year-target",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "the seeded year reaches 365 days at the 10th percentile in normal and strict mode",
+   "probe": {
+    "file": "seed/autonomy/kit.json",
+    "contains": "\"target_days\": 365"
+   }
+  },
+  {
+   "id": "seedadmit-expiry",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "expires after 8 days",
+   "probe": {
+    "file": "seed/autonomy/kit.json",
+    "contains": "\"max_age_days\": 8"
+   }
+  },
+  {
+   "id": "tenant-promo-no-cold",
+   "source": "agents/AGENTS.md",
+   "quote": "a tenant never creates an account, never posts from the owner's personal account and never sends a cold message to a person",
+   "probe": {
+    "file": "seed/worker/src/promoqueue.js",
+    "contains": "@[a-z0-9_]"
+   }
+  },
+  {
+   "id": "seed-autonomy-stage",
+   "source": "agents/AGENTS.md",
+   "quote": "that is below `looping` 48 hours after its first live deploy",
+   "probe": {
+    "file": "tests/foundation/test_seedadmit.py",
+    "contains": "def test_autonomy_is_read_from_the_seed"
+   }
+  },
+  {
+   "id": "improve-loop-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "def test_frontend_and_backend_lanes_every_pass"
+   }
+  },
+  {
+   "id": "improve-loop-seed",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "def test_frontend_and_backend_lanes_every_pass"
+   }
+  },
+  {
+   "id": "improve-loop-agents-pi",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "\"Automatically improve impact and reach. An Ultrastable system shall always continue improving entirely on its own, 100% autonomously.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "def test_frontend_and_backend_lanes_every_pass"
+   }
+  },
+  {
+   "id": "datagraph-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
+   "probe": {
+    "file": "seed/worker/test/datagraph.test.js",
+    "contains": "a pass builds the graph from every table with no configuration"
+   }
+  },
+  {
+   "id": "datagraph-seed-agents",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
+   "probe": {
+    "file": "seed/worker/test/datagraph.test.js",
+    "contains": "a pass builds the graph from every table with no configuration"
+   }
+  },
+  {
+   "id": "datagraph-agents-pi",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "\"All UltraStable deployments and systems shall have a knowledge graph (graph network) to automatically build and maintain a graph of connections for all data.",
+   "probe": {
+    "file": "seed/worker/test/datagraph.test.js",
+    "contains": "a pass builds the graph from every table with no configuration"
+   }
+  },
+  {
+   "id": "sync-both-ways-agents-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "class SyncBothWays"
+   }
+  },
+  {
+   "id": "sync-both-ways-seed-agents-agents",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "class SyncBothWays"
+   }
+  },
+  {
+   "id": "sync-both-ways-agents-project-instructions",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "\"Every Ultrastable system shall always improve and update itself and the Ultrastable platform automatically.\"",
+   "probe": {
+    "file": "tests/foundation/test_improve.py",
+    "contains": "class SyncBothWays"
+   }
+  },
+  {
+   "id": "directory-daily-listing",
+   "source": "site/worker.js",
+   "quote": "checks in once a day",
+   "probe": {
+    "file": "seed/worker/src/discover.js",
+    "contains": "now.getUTCHours() === 3"
+   }
+  },
+  {
+   "id": "directory-recheck-daily",
+   "source": "site/worker.js",
+   "quote": "rechecks it daily",
+   "probe": {
+    "file": "site/directory.js",
+    "contains": "20 * 3600e3"
+   }
+  },
+  {
+   "id": "directory-drop-three",
+   "source": "agents/AGENTS.md",
+   "quote": "three failed days",
+   "probe": {
+    "file": "site/directory.js",
+    "contains": "row.fails + 1 >= 3"
+   }
+  },
+  {
+   "id": "directory-heartbeat-daily-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "a daily heartbeat",
+   "probe": {
+    "file": "seed/worker/src/discover.js",
+    "contains": "now.getUTCHours() === 3"
+   }
+  },
+  {
+   "id": "directory-recheck-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "rechecks daily",
+   "probe": {
+    "file": "site/directory.js",
+    "contains": "20 * 3600e3"
+   }
+  },
+  {
+   "id": "admit-1-bootstrap",
+   "source": "agents/AGENTS.md",
+   "quote": "everything has to work together automatically and seamlessly from the beginning",
+   "probe": {
+    "file": "scripts/regen_generated.py",
+    "contains": "\"admit\", \"--apply\""
+   }
+  },
+  {
+   "id": "no-fabrication-agents-agents.md",
+   "source": "agents/AGENTS.md",
+   "quote": "No made-up numbers (NO-FABRICATION-1",
+   "probe": {
+    "file": "foundation/claimcode.py",
+    "contains": "claim_patterns"
+   }
+  },
+  {
+   "id": "no-fabrication-seed-agents-agents.md",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "No made-up numbers (NO-FABRICATION-1",
+   "probe": {
+    "file": "foundation/claimcode.py",
+    "contains": "claim_patterns"
+   }
+  },
+  {
+   "id": "no-fabrication-agents-project-instructions.md",
+   "source": "agents/PROJECT-INSTRUCTIONS.md",
+   "quote": "No made-up numbers (NO-FABRICATION-1",
+   "probe": {
+    "file": "foundation/claimcode.py",
+    "contains": "claim_patterns"
+   }
+  },
+  {
+   "id": "platform-statement-claims",
+   "source": "site/contract.js",
+   "quote": "Every statement on this site is bound to a probe in the code, and the result of each probe is served as data.",
+   "probe": {
+    "file": "site/worker.js",
+    "contains": "case \"/api/claims\""
+   }
+  },
+  {
+   "id": "platform-statement-audit",
+   "source": "site/contract.js",
+   "quote": "Every deploy and decision is a row in a hash chain whose head is public.",
+   "probe": {
+    "file": "seed/worker/src/index.js",
+    "contains": "/api/audit/head"
+   }
+  },
+  {
+   "id": "fleet-contract-daily-agents",
+   "source": "agents/AGENTS.md",
+   "quote": "daily in `tenant-repos.yml`, and the failure-audit detector `fleet-contract`",
+   "probe": {
+    "file": ".github/workflows/tenant-repos.yml",
+    "contains": "python3 -m foundation fleetcontract --live"
+   }
+  },
+  {
+   "id": "readme-live-core-deploy",
+   "source": "README.md",
+   "quote": "deployed from this repository's `main` on every merge that changes them",
+   "probe": {
+    "file": ".github/workflows/deploy-ultrastable.yml",
+    "contains": "branches: [main]"
+   }
+  },
+  {
+   "id": "controlplane-tick-cron",
+   "source": "site/controlplane.js",
+   "quote": "cron is every 10 minutes",
+   "probe": {
+    "file": "seed/ultrastable.json",
+    "contains": "\"tick_cron\": \"*/10 * * * *\""
+   }
+  },
+  {
+   "id": "oauth-code-single-use",
+   "source": "site/oauth.js",
+   "quote": "single use, burned before any check so a replay can never succeed",
+   "probe": {
+    "file": "site/oauth.test.mjs",
+    "contains": "a failed attempt burns the code"
+   }
+  },
+  {
+   "id": "roadmap-plus-share",
+   "source": "site/roadmap-data.js",
+   "quote": "A protected share of capacity (default 20%)",
+   "probe": {
+    "file": "seed/ultrastable.json",
+    "contains": "\"plus_share\": 0.2"
+   }
+  },
+  {
+   "id": "orchestrate-one-phase-a-tick",
+   "source": "agents/AGENTS.md",
+   "quote": "advances it one phase a tick",
+   "probe": {
+    "file": "seed/worker/src/orchestrate.js",
+    "contains": "One tick, one phase of the oldest unfinished run"
+   }
+  },
+  {
+   "id": "ashby-search-never-retries-a-failed-value",
+   "source": "agents/AGENTS.md",
+   "quote": "never retries a value that failed in the same episode",
+   "probe": {
+    "file": "seed/worker/test/ashby.test.js",
+    "contains": "assert.deepEqual(order, [3, 5, 2, 6, 1, 7, 8]);"
+   }
+  },
+  {
+   "id": "pr-never-lose-unknown-is-not-conflict",
+   "source": "agents/AGENTS.md",
+   "quote": "A label, a cached state or an unknown state is never a reason to close a pull request",
+   "probe": {
+    "file": "tests/foundation/test_prsafe.py",
+    "contains": "def test_unknown_state_is_not_a_conflict"
+   }
+  },
+  {
+   "id": "pr-never-lose-unknown-is-not-conflict-seed",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "A label, a cached state or an unknown state is never a reason to close a pull request",
+   "probe": {
+    "file": "tests/foundation/test_prsafe.py",
+    "contains": "def test_unknown_state_is_not_a_conflict"
+   }
+  },
+  {
+   "id": "recency-page-schedule",
+   "source": "site/edge.js",
+   "quote": "Rebuilt after every merge and live within 26 hours",
+   "probe": {
+    "file": "site/recency.test.mjs",
+    "contains": "assert.equal(j.recency.max_age_s, 26 * 3600)"
+   }
+  },
+  {
+   "id": "recency-live-schedule",
+   "source": "site/live.js",
+   "quote": "Republished by the transparency loop at least every 26 hours",
+   "probe": {
+    "file": "site/recency.test.mjs",
+    "contains": "assert.match(r.schedule, /26 hours/)"
+   }
   }
+ ],
+ "baseline": [
+  "site/agentdata.js::f88bf585a47d",
+  "site/dashboard-data.js::18b59115f563",
+  "site/dashboard-data.js::4e3eebe32437",
+  "site/dashboard-data.js::7b3fe3667cbd",
+  "site/dashboard-data.js::9919b359d0c5",
+  "site/dashboard-data.js::d8b08106b61d",
+  "site/feed-data.js::830d0643fe27",
+  "site/feed-data.js::b8ddf219e4c1",
+  "site/platformbrief.js::10b3d56fb934",
+  "site/platformbrief.js::33a3f68eaf07",
+  "site/platformbrief.js::6079cb307527",
+  "site/platformbrief.js::679cd7845747",
+  "site/platformbrief.js::a1643684c5ce",
+  "site/stakeholders.js::234a2a8c3dfb",
+  "site/stakeholders.js::4efb6f692137",
+  "site/stakeholders.js::921904b57ebd",
+  "site/stakeholders.js::e4426faa78a2",
+  "site/userpath.js::d3a8370d7865",
+  "site/userpath.js::eac0cdb7b2e4"
+ ],
+ "closing_probe": "python3 -m foundation claimcode --check",
+ "skip_reasons": {
+  "self-data\\.js": "SELF-MODEL-1: a generated mirror of the loop registry, clocks and boundary declarations (the code's own statements about itself), kept equal to them by `foundation selfmodel --check`; it authors no statement of its own.",
+  "research-data\\.js": "RESEARCH-1: generated by foundation/research.py. Its numbers are either measurements computed from the ledgers by `measures()` (tests/foundation/test_research.py) or figures quoted from a study file in research/studies, and its mechanism lines name paths `research --check` proves exist; it authors no statement of its own.",
+  "temporal-data\\.js": "TEMPORAL-1: generated by foundation/temporal.py from the repository's own history and ledgers (series, findings, predictions it computed); it authors no statement of its own, and site/temporal.js renders it.",
+  "yearfail-data\\.js": "YEARFAIL-1: generated by foundation/yearfail.py from a real run on every weekly run; each cell is a measured result or the quoted evidence of a detector, and the page labels what was simulated; it authors no statement of its own (tests/foundation/test_yearfail.py).",
+  "saydo-data\\.js": "SAY-DO-1: generated by foundation/saydo.py from ops/saydo.json; its lines quote the gaps the say-do check measured (statement and probe output) and author no statement of their own; `saydo --check` fails when it is stale.",
+  "yearsim-data\\.js": "YEAR-SIM-1: generated by foundation/yearsim.py from ops/yearsim.json; every number is a simulation output and every evidence line is a drill result; `yearsim --check` fails when it is stale.",
+  "trajectory-data\\.js": "TRAJECTORY-1: generated by foundation/trajectory.py from ops/trajectory.json; every number is read from git and the ops ledgers and it authors no statement of its own; `trajectory --check` fails when stale.",
+  "intent-yield-data\\.js": "INTENT-YIELD-1: generated by foundation/intentyield.py. Its titles are the owner's own directive titles copied from agents/AGENTS.md (already scanned there) and its numbers are verdicts computed by running each directive's own probe; it authors no statement of its own.",
+  "feed-data\\.js": "CONTENT-DRIFT-1: generated by foundation/reach.py write_feed from ops/changelog.json; each entry is the title of a merged change and the date and parts it touched, quoted from the public changelog (a record of what merged, judged by foundation/contentdrift.py), so it authors no statement of its own."
+ }
 }
