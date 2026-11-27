@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2755",
+  "title": "OL-PR-2755: land or supersede pull request #2755 (ci-failed)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2755 is ci-failed\n**Done check:** cmd:python3 -m foundation loopowner --closed 2755\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2755 (`claude/project-thread-k0ffl9` at 436fa31170, opened by rwnq8): Pin Kernel 9.0.0 text with doctrine/kernel.lock. The session that opened it is not its closer and is never asked to act. A check failed on the head commit. Read the failing run, then land the same change so that every check passes: push a fix to the branch, or open a new pull request from main that carries the change and close this one as superseded. Failed checks: checks. Files (5): doctrine/kernel-9.0.0.md, doctrine/kernel.lock, doctrine/writeback/decision-2026-11-27-kernel-9-0-0-pinned-by-kernel-lock.json, foundation/kernel.py, tests/foundation/test_kernel.py.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2755 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2755` exits 0 (pull request #2755 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
