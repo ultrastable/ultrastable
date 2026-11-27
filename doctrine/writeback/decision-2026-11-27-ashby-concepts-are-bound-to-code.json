@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-ashby-concepts-are-bound-to-code",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "Ashby concepts are bound to code",
+  "body": "18 concepts from ashby.info's concept index map to mechanism files in doctrine/ashby-concepts.json. The multistable idea is measured as interference_share from ops/ultrastability.jsonl. Summaries in our own words; source pages linked, not copied.",
+  "probe": "grep:foundation/ashbymap.py::def interference",
+  "session": "session_0156nqDrWQrweUijDBYFDoPg"
+ },
+ "kind": "decision",
+ "title": "Ashby concepts are bound to code",
+ "session": "session_0156nqDrWQrweUijDBYFDoPg"
+}
