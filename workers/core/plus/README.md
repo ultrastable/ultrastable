@@ -27,13 +27,13 @@ BUILT means implemented and covered by a passing test in this directory (or the 
 | US-04-R07 filed as an ordinary work item with a doer line | BUILT | `proposePlus` (item kind `plus`). Travelling the change path is the runner's part, not this module's |
 | US-04-R08 guard separate from the outcome measure, read in the product's direction | BUILT | `registerProduct`, `proposePlus`, `decidePlus` |
 | US-04-R09, US-04-T04 missing or stale reading is null, never 0, never a pass | BUILT | `recordReading`, `latestReading`, `decidePlus` |
-| US-04-R15, US-04-T05 unmeasured stays shipped with an item through the grace, then is reverted as a miss | BUILT | `decidePlus` (`PLUSMEASURE-<id>`, `unmeasured_grace_h`) |
+| US-04-R21, US-04-T09 unmeasured stays shipped with an item through the grace, then is reverted as a miss | BUILT | `decidePlus` (`PLUSMEASURE-<id>`, `unmeasured_grace_h`) |
 | US-04-R10, US-04-T03 revert item, `misses_in_row`, different angle, `rest_until` after 3 | BUILT | `decidePlus`, `proposePlus` |
 | US-04-R11 every Nth cycle is a simplify pass | BUILT | `cycleKind` |
 | US-04-R12 a principal-only step is one gate card, never a question | BUILT | `principalStep` |
 | US-04-R13 detector for unmeasured usage and a stale digest | BUILT | `detect` |
 | US-04-R14 usage that counts machine requests is labelled | BUILT | `measureUsage`; first-party reader labels human requests |
-| US-04-R16, US-04-T06 daily cap counted from the ledger | BUILT | `runCycle` |
+| US-04-R22, US-04-T10 daily cap counted from the ledger | BUILT | `runCycle` |
 | US-04-R17 a kept plus seeds the next proposal | BUILT | `decidePlus`, `proposePlus` |
 | US-04-R18 step 404 evidence sources; unavailable sources listed | BUILT | `gatherEvidence`; sections and slow routes also read `usage_section:` and `slow_route:` readings |
 | US-04-R19 the generator, checked before filing | BUILT over a model port | `propose.js` (fake model); the first real call is on a deployed account |

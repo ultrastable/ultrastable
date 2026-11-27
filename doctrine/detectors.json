@@ -1,1152 +1,1169 @@
 {
-  "_doc": "FAILURE-AUDIT-1 + FAILURE-RESOLVE-1: live detectors for every failure mode in doctrine/registers.json (python3 -m foundation failure_audit --check fails when one has none), run daily by .github/workflows/failure-audit.yml and on demand. Read by foundation/failure_audit.py. A failing detector files queue item docs/issues/Q-AUDIT-<id>.json, which the executor takes; a passing one closes it with evidence. Kinds: command (argv, no shell), http (https reading), probe (file: or grep: spec).",
-  "version": "1.1.0",
-  "workflow": "failure-audit.yml",
-  "detectors": [
-    {
-      "id": "selfhost-tick",
-      "failure_mode": "fm-clock-silent",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "selfhost",
-        "--verify"
-      ],
-      "timeout": 240,
-      "root_cause": "the seed heartbeat cannot boot from this repository alone (path, migration or tick step error)",
-      "owner": "operations",
-      "remedy": "Run python3 -m foundation selfhost, read tick errors, fix the portable core, add a regression test."
-    },
-    {
-      "id": "foundation-tests",
-      "failure_mode": "fm-tests-red",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "unittest",
-        "discover",
-        "-s",
-        "tests/foundation"
-      ],
-      "timeout": 900,
-      "root_cause": "a foundation check regressed or a test depends on the host",
-      "owner": "operations",
-      "remedy": "Fix the root cause in code or make the test host-independent; never delete the failing test."
-    },
-    {
-      "id": "seed-tests",
-      "failure_mode": "fm-probe-untested",
-      "kind": "command",
-      "run": [
-        "node",
-        "--test",
-        "--no-warnings",
-        "test/*.test.js"
-      ],
-      "timeout": 300,
-      "root_cause": "the seed worker (tick, measure, executor, lane) regressed",
-      "owner": "operations",
-      "remedy": "Fix the seed worker; every probe kind keeps a test.",
-      "cwd": "seed/worker"
-    },
-    {
-      "id": "vision",
-      "failure_mode": "fm-vision-drift",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "unittest",
-        "tests.test_vision"
-      ],
-      "timeout": 120,
-      "root_cause": "the vision or its enforcement was edited out of one entry point",
-      "owner": "product-manager",
-      "remedy": "Restore the system test in the drifted file; keep docs/doctrine/VISION.md and its seed copy identical."
-    },
-    {
-      "id": "site-health",
-      "failure_mode": "fm-site-down",
-      "kind": "http",
-      "url": "https://ultrastable.io/health",
-      "json_ok": true,
-      "timeout": 15,
-      "root_cause": "the public worker is down or misrouted",
-      "owner": "operations",
-      "remedy": "Check the last deploy-site run and route; canary revert should already have acted."
-    },
-    {
-      "id": "site-claims",
-      "failure_mode": "fm-site-claims-unlinked",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-c",
-        "import subprocess,sys; r=[subprocess.run(c).returncode for c in (['python3','scripts/build_site_roadmap.py','--check'],['python3','-m','foundation','pins','--check'])]; sys.exit(1 if any(r) else 0)"
-      ],
-      "timeout": 120,
-      "root_cause": "a public claim is not linked to code, proof or a probe-backed issue, or site/pins.js is stale",
-      "owner": "product-manager",
-      "remedy": "Write the missing probe or code link; run python3 -m foundation pins --apply."
-    },
-    {
-      "id": "runtime-tenant0",
-      "failure_mode": "fm-clock-silent",
-      "kind": "http",
-      "url": "https://ultrastable-tick.ultrastable.workers.dev/health",
-      "json_ok": true,
-      "timeout": 15,
-      "root_cause": "the deployed seed runtime of Ultrastable stopped ticking or its D1/cron binding broke",
-      "owner": "operations",
-      "remedy": "Read the runtime's last tick_runs.errors with wrangler d1 execute; redeploy with scripts/deploy_tenant.py; check the cron schedule."
-    },
-    {
-      "id": "owner-handback",
-      "failure_mode": "fm-owner-handback",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "unittest",
-        "discover",
-        "-s",
-        "tests/foundation",
-        "-p",
-        "test_directive.py",
-        "-k",
-        "test_lint_flags_owner_handback"
-      ],
-      "timeout": 45,
-      "root_cause": "the report lint no longer rejects a report that ends in a question, menu or approval request",
-      "owner": "operations",
-      "remedy": "Restore the hand-back rule in foundation/directive.py lint; a report states the decision and its assumption."
-    },
-    {
-      "id": "silent-drop",
-      "failure_mode": "fm-silent-drop",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "queue",
-        "--check"
-      ],
-      "timeout": 45,
-      "root_cause": "a queue item was closed without evidence, or lost its owner, trigger or probe",
-      "owner": "operations",
-      "remedy": "Give the item its evidence or reopen it; python3 -m foundation queue --check names each one."
-    },
-    {
-      "id": "retry-spin",
-      "failure_mode": "fm-retry-spin",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "unittest",
-        "discover",
-        "-s",
-        "tests/foundation",
-        "-p",
-        "test_directive.py",
-        "-k",
-        "test_loop_breaker"
-      ],
-      "timeout": 45,
-      "root_cause": "the loop-breaker no longer mutates on the second identical failure or opens an incident on the third",
-      "owner": "operations",
-      "remedy": "Restore directive.loop_breaker; a fourth attempt of the same fix is never allowed."
-    },
-    {
-      "id": "blocker-unproven",
-      "failure_mode": "fm-blocker-unproven",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "unittest",
-        "discover",
-        "-s",
-        "tests/foundation",
-        "-p",
-        "test_directive.py",
-        "-k",
-        "test_blocker_log_scorecard"
-      ],
-      "timeout": 45,
-      "root_cause": "a blocker is accepted with one surface tested",
-      "owner": "operations",
-      "remedy": "Restore the blocker log rule in directive.scorecard: every surface and its evidence."
-    },
-    {
-      "id": "durable-facts",
-      "failure_mode": "fm-fact-only-in-tool-memory",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "directive",
-        "--check"
-      ],
-      "timeout": 60,
-      "root_cause": "a required fact left the repository or the directive text drifted (write-back skipped)",
-      "owner": "operations",
-      "remedy": "Write the fact back to its file in doctrine/durable-facts.json; never keep it in tool memory."
-    },
-    {
-      "id": "green-guard",
-      "failure_mode": "fm-merge-without-checks",
-      "kind": "command",
-      "run": [
-        "node",
-        "--test",
-        "--no-warnings",
-        "seed/worker/test/greenguard.test.js"
-      ],
-      "timeout": 45,
-      "root_cause": "the lane treats 'no required check is red' as green",
-      "owner": "operations",
-      "remedy": "Restore greenguard.notGreen in the tick lane and sweeper: a merge needs a successful checks run on the head commit."
-    },
-    {
-      "id": "lane-rebase",
-      "failure_mode": "fm-lane-rebase-wedge",
-      "kind": "probe",
-      "spec": "grep:scripts/lane.sh::LANE-REBASE-1",
-      "root_cause": "the lane no longer aborts a half-finished rebase before adopting main",
-      "owner": "operations",
-      "remedy": "Restore the LANE-REBASE-1 block in scripts/lane.sh: abort, reset to origin/main, redo the idempotent adoption."
-    },
-    {
-      "id": "regen-push",
-      "failure_mode": "fm-regen-push-race",
-      "kind": "probe",
-      "spec": "grep:.github/workflows/regen-generated.yml::REGEN-PUSH-1",
-      "root_cause": "the regenerate workflow pushes once to a moving branch",
-      "owner": "operations",
-      "remedy": "Restore REGEN-PUSH-1: fetch, reset to main, regenerate, push again, up to 4 tries, never force."
-    },
-    {
-      "id": "foreign-ci-item",
-      "failure_mode": "fm-foreign-ci-item",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "unittest",
-        "discover",
-        "-s",
-        "tests/foundation",
-        "-p",
-        "test_executor.py",
-        "-k",
-        "ForeignCifail"
-      ],
-      "timeout": 45,
-      "root_cause": "an item about another repository's CI is takeable here",
-      "owner": "operations",
-      "remedy": "Restore executor.foreign_cifail so the item leaves the takeable set; ciwatch closes it by probe."
-    },
-    {
-      "id": "merge-bypass",
-      "failure_mode": "fm-session-merge-bypass",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "mergeaudit",
-        "--check"
-      ],
-      "timeout": 45,
-      "root_cause": "scripts/lane.sh no longer runs the merge audit, so a merge without a green checks run goes unfiled",
-      "owner": "operations",
-      "remedy": "Restore the mergeaudit step in scripts/lane.sh; it files Q-CIFAIL-mergeaudit-N for every such merge."
-    },
-    {
-      "id": "audit-loop",
-      "failure_mode": "fm-audit-open-loop",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "failure_audit",
-        "--check"
-      ],
-      "timeout": 45,
-      "root_cause": "a failure mode lost its detector, or a recorded failure has no open Q-AUDIT item in the queue",
-      "owner": "operations",
-      "remedy": "Add the detector to doctrine/detectors.json, or run python3 -m foundation failure_audit --run so the finding is filed."
-    },
-    {
-      "id": "pathfinder-exhaustion",
-      "failure_mode": "fm-waiting-on-person",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "pathfinder",
-        "--check"
-      ],
-      "timeout": 60,
-      "root_cause": "an owner ask (gate, needs-you item, /owner link) was emitted without an attempt in every surface class",
-      "owner": "operations",
-      "remedy": "Run python3 -m foundation pathfinder --resolve ASK_ID; the first working route closes the ask, otherwise the recorded attempts are the exhaustion proof."
-    },
-    {
-      "id": "waiting-on-person",
-      "failure_mode": "fm-waiting-on-person",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "closedloop",
-        "--check"
-      ],
-      "timeout": 60,
-      "root_cause": "a wait on a person entered the system as a document, card, report or unmerged PR",
-      "owner": "operations",
-      "remedy": "Take the input as given: build the consumer, let the lane merge and deploy, or reduce it to one identity-bound gate with a default in effect."
-    },
-    {
-      "id": "temporal-drift",
-      "failure_mode": "fm-temporal-drift",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "temporal",
-        "--probe"
-      ],
-      "timeout": 120,
-      "root_cause": "a hotspot, neglected area, stopped loop or repeated failure stood in the series for several runs and nothing corrected it",
-      "owner": "operations",
-      "remedy": "Take the open Q-TEMPORAL items for the finding; python3 -m foundation pathfinder --regress lists the commits since a loop last worked."
-    },
-    {
-      "id": "dependency-watch",
-      "failure_mode": "fm-dependency-rot",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "deprot",
-        "--check"
-      ],
-      "timeout": 60,
-      "root_cause": "a dependency manifest has no Dependabot entry",
-      "owner": "operations",
-      "remedy": "Add the ecosystem and directory to .github/dependabot.yml."
-    },
-    {
-      "id": "root-cause",
-      "failure_mode": "fm-recurring-root-cause",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "rootcause",
-        "--check"
-      ],
-      "timeout": 60,
-      "root_cause": "a root-cause class is malformed, or one escalated with no open Q-ROOT item",
-      "owner": "operations",
-      "remedy": "Fix doctrine/rootcauses.json or let python3 -m foundation rootcause --run file the item."
-    },
-    {
-      "id": "sla-breach",
-      "failure_mode": "fm-sla-breach",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "slawatch",
-        "--check"
-      ],
-      "timeout": 120,
-      "root_cause": "an item outlived its written SLA because no loop owned its state",
-      "owner": "operations",
-      "remedy": "Read the breach list; the sweeper supersedes PRs, the executor takes the issue at p0. Fix the loop that left it, never raise the limit."
-    },
-    {
-      "id": "yearsim-model-retirement",
-      "failure_mode": "fm-model-retired",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "yearsim",
-        "--probe",
-        "model-retirement"
-      ],
-      "timeout": 120,
-      "root_cause": "source names a model id after the provider retired it",
-      "owner": "operations",
-      "remedy": "Run python3 -m foundation yearsim --probe model-retirement, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
-    },
-    {
-      "id": "yearsim-merge-conflict",
-      "failure_mode": "fm-merge-conflict-stuck",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "yearsim",
-        "--probe",
-        "merge-conflict"
-      ],
-      "timeout": 120,
-      "root_cause": "generated and append-only files edited on both sides",
-      "owner": "operations",
-      "remedy": "Run python3 -m foundation yearsim --probe merge-conflict, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
-    },
-    {
-      "id": "yearsim-ai-quota",
-      "failure_mode": "fm-ai-quota-halt",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "yearsim",
-        "--probe",
-        "ai-quota"
-      ],
-      "timeout": 120,
-      "root_cause": "a hard cap instead of a soft throttle",
-      "owner": "operations",
-      "remedy": "Run python3 -m foundation yearsim --probe ai-quota, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
-    },
-    {
-      "id": "yearsim-dependency-break",
-      "failure_mode": "fm-dependency-rot",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "yearsim",
-        "--probe",
-        "dependency-break"
-      ],
-      "timeout": 120,
-      "root_cause": "no loop updates dependencies",
-      "owner": "operations",
-      "remedy": "Run python3 -m foundation yearsim --probe dependency-break, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
-    },
-    {
-      "id": "yearsim-scheduler-silent",
-      "failure_mode": "fm-scheduler-skips",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "yearsim",
-        "--probe",
-        "scheduler-silent"
-      ],
-      "timeout": 120,
-      "root_cause": "one clock with no second host",
-      "owner": "operations",
-      "remedy": "Run python3 -m foundation yearsim --probe scheduler-silent, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
-    },
-    {
-      "id": "saydo-wellformed",
-      "failure_mode": "fm-say-do-gap",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "saydo",
-        "--check"
-      ],
-      "timeout": 120,
-      "root_cause": "the say-do module, its data or its executor guard is missing or stale",
-      "owner": "operations",
-      "remedy": "Run python3 -m foundation saydo --run --apply, then --check; restore the SAY-DO-1 guard in foundation/executor.py if it is gone."
-    },
-    {
-      "id": "intent-yield-fresh",
-      "failure_mode": "fm-intent-yield-stale",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "intentyield",
-        "--probe"
-      ],
-      "timeout": 60,
-      "root_cause": "the daily intent-yield run stopped, errored, or its parser lost the owner's directives",
-      "owner": "operations",
-      "remedy": "Read the last run's error in ops/intent-yield/state.json; dispatch .github/workflows/intent-yield.yml, or fix the parser in foundation/intentyield.py when the directive format changed, with a test."
-    },
-    {
-      "id": "seedadmit-probe",
-      "failure_mode": "fm-seed-unadmitted",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "seedadmit",
-        "--probe"
-      ],
-      "timeout": 120,
-      "root_cause": "the template cannot admit a system: a probe, import or kernel path regressed",
-      "owner": "operations",
-      "remedy": "Run python3 -m foundation seedadmit --probe, read the failing component, fix the seed (never the kit's bar), add a regression test (SEED-ADMIT-1)."
-    },
-    {
-      "id": "seed-live",
-      "failure_mode": "fm-seed-undeployed",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "seedadmit",
-        "--live"
-      ],
-      "timeout": 120,
-      "root_cause": "an admitted seed was never deployed, or its Worker stopped answering /health",
-      "owner": "operations",
-      "remedy": "Dispatch .github/workflows/deploy-workers.yml (it runs deploy/deploy-seed.mjs); read the failing row in ops/deploys.jsonl; fix the seed, never the probe (SEED-DEPLOY-1)."
-    },
-    {
-      "id": "seed-launch",
-      "failure_mode": "fm-seed-not-launched",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "seedlaunch",
-        "--check"
-      ],
-      "timeout": 60,
-      "root_cause": "the latest e2e seed launch failed or is stale, or a seeded repository failed its launch",
-      "owner": "operations",
-      "remedy": "Read ops/seed-launches.jsonl failed_stages, fix the seed or bootstrap stage in seed/, add a regression test, dispatch seed-launch.yml."
-    },
-    {
-      "id": "boot-accept",
-      "failure_mode": "fm-surfaces-not-integrated",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "bootaccept",
-        "--check"
-      ],
-      "timeout": 60,
-      "root_cause": "a surface was added and proved on its own, but a launched system does not serve it with the others: a visibility gate hid the discovery manifest and the knowledge graph on every seed, and seeds deployed without their public URL or repository",
-      "owner": "operations",
-      "remedy": "Read ops/boot-accept.jsonl failed_layers and each layer's detail, fix the seed kernel or deploy/deploy-seed.mjs, add a regression test in seed/worker/test/bootaccept.test.js or tests/foundation/test_bootaccept.py, dispatch seed-launch.yml."
-    },
-    {
-      "id": "seed-autonomous",
-      "failure_mode": "fm-seed-not-autonomous",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "seedadmit",
-        "--autonomy"
-      ],
-      "timeout": 120,
-      "root_cause": "a seed was deployed with a database and a cron only: no source-control credential and no repository of its own, so every loop that reads or writes a repository fails and the seed stays at ticking",
-      "owner": "operations",
-      "remedy": "Read the blocking loops in the seed's /health ignition field. Give the generated seed its own repository and a token scoped to that repository only, bound by deploy/deploy-seed.mjs, then let its loops record beats; never accept /health 200 as autonomy and never lower the stage (SEED-AUTONOMY-1)."
-    },
-    {
-      "id": "tenant-health",
-      "failure_mode": "fm-tenant-unhealthy",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "tenantrepos",
-        "--health"
-      ],
-      "timeout": 120,
-      "root_cause": "a tenant worker's clock stopped, or a part it reports (its evidence search, reader or feed) says ok false while the clock still ticks",
-      "owner": "operations",
-      "remedy": "Read the tenant's /health and its last beats' reports (error samples per source); fix the tenant repository by PR; the tick's tenant-deploy step ships it."
-    },
-    {
-      "id": "static-content",
-      "failure_mode": "fm-static-content",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "staticcontent",
-        "--run",
-        "--apply"
-      ],
-      "timeout": 300,
-      "root_cause": "a published page is not bound to any loop that regenerates it, so it stopped changing",
-      "owner": "product-manager",
-      "remedy": "Bind the named page to a loop (generated block, feed or live read) in the system that serves it; never edit its text only to change it."
-    },
-    {
-      "id": "selftest-data",
-      "failure_mode": "fm-frozen-page",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "selftest",
-        "--data"
-      ],
-      "timeout": 60,
-      "root_cause": "a generator that feeds a public page stopped running, or its output never lands on main",
-      "owner": "operations",
-      "remedy": "Find the generator named in the file header; make the workflow that runs it land the file through scripts/land_data.py, then rerun."
-    },
-    {
-      "id": "selftest-workflows",
-      "failure_mode": "fm-silent-loop-stop",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "selftest",
-        "--workflows"
-      ],
-      "timeout": 240,
-      "root_cause": "a scheduled workflow fails every run or stopped being scheduled, and no check watches it",
-      "owner": "operations",
-      "remedy": "Read the failing run's log, fix the root cause in that repository, and dispatch it once to prove it is green."
-    },
-    {
-      "id": "actions-stuck",
-      "failure_mode": "fm-actions-stuck",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "silentfail",
-        "--actions",
-        "--apply"
-      ],
-      "timeout": 60,
-      "root_cause": "workflow runs sit at action_required, or an issue made with the built-in token triggered nothing",
-      "owner": "operations",
-      "remedy": "silentfail --actions approves or dispatches the run and dispatches the issue loop; fix the repository approval setting if it recurs"
-    },
-    {
-      "id": "worker-bundle",
-      "failure_mode": "fm-bundle-break",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "silentfail",
-        "--bundle"
-      ],
-      "timeout": 120,
-      "root_cause": "Worker source imports a Node builtin without nodejs_compat or a file that does not exist",
-      "owner": "operations",
-      "remedy": "Remove the import or add the compat flag in the worker's wrangler file; the check runs before merge in checks"
-    },
-    {
-      "id": "module-overlap",
-      "failure_mode": "fm-duplicate-build",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "silentfail",
-        "--overlap",
-        "HEAD~40"
-      ],
-      "timeout": 120,
-      "root_cause": "a new module duplicates an existing one",
-      "owner": "operations",
-      "remedy": "Extend the existing module; if distinct, add the pair to overlap.distinct in doctrine/silent-failures.json with the reason in the commit"
-    },
-    {
-      "id": "live-verify",
-      "failure_mode": "fm-done-unverified",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "silentfail",
-        "--live"
-      ],
-      "timeout": 120,
-      "root_cause": "a public surface no longer reads what the code says it serves (zero changes, a wrong claim, a dead page)",
-      "owner": "operations",
-      "remedy": "Fix the producer, not the reading; the ledger ops/live-verify.jsonl is what every done claim cites"
-    },
-    {
-      "id": "ledger-stale",
-      "failure_mode": "fm-silent-job-ok",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "silentfail",
-        "--stale"
-      ],
-      "timeout": 120,
-      "root_cause": "a loop stopped writing its ledger",
-      "owner": "operations",
-      "remedy": "Find the loop's workflow run, fix its trigger, add a second route"
-    },
-    {
-      "id": "classes-complete",
-      "failure_mode": "fm-silent-job-ok",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "silentfail",
-        "--classes"
-      ],
-      "timeout": 120,
-      "root_cause": "an incident matches no silent-failure class, or a class lost its detector",
-      "owner": "operations",
-      "remedy": "Add the class with a detector to doctrine/silent-failures.json"
-    },
-    {
-      "id": "model-routes",
-      "failure_mode": "fm-model-route",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "agents",
-        "--check"
-      ],
-      "timeout": 120,
-      "root_cause": "a code-agent model route fails and nothing falls to the next rung",
-      "owner": "operations",
-      "remedy": "Fix the ladder in foundation/agents.py; probe each rung"
-    },
-    {
-      "id": "dg-visibility",
-      "failure_mode": "fm-declared-live-drift",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "driftguard",
-        "--visibility-live"
-      ],
-      "timeout": 120,
-      "root_cause": "a repository's live visibility differs from org/repos.json or doctrine/tenant-repos.json",
-      "owner": "operations",
-      "remedy": "The tick's repo-visibility loop sets it back; if it reports refused, give the administration app access to that repository."
-    },
-    {
-      "id": "dg-crons",
-      "failure_mode": "fm-cron-single-route",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "driftguard",
-        "--crons",
-        "--live"
-      ],
-      "timeout": 120,
-      "root_cause": "crons exceed the plan's account limit, a live schedule is undeclared, or a tenant clock has no pulse route",
-      "owner": "operations",
-      "remedy": "Declare the schedule in doctrine/topology.json and give the tenant a pulse URL the tick calls."
-    },
-    {
-      "id": "dg-triggers",
-      "failure_mode": "fm-missed-trigger",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "driftguard",
-        "--triggers",
-        "--apply"
-      ],
-      "timeout": 180,
-      "root_cause": "a push on main matched a workflow's paths and started no run",
-      "owner": "operations",
-      "remedy": "The detector dispatches the workflow; if dispatch is refused, the workflow needs workflow_dispatch."
-    },
-    {
-      "id": "dg-empty-commits",
-      "failure_mode": "fm-empty-commit-loop",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "driftguard",
-        "--empty-commits"
-      ],
-      "timeout": 60,
-      "root_cause": "a bot commits without comparing trees",
-      "owner": "operations",
-      "remedy": "Find the committing step on the named branch and compare its tree with the head before committing (MERGENOW-NOOP-1 pattern)."
-    },
-    {
-      "id": "dg-lane-closed",
-      "failure_mode": "fm-lane-item-open",
-      "kind": "probe",
-      "spec": "grep:foundation/contracts.py::LANE-FILED-FAIL-1",
-      "root_cause": "lane items are no longer closed by their PR's state",
-      "owner": "operations",
-      "remedy": "Restore LANE-FILED-FAIL-1 in foundation/contracts.py."
-    },
-    {
-      "id": "dg-accounts",
-      "failure_mode": "fm-account-drift",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "driftguard",
-        "--accounts-live"
-      ],
-      "timeout": 60,
-      "root_cause": "the Cloudflare credential reaches another account than the topology names",
-      "owner": "operations",
-      "remedy": "Re-issue the workflow secrets from the topology's account through the deploy route; never paste the retired id."
-    },
-    {
-      "id": "dg-built-live",
-      "failure_mode": "fm-built-without-evidence",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "driftguard",
-        "--built-live"
-      ],
-      "timeout": 120,
-      "root_cause": "a knowledge-graph row is built but its probe answers no nodes",
-      "owner": "product-manager",
-      "remedy": "Run the tenant's graph step and set the row back to pending until its probe shows nodes."
-    },
-    {
-      "id": "dg-handoff-lint",
-      "failure_mode": "fm-built-without-evidence",
-      "kind": "probe",
-      "spec": "grep:.github/workflows/checks.yml::driftguard --handoff-lint",
-      "root_cause": "checks no longer refuse a deploy verified only by the tick's /health",
-      "owner": "operations",
-      "remedy": "Restore the handoff-lint step in checks.yml."
-    },
-    {
-      "id": "dg-baseline-roll",
-      "failure_mode": "fm-declared-live-drift",
-      "kind": "probe",
-      "spec": "grep:.github/workflows/uiux.yml::--roll-baseline",
-      "root_cause": "the UI/UX run no longer rolls a stale visual baseline",
-      "owner": "design-manager",
-      "remedy": "Restore --roll-baseline in uiux.yml."
-    },
-    {
-      "id": "replication-ledger-citations",
-      "failure_mode": "fm-unverified-citations",
-      "kind": "http",
-      "url": "https://replication-ledger.ultrastable.org/api/citations",
-      "json_ok": true,
-      "timeout": 15,
-      "root_cause": "a seed DOI of the Replication Ledger was never checked at Crossref after the grace beats, or its check failed",
-      "owner": "operations",
-      "remedy": "The ledger's beat checks BEAT.CROSSREF seed DOIs per beat; the 503 body names unchecked_dois and failed. A failed DOI is corrected in instances/replication-ledger/worker/data/findings.json (node worker/cli.mjs verify); an unchecked one means beats are erroring at Crossref (GET /api/beats)."
-    },
-    {
-      "id": "bootproof",
-      "failure_mode": "fm-seed-not-launched",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "bootproof"
-      ],
-      "timeout": 60,
-      "root_cause": "the seed kernel needs something no code in it produces (instruction import, wrangler placeholder, undeclared secret, migration collision, workflow with no trigger)",
-      "owner": "operations",
-      "remedy": "Run python3 -m foundation bootproof, fix the seed tree or declare the item in doctrine/bootproof.json with its degrade and acquire route (BOOTPROOF-1)."
-    },
-    {
-      "id": "fleet-contract",
-      "failure_mode": "fm-front-back-drift",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "fleetcontract",
-        "--live",
-        "--record"
-      ],
-      "timeout": 300,
-      "root_cause": "a system's pages and its endpoints are written in different places, so a sentence stays on a page after its endpoint is gone, an endpoint ships that no page describes, or a contract surface (manifest, statements, health, social queue, graph) is never served",
-      "owner": "operations",
-      "remedy": "Read the failing lines of python3 -m foundation fleetcontract --live: each names the system, the direction (front-to-back, back-to-front or contract) and the page or endpoint. Fix that system in its own repository: declare the statement in its contract.js so the page sentence and /claims.json are one string, serve the missing surface through the vendored seed/worker/src/contract.js, or repair the endpoint. Never remove a statement to pass and never relax the reading (FLEET-CONTRACT-1)."
-    },
-    {
-      "id": "managers-live",
-      "failure_mode": "fm-manager-not-running",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "managers",
-        "--live"
-      ],
-      "timeout": 120,
-      "root_cause": "a switched-on manager has no runtime row (the roles table was not reconciled with the register) or its dispatch beat stopped (the tick skipped dispatch, for example while a cost breach holds the tick lean)",
-      "owner": "org-designer",
-      "remedy": "Read python3 -m foundation managers --live. For `missing`: the tick's reconcile step (seed/worker/src/managers.js hireStep) hires it once the Worker carries seed/autonomy/managers.json in its config; check the three config builders (deploy/deploy-workers.mjs, seed/worker/src/handoff.js tickConfigSource, seed/bootstrap/bootstrap.py). For `stopped` or `late`: read the last tick report at /health; when dispatch is skipped for a cost breach, cut the rows read (Q-MANAGERS-dispatch-starved) and never raise the limit to pass."
-    },
-    {
-      "id": "standards-register",
-      "failure_mode": "fm-standard-drift",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "standards",
-        "--check"
-      ],
-      "timeout": 300,
-      "root_cause": "a row of the standards register no longer measures true: a probe fails, a config stopped validating against its JSON Schema or arrived without one, a generated commit title left the Conventional Commits header, a rendered surface (catalog-info.yaml) drifted from its manifest, or an adopt-later row lost its item",
-      "owner": "operations",
-      "remedy": "Read the failing lines of python3 -m foundation standards --check: each names the row and the probe. Fix the code or the data so the standard is met again (render with python3 -m foundation standards --render, write the missing schema, correct the config the schema refused). Never loosen a schema, raise a baseline ceiling or change a row to adopted to pass (STANDARDS-FIRST-1)."
-    },
-    {
-      "id": "standards-live",
-      "failure_mode": "fm-standard-drift",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "standards",
-        "--live"
-      ],
-      "timeout": 300,
-      "root_cause": "a public address that a standards row names as its proof (llms.txt, the OpenAPI description, security.txt, the feeds, robots and sitemap, the JSON-LD on the home page) stopped answering in the form the standard requires",
-      "owner": "operations",
-      "remedy": "Read the failing lines of python3 -m foundation standards --live: each names the row, the address and what was missing. Repair the route in the Worker that serves it and redeploy; the same reading closes the item."
-    },
-    {
-      "id": "constitution",
-      "failure_mode": "fm-constitution-drift",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "constitution",
-        "--check"
-      ],
-      "timeout": 120,
-      "root_cause": "a section of the constitution no longer matches the code it describes, or a standing rule has no detector and remediation in code",
-      "owner": "operations",
-      "remedy": "Run python3 -m foundation constitution --check; bind the rule to code (seed/doctrine/constitution.json) or fix the drifted code; regenerate with --render (CONSTITUTION-1)."
-    },
-    {
-      "id": "cost-runaway",
-      "failure_mode": "fm-cost-runaway",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "cost",
-        "--guard"
-      ],
-      "timeout": 120,
-      "root_cause": "the cost reading stopped, was unmeasured, or a free-plan limit is near",
-      "owner": "operations",
-      "remedy": "Read the latest ops/cost.jsonl row: fix the probe if unmeasured, otherwise cut the largest spender (model route, read pattern) by PR"
-    },
-    {
-      "id": "d1-growth",
-      "failure_mode": "fm-d1-growth",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "cost",
-        "--guard"
-      ],
-      "timeout": 120,
-      "root_cause": "a database's measured growth reaches the size limit inside the horizon",
-      "owner": "operations",
-      "remedy": "Add or tighten its retention rows in seed/autonomy/retention.json and archive old rows through the audit chain"
-    },
-    {
-      "id": "credential-expiry",
-      "failure_mode": "fm-credential-expiry",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "credwatch",
-        "--ledger"
-      ],
-      "timeout": 120,
-      "root_cause": "a credential or registration is invalid, unrecorded or inside its warning window",
-      "owner": "staff",
-      "remedy": "Move the loops that use it to a credential-free route, then renew it through the connect flow"
-    },
-    {
-      "id": "content-drift",
-      "failure_mode": "fm-content-drift",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "contentdrift",
-        "--live"
-      ],
-      "timeout": 120,
-      "root_cause": "a system's feed is unreadable or its newest entries are empty, cut off, templated or repeated",
-      "owner": "product-manager",
-      "remedy": "Fix the generator in that system's repository so each entry is whole and distinct; never loosen the thresholds"
-    },
-    {
-      "id": "code-agent-ladder",
-      "failure_mode": "fm-code-ladder-dead",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "ladderwatch",
-        "--check"
-      ],
-      "timeout": 60,
-      "root_cause": "no code-agent rung returns an answer (credential without the permission, provider answering 200 with no body), so the executor ships nothing while its job and the static model-routes check read green",
-      "owner": "operations",
-      "remedy": "Read the rung errors ladderwatch prints, fix the route (site AI binding, model endpoint) and add a test; never relax the threshold."
-    },
-    {
-      "id": "pr-age-bound",
-      "failure_mode": "fm-pr-stale",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "prbound",
-        "--check"
-      ],
-      "timeout": 60,
-      "root_cause": "the lane labelled a conflicted or failed session PR and handed it to the executor, whose model calls were failing; no age bound existed",
-      "owner": "operations",
-      "remedy": "The lane runs prbound --apply each pass (closes past the bound, branch kept) and resolve_generated merges additive conflicts model-free; never raise the bound to clear a breach."
-    },
-    {
-      "id": "pr-lost",
-      "failure_mode": "fm-pr-lost",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "prsafe",
-        "--check"
-      ],
-      "timeout": 90,
-      "root_cause": "a closer trusted a stale conflict reading and the branch was then deleted, so unmerged work was discarded (PR #2615)",
-      "owner": "operations",
-      "remedy": "The lane runs prsafe --recover --apply each pass, which reopens the pull request; fix the closer that closed it so it goes through prsafe.safe_close; never delete the archive ref or the marker comment to clear a breach."
-    },
-    {
-      "id": "clock-measured",
-      "failure_mode": "fm-loop-unmeasured",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "clock",
-        "--measured"
-      ],
-      "timeout": 60,
-      "root_cause": "a loop's clock has no reading in the published record (no route that can read its beats from this host)",
-      "owner": "operations",
-      "remedy": "Give the clock a route this host can read (a health field, a workflow, a token), so /demo and /live show its real status."
-    },
-    {
-      "id": "canon-late",
-      "failure_mode": "fm-paper-late",
-      "kind": "command",
-      "run": [
-        "python3",
-        "-m",
-        "foundation",
-        "research",
-        "--probe-canon",
-        "--apply"
-      ],
-      "timeout": 120,
-      "root_cause": "a step of the canon research program is late or unmeasured",
-      "owner": "product-manager",
-      "remedy": "Read the probe output, fix the stalled loop, add a regression test."
-    },
-    {
-      "id": "repo-conform",
-      "failure_mode": "fm-repo-nonconformant",
-      "kind": "command",
-      "run": [
-        "python3",
-        "seed/scripts/repoconform.py",
-        "--fleet",
-        "doctrine/fleet-map.json"
-      ],
-      "timeout": 300,
-      "root_cause": "a repository in the fleet map carries a machine-readable file (AGENTS.md, llms.txt, LICENSE and LICENSES/, REUSE.toml, CITATION.cff, publiccode.yml, catalog-info.yaml, ultrastable.json, EditorConfig, Dependabot, devcontainer, CHANGELOG, CONTRIBUTING, SECURITY) that is missing, fails its own standard or differs from what its manifest renders, or the repository cannot be read",
-      "owner": "operations",
-      "remedy": "Read python3 seed/scripts/repoconform.py --fleet doctrine/fleet-map.json (the platform command for the same reader is python3 -m foundation repoconform, foundation/repoconform.py): each line names the repository, the file, its validator and why. The last line lists each repository that does not conform with its file score and failing files. Fix the file in that repository's own pull request: render the generated ones with the kit's surfaces.py --render (scripts/surfaces.py in a seeded system, vendor/ultrastable/tools/surfaces.py in a tenant, seed/scripts/surfaces.py in the core; each failing line names the one for its repository), fix the manifest or generator for the rest. An unmeasured repository needs a read route (the lane's token for a private one), never a pass. Never relax a validator to clear a reading."
-    }
-  ]
+ "_doc": "FAILURE-AUDIT-1 + FAILURE-RESOLVE-1: live detectors for every failure mode in doctrine/registers.json (python3 -m foundation failure_audit --check fails when one has none), run daily by .github/workflows/failure-audit.yml and on demand. Read by foundation/failure_audit.py. A failing detector files queue item docs/issues/Q-AUDIT-<id>.json, which the executor takes; a passing one closes it with evidence. Kinds: command (argv, no shell), http (https reading), probe (file: or grep: spec).",
+ "version": "1.1.0",
+ "workflow": "failure-audit.yml",
+ "detectors": [
+  {
+   "id": "selfhost-tick",
+   "failure_mode": "fm-clock-silent",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "selfhost",
+    "--verify"
+   ],
+   "timeout": 240,
+   "root_cause": "the seed heartbeat cannot boot from this repository alone (path, migration or tick step error)",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation selfhost, read tick errors, fix the portable core, add a regression test."
+  },
+  {
+   "id": "foundation-tests",
+   "failure_mode": "fm-tests-red",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/foundation"
+   ],
+   "timeout": 900,
+   "root_cause": "a foundation check regressed or a test depends on the host",
+   "owner": "operations",
+   "remedy": "Fix the root cause in code or make the test host-independent; never delete the failing test."
+  },
+  {
+   "id": "seed-tests",
+   "failure_mode": "fm-probe-untested",
+   "kind": "command",
+   "run": [
+    "node",
+    "--test",
+    "--no-warnings",
+    "test/*.test.js"
+   ],
+   "timeout": 300,
+   "root_cause": "the seed worker (tick, measure, executor, lane) regressed",
+   "owner": "operations",
+   "remedy": "Fix the seed worker; every probe kind keeps a test.",
+   "cwd": "seed/worker"
+  },
+  {
+   "id": "vision",
+   "failure_mode": "fm-vision-drift",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "unittest",
+    "tests.test_vision"
+   ],
+   "timeout": 120,
+   "root_cause": "the vision or its enforcement was edited out of one entry point",
+   "owner": "product-manager",
+   "remedy": "Restore the system test in the drifted file; keep docs/doctrine/VISION.md and its seed copy identical."
+  },
+  {
+   "id": "site-health",
+   "failure_mode": "fm-site-down",
+   "kind": "http",
+   "url": "https://ultrastable.io/health",
+   "json_ok": true,
+   "timeout": 15,
+   "root_cause": "the public worker is down or misrouted",
+   "owner": "operations",
+   "remedy": "Check the last deploy-site run and route; canary revert should already have acted."
+  },
+  {
+   "id": "site-claims",
+   "failure_mode": "fm-site-claims-unlinked",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-c",
+    "import subprocess,sys; r=[subprocess.run(c).returncode for c in (['python3','scripts/build_site_roadmap.py','--check'],['python3','-m','foundation','pins','--check'])]; sys.exit(1 if any(r) else 0)"
+   ],
+   "timeout": 120,
+   "root_cause": "a public claim is not linked to code, proof or a probe-backed issue, or site/pins.js is stale",
+   "owner": "product-manager",
+   "remedy": "Write the missing probe or code link; run python3 -m foundation pins --apply."
+  },
+  {
+   "id": "runtime-tenant0",
+   "failure_mode": "fm-clock-silent",
+   "kind": "http",
+   "url": "https://ultrastable-tick.ultrastable.workers.dev/health",
+   "json_ok": true,
+   "timeout": 15,
+   "root_cause": "the deployed seed runtime of Ultrastable stopped ticking or its D1/cron binding broke",
+   "owner": "operations",
+   "remedy": "Read the runtime's last tick_runs.errors with wrangler d1 execute; redeploy with scripts/deploy_tenant.py; check the cron schedule."
+  },
+  {
+   "id": "owner-handback",
+   "failure_mode": "fm-owner-handback",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/foundation",
+    "-p",
+    "test_directive.py",
+    "-k",
+    "test_lint_flags_owner_handback"
+   ],
+   "timeout": 45,
+   "root_cause": "the report lint no longer rejects a report that ends in a question, menu or approval request",
+   "owner": "operations",
+   "remedy": "Restore the hand-back rule in foundation/directive.py lint; a report states the decision and its assumption."
+  },
+  {
+   "id": "silent-drop",
+   "failure_mode": "fm-silent-drop",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "queue",
+    "--check"
+   ],
+   "timeout": 45,
+   "root_cause": "a queue item was closed without evidence, or lost its owner, trigger or probe",
+   "owner": "operations",
+   "remedy": "Give the item its evidence or reopen it; python3 -m foundation queue --check names each one."
+  },
+  {
+   "id": "retry-spin",
+   "failure_mode": "fm-retry-spin",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/foundation",
+    "-p",
+    "test_directive.py",
+    "-k",
+    "test_loop_breaker"
+   ],
+   "timeout": 45,
+   "root_cause": "the loop-breaker no longer mutates on the second identical failure or opens an incident on the third",
+   "owner": "operations",
+   "remedy": "Restore directive.loop_breaker; a fourth attempt of the same fix is never allowed."
+  },
+  {
+   "id": "blocker-unproven",
+   "failure_mode": "fm-blocker-unproven",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/foundation",
+    "-p",
+    "test_directive.py",
+    "-k",
+    "test_blocker_log_scorecard"
+   ],
+   "timeout": 45,
+   "root_cause": "a blocker is accepted with one surface tested",
+   "owner": "operations",
+   "remedy": "Restore the blocker log rule in directive.scorecard: every surface and its evidence."
+  },
+  {
+   "id": "durable-facts",
+   "failure_mode": "fm-fact-only-in-tool-memory",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "directive",
+    "--check"
+   ],
+   "timeout": 60,
+   "root_cause": "a required fact left the repository or the directive text drifted (write-back skipped)",
+   "owner": "operations",
+   "remedy": "Write the fact back to its file in doctrine/durable-facts.json; never keep it in tool memory."
+  },
+  {
+   "id": "green-guard",
+   "failure_mode": "fm-merge-without-checks",
+   "kind": "command",
+   "run": [
+    "node",
+    "--test",
+    "--no-warnings",
+    "seed/worker/test/greenguard.test.js"
+   ],
+   "timeout": 45,
+   "root_cause": "the lane treats 'no required check is red' as green",
+   "owner": "operations",
+   "remedy": "Restore greenguard.notGreen in the tick lane and sweeper: a merge needs a successful checks run on the head commit."
+  },
+  {
+   "id": "lane-rebase",
+   "failure_mode": "fm-lane-rebase-wedge",
+   "kind": "probe",
+   "spec": "grep:scripts/lane.sh::LANE-REBASE-1",
+   "root_cause": "the lane no longer aborts a half-finished rebase before adopting main",
+   "owner": "operations",
+   "remedy": "Restore the LANE-REBASE-1 block in scripts/lane.sh: abort, reset to origin/main, redo the idempotent adoption."
+  },
+  {
+   "id": "regen-push",
+   "failure_mode": "fm-regen-push-race",
+   "kind": "probe",
+   "spec": "grep:.github/workflows/regen-generated.yml::REGEN-PUSH-1",
+   "root_cause": "the regenerate workflow pushes once to a moving branch",
+   "owner": "operations",
+   "remedy": "Restore REGEN-PUSH-1: fetch, reset to main, regenerate, push again, up to 4 tries, never force."
+  },
+  {
+   "id": "foreign-ci-item",
+   "failure_mode": "fm-foreign-ci-item",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/foundation",
+    "-p",
+    "test_executor.py",
+    "-k",
+    "ForeignCifail"
+   ],
+   "timeout": 45,
+   "root_cause": "an item about another repository's CI is takeable here",
+   "owner": "operations",
+   "remedy": "Restore executor.foreign_cifail so the item leaves the takeable set; ciwatch closes it by probe."
+  },
+  {
+   "id": "merge-bypass",
+   "failure_mode": "fm-session-merge-bypass",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "mergeaudit",
+    "--check"
+   ],
+   "timeout": 45,
+   "root_cause": "scripts/lane.sh no longer runs the merge audit, so a merge without a green checks run goes unfiled",
+   "owner": "operations",
+   "remedy": "Restore the mergeaudit step in scripts/lane.sh; it files Q-CIFAIL-mergeaudit-N for every such merge."
+  },
+  {
+   "id": "audit-loop",
+   "failure_mode": "fm-audit-open-loop",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "failure_audit",
+    "--check"
+   ],
+   "timeout": 45,
+   "root_cause": "a failure mode lost its detector, or a recorded failure has no open Q-AUDIT item in the queue",
+   "owner": "operations",
+   "remedy": "Add the detector to doctrine/detectors.json, or run python3 -m foundation failure_audit --run so the finding is filed."
+  },
+  {
+   "id": "pathfinder-exhaustion",
+   "failure_mode": "fm-waiting-on-person",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "pathfinder",
+    "--check"
+   ],
+   "timeout": 60,
+   "root_cause": "an owner ask (gate, needs-you item, /owner link) was emitted without an attempt in every surface class",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation pathfinder --resolve ASK_ID; the first working route closes the ask, otherwise the recorded attempts are the exhaustion proof."
+  },
+  {
+   "id": "waiting-on-person",
+   "failure_mode": "fm-waiting-on-person",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "closedloop",
+    "--check"
+   ],
+   "timeout": 60,
+   "root_cause": "a wait on a person entered the system as a document, card, report or unmerged PR",
+   "owner": "operations",
+   "remedy": "Take the input as given: build the consumer, let the lane merge and deploy, or reduce it to one identity-bound gate with a default in effect."
+  },
+  {
+   "id": "temporal-drift",
+   "failure_mode": "fm-temporal-drift",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "temporal",
+    "--probe"
+   ],
+   "timeout": 120,
+   "root_cause": "a hotspot, neglected area, stopped loop or repeated failure stood in the series for several runs and nothing corrected it",
+   "owner": "operations",
+   "remedy": "Take the open Q-TEMPORAL items for the finding; python3 -m foundation pathfinder --regress lists the commits since a loop last worked."
+  },
+  {
+   "id": "dependency-watch",
+   "failure_mode": "fm-dependency-rot",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "deprot",
+    "--check"
+   ],
+   "timeout": 60,
+   "root_cause": "a dependency manifest has no Dependabot entry",
+   "owner": "operations",
+   "remedy": "Add the ecosystem and directory to .github/dependabot.yml."
+  },
+  {
+   "id": "root-cause",
+   "failure_mode": "fm-recurring-root-cause",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "rootcause",
+    "--check"
+   ],
+   "timeout": 60,
+   "root_cause": "a root-cause class is malformed, or one escalated with no open Q-ROOT item",
+   "owner": "operations",
+   "remedy": "Fix doctrine/rootcauses.json or let python3 -m foundation rootcause --run file the item."
+  },
+  {
+   "id": "sla-breach",
+   "failure_mode": "fm-sla-breach",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "slawatch",
+    "--check"
+   ],
+   "timeout": 120,
+   "root_cause": "an item outlived its written SLA because no loop owned its state",
+   "owner": "operations",
+   "remedy": "Read the breach list; the sweeper supersedes PRs, the executor takes the issue at p0. Fix the loop that left it, never raise the limit."
+  },
+  {
+   "id": "yearsim-model-retirement",
+   "failure_mode": "fm-model-retired",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "yearsim",
+    "--probe",
+    "model-retirement"
+   ],
+   "timeout": 120,
+   "root_cause": "source names a model id after the provider retired it",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation yearsim --probe model-retirement, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
+  },
+  {
+   "id": "yearsim-merge-conflict",
+   "failure_mode": "fm-merge-conflict-stuck",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "yearsim",
+    "--probe",
+    "merge-conflict"
+   ],
+   "timeout": 120,
+   "root_cause": "generated and append-only files edited on both sides",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation yearsim --probe merge-conflict, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
+  },
+  {
+   "id": "yearsim-ai-quota",
+   "failure_mode": "fm-ai-quota-halt",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "yearsim",
+    "--probe",
+    "ai-quota"
+   ],
+   "timeout": 120,
+   "root_cause": "a hard cap instead of a soft throttle",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation yearsim --probe ai-quota, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
+  },
+  {
+   "id": "yearsim-dependency-break",
+   "failure_mode": "fm-dependency-rot",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "yearsim",
+    "--probe",
+    "dependency-break"
+   ],
+   "timeout": 120,
+   "root_cause": "no loop updates dependencies",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation yearsim --probe dependency-break, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
+  },
+  {
+   "id": "yearsim-scheduler-silent",
+   "failure_mode": "fm-scheduler-skips",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "yearsim",
+    "--probe",
+    "scheduler-silent"
+   ],
+   "timeout": 120,
+   "root_cause": "one clock with no second host",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation yearsim --probe scheduler-silent, read the drill evidence, fix the recovery code it exercises (YEAR-SIM-1), add a regression test."
+  },
+  {
+   "id": "saydo-wellformed",
+   "failure_mode": "fm-say-do-gap",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "saydo",
+    "--check"
+   ],
+   "timeout": 120,
+   "root_cause": "the say-do module, its data or its executor guard is missing or stale",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation saydo --run --apply, then --check; restore the SAY-DO-1 guard in foundation/executor.py if it is gone."
+  },
+  {
+   "id": "intent-yield-fresh",
+   "failure_mode": "fm-intent-yield-stale",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "intentyield",
+    "--probe"
+   ],
+   "timeout": 60,
+   "root_cause": "the daily intent-yield run stopped, errored, or its parser lost the owner's directives",
+   "owner": "operations",
+   "remedy": "Read the last run's error in ops/intent-yield/state.json; dispatch .github/workflows/intent-yield.yml, or fix the parser in foundation/intentyield.py when the directive format changed, with a test."
+  },
+  {
+   "id": "seedadmit-probe",
+   "failure_mode": "fm-seed-unadmitted",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "seedadmit",
+    "--probe"
+   ],
+   "timeout": 120,
+   "root_cause": "the template cannot admit a system: a probe, import or kernel path regressed",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation seedadmit --probe, read the failing component, fix the seed (never the kit's bar), add a regression test (SEED-ADMIT-1)."
+  },
+  {
+   "id": "seed-live",
+   "failure_mode": "fm-seed-undeployed",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "seedadmit",
+    "--live"
+   ],
+   "timeout": 120,
+   "root_cause": "an admitted seed was never deployed, or its Worker stopped answering /health",
+   "owner": "operations",
+   "remedy": "Dispatch .github/workflows/deploy-workers.yml (it runs deploy/deploy-seed.mjs); read the failing row in ops/deploys.jsonl; fix the seed, never the probe (SEED-DEPLOY-1)."
+  },
+  {
+   "id": "seed-launch",
+   "failure_mode": "fm-seed-not-launched",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "seedlaunch",
+    "--check"
+   ],
+   "timeout": 60,
+   "root_cause": "the latest e2e seed launch failed or is stale, or a seeded repository failed its launch",
+   "owner": "operations",
+   "remedy": "Read ops/seed-launches.jsonl failed_stages, fix the seed or bootstrap stage in seed/, add a regression test, dispatch seed-launch.yml."
+  },
+  {
+   "id": "boot-accept",
+   "failure_mode": "fm-surfaces-not-integrated",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "bootaccept",
+    "--check"
+   ],
+   "timeout": 60,
+   "root_cause": "a surface was added and proved on its own, but a launched system does not serve it with the others: a visibility gate hid the discovery manifest and the knowledge graph on every seed, and seeds deployed without their public URL or repository",
+   "owner": "operations",
+   "remedy": "Read ops/boot-accept.jsonl failed_layers and each layer's detail, fix the seed kernel or deploy/deploy-seed.mjs, add a regression test in seed/worker/test/bootaccept.test.js or tests/foundation/test_bootaccept.py, dispatch seed-launch.yml."
+  },
+  {
+   "id": "seed-autonomous",
+   "failure_mode": "fm-seed-not-autonomous",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "seedadmit",
+    "--autonomy"
+   ],
+   "timeout": 120,
+   "root_cause": "a seed was deployed with a database and a cron only: no source-control credential and no repository of its own, so every loop that reads or writes a repository fails and the seed stays at ticking",
+   "owner": "operations",
+   "remedy": "Read the blocking loops in the seed's /health ignition field. Give the generated seed its own repository and a token scoped to that repository only, bound by deploy/deploy-seed.mjs, then let its loops record beats; never accept /health 200 as autonomy and never lower the stage (SEED-AUTONOMY-1)."
+  },
+  {
+   "id": "tenant-health",
+   "failure_mode": "fm-tenant-unhealthy",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "tenantrepos",
+    "--health"
+   ],
+   "timeout": 120,
+   "root_cause": "a tenant worker's clock stopped, or a part it reports (its evidence search, reader or feed) says ok false while the clock still ticks",
+   "owner": "operations",
+   "remedy": "Read the tenant's /health and its last beats' reports (error samples per source); fix the tenant repository by PR; the tick's tenant-deploy step ships it."
+  },
+  {
+   "id": "static-content",
+   "failure_mode": "fm-static-content",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "staticcontent",
+    "--run",
+    "--apply"
+   ],
+   "timeout": 300,
+   "root_cause": "a published page is not bound to any loop that regenerates it, so it stopped changing",
+   "owner": "product-manager",
+   "remedy": "Bind the named page to a loop (generated block, feed or live read) in the system that serves it; never edit its text only to change it."
+  },
+  {
+   "id": "selftest-data",
+   "failure_mode": "fm-frozen-page",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "selftest",
+    "--data"
+   ],
+   "timeout": 60,
+   "root_cause": "a generator that feeds a public page stopped running, or its output never lands on main",
+   "owner": "operations",
+   "remedy": "Find the generator named in the file header; make the workflow that runs it land the file through scripts/land_data.py, then rerun."
+  },
+  {
+   "id": "selftest-workflows",
+   "failure_mode": "fm-silent-loop-stop",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "selftest",
+    "--workflows"
+   ],
+   "timeout": 240,
+   "root_cause": "a scheduled workflow fails every run or stopped being scheduled, and no check watches it",
+   "owner": "operations",
+   "remedy": "Read the failing run's log, fix the root cause in that repository, and dispatch it once to prove it is green."
+  },
+  {
+   "id": "actions-stuck",
+   "failure_mode": "fm-actions-stuck",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "silentfail",
+    "--actions",
+    "--apply"
+   ],
+   "timeout": 60,
+   "root_cause": "workflow runs sit at action_required, or an issue made with the built-in token triggered nothing",
+   "owner": "operations",
+   "remedy": "silentfail --actions approves or dispatches the run and dispatches the issue loop; fix the repository approval setting if it recurs"
+  },
+  {
+   "id": "worker-bundle",
+   "failure_mode": "fm-bundle-break",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "silentfail",
+    "--bundle"
+   ],
+   "timeout": 120,
+   "root_cause": "Worker source imports a Node builtin without nodejs_compat or a file that does not exist",
+   "owner": "operations",
+   "remedy": "Remove the import or add the compat flag in the worker's wrangler file; the check runs before merge in checks"
+  },
+  {
+   "id": "module-overlap",
+   "failure_mode": "fm-duplicate-build",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "silentfail",
+    "--overlap",
+    "HEAD~40"
+   ],
+   "timeout": 120,
+   "root_cause": "a new module duplicates an existing one",
+   "owner": "operations",
+   "remedy": "Extend the existing module; if distinct, add the pair to overlap.distinct in doctrine/silent-failures.json with the reason in the commit"
+  },
+  {
+   "id": "live-verify",
+   "failure_mode": "fm-done-unverified",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "silentfail",
+    "--live"
+   ],
+   "timeout": 120,
+   "root_cause": "a public surface no longer reads what the code says it serves (zero changes, a wrong claim, a dead page)",
+   "owner": "operations",
+   "remedy": "Fix the producer, not the reading; the ledger ops/live-verify.jsonl is what every done claim cites"
+  },
+  {
+   "id": "ledger-stale",
+   "failure_mode": "fm-silent-job-ok",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "silentfail",
+    "--stale"
+   ],
+   "timeout": 120,
+   "root_cause": "a loop stopped writing its ledger",
+   "owner": "operations",
+   "remedy": "Find the loop's workflow run, fix its trigger, add a second route"
+  },
+  {
+   "id": "classes-complete",
+   "failure_mode": "fm-silent-job-ok",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "silentfail",
+    "--classes"
+   ],
+   "timeout": 120,
+   "root_cause": "an incident matches no silent-failure class, or a class lost its detector",
+   "owner": "operations",
+   "remedy": "Add the class with a detector to doctrine/silent-failures.json"
+  },
+  {
+   "id": "model-routes",
+   "failure_mode": "fm-model-route",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "agents",
+    "--check"
+   ],
+   "timeout": 120,
+   "root_cause": "a code-agent model route fails and nothing falls to the next rung",
+   "owner": "operations",
+   "remedy": "Fix the ladder in foundation/agents.py; probe each rung"
+  },
+  {
+   "id": "dg-visibility",
+   "failure_mode": "fm-declared-live-drift",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "driftguard",
+    "--visibility-live"
+   ],
+   "timeout": 120,
+   "root_cause": "a repository's live visibility differs from org/repos.json or doctrine/tenant-repos.json",
+   "owner": "operations",
+   "remedy": "The tick's repo-visibility loop sets it back; if it reports refused, give the administration app access to that repository."
+  },
+  {
+   "id": "dg-crons",
+   "failure_mode": "fm-cron-single-route",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "driftguard",
+    "--crons",
+    "--live"
+   ],
+   "timeout": 120,
+   "root_cause": "crons exceed the plan's account limit, a live schedule is undeclared, or a tenant clock has no pulse route",
+   "owner": "operations",
+   "remedy": "Declare the schedule in doctrine/topology.json and give the tenant a pulse URL the tick calls."
+  },
+  {
+   "id": "dg-triggers",
+   "failure_mode": "fm-missed-trigger",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "driftguard",
+    "--triggers",
+    "--apply"
+   ],
+   "timeout": 180,
+   "root_cause": "a push on main matched a workflow's paths and started no run",
+   "owner": "operations",
+   "remedy": "The detector dispatches the workflow; if dispatch is refused, the workflow needs workflow_dispatch."
+  },
+  {
+   "id": "dg-empty-commits",
+   "failure_mode": "fm-empty-commit-loop",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "driftguard",
+    "--empty-commits"
+   ],
+   "timeout": 60,
+   "root_cause": "a bot commits without comparing trees",
+   "owner": "operations",
+   "remedy": "Find the committing step on the named branch and compare its tree with the head before committing (MERGENOW-NOOP-1 pattern)."
+  },
+  {
+   "id": "dg-lane-closed",
+   "failure_mode": "fm-lane-item-open",
+   "kind": "probe",
+   "spec": "grep:foundation/contracts.py::LANE-FILED-FAIL-1",
+   "root_cause": "lane items are no longer closed by their PR's state",
+   "owner": "operations",
+   "remedy": "Restore LANE-FILED-FAIL-1 in foundation/contracts.py."
+  },
+  {
+   "id": "dg-accounts",
+   "failure_mode": "fm-account-drift",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "driftguard",
+    "--accounts-live"
+   ],
+   "timeout": 60,
+   "root_cause": "the Cloudflare credential reaches another account than the topology names",
+   "owner": "operations",
+   "remedy": "Re-issue the workflow secrets from the topology's account through the deploy route; never paste the retired id."
+  },
+  {
+   "id": "dg-built-live",
+   "failure_mode": "fm-built-without-evidence",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "driftguard",
+    "--built-live"
+   ],
+   "timeout": 120,
+   "root_cause": "a knowledge-graph row is built but its probe answers no nodes",
+   "owner": "product-manager",
+   "remedy": "Run the tenant's graph step and set the row back to pending until its probe shows nodes."
+  },
+  {
+   "id": "dg-handoff-lint",
+   "failure_mode": "fm-built-without-evidence",
+   "kind": "probe",
+   "spec": "grep:.github/workflows/checks.yml::driftguard --handoff-lint",
+   "root_cause": "checks no longer refuse a deploy verified only by the tick's /health",
+   "owner": "operations",
+   "remedy": "Restore the handoff-lint step in checks.yml."
+  },
+  {
+   "id": "dg-baseline-roll",
+   "failure_mode": "fm-declared-live-drift",
+   "kind": "probe",
+   "spec": "grep:.github/workflows/uiux.yml::--roll-baseline",
+   "root_cause": "the UI/UX run no longer rolls a stale visual baseline",
+   "owner": "design-manager",
+   "remedy": "Restore --roll-baseline in uiux.yml."
+  },
+  {
+   "id": "replication-ledger-citations",
+   "failure_mode": "fm-unverified-citations",
+   "kind": "http",
+   "url": "https://replication-ledger.ultrastable.org/api/citations",
+   "json_ok": true,
+   "timeout": 15,
+   "root_cause": "a seed DOI of the Replication Ledger was never checked at Crossref after the grace beats, or its check failed",
+   "owner": "operations",
+   "remedy": "The ledger's beat checks BEAT.CROSSREF seed DOIs per beat; the 503 body names unchecked_dois and failed. A failed DOI is corrected in instances/replication-ledger/worker/data/findings.json (node worker/cli.mjs verify); an unchecked one means beats are erroring at Crossref (GET /api/beats)."
+  },
+  {
+   "id": "bootproof",
+   "failure_mode": "fm-seed-not-launched",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "bootproof"
+   ],
+   "timeout": 60,
+   "root_cause": "the seed kernel needs something no code in it produces (instruction import, wrangler placeholder, undeclared secret, migration collision, workflow with no trigger)",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation bootproof, fix the seed tree or declare the item in doctrine/bootproof.json with its degrade and acquire route (BOOTPROOF-1)."
+  },
+  {
+   "id": "fleet-contract",
+   "failure_mode": "fm-front-back-drift",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "fleetcontract",
+    "--live",
+    "--record"
+   ],
+   "timeout": 300,
+   "root_cause": "a system's pages and its endpoints are written in different places, so a sentence stays on a page after its endpoint is gone, an endpoint ships that no page describes, or a contract surface (manifest, statements, health, social queue, graph) is never served",
+   "owner": "operations",
+   "remedy": "Read the failing lines of python3 -m foundation fleetcontract --live: each names the system, the direction (front-to-back, back-to-front or contract) and the page or endpoint. Fix that system in its own repository: declare the statement in its contract.js so the page sentence and /claims.json are one string, serve the missing surface through the vendored seed/worker/src/contract.js, or repair the endpoint. Never remove a statement to pass and never relax the reading (FLEET-CONTRACT-1)."
+  },
+  {
+   "id": "managers-live",
+   "failure_mode": "fm-manager-not-running",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "managers",
+    "--live"
+   ],
+   "timeout": 120,
+   "root_cause": "a switched-on manager has no runtime row (the roles table was not reconciled with the register) or its dispatch beat stopped (the tick skipped dispatch, for example while a cost breach holds the tick lean)",
+   "owner": "org-designer",
+   "remedy": "Read python3 -m foundation managers --live. For `missing`: the tick's reconcile step (seed/worker/src/managers.js hireStep) hires it once the Worker carries seed/autonomy/managers.json in its config; check the three config builders (deploy/deploy-workers.mjs, seed/worker/src/handoff.js tickConfigSource, seed/bootstrap/bootstrap.py). For `stopped` or `late`: read the last tick report at /health; when dispatch is skipped for a cost breach, cut the rows read (Q-MANAGERS-dispatch-starved) and never raise the limit to pass."
+  },
+  {
+   "id": "standards-register",
+   "failure_mode": "fm-standard-drift",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "standards",
+    "--check"
+   ],
+   "timeout": 300,
+   "root_cause": "a row of the standards register no longer measures true: a probe fails, a config stopped validating against its JSON Schema or arrived without one, a generated commit title left the Conventional Commits header, a rendered surface (catalog-info.yaml) drifted from its manifest, or an adopt-later row lost its item",
+   "owner": "operations",
+   "remedy": "Read the failing lines of python3 -m foundation standards --check: each names the row and the probe. Fix the code or the data so the standard is met again (render with python3 -m foundation standards --render, write the missing schema, correct the config the schema refused). Never loosen a schema, raise a baseline ceiling or change a row to adopted to pass (STANDARDS-FIRST-1)."
+  },
+  {
+   "id": "standards-live",
+   "failure_mode": "fm-standard-drift",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "standards",
+    "--live"
+   ],
+   "timeout": 300,
+   "root_cause": "a public address that a standards row names as its proof (llms.txt, the OpenAPI description, security.txt, the feeds, robots and sitemap, the JSON-LD on the home page) stopped answering in the form the standard requires",
+   "owner": "operations",
+   "remedy": "Read the failing lines of python3 -m foundation standards --live: each names the row, the address and what was missing. Repair the route in the Worker that serves it and redeploy; the same reading closes the item."
+  },
+  {
+   "id": "constitution",
+   "failure_mode": "fm-constitution-drift",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "constitution",
+    "--check"
+   ],
+   "timeout": 120,
+   "root_cause": "a section of the constitution no longer matches the code it describes, or a standing rule has no detector and remediation in code",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation constitution --check; bind the rule to code (seed/doctrine/constitution.json) or fix the drifted code; regenerate with --render (CONSTITUTION-1)."
+  },
+  {
+   "id": "cost-runaway",
+   "failure_mode": "fm-cost-runaway",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "cost",
+    "--guard"
+   ],
+   "timeout": 120,
+   "root_cause": "the cost reading stopped, was unmeasured, or a free-plan limit is near",
+   "owner": "operations",
+   "remedy": "Read the latest ops/cost.jsonl row: fix the probe if unmeasured, otherwise cut the largest spender (model route, read pattern) by PR"
+  },
+  {
+   "id": "d1-growth",
+   "failure_mode": "fm-d1-growth",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "cost",
+    "--guard"
+   ],
+   "timeout": 120,
+   "root_cause": "a database's measured growth reaches the size limit inside the horizon",
+   "owner": "operations",
+   "remedy": "Add or tighten its retention rows in seed/autonomy/retention.json and archive old rows through the audit chain"
+  },
+  {
+   "id": "credential-expiry",
+   "failure_mode": "fm-credential-expiry",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "credwatch",
+    "--ledger"
+   ],
+   "timeout": 120,
+   "root_cause": "a credential or registration is invalid, unrecorded or inside its warning window",
+   "owner": "staff",
+   "remedy": "Move the loops that use it to a credential-free route, then renew it through the connect flow"
+  },
+  {
+   "id": "content-drift",
+   "failure_mode": "fm-content-drift",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "contentdrift",
+    "--live"
+   ],
+   "timeout": 120,
+   "root_cause": "a system's feed is unreadable or its newest entries are empty, cut off, templated or repeated",
+   "owner": "product-manager",
+   "remedy": "Fix the generator in that system's repository so each entry is whole and distinct; never loosen the thresholds"
+  },
+  {
+   "id": "code-agent-ladder",
+   "failure_mode": "fm-code-ladder-dead",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "ladderwatch",
+    "--check"
+   ],
+   "timeout": 60,
+   "root_cause": "no code-agent rung returns an answer (credential without the permission, provider answering 200 with no body), so the executor ships nothing while its job and the static model-routes check read green",
+   "owner": "operations",
+   "remedy": "Read the rung errors ladderwatch prints, fix the route (site AI binding, model endpoint) and add a test; never relax the threshold."
+  },
+  {
+   "id": "pr-age-bound",
+   "failure_mode": "fm-pr-stale",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "prbound",
+    "--check"
+   ],
+   "timeout": 60,
+   "root_cause": "the lane labelled a conflicted or failed session PR and handed it to the executor, whose model calls were failing; no age bound existed",
+   "owner": "operations",
+   "remedy": "The lane runs prbound --apply each pass (closes past the bound, branch kept) and resolve_generated merges additive conflicts model-free; never raise the bound to clear a breach."
+  },
+  {
+   "id": "pr-lost",
+   "failure_mode": "fm-pr-lost",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "prsafe",
+    "--check"
+   ],
+   "timeout": 90,
+   "root_cause": "a closer trusted a stale conflict reading and the branch was then deleted, so unmerged work was discarded (PR #2615)",
+   "owner": "operations",
+   "remedy": "The lane runs prsafe --recover --apply each pass, which reopens the pull request; fix the closer that closed it so it goes through prsafe.safe_close; never delete the archive ref or the marker comment to clear a breach."
+  },
+  {
+   "id": "clock-measured",
+   "failure_mode": "fm-loop-unmeasured",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "clock",
+    "--measured"
+   ],
+   "timeout": 60,
+   "root_cause": "a loop's clock has no reading in the published record (no route that can read its beats from this host)",
+   "owner": "operations",
+   "remedy": "Give the clock a route this host can read (a health field, a workflow, a token), so /demo and /live show its real status."
+  },
+  {
+   "id": "canon-late",
+   "failure_mode": "fm-paper-late",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "research",
+    "--probe-canon",
+    "--apply"
+   ],
+   "timeout": 120,
+   "root_cause": "a step of the canon research program is late or unmeasured",
+   "owner": "product-manager",
+   "remedy": "Read the probe output, fix the stalled loop, add a regression test."
+  },
+  {
+   "id": "repo-conform",
+   "failure_mode": "fm-repo-nonconformant",
+   "kind": "command",
+   "run": [
+    "python3",
+    "seed/scripts/repoconform.py",
+    "--fleet",
+    "doctrine/fleet-map.json"
+   ],
+   "timeout": 300,
+   "root_cause": "a repository in the fleet map carries a machine-readable file (AGENTS.md, llms.txt, LICENSE and LICENSES/, REUSE.toml, CITATION.cff, publiccode.yml, catalog-info.yaml, ultrastable.json, EditorConfig, Dependabot, devcontainer, CHANGELOG, CONTRIBUTING, SECURITY) that is missing, fails its own standard or differs from what its manifest renders, or the repository cannot be read",
+   "owner": "operations",
+   "remedy": "Read python3 seed/scripts/repoconform.py --fleet doctrine/fleet-map.json (the platform command for the same reader is python3 -m foundation repoconform, foundation/repoconform.py): each line names the repository, the file, its validator and why. The last line lists each repository that does not conform with its file score and failing files. Fix the file in that repository's own pull request: render the generated ones with the kit's surfaces.py --render (scripts/surfaces.py in a seeded system, vendor/ultrastable/tools/surfaces.py in a tenant, seed/scripts/surfaces.py in the core; each failing line names the one for its repository), fix the manifest or generator for the rest. An unmeasured repository needs a read route (the lane's token for a private one), never a pass. Never relax a validator to clear a reading."
+  },
+  {
+   "id": "discovered-20bcba4f37",
+   "failure_mode": "fm-discovered-20bcba4f37",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "failmine",
+    "--probe",
+    "20bcba4f37"
+   ],
+   "timeout": 60,
+   "root_cause": "unclassified recurring failure",
+   "owner": "operations",
+   "remedy": "Remove the cause in foundation/failmine.py; seen in Q-AUDIT-2716, Q-AUDIT-2722, Q-AUDIT-2742, Q-AUDIT-2765"
+  }
+ ]
 }

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// US-14-R12 (and R01): no core module outside a recorded baseline calls a platform. The core reaches a platform only through a port, so
+// US-14-R19 (and R01): no core module outside a recorded baseline calls a platform. The core reaches a platform only through a port, so
 // a core file that imports node: modules, reads process, uses caches, a cloudflare: module, env.DB, or an adapter (a port named fetch, even defaulting to the global, is allowed) fails
 // here unless adapters/shared/purity-baseline.json names it with a reason. The baseline only shrinks: an entry whose finding is gone
 // must be removed, so a cleaned file cannot regress unnoticed.
@@ -44,7 +44,7 @@ const findings = () => {
   return out;
 };
 
-test('US-14-R12: no core module outside the baseline imports a platform, and the baseline only shrinks', () => {
+test('US-14-R19: no core module outside the baseline imports a platform, and the baseline only shrinks', () => {
   const found = findings();
   const known = BASELINE.entries;
   const fresh = Object.entries(found).flatMap(([file, rules]) => rules.filter(r => !(known[file]?.rules || []).includes(r)).map(r => `${file}: ${r}`));
@@ -54,7 +54,7 @@ test('US-14-R12: no core module outside the baseline imports a platform, and the
   for (const [file, e] of Object.entries(known)) assert.ok(String(e.reason || '').trim().length > 10, `${file} needs a reason`);
 });
 
-test('US-14-R12: the scanner sees each kind of platform call', () => {
+test('US-14-R19: the scanner sees each kind of platform call', () => {
   const sample = { 'node-import': `import fs from 'node:fs';`, process: `const x = process.env.A;`, caches: `await caches.default.match(r);`, 'cloudflare-import': `import { DurableObject } from 'cloudflare:workers';`, 'env-db': `env.DB.prepare('x')`, 'adapter-import': `import { x } from '../../adapters/github/stage2.js';` };
   for (const [name, re] of RULES) assert.ok(re.test(sample[name]), name);
   for (const [name, re] of RULES) assert.ok(!re.test(`const ok = port.fetch(u); const p = myprocess.x; // ${sample[name]}`.replace(/\/\/.*/, '')), `${name} ignores a method call and a comment`);

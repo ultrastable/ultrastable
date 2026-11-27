@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // Conformance tests for US-SPEC-20 (self-hosting) that run the real Python tools, so the requirement ids attach to behaviour the JS
 // conformance scanner can see (core/conformance reads Python test names too; these also prove the tools from the JS side).
-// T20-1 .. T20-6 are the specification's own test ids. No network: every tool is run on fixtures in a temporary directory.
+// T20-1 .. T20-9 are the specification's own test ids. No network: every tool is run on fixtures in a temporary directory.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
@@ -61,7 +61,7 @@ test('T20-4 and US-20-R07: a change to a protected path without Protected-change
   assert.equal(ok.status, 0, ok.stderr);
 });
 
-test('T20-9 and US-20-R14: a deleted guard file fails the gate and an added human approver fails it only under the closed-loop flag', () => {
+test('T20-4, T20-9, US-20-R07 and US-20-R14: a deleted guard file fails the gate and an added human approver fails it only under the closed-loop flag', () => {
   const d = tmp(), body = path.join(d, 'pr.md'), ns = path.join(d, 'ns.txt'), co = path.join(d, 'co.diff');
   writeFileSync(body, GOOD + 'Protected-change: removing a guard to prove the gate refuses it\n');
   writeFileSync(ns, 'D\ttools/spec_truth.py\n'); writeFileSync(co, '+/docs/ @someone\n');

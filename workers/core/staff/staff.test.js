@@ -216,7 +216,7 @@ test('US-02-R07: a persona writes exactly one brief per tick it runs, built from
   assert.match(await writeBrief(db, 'pgm-slow', 6, NOW), /nothing needed doing/);
 });
 
-test('US-02-R11, US-02-R15: a role filled by a person gets the same action record, prediction (decision STAFF-<id>, an unparsable one refused), brief and trust outcome, and is never acted for', async () => {
+test('US-02-R11, US-02-R21: a role filled by a person gets the same action record, prediction (decision STAFF-<id>, an unparsable one refused), brief and trust outcome, and is never acted for', async () => {
   const db = setup(); const tools = await staffed(db);
   await registerMetric(db, { id: 'reach_visits', program_id: 'REACH', op: '>=', target: 10, read_probe: `SELECT 12 AS value` });
   await registerPersona(db, { id: 'pgm-reach', role: 'program-manager', program_id: 'REACH', scope: 'program REACH', instruction_source: 'agents/roles/product-manager.md', authority: PM_OPS, filled_by: 'person', holder: 'a-person' });
@@ -380,7 +380,7 @@ test('US-02-R06, US-02-T07: reversing a supersede or close restores the claim th
   assert.deepEqual({ ...one(db, `SELECT agent, claimed_at FROM claims WHERE item_id = 'S-old'`) }, { agent: 'staff-1', claimed_at: '2026-11-10 09:00:00' });
 });
 
-test('US-02-R14, US-02-T06: a refusal is recorded with its kind (authority, lane, control_plane, precondition), changes nothing, and a quiet duty leaves no row for a failed precondition', async () => {
+test('US-02-R20, US-02-T10: a refusal is recorded with its kind (authority, lane, control_plane, precondition), changes nothing, and a quiet duty leaves no row for a failed precondition', async () => {
   const db = setup(); const tools = await staffed(db);
   item(db, 'A', { project: 'OPS', priority: 50 }); item(db, 'B', { project: 'REACH', priority: 50 }); focus(db, 'OPS', 'A');
   const before = () => ({ prio: rows(db, `SELECT id, priority, status FROM items ORDER BY id`).map(r => ({ ...r })), actions: one(db, `SELECT COUNT(*) AS n FROM staff_actions`).n });

@@ -1,0 +1,14 @@
+{
+  "id": "Q-RECUR-20bcba4f37",
+  "title": "Q-RECUR-20bcba4f37: other recurred 12x: q-audit audit merged pr",
+  "body": "**Owner:** executor\n**Trigger:** the failure miner files it after every merge and daily\n**Done check:** cmd:python3 -m foundation failmine --probe 20bcba4f37\n**Status:** open\n\nRecurring failure, class `other`, seen 12 times (open 12, last 2026-11-27T12:41:41Z).\nSignature: q-audit audit merged pr\nEvents: Q-AUDIT-2708, Q-AUDIT-2710, Q-AUDIT-2716, Q-AUDIT-2722, Q-AUDIT-2742, Q-AUDIT-2765\nRoot cause (5 whys): unclassified: register a class in foundation/failmine.py ROOT_CAUSES\nOwning mechanism: foundation/failmine.py\nSeen three or more times: incident. Redesign the owning mechanism so this class cannot recur; a fourth attempt of the same fix is not allowed.\n\n**Closing probe:** cmd:python3 -m foundation failmine --probe 20bcba4f37\n",
+  "labels": [
+    "audit",
+    "incident",
+    "agent-ready",
+    "p1",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}

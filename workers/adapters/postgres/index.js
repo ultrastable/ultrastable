@@ -15,6 +15,7 @@
 //   FROM sqlite_master      -> a sub-select over pg_tables, pg_views and pg_indexes with the columns name, type, sql, tbl_name
 //   julianday(x)            -> days as a number (epoch / 86400 + 2440587.5), so differences in days and hours still work
 //   json_extract(c, '$.a.b') -> (c::json #>> '{a,b}');  IFNULL -> COALESCE;  hex(randomblob(n)) -> upper-case hex from md5, n up to 32
+//   instr(x, y)             -> strpos(x, y): the 1-based position of y in x, 0 when absent, as in SQLite
 //   refused with a message: rowid, PRAGMA (no Postgres form; write the column or the setting)
 const NOW_TEXT = `to_char(now() AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI:SS')`;
 const nowPlus = (mod) => {
@@ -123,6 +124,7 @@ export function translate(sql, { serialTables = new Set(), keys = new Map() } = 
     const md5 = `md5(random()::text || clock_timestamp()::text)`;
     return `upper(substr(${md5} || ${md5}, 1, ${2 * Number(n[1])}))`;
   });
+  s = rewriteCalls(s, 'instr', ([x, y]) => `strpos(${x}, ${y})`);
   s = s.replace(/\bIFNULL\s*\(/gi, 'COALESCE(');
   if (/^\s*PRAGMA\b/i.test(s)) throw new Error('PRAGMA has no Postgres form: the setting belongs to the SQLite handle only');
   if (/(?<![\w'"])rowid\b/i.test(segments(s).filter(g => !g.lit).map(g => g.text).join(' '))) throw new Error('rowid has no Postgres form: order or key by a real column');

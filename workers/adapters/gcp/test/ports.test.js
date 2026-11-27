@@ -21,7 +21,7 @@ function fakeCloudRun() {
     if (init.method === 'PATCH') {
       const b = JSON.parse(init.body);
       if (b.traffic) s.live = b.traffic[0].revision; else s.live = 'rev-' + (++s.n);
-      return Response.json({ name: 'operations/op' });
+      return Response.json({ name: 'operations/op', done: true });
     }
     return Response.json({ latestReadyRevision: s.live });
   };

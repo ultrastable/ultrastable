@@ -62,7 +62,7 @@ test('an unreadable host, a missing token or a bad repo name throws instead of r
   assert.throws(() => githubPulls({ ...bad, repo: 'nope' }), /owner\/name/);
 });
 
-test('githubPullReader: one read of the pull request, state open, closed or merged, the token only in the Authorization header; an unset token, a bad repo or a failed read throws (never reads as closed)', async () => {
+test('US-08-R31: githubPullReader: one read of the pull request, state open, closed or merged, the token only in the Authorization header; an unset token, a bad repo or a failed read throws (never reads as closed)', async () => {
   const seen = [];
   const answer = body => async (url, init) => { seen.push({ url: String(url), auth: init.headers.authorization }); return { ok: true, status: 200, json: async () => body }; };
   const read = body => githubPullReader({ fetch: answer(body), env: { VCS_TOKEN: 'tok-123456789' } });
@@ -78,4 +78,18 @@ test('githubPullReader: one read of the pull request, state open, closed or merg
   await assert.rejects(githubPullReader({ fetch: async () => ({ ok: false, status: 404 }), env: { VCS_TOKEN: 'x' } })('o/r', 7), /http 404/);
   assert.throws(() => githubPullReader({}), /fetch port/);
   const other = githubPullReader({ fetch: answer({ state: 'open' }), env: { OTHER: 'tok-xyz' }, tokenEnv: 'OTHER' }); await other('o/r', 1); assert.equal(seen.at(-1).auth, 'Bearer tok-xyz');
+});
+
+test('US-08-R31: githubPullReader is core/claims restPullReader bound to GitHub, so a 200 body with no pull request state throws and the reaper books it unmeasured, never open', async () => {
+  const { reapClosedPulls, acquire } = await import('../../core/claims/index.js');
+  const { makeDb } = await import('../../core/_shared/testdb.js');
+  const stateless = async () => ({ ok: true, status: 200, json: async () => ({ message: 'rate limited' }) });
+  const read = githubPullReader({ fetch: stateless, env: { VCS_TOKEN: 'tok-123456789' } });
+  await assert.rejects(read('o/r', 7), /no pull request state/);
+  const db = makeDb([new URL('../../core/claims/migrations/', import.meta.url).pathname]);
+  db.raw.exec(`INSERT INTO items (id, title, owner_role, done_check, status) VALUES ('A', 'a', 'staff', 'x', 'ready')`);
+  const ctx = { db, now: () => Date.parse('2026-11-20T08:00:00Z'), config: {} };
+  await acquire(ctx, { item_id: 'A', holder: 'agent', repo: 'o/r', pr: 7 });
+  const r = await reapClosedPulls(ctx, { readPull: read });
+  assert.deepEqual([r.released, r.kept, r.unmeasured.map(u => u.key ?? u)], [[], [], ['item:A']]);
 });

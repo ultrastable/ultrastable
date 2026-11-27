@@ -384,7 +384,7 @@ test('US-04-R18: fresh usage_section and slow_route readings become evidence by 
   assert.deepEqual(seen.feedback, [{ label: 'x' }]);
 });
 
-test('US-04-T05, US-04-R15: an unmeasured plus stays shipped with an item through the grace period, then is reverted and counts as a miss', async () => {
+test('US-04-T09, US-04-R21: an unmeasured plus stays shipped with an item through the grace period, then is reverted and counts as a miss', async () => {
   const db = makeDb([MIGRATIONS_DIR]); await product(db); await read(db, 1240, 0.8, NOW);
   const a = await proposePlus(db, plus({ now: NOW }));
   await shipPlus(db, a.id, { evidence: 'deploy probed', now: NOW });
@@ -398,7 +398,7 @@ test('US-04-T05, US-04-R15: an unmeasured plus stays shipped with an item throug
   assert.equal(one(db, `SELECT priority FROM items WHERE id = ?`, `PLUSREVERT-${a.id}`).priority, 5);
 });
 
-test('US-04-T06, US-04-R16: the daily cap counts plus rows created today, independent of the managers\' origination cap', async () => {
+test('US-04-T10, US-04-R22: the daily cap counts plus rows created today, independent of the managers\' origination cap', async () => {
   const db = makeDb([MIGRATIONS_DIR]);
   for (const n of ['a', 'b', 'c']) { await registerProduct(db, { product: n, program: 'P', usage_metric: 'requests_per_day', quality_measure: 'error_page_rate', now: NOW - 30 * DAY }); await read(db, 100, 0.5, NOW, n); }
   let calls = 0;
@@ -410,7 +410,7 @@ test('US-04-T06, US-04-R16: the daily cap counts plus rows created today, indepe
   assert.equal(next.filter(r => r.skipped).length, 0 + next.filter(r => r.skipped).length); assert.ok(calls >= 3);
 });
 
-test('US-04-R16, US-04-T06: a plus written onto a seed row counts on the day it is filed, so the cap holds across ticks even when every product has an old seed', async () => {
+test('US-04-R22, US-04-T10: a plus written onto a seed row counts on the day it is filed, so the cap holds across ticks even when every product has an old seed', async () => {
   const db = makeDb([MIGRATIONS_DIR]), names = ['a', 'b', 'c', 'd', 'e'];
   for (const n of names) {
     await registerProduct(db, { product: n, program: 'P', usage_metric: 'requests_per_day', quality_measure: 'error_page_rate', now: NOW - 30 * DAY }); await read(db, 100, 0.5, NOW, n);

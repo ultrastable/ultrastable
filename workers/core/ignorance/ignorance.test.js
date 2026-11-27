@@ -43,7 +43,7 @@ test('the deterministic red team challenges every entry with a falsifier and nee
   assert.ok(f.some(x => x.severity === 3), 'a causal claim on a weak design is a severe challenge');
 });
 
-test('model output is untrusted: validated, capped, tagged, and refused from the author family', async () => {
+test('US-16-R23: model output is untrusted: validated, capped, tagged, and refused from the author family', async () => {
   const bad = { family: 'x', findings: [{ pass: 'bogus', q: 99, challenge: 'short' }] };
   assert.equal(sanitizeModel(bad).length, 0);
   const good = { family: 'other', findings: Array.from({ length: 20 }, (_, i) => ({ pass: 'inversion', q: 4, challenge: 'What if the opposite were true for case number ' + i + '?', severity: 3, falsifier: 'x' })) };
@@ -54,7 +54,7 @@ test('model output is untrusted: validated, capped, tagged, and refused from the
   const r2 = await redTeam(sol('a'), { model: async () => { throw new Error('down'); } }); assert.equal(r2.model_error, 'down');
 });
 
-test('a run records gaps, challenges the stalest subjects first, and never loses one (accounting invariant)', async () => {
+test('US-16-R23: a run records gaps, challenges the stalest subjects first, and never loses one (accounting invariant)', async () => {
   const registry = reg(), subjects = [sol('a'), sol('b'), sol('c'), sol('d'), { id: 'p1', type: 'problem', title: 'P1' }];
   const r1 = await run({ registry, subjects, now: () => T.v, budget: 2 });
   assert.equal(r1.metrics.targets.length, 2); assert.ok(r1.metrics.open > 10); assert.equal(r1.metrics.audit.balanced, true);
@@ -66,7 +66,7 @@ test('a run records gaps, challenges the stalest subjects first, and never loses
   assert.ok((await registry.list({ kind: 'audit_coverage' })).length >= 1, 'ignorance about ignorance is itself measured');
 });
 
-test('closing needs a disposition and evidence; a fixed condition closes itself with evidence; a regression reopens', async () => {
+test('US-16-R23: closing needs a disposition and evidence; a fixed condition closes itself with evidence; a regression reopens', async () => {
   const registry = reg(), s = sol('a', { assumptions: [{ text: 'Nurses are trained', tested: false }], effect: { value: 1, low: 1, high: 2, unit: 'u' }, bca: { higher_order: ['x'], counterfactual: 'y' } });
   await run({ registry, subjects: [s], now: () => T.v, budget: 0 });
   const open = await registry.list({ kind: 'untested_assumption', status: 'open' }); assert.ok(open.some(g => /Nurses/.test(g.text)));

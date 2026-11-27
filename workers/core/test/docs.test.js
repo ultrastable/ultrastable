@@ -52,7 +52,7 @@ test('requirement ids use the US-NN-RNN or US-SPEC-NN shape', () => {
 
 test('US-19-R21 the platform statement is made in the scope page and the skill, links docs/why-cloudflare.md, and that document has its limits and its not-the-right-choice sections', () => {
   const read = p => readFileSync(join(root, p), 'utf8');
-  for (const f of ['SCOPE.md', 'agent-setup/SKILL.md']) {
+  for (const f of ['SCOPE.md', 'agent-setup/SKILL.md', 'README.md']) {
     assert.match(read(f), /Cloudflare Workers/, f);
     assert.match(read(f), /docs\/why-cloudflare\.md/, `${f} links the document`);
   }
@@ -63,4 +63,16 @@ test('US-19-R21 the platform statement is made in the scope page and the skill, 
     assert.ok(why.includes(h), `docs/why-cloudflare.md needs: ${h}`);
   assert.match(why, /only supported platform/);
   assert.doesNotMatch(why, /alarm-driven tick is planned/, 'a built mechanism is not described as planned');
+});
+
+test('US-19-R20 / US-19-R22 every organization configuration names Cloudflare Workers as its only supported runtime and other runtimes only as proofs', () => {
+  const configs = ['ultrastable.json', 'self/ultrastable.json', 'runtimes/python/tests/fixtures/ultrastable.json', '../seed/ultrastable.json']
+    .filter(f => existsSync(join(root, f)));
+  assert.ok(configs.includes('ultrastable.json'));
+  for (const f of configs) {
+    const runtime = JSON.parse(readFileSync(join(root, f), 'utf8')).runtime || {};
+    assert.deepEqual(runtime.supported, ['cloudflare-workers'], `${f}: the one supported runtime`);
+    for (const k of Object.keys(runtime)) assert.doesNotMatch(k, /supported_later|planned|roadmap/i, `${f}: ${k} promises another platform`);
+    assert.ok((runtime.portability_proofs_only || []).every(r => r !== 'cloudflare-workers'), `${f}: a proof is not the supported runtime`);
+  }
 });

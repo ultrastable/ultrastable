@@ -397,7 +397,7 @@ test('US-03-R11: the tick returns, for every step it ran, whether it completed a
   assert.match(byName.probe_gates.evidence, /completed/);
 });
 
-test('US-08-R03: a ready item whose trigger item is not done is not dispatched; one whose trigger is done with its disposition is; list and gate triggers are left to core/claims', async () => {
+test('US-08-R03: a ready item whose trigger item is not done is not dispatched; one whose trigger is done with its disposition is; a list or gate trigger the tick cannot judge goes back to open undispatched', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('staff-1','staff',1,'m');
     INSERT INTO items (id,title,owner_role,done_check,priority,status) VALUES ('A','a','staff','x',50,'open');
@@ -405,7 +405,9 @@ test('US-08-R03: a ready item whose trigger item is not done is not dispatched; 
   // C was made ready by hand while its trigger A is still open: it must not go first although it has the best priority
   await runTick(db, { config, now: T0 });
   const claimed = () => db.raw.prepare('SELECT item_id FROM claims ORDER BY item_id').all().map(x => x.item_id);
-  assert.deepEqual(claimed(), ['L'], 'C waits for A; the list trigger is judged by core/claims, so L is dispatched');
+  assert.deepEqual(claimed(), ['A'], 'C waits for A; with no judge L and G are not known to be done, so the role takes the next ready item');
+  assert.deepEqual(db.raw.prepare(`SELECT id, status FROM items WHERE id IN ('L','G') ORDER BY id`).all().map(r => `${r.id}:${r.status}`), ['G:open', 'L:open']);
+  assert.equal(db.raw.prepare(`SELECT COUNT(*) AS n FROM outcomes WHERE action_class='trigger_guard' AND item_id IN ('L','G')`).get().n, 2);
   // the trigger is reopened after it was done: still not dispatched
   db.raw.exec(`DELETE FROM claims; UPDATE items SET status='done', disposition='merged' WHERE id='A'; UPDATE items SET status='ready' WHERE id='L'`);
   db.raw.exec(`UPDATE items SET status='open' WHERE id='A'`);
@@ -429,4 +431,39 @@ test('US-14-R11: a dispatcher that loses the race for a claim skips the item: on
   assert.deepEqual(db.raw.prepare('SELECT item_id, agent FROM claims').all().map(x => [x.item_id, x.agent]), [['A', 'other-writer']]);
   assert.equal(db.raw.prepare('SELECT COUNT(*) AS n FROM dispatches').get().n, 0, 'no dispatch row for a claim this dispatcher does not hold');
   assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='A'").get().status, 'ready', 'the item is not changed by the dispatcher that lost');
+});
+
+test('US-03-R17: steps_total is the length of the declared list, extra steps included, and an extra step is guarded like a core step: it files its own TICKFAIL item and the steps after it run', async () => {
+  const db = makeDb(); seed(db);
+  const ran = [];
+  const extra = [
+    { name: 'x_breaks', run: async () => { throw new Error('extra step broke'); } },
+    { name: 'x_after', run: async () => { ran.push('x_after'); } },
+  ];
+  const r = await runTick(db, { config, now: T0, extraSteps: extra });
+  assert.equal(r.total, STEP_ORDER.length + extra.length, 'the declared list is the core steps and the extra steps');
+  assert.equal(r.completed, r.total - 1, 'only the step that threw is not complete');
+  assert.deepEqual(ran, ['x_after'], 'the step after the failing one still ran');
+  const row = q1(db, 'SELECT steps_total, steps_completed FROM tick_runs');
+  assert.equal(row.steps_total, STEP_ORDER.length + extra.length); assert.equal(row.steps_completed, r.total - 1);
+  const fail = q1(db, "SELECT id, priority, owner_role FROM items WHERE id LIKE 'TICKFAIL-x_breaks-%'");
+  assert.equal(fail.id, 'TICKFAIL-x_breaks-2026-11-10T00'); assert.equal(fail.priority, 0); assert.equal(fail.owner_role, 'operations');
+  await runTick(db, { config, now: T0 + 600e3, extraSteps: extra });
+  assert.equal(q1(db, "SELECT COUNT(*) AS n FROM items WHERE id LIKE 'TICKFAIL-x_breaks-%'").n, 1, 'deduplicated by identifier within the hour');
+});
+
+test('US-08-R03: with a trigger judge the tick dispatches a list or gate trigger that is done and holds back one that is not', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('staff-1','staff',1,'m');
+    INSERT INTO items (id,title,owner_role,done_check,priority,status,disposition) VALUES ('A','a','staff','x',50,'done','merged'), ('B','b','staff','x',50,'open',NULL);
+    INSERT INTO items (id,title,owner_role,done_check,priority,status,trigger_on) VALUES ('L1','l','staff','x',10,'ready','A,B'), ('L2','l','staff','x',20,'ready','A, gate:G1');
+    INSERT INTO gate_cards (id, what, why_gated, default_in_effect, closing_probe, status) VALUES ('G1','w','y','d','manual','closed');`);
+  const seen = [];
+  const triggerJudge = async spec => { seen.push(spec); const toks = spec.split(',').map(t => t.trim());
+    const done = toks.every(t => t.startsWith('gate:') ? db.raw.prepare(`SELECT status FROM gate_cards WHERE id=?`).get(t.slice(5))?.status === 'closed' : db.raw.prepare(`SELECT status FROM items WHERE id=?`).get(t)?.status === 'done');
+    return { done, waiting_on: done ? [] : toks, reasons: {} }; };
+  await runTick(db, { config, now: T0, triggerJudge });
+  assert.deepEqual(db.raw.prepare('SELECT item_id FROM claims').all().map(x => x.item_id), ['L2'], 'L1 waits on B; L2 has its item done and its card closed');
+  assert.deepEqual(seen, ['A,B', 'A, gate:G1']);
+  assert.equal(db.raw.prepare(`SELECT status FROM items WHERE id='L1'`).get().status, 'open');
 });

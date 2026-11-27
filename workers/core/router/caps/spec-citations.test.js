@@ -67,7 +67,7 @@ test('US-24-R54 a consumer that scanned 25 items and booked 0 raises an incident
   assert.equal((await recordLoopRun(db, { loop: 'runner', scanned: 7, executed: 4, failed: 2, no_action: 1 })).balanced, true, 'buckets sum to the scanned count');
 });
 
-test('US-09-R22 a keyless provider never serves a role the configuration does not allow it, the refusal names role_not_allowed, and configuration can allow it', async () => {
+test('US-09-R27 a keyless provider never serves a role the configuration does not allow it, the refusal names role_not_allowed, and configuration can allow it', async () => {
   const edge = { kind: 'workers_ai', key_env: null, family: 'open', models: { small: { id: 'm-small', capabilities: ['json'] } } };
   const cfg = (extra = {}) => ({ rungs: ['small', 'medium', 'large'], fallbacks: ['edge'], providers: { edge }, ...extra });
   const ai = { calls: 0, run: async () => { ai.calls++; return { response: 'x' }; } };

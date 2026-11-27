@@ -253,12 +253,27 @@ export const STEPS = {
       // When a code executor is running (ctx.config.executor_takes_targeted), an item that names its target file is the
       // executor's: a role claim on it would hide it from the executor and then be released unworked (CRIT-3).
       // US-08-R03: an item whose trigger item is not done (with its disposition) is not dispatched, even when something made it ready: the dispatcher is the last line,
-      // reconcile and core/claims the first. A list of triggers and a gate trigger are judged by core/claims (enforceTriggers), which demotes the item after dispatch.
-      const item = await first(db, `SELECT id FROM items WHERE status='ready' AND (owner_role=? OR owner_role=?)
+      // reconcile and core/claims the first. A list of triggers and a gate trigger are judged below with the judge the host passes (`triggerJudge`).
+      let item = null;
+      for (let pick = 0; pick < 3 && !item; pick++) {
+        const cand = await first(db, `SELECT id FROM items WHERE status='ready' AND (owner_role=? OR owner_role=?)
           AND (project IS NULL OR project = ? OR ? IS NULL)${ctx.config.executor_takes_targeted ? ` AND done_check NOT LIKE '%target:%'` : ''}
           AND (trigger_on IS NULL OR trigger_on LIKE '%,%' OR trigger_on LIKE 'gate:%' OR trigger_on IN (SELECT id FROM items WHERE status='done' AND disposition IS NOT NULL AND disposition <> ''))
           AND id NOT IN (SELECT item_id FROM claims) ORDER BY (owner_role=?) DESC, priority, created_at LIMIT 1`,
-        role.role, role.id, role.project, role.project, role.id);
+          role.role, role.id, role.project, role.project, role.id);
+        if (!cand) break;
+        // US-08-R03: a list or gate trigger is judged by the rule the host passes as `triggerJudge` (the composition root passes core/claims
+        // triggerState, so dispatch and the claims step read one rule); with no judge it is not known to be done, so it is not dispatched.
+        const spec = (await first(db, `SELECT trigger_on FROM items WHERE id=?`, cand.id))?.trigger_on;
+        if (!spec || !/,|^\s*gate:/i.test(spec)) { item = cand; break; }
+        const t = typeof ctx.triggerJudge === 'function'
+          ? await Promise.resolve().then(() => ctx.triggerJudge(spec)).catch(e => ({ done: false, waiting_on: [spec], reasons: { [spec]: `the judge failed: ${e.message}` } }))
+          : { done: false, waiting_on: [spec], reasons: { [spec]: 'no trigger judge was supplied' } };
+        if (t && t.done) { item = cand; break; }
+        await run(db, `UPDATE items SET status='open', updated_at=? WHERE id=? AND status='ready'`, ctx.nowIso, cand.id);
+        await run(db, `INSERT INTO outcomes (item_id, surface, action_class, result, evidence) VALUES (?, 'work_tracker', 'trigger_guard', 'failed', ?)`,
+          cand.id, `not dispatched, back to open: trigger not done (${(t.waiting_on || []).map(w => `${w}: ${(t.reasons || {})[w]}`).join('; ')})`.slice(0, 500));
+      }
       await run(db, `UPDATE roles SET last_tick_at=? WHERE id=?`, ctx.nowIso, role.id);
       if (!item) continue;
       // US-14-R11: claims.item_id is the primary key. On a store with more than one writer a dispatcher that loses the race gets no row, and then neither changes the item nor writes a
@@ -318,13 +333,13 @@ export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_pre
 
 // extraSteps: optional [{ name, run(db, ctx) }] appended after the eight L1 steps (extension point for higher layers).
 // metrics: optional { name: async (db, nowMs, predictionRow) => number }, consulted before the built-ins when a due prediction is scored.
-export async function runTick(db, { config, env = {}, now = Date.now(), extraSteps = [], metrics = {} } = {}) {
+export async function runTick(db, { config, env = {}, now = Date.now(), extraSteps = [], metrics = {}, triggerJudge = null } = {}) {
   const steps = [...STEP_ORDER.map(name => ({ name, run: STEPS[name] })), ...extraSteps];
   const startedIso = iso(new Date(now));
   const ins = await run(db, `INSERT INTO tick_runs (started_at, steps_total) VALUES (?, ?)`, startedIso, steps.length);
   const tickId = ins.meta.last_row_id;
   // stepLog (US-03-R11): what each step that has run reported, taken from the step itself (its notes, or its error), for a layer above to store as evidence.
-  const ctx = { config: withDefaults(config), env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0, metrics, stepLog: [] };
+  const ctx = { config: withDefaults(config), env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0, metrics, stepLog: [], triggerJudge };
   let completed = 0;
   for (const { name, run: stepRun } of steps) {
     const mark = ctx.notes.length;

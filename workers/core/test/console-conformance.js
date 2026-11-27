@@ -33,7 +33,7 @@ export function runConsoleConformance(test, host) {
   const tag = `[${host.name}]`;
   const boot = async (token = KEY) => { const app = await host.boot({ token }); return app; };
 
-  test(`T18-1, US-18-R09 and US-18-R13: with no door configured every console path answers off and returns no data ${tag}`, async () => {
+  test(`T18-1, US-18-R09 and US-18-R22: with no door configured every console path answers off and returns no data ${tag}`, async () => {
     const app = await host.boot({ token: null }); app.sql(SEED);
     try {
       for (const [path, method] of [['/console', 'GET'], ['/api/console', 'GET'], ['/console/login', 'POST'], ['/api/console/card', 'POST'], ['/api/console/ask', 'POST'], ['/api/console/secret', 'POST']]) {

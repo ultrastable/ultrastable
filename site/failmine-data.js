@@ -2,50 +2,59 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 export const FAILMINE = {
  "schema": "ultrastable-failmine/1",
- "at": "2026-11-26T15:44:49Z",
- "events": 335,
- "open": 20,
- "signatures": 88,
- "recurrence_rate": 0.737,
- "mttr_hours_mean": 63.5,
- "mttr_hours_median": 24.0,
- "remediated": 315,
+ "at": "2026-11-27T15:33:26Z",
+ "events": 425,
+ "open": 55,
+ "signatures": 113,
+ "recurrence_rate": 0.734,
+ "mttr_hours_mean": 55.0,
+ "mttr_hours_median": 6.8,
+ "remediated": 370,
  "classes": [
   {
-   "class": "merge-conflict",
-   "events": 117,
-   "open": 1,
-   "signatures": 5,
-   "root_cause": "two writers change one generated or append-only file and the second PR cannot apply",
-   "owner": "scripts/resolve_generated.py, scripts/no_markers.py",
-   "failure_mode": "fm-lane-rebase-wedge"
-  },
-  {
    "class": "pr-stuck",
-   "events": 103,
-   "open": 1,
+   "events": 139,
+   "open": 3,
    "signatures": 2,
    "root_cause": "nothing server-side owns the PR after the session that opened it ends",
    "owner": "seed/worker/src/sweeper.js lane",
    "failure_mode": "fm-waiting-on-person"
   },
   {
+   "class": "merge-conflict",
+   "events": 123,
+   "open": 1,
+   "signatures": 4,
+   "root_cause": "two writers change one generated or append-only file and the second PR cannot apply",
+   "owner": "scripts/resolve_generated.py, scripts/no_markers.py",
+   "failure_mode": "fm-lane-rebase-wedge"
+  },
+  {
    "class": "ci-red",
-   "events": 56,
-   "open": 8,
-   "signatures": 56,
+   "events": 72,
+   "open": 16,
+   "signatures": 68,
    "root_cause": "a change merged or main moved while a check was red",
    "owner": "foundation/redmain.py",
    "failure_mode": "fm-tests-red"
   },
   {
    "class": "gate-skipped",
-   "events": 25,
-   "open": 0,
+   "events": 31,
+   "open": 1,
    "signatures": 1,
    "root_cause": "a merge path reads mergeable_state instead of a green full checks run",
    "owner": "foundation/mergeaudit.py, green guard",
    "failure_mode": "fm-merge-without-checks"
+  },
+  {
+   "class": "other",
+   "events": 24,
+   "open": 23,
+   "signatures": 13,
+   "root_cause": "unclassified: register a class in foundation/failmine.py ROOT_CAUSES",
+   "owner": "foundation/failmine.py",
+   "failure_mode": null
   },
   {
    "class": "tick-step-failed",
@@ -57,31 +66,31 @@ export const FAILMINE = {
    "failure_mode": "fm-clock-silent"
   },
   {
+   "class": "loop-stalled",
+   "events": 9,
+   "open": 4,
+   "signatures": 8,
+   "root_cause": "a loop has one trigger and that trigger did not fire",
+   "owner": "foundation/resilience.py, seed/worker/src/pulse.js",
+   "failure_mode": "fm-clock-silent"
+  },
+  {
    "class": "credential",
-   "events": 7,
-   "open": 1,
-   "signatures": 7,
+   "events": 8,
+   "open": 2,
+   "signatures": 8,
    "root_cause": "a credential lapses with no renewal probe ahead of expiry",
    "owner": "foundation/credwatch.py, seed/worker/src/auth/",
    "failure_mode": null
   },
   {
-   "class": "other",
-   "events": 6,
-   "open": 5,
-   "signatures": 6,
-   "root_cause": "unclassified: register a class in foundation/failmine.py ROOT_CAUSES",
-   "owner": "foundation/failmine.py",
+   "class": "quota-governor",
+   "events": 5,
+   "open": 3,
+   "signatures": 5,
+   "root_cause": "a fixed cap refuses work instead of throttling against measured spend",
+   "owner": "seed/worker/src/budget.js soft throttle",
    "failure_mode": null
-  },
-  {
-   "class": "loop-stalled",
-   "events": 6,
-   "open": 2,
-   "signatures": 6,
-   "root_cause": "a loop has one trigger and that trigger did not fire",
-   "owner": "foundation/resilience.py, seed/worker/src/pulse.js",
-   "failure_mode": "fm-clock-silent"
   },
   {
    "class": "trivial-change",
@@ -91,49 +100,40 @@ export const FAILMINE = {
    "root_cause": "a generator or bot commits volatile values instead of behaviour",
    "owner": "foundation/substance.py",
    "failure_mode": null
-  },
-  {
-   "class": "quota-governor",
-   "events": 1,
-   "open": 0,
-   "signatures": 1,
-   "root_cause": "a fixed cap refuses work instead of throttling against measured spend",
-   "owner": "seed/worker/src/budget.js soft throttle",
-   "failure_mode": null
   }
  ],
  "recurring": [
   {
-   "sig": "0f61587b9e",
-   "class": "merge-conflict",
-   "signature": "ol-pr land or supersede pull request conflict",
-   "count": 113,
-   "open": 0,
-   "last": "2026-11-26T14:30:51Z",
+   "sig": "5f8b2445f4",
+   "class": "pr-stuck",
+   "signature": "ol-pr land or supersede pull request ci",
+   "count": 128,
+   "open": 3,
+   "last": "2026-11-27T14:36:17Z",
    "ids": [
-    "OL-PR-2369",
-    "OL-PR-2442",
-    "OL-PR-2444",
-    "OL-PR-2477",
-    "OL-PR-2500",
-    "OL-PR-2502"
+    "OL-PR-2788",
+    "OL-PR-2804",
+    "OL-PR-2816",
+    "OL-PR-2818",
+    "OL-PR-2817",
+    "OL-PR-2822"
    ],
    "disposition": "incident"
   },
   {
-   "sig": "5f8b2445f4",
-   "class": "pr-stuck",
-   "signature": "ol-pr land or supersede pull request ci",
-   "count": 92,
-   "open": 1,
-   "last": "2026-11-26T15:10:04Z",
+   "sig": "0f61587b9e",
+   "class": "merge-conflict",
+   "signature": "ol-pr land or supersede pull request conflict",
+   "count": 120,
+   "open": 0,
+   "last": "2026-11-27T13:02:33Z",
    "ids": [
-    "OL-PR-2441",
-    "OL-PR-2464",
-    "OL-PR-2469",
-    "OL-PR-2482",
-    "OL-PR-2503",
-    "OL-PR-2514"
+    "OL-PR-2622",
+    "OL-PR-2629",
+    "OL-PR-2631",
+    "OL-PR-2664",
+    "OL-PR-2717",
+    "OL-PR-2801"
    ],
    "disposition": "incident"
   },
@@ -141,16 +141,33 @@ export const FAILMINE = {
    "sig": "7f3c1db956",
    "class": "gate-skipped",
    "signature": "q-cifail-mergeaudit pr merged without a green checks",
-   "count": 25,
-   "open": 0,
-   "last": "2026-11-25T20:18:04Z",
+   "count": 31,
+   "open": 1,
+   "last": "2026-11-27T12:41:41Z",
    "ids": [
-    "Q-CIFAIL-mergeaudit-1876",
-    "Q-CIFAIL-mergeaudit-1885",
-    "Q-CIFAIL-mergeaudit-1894",
-    "Q-CIFAIL-mergeaudit-1936",
-    "Q-CIFAIL-mergeaudit-2203",
-    "Q-CIFAIL-mergeaudit-2222"
+    "Q-CIFAIL-mergeaudit-2529",
+    "Q-CIFAIL-mergeaudit-2545",
+    "Q-CIFAIL-mergeaudit-2589",
+    "Q-CIFAIL-mergeaudit-2596",
+    "Q-CIFAIL-mergeaudit-2644",
+    "Q-CIFAIL-mergeaudit-2765"
+   ],
+   "disposition": "incident"
+  },
+  {
+   "sig": "20bcba4f37",
+   "class": "other",
+   "signature": "q-audit audit merged pr",
+   "count": 12,
+   "open": 12,
+   "last": "2026-11-27T12:41:41Z",
+   "ids": [
+    "Q-AUDIT-2708",
+    "Q-AUDIT-2710",
+    "Q-AUDIT-2716",
+    "Q-AUDIT-2722",
+    "Q-AUDIT-2742",
+    "Q-AUDIT-2765"
    ],
    "disposition": "incident"
   },
@@ -203,15 +220,49 @@ export const FAILMINE = {
     "NC-PLUS-TICKFAIL-criticality-2026-11-13T18"
    ],
    "disposition": "incident"
+  },
+  {
+   "sig": "be3e6aaca8",
+   "class": "ci-red",
+   "signature": "q-audit audit merged pr",
+   "count": 5,
+   "open": 5,
+   "last": "2026-11-27T12:41:41Z",
+   "ids": [
+    "Q-AUDIT-2663",
+    "Q-AUDIT-2664",
+    "Q-AUDIT-2718",
+    "Q-AUDIT-2752",
+    "Q-AUDIT-2790"
+   ],
+   "disposition": "incident"
+  },
+  {
+   "sig": "95160dac44",
+   "class": "loop-stalled",
+   "signature": "selftest workflows last scheduled runs all failed silent loop stop ultrastable practical solutions github",
+   "count": 2,
+   "open": 2,
+   "last": "2026-11-26T16:01:07Z",
+   "ids": [
+    "audit-selftest-workflows-2026-11-25T21:07:12Z",
+    "audit-selftest-workflows-2026-11-26T16:01:07Z"
+   ],
+   "disposition": "mutate"
   }
  ],
- "discovered": [],
+ "discovered": [
+  "fm-discovered-20bcba4f37"
+ ],
  "escalated": [
-  "Q-RECUR-0f61587b9e",
   "Q-RECUR-5f8b2445f4",
+  "Q-RECUR-0f61587b9e",
   "Q-RECUR-7f3c1db956",
+  "Q-RECUR-20bcba4f37",
   "Q-RECUR-39caaf9374",
   "Q-RECUR-9ead069526",
-  "Q-RECUR-b680afd12d"
+  "Q-RECUR-b680afd12d",
+  "Q-RECUR-be3e6aaca8",
+  "Q-RECUR-95160dac44"
  ]
 };

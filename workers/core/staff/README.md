@@ -33,8 +33,8 @@ BUILT means implemented and covered by a passing test in this directory. Nothing
 | US-02-R10 managers never target control-plane files | BUILT | `isControlPlane` in `assign_doer` and `originate`; the default list covers the tick implementations and the guards the repository protects; `control_plane_extra` adds to it (`controlplane.test.js`) |
 | US-02-R11 a role filled by a person: same records, predictions, briefs, trust outcome | BUILT | `filled_by: 'person'`; the tick never acts for a person |
 | US-02-R12, US-02-T09 role instruction files carry a never list | BUILT checker, PLANNED content | `rolefile.js`, `rolefile.test.js`. The six files in `agents/roles/` are protected paths and do not yet carry the three items; the todo test turns green when they do |
-| US-02-R14, US-02-T06 refusals have a kind, change nothing, and a quiet duty leaves no row for a failed precondition | BUILT | `act` (`quiet`, `dry`), `staff.test.js` |
-| US-02-R15 each operation reads back, writes a trust outcome and, with a prediction, a decision | BUILT | `act` |
+| US-02-R20, US-02-T10 refusals have a kind, change nothing, and a quiet duty leaves no row for a failed precondition | BUILT | `act` (`quiet`, `dry`), `staff.test.js` |
+| US-02-R21 each operation reads back, writes a trust outcome and, with a prediction, a decision | BUILT | `act` |
 | US-02-R17 default personas for the portfolio and every active program | BUILT | `seed.js`, `seed.test.js`; `staffStep` seeds first unless `config.staff.seed_personas` is false |
 | US-02-R18 a person performs a role through a screen | BUILT handlers | `screen.js`, `screen.test.js`. PLANNED: mounting them in the console |
 | US-02-R19 research agent behind origination | BUILT over a model port | `research.js`, `research.test.js` (fake model); the first real call is on a deployed account |

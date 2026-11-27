@@ -278,7 +278,7 @@ test('US-15-R12, T15-4: an out-of-scope request creates a scope-gate entry with 
   assert.deepEqual(rows(db, `SELECT pack FROM lifecycle_scope_gate WHERE status = 'held' ORDER BY id`).map(r => r.pack), ['outreach', 'business-plan']);
 });
 
-// ---- US-15-R17, R20: the gate conditions are one enforcement point ----
+// ---- US-15-R23, R20: the gate conditions are one enforcement point ----
 async function toPlanning(db, id, { skipPlanning = [] } = {}) {
   await startProject(db, { id, name: id, override: { mode: 'hybrid', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
   await fill(db, id, 'initiating', 'hybrid');
@@ -291,7 +291,7 @@ const putRequirements = async (db, id, requirements) => {
   await reviewArtifact(db, { project_id: id, kind: 'A-PLN-1', reviewer: 'reviewer-1', reviewer_model: 'beta-1', verdict: 'approved' });
 };
 
-test('US-15-R17, US-15-T08: a requirement with no mapped item, a mapped item that is not the project\'s or has no closing probe, or an item with a dangling trigger blocks G2 and files an item', async () => {
+test('US-15-R23, US-15-T13: a requirement with no mapped item, a mapped item that is not the project\'s or has no closing probe, or an item with a dangling trigger blocks G2 and files an item', async () => {
   const db = setup(); await toPlanning(db, 'M');
   item(db, 'M-W1', { project: 'M' }); item(db, 'M-W2', { project: 'M' }); item(db, 'OTHER-1', { project: 'OTHER' });
   db.raw.exec(`UPDATE items SET closing_probe = NULL WHERE id = 'M-W2'`);
@@ -368,7 +368,7 @@ test('US-15-R20, US-15-T11: the kernel advancePhase enforces the G3 conditions t
 });
 
 // ---- US-15-R18: closing opens by itself, and the record is archived ----
-test('US-15-R18, US-15-T09: closing opens by itself when every chartered outcome has a disposition, monitoring items do not hold it open, and the closing artifacts are filed', async () => {
+test('US-15-R18, US-15-T14: closing opens by itself when every chartered outcome has a disposition, monitoring items do not hold it open, and the closing artifacts are filed', async () => {
   const db = setup(); await executing(db, 'AG', 'agile');
   assert.deepEqual(await openClosing(db, { now: NOW }), []);                                                    // AG-W1 has no disposition yet
   db.raw.prepare(`INSERT INTO items (id, title, owner_role, done_check, status, project) VALUES ('RISKREVIEW-AG-1', 'r', 'project-manager', 'x', 'ready', 'AG')`).run();
@@ -408,7 +408,7 @@ async function lessonAndClose(db) {
 }
 
 // ---- US-15-R15, R16: risk and issue review, quality metrics, compliance ----
-test('US-15-R15, US-15-T07: a risk review reads every trigger probe, marks a fired risk triggered and files it for its owner once, and flags what the register and the issues lack', async () => {
+test('US-15-R15, US-15-T12: a risk review reads every trigger probe, marks a fired risk triggered and files it for its owner once, and flags what the register and the issues lack', async () => {
   const db = setup(); await executing(db, 'AG', 'agile');
   const a = await addRisk(db, { project_id: 'AG', cause: 'the mail service is down', effect: 'no confirmations', likelihood: 2, impact: 3, response: 'fall back to the page', owner_role: 'operations', trigger: `SELECT v AS value FROM t_vals WHERE k = 'mail_down'` });
   const b = await addRisk(db, { project_id: 'AG', cause: 'users complain', effect: 'churn', trigger: 'when users complain' });
@@ -428,7 +428,7 @@ test('US-15-R15, US-15-T07: a risk review reads every trigger probe, marks a fir
   await assert.rejects(recordRiskReview(db, { project_id: 'AG', reviewer: '', now: NOW }), /names its reviewer/); await assert.rejects(recordRiskReview(db, { project_id: 'NOPE', reviewer: 'x' }), /unknown project/);
 });
 
-test('US-15-R15, US-15-T07: a register not reviewed inside the communication period files one review item, numbered after the reviews so far', async () => {
+test('US-15-R15, US-15-T12: a register not reviewed inside the communication period files one review item, numbered after the reviews so far', async () => {
   const db = setup(); await executing(db, 'AG', 'agile', NOW);                                                   // the plan says every 24 h
   assert.deepEqual(await riskReviewDue(db, { now: NOW + 23 * HOUR }), []);
   assert.deepEqual(await riskReviewDue(db, { now: NOW + 25 * HOUR }), ['RISKREVIEW-AG-1']);
@@ -441,7 +441,7 @@ test('US-15-R15, US-15-T07: a register not reviewed inside the communication per
   assert.deepEqual(await riskReviewDue(init, { now: NOW + 30 * DAY }), []);                                      // an initiating project has no register to review yet
 });
 
-test('US-15-R16, US-15-T07: quality metrics are null when unmeasured and never 0, and match the stated formulas on seeded data', async () => {
+test('US-15-R16, US-15-T12: quality metrics are null when unmeasured and never 0, and match the stated formulas on seeded data', async () => {
   const db = setup(); await startProject(db, { id: 'Z', name: 'z', now: NOW });
   const none = await computeQuality(db, 'Z', { now: NOW });
   assert.deepEqual([none.rework_rate, none.defects_escaped, none.probe_pass_rate], [null, null, null]);
@@ -636,7 +636,7 @@ test('US-15-R10, US-15-R15: lifecycleProbe reports the lifecycle from its own ta
   assert.deepEqual([p.projects, p.by_phase, p.status_report_age_h], [1, { executing: 1 }, 5]);
 });
 
-test('A-MON-4: the risk and issue review files one item per incomplete open risk and per issue without a probe, counts new risks, and is a record', async () => {
+test('US-15-R15, T15-7, A-MON-4: the risk and issue review files one item per incomplete open risk and per issue without a probe, counts new risks, and is a record', async () => {
   const db = setup();
   await startProject(db, { id: 'RK', name: 'rk', override: { mode: 'agile', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
   const full = await addRisk(db, { project_id: 'RK', cause: 'vendor delay', effect: 'schedule slip', likelihood: 3, impact: 4, response: 'second vendor', owner_role: 'project-manager', trigger: 'no delivery by day 10' });
@@ -670,7 +670,7 @@ test('A-MON-4: the risk and issue review files one item per incomplete open risk
   assert.deepEqual((await reviewRisks(db, { project_id: 'RK', now: NOW + 2 * DAY })).incomplete, []);
 });
 
-test('A-MON-6: rework rate, defects escaped and probe pass rate are read from the project records; nothing under a ratio is unmeasured, not zero', async () => {
+test('US-15-R16, T15-8, A-MON-6: rework rate, defects escaped and probe pass rate are read from the project records; nothing under a ratio is unmeasured, not zero', async () => {
   const db = setup();
   await startProject(db, { id: 'QM', name: 'qm', override: { mode: 'agile', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
   const empty = await qualityMetrics(db, { project_id: 'QM', now: NOW });
@@ -688,7 +688,7 @@ test('A-MON-6: rework rate, defects escaped and probe pass rate are read from th
   assert.deepEqual([a.phase, a.owner_role, a.updated_at, JSON.parse(a.evidence).rework_rate], ['monitoring', 'reviewer', ts(NOW + HOUR), 0.25]);
 });
 
-test('A-MON-4, A-MON-6 on the tick: each open project is reviewed once per period and a closed project is left alone', async () => {
+test('US-15-R15, US-15-R16, A-MON-4, A-MON-6 on the tick: each open project is reviewed once per period and a closed project is left alone', async () => {
   const db = setup();
   await startProject(db, { id: 'T1', name: 't1', override: { mode: 'agile', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
   await startProject(db, { id: 'T2', name: 't2', override: { mode: 'agile', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });

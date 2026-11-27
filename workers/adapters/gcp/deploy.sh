@@ -25,10 +25,17 @@ gcloud run deploy "$SVC" --project "$PROJECT" --region "$REGION" --source . --no
   --add-volume "name=data,type=cloud-storage,bucket=${BUCKET}" --add-volume-mount "volume=data,mount-path=/data"
 URL=$(gcloud run services describe "$SVC" --project "$PROJECT" --region "$REGION" --format 'value(status.url)')
 TOKEN=$(gcloud secrets versions access latest --secret ultrastable-tick-token --project "$PROJECT")
-# Cloud Scheduler: every 10 minutes, with the shared token and a Google identity token so Cloud Run IAM also passes.
-gcloud scheduler jobs create http ultrastable-tick --project "$PROJECT" --location "$REGION" --schedule "*/10 * * * *" \
-  --uri "${URL}/tick" --http-method POST --headers "X-Tick-Token=${TOKEN}" \
-  --oidc-service-account-email "$SA" --oidc-token-audience "$URL" || true
+# Cloud Scheduler: every 10 minutes, with the shared token and a Google identity token so Cloud Run IAM also passes. The job is the tick's clock, so
+# it is created when it is missing and updated when it exists (a new URL or token reaches it); any refusal stops the script with its message.
+if gcloud scheduler jobs describe ultrastable-tick --project "$PROJECT" --location "$REGION" --format 'value(name)'; then
+  gcloud scheduler jobs update http ultrastable-tick --project "$PROJECT" --location "$REGION" --schedule "*/10 * * * *" \
+    --uri "${URL}/tick" --http-method POST --update-headers "X-Tick-Token=${TOKEN}" \
+    --oidc-service-account-email "$SA" --oidc-token-audience "$URL"
+else
+  gcloud scheduler jobs create http ultrastable-tick --project "$PROJECT" --location "$REGION" --schedule "*/10 * * * *" \
+    --uri "${URL}/tick" --http-method POST --headers "X-Tick-Token=${TOKEN}" \
+    --oidc-service-account-email "$SA" --oidc-token-audience "$URL"
+fi
 # An uptime check on /health every minute (the health row of US-SPEC-14 section 3; the platform's own uptime worker covers Cloudflare hosts at 5 minutes).
 # The service refuses unauthenticated requests, so the check sends the Monitoring service agent's OIDC token and that agent may invoke the service.
 # A failure of either step stops the deploy script with its message; there is no swallowed error. UNPROVEN until run against a project (section 8).

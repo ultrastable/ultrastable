@@ -47,7 +47,7 @@ test('GitHub Models route: Actions token as bearer, parsed, validated, tagged un
   assert.ok((await createRegistry({ store: dbStore(db), now: () => T }).list()).some(g => g.source === 'model'));
 });
 
-test('no token, a failing route, or the author family all degrade to the rule-based red team, never to silence', async () => {
+test('US-16-R23: no token, a failing route, or the author family all degrade to the rule-based red team, never to silence', async () => {
   const base = { ignorance: { enabled: true, model_alias: 'red', models: { red: { endpoint: 'github_models', model: 'm', family: 'openai' } } } };
   assert.equal(modelFor({ config: base, env: {} }).model, null);
   const bad = async () => new Response('no', { status: 500 });
