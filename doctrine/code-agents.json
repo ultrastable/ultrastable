@@ -16,7 +16,9 @@
    "usd_per_m_in": 0,
    "usd_per_m_out": 0,
    "note": "FREE-LLM-1: GitHub Models over the workflow's built-in GITHUB_TOKEN (permissions: models: read); no key to mint, rate-limited free tier, ranks first because it costs 0; free tier caps a request near 8k tokens in and 4k out, so the prompt is trimmed to max_prompt_chars",
-   "max_prompt_chars": 12000
+   "max_prompt_chars": 12000,
+   "retired": "2026-07-30",
+   "retired_why": "GitHub Models was retired on 2026-07-30 (github.blog changelog); the endpoint answers HTTP 200 text/plain OK to every call"
   },
   {
    "id": "github-models-llama",
@@ -33,7 +35,9 @@
    "usd_per_m_in": 0,
    "usd_per_m_out": 0,
    "note": "FREE-LLM-1: second free family on the same built-in token, so the reviewer is never the author's family; free tier caps a request near 8k tokens in and 4k out, so the prompt is trimmed to max_prompt_chars",
-   "max_prompt_chars": 12000
+   "max_prompt_chars": 12000,
+   "retired": "2026-07-30",
+   "retired_why": "GitHub Models was retired on 2026-07-30 (github.blog changelog); the endpoint answers HTTP 200 text/plain OK to every call"
   },
   {
    "id": "workers-ai-qwen-coder",

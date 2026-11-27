@@ -32,9 +32,9 @@ class Agents(unittest.TestCase):
         c = []; agents.invoke(A["github-models-gpt"], "H" * 30000 + "TAIL", {"GITHUB_TOKEN": "g"}, fake_gh(c))
         sent = c[0][2]["messages"][0]["content"]; self.assertLessEqual(len(sent), 12000); self.assertTrue(sent.endswith("TAIL"))
 
-    def test_free_route_is_first_and_needs_only_the_builtin_token(self):
-        self.assertEqual(agents.route_authors({"GITHUB_TOKEN": "g"}, REPO)[0]["id"], "github-models-gpt")
-        self.assertEqual(agents.ensemble("openai", {"GITHUB_TOKEN": "g"}, REPO)[0]["family"], "llama")
+    def test_a_retired_route_is_never_asked(self):  # ROUTE-RETIRED-1: GitHub Models shut down 2026-07-30
+        self.assertEqual(agents.route_authors({"GITHUB_TOKEN": "g"}, REPO), [])
+        self.assertEqual(agents.ensemble("openai", {"GITHUB_TOKEN": "g"}, REPO), [])
 
     def test_registry_is_clean(self):
         self.assertEqual(agents.check(REPO), [])

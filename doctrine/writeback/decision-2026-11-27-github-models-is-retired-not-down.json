@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-github-models-is-retired-not-down",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "GitHub Models is retired, not down",
+  "body": "GitHub retired GitHub Models on 2026-07-30 (github.blog changelog). Its rungs carry retired and available() never routes them; the 200 OK body is the shutdown, not an outage.",
+  "probe": "grep:foundation/agents.py::ROUTE-RETIRED-1",
+  "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+ },
+ "kind": "decision",
+ "title": "GitHub Models is retired, not down",
+ "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+}

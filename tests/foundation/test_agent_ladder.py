@@ -58,6 +58,9 @@ class Ladder(unittest.TestCase):
         L.DOWN.clear()
 
     def test_a_dead_rung_does_not_spend_the_attempt(self):  # LADDER-FALLTHROUGH-1
+        reg = Path(self.d) / "doctrine/code-agents.json"  # the mechanism, not the provider: un-retire GitHub Models in the scratch copy
+        reg.parent.mkdir(parents=True, exist_ok=True)
+        d = json.loads((Path(agents.REPO) / "doctrine/code-agents.json").read_text()); [a.pop("retired", None) for a in d["adapters"]]; reg.write_text(json.dumps(d))
         GH = {**CF, "GITHUB_TOKEN": "g"}
         rs = L.rungs(self.d, GH)
         self.assertEqual(rs[0]["route"], "github-models")  # free rung first
