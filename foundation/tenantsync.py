@@ -77,7 +77,10 @@ def run(root=REPO, apply=False, only=None) -> list[dict]:
             rows.append({"tenant": name, "status": "tool-error", "detail": down["error"]}); ledger(root, rows[-1]); print(rows[-1], file=sys.stderr); continue
         row = {"tenant": name, "check": "ok" if rc == 0 else "fail", "findings": report.split("\n")[:20] if rc else [],
                "send_up": [] if up.startswith("nothing") else up.split("\n"), "revendor": down}
-        row["status"] = "in-sync" if rc == 0 and not row["send_up"] and not down.get("changed") and not down.get("removed") else "needs-pr"
+        # A text-form record whose core path is gone (US-31-R63, revendor `missing_in_core`), or a lifting entry whose code reached the core
+        # but that the record does not list (`unsettled`), is not in sync: the drift item files for it.
+        row["status"] = ("in-sync" if rc == 0 and not row["send_up"] and not down.get("changed") and not down.get("removed")
+                         and not down.get("missing_in_core") and not down.get("unsettled") else "needs-pr")
         rows.append(row)
         ledger(root, {k: v for k, v in row.items() if k != "findings"} | {"findings": len(row["findings"])})
         if apply and row["status"] == "needs-pr":

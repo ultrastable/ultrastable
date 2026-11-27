@@ -63,9 +63,26 @@ def _vendor_tool():
     return m
 
 
+_READER = None
+
+
+def _reader():
+    """tools/vendor.py as the one VENDORED_FROM reader and writer (US-31-R63), loaded by path once. Kept apart from _vendor_tool, which a
+    test may replace to choose what ships, so the manifest is always read by the real reader."""
+    global _READER
+    if _READER is None:
+        spec = importlib.util.spec_from_file_location("us_vendor_reader", HERE / "vendor.py")
+        _READER = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(_READER)
+    return _READER
+
+
 def read_manifest(tenant: Path, cfg: dict) -> dict:
+    """The tenant's VENDORED_FROM in either form (US-31-R63, tools/vendor.py parse_vendored), keyed by the path inside vendor_dir."""
     p = tenant / cfg["vendor_dir"] / MANIFEST
-    return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else {"files": {}, "commit": None}
+    if not p.is_file():
+        return {"files": {}, "commit": None, "form": "json", "source": None, "paths": {}}
+    return _reader().parse_vendored(p.read_text(encoding="utf-8"), vendor_rel=cfg["vendor_dir"])
 
 
 def drift(tenant: Path, cfg: dict | None = None) -> dict:
@@ -85,7 +102,7 @@ def drift(tenant: Path, cfg: dict | None = None) -> dict:
             rel = p.relative_to(vd).as_posix()
             if p.is_file() and rel != MANIFEST and rel not in man["files"] and "node_modules" not in p.parts and "__pycache__" not in p.parts:
                 extra.append(rel)
-    return {"tampered": tampered, "missing": missing, "extra": extra, "commit": man.get("commit")}
+    return {"tampered": tampered, "missing": missing, "extra": extra, "commit": man.get("commit"), "unreadable": man.get("unreadable", [])}
 
 
 def is_shim(text: str) -> bool:
@@ -148,6 +165,7 @@ def check(tenant: Path, core: Path | None = None) -> list[str]:
     d = drift(tenant, cfg)
     bad += [f"vendored file edited by hand: {f} (send it up with `send-up`, then re-vendor; never keep a fork)" for f in d["tampered"]]
     bad += [f"vendored file missing: {f}" for f in d["missing"]]
+    bad += [f"{MANIFEST} line {n} is unreadable: it records no file, so nothing proves that file unedited" for n in d["unreadable"]]
     bad += [f"unvendored file inside {cfg['vendor_dir']}: {f} (it is core code that is not in the core; send it up)" for f in d["extra"]]
     vd = tenant / cfg["vendor_dir"]
     for mine, theirs in cfg["lifted"].items():
@@ -190,10 +208,15 @@ def send_up(tenant: Path, core: Path, apply: bool = False) -> list[str]:
     """Flow UP into a core checkout. Hand-edited vendored files overwrite their core path; every unheld `lifting` entry is copied to its core path."""
     cfg = load(tenant)
     acts = []
+    sources = core_sources(core, read_manifest(tenant, cfg))
     for f in drift(tenant, cfg)["tampered"]:
+        dst = sources.get(f)
+        if dst is None:
+            acts.append(f"unresolved {f}: the record names no core path for it")
+            continue
         acts.append(f"edit {f}")
         if apply:
-            (core / f).write_bytes((tenant / cfg["vendor_dir"] / f).read_bytes())
+            dst.write_bytes((tenant / cfg["vendor_dir"] / f).read_bytes())
     for f, e in sorted(cfg["lifting"].items()):
         if e.get("hold") or not e.get("core"):
             continue
@@ -235,21 +258,72 @@ def shim_for(tenant: Path, tenant_file: str, core_file: str, cfg: dict) -> str:
     return SPDX + "// This module lives in the core (TENANT-SYNC-1). This file is a shim; edit the core, never this.\n" + "\n".join(lines) + "\n"
 
 
+def _repo_root(core: Path) -> Path:
+    """The root of the core repository: the text form records core paths from there (seed/worker/src/contract.js), not from workers/."""
+    r = subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=core, capture_output=True, text=True)
+    return Path(r.stdout.strip()) if r.returncode == 0 and r.stdout.strip() else core
+
+
+def core_sources(core: Path, recorded: dict) -> dict:
+    """US-31-R63: each vendored file, named relative to vendor_dir, mapped to the core file it comes from. The JSON form
+    keys files by their path in the vendoring selection (relative to core); the text form names each file's core path, relative to the
+    repository root. The two key spaces are never compared with each other."""
+    if recorded.get("form") == "text":
+        root = _repo_root(core)
+        return {k: root / cp for k, cp in (recorded.get("paths") or {}).items()}
+    return {f: core / f for f in recorded.get("files") or {}}
+
+
+def _record_keys(core: Path, recorded: dict):
+    """Text form (US-31-R63): a function from a core path relative to workers/ (a lifting entry's `core`) to the vendor-directory key the
+    record lists for it, or None when the record does not list that core file."""
+    import os
+    root = _repo_root(core)
+    inverse = {os.path.normpath(cp).replace(os.sep, "/"): k for k, cp in (recorded.get("paths") or {}).items()}
+
+    def key(core_rel):
+        if not core_rel:
+            return None
+        rel = os.path.relpath(core / core_rel, root).replace(os.sep, "/")
+        return inverse.get(os.path.normpath(rel).replace(os.sep, "/"))
+    return key
+
+
 def revendor(tenant: Path, core: Path, apply: bool = False, commit: str | None = None) -> dict:
-    """Flow DOWN: copy the core (the vendoring selection) into vendor_dir, write the manifest, settle lifted code to shims."""
+    """Flow DOWN: copy the core into vendor_dir, write the manifest, settle lifted code to shims. A JSON-form tenant takes the whole
+    vendoring selection; a text-form tenant (US-31-R63) takes exactly the files its record lists, each from its recorded core path, and
+    nothing it vendors is removed: a core path that no longer exists is reported in `missing_in_core` and its file and line are kept."""
     cfg = load(tenant)
-    v = _vendor_tool()
-    files = v.select(core)
     vd = tenant / cfg["vendor_dir"]
-    old = read_manifest(tenant, cfg)["files"]
-    new = {f: sha(core / f) for f in files}
+    recorded = read_manifest(tenant, cfg)
+    old = recorded["files"]
+    text_form = recorded.get("form") == "text"
+    if text_form:
+        sources = core_sources(core, recorded)
+        missing_in_core = sorted(k for k, p in sources.items() if not p.is_file())
+        sources = {k: p for k, p in sources.items() if p.is_file()}
+        removed = []
+    else:
+        files = _vendor_tool().select(core)
+        sources = {f: core / f for f in files}
+        missing_in_core = []
+    new = {f: sha(p) for f, p in sources.items()}
     changed = sorted(f for f in new if old.get(f) != new[f])
-    removed = sorted(set(old) - set(new))
-    settled = []
-    for mine, e in sorted(cfg["lifting"].items()):
-        if e.get("core") in new and sha(core / e["core"]) is not None:
-            settled.append(mine)
-    result = {"changed": len(changed), "removed": removed, "settled": settled, "files": len(files)}
+    if not text_form:
+        removed = sorted(set(old) - set(new))
+    # A lifting entry names its core path relative to workers/ (send_up writes core / e["core"]). The JSON form keys `new` the same way;
+    # the text form keys it by the path inside the vendor directory, so each entry is resolved through the record first (US-31-R63).
+    to_key = _record_keys(core, recorded) if text_form else (lambda c: c)
+    settled_keys = {mine: to_key(e.get("core")) for mine, e in cfg["lifting"].items() if e.get("core")}
+    settled = sorted(mine for mine, k in settled_keys.items() if k is not None and k in new)
+    # Text form: code that reached the core but that the record does not list cannot settle to a shim; it is reported, never dropped.
+    unsettled = sorted(mine for mine, e in cfg["lifting"].items() if text_form and e.get("core") and not e.get("hold")
+                       and settled_keys.get(mine) is None and (core / e["core"]).is_file())
+    result = {"changed": len(changed), "removed": removed, "settled": settled, "files": len(new) + len(missing_in_core)}
+    if missing_in_core:
+        result["missing_in_core"] = missing_in_core
+    if unsettled:
+        result["unsettled"] = unsettled
     if not apply:
         return result
     for f in removed:
@@ -257,19 +331,26 @@ def revendor(tenant: Path, core: Path, apply: bool = False, commit: str | None =
     for f in changed:
         t = vd / f
         t.parent.mkdir(parents=True, exist_ok=True)
-        t.write_bytes((core / f).read_bytes())
+        t.write_bytes(sources[f].read_bytes())
     commit = commit or subprocess.run(["git", "rev-parse", "HEAD"], cwd=core, capture_output=True, text=True).stdout.strip()
-    (vd / MANIFEST).write_text(json.dumps({"schema": "vendored-from/1", "source": "ultrastable/ultrastable:workers", "commit": commit,
-                                           "files": {f: sha(vd / f) for f in files}}, indent=1, sort_keys=True) + "\n")
+    # US-31-R63: the manifest is written back in the form the tenant already uses (JSON, or the text form of vendor_sync.mjs).
+    if text_form:
+        kept = {f: (sha(vd / f) if (vd / f).is_file() else old.get(f)) for f in recorded.get("paths") or {}}
+        body = _reader().render_vendored("text", recorded.get("source") or "ultrastable/ultrastable", commit, kept, cfg["vendor_dir"],
+                                         recorded.get("paths"))
+    else:
+        body = _reader().render_vendored("json", "ultrastable/ultrastable:workers", commit, {f: sha(vd / f) for f in new}, cfg["vendor_dir"])
+    (vd / MANIFEST).write_text(body)
     for mine in settled:
         e = cfg["lifting"].pop(mine)
-        text = shim_for(tenant, mine, e["core"], cfg)
+        text = shim_for(tenant, mine, settled_keys[mine], cfg)
         (tenant / mine).write_text(text, encoding="utf-8")
         cfg["lifted"][mine] = e["core"]
     for mine, theirs in sorted(cfg["lifted"].items()):
         t = tenant / mine
-        if t.is_file() and not is_shim(t.read_text(encoding="utf-8")) and theirs in new:
-            t.write_bytes((core / theirs).read_bytes())
+        key = to_key(theirs)
+        if t.is_file() and not is_shim(t.read_text(encoding="utf-8")) and key in new:
+            t.write_bytes(sources[key].read_bytes())
     if settled:
         save(tenant, cfg)
     return result

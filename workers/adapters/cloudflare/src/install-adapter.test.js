@@ -45,6 +45,16 @@ test('US-SPEC-10 s7 provision creates one database per slug, reuses a same-named
   assert.equal(await a.provisioned('other'), false, 'another slug has its own database');
 });
 
+test('US-SPEC-10 s7 provision applies the org record\'s seed after the migrations, and only when the bootstrapper wrote one', async () => {
+  const p = platform(), a = mk(p);
+  const r = await a.provision('tool-share', { migrations: 'CREATE TABLE IF NOT EXISTS gate_cards (id TEXT);', seed: "INSERT OR IGNORE INTO gate_cards (id) VALUES ('GATE-X');" });
+  assert.deepEqual(p.sql, ['CREATE TABLE IF NOT EXISTS gate_cards (id TEXT);', "INSERT OR IGNORE INTO gate_cards (id) VALUES ('GATE-X');"], 'migrations first, then the seed');
+  assert.match(r.detail, /org record seeded/);
+  const q = platform();
+  await mk(q).provision('other', { migrations: 'CREATE TABLE IF NOT EXISTS t (a);' });
+  assert.equal(q.sql.length, 1, 'no seed, no second statement');
+});
+
 test('the full install through the adapter: the digest that runs is read back from the Worker, and a re-run changes nothing', async () => {
   const p = platform(), a = mk(p); let ticked = false;
   const bundle = 'export default {}', migrations = 'CREATE TABLE IF NOT EXISTS t (a);';

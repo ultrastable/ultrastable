@@ -99,13 +99,62 @@ def vendor(root: Path, dest: Path, subset: bool = False) -> dict:
     return manifest
 
 
+TEXT_LINE = re.compile(r"^(\S+) -> (\S+)(?: sha256:([0-9a-f]{64}))?$")
+
+
+def _vendor_prefix(dest: Path, dst_paths) -> str:
+    """The path of the vendor directory as the text form writes it: the longest tail of dest's parts that leads every tenant path."""
+    parts = Path(dest).resolve().parts
+    for k in range(len(parts) - 1, 0, -1):
+        pre = "/".join(parts[k:])
+        if dst_paths and all(d.startswith(pre + "/") for d in dst_paths):
+            return pre
+    return ""
+
+
+def parse_vendored(text: str, vendor_rel: str | None = None, dest: Path | None = None) -> dict:
+    """US-31-R63: one reader for both VENDORED_FROM forms. A text beginning with '{' is the JSON form ({schema, source, commit, files}); any
+    other is the text form: '<core repo>@<commit>' on line 1, then '<core path> -> <tenant path> sha256:<hex>' per file. Either way the result
+    is {form, source, commit, files: {path inside the vendor directory: sha256}, paths: {that path: core path}}. In the text form the tenant path
+    is keyed by its path inside the vendor directory: vendor_rel names that directory, or it is read from dest."""
+    s = text.lstrip()
+    if s.startswith("{"):
+        m = json.loads(s)
+        return {"form": "json", "source": m.get("source"), "commit": m.get("commit"), "files": dict(m.get("files") or {}), "paths": {},
+                "schema": m.get("schema"), "unreadable": []}
+    lines = [ln.strip() for ln in s.split("\n")]
+    head_line = lines[0] if lines else ""
+    source, _, commit = head_line.rpartition("@") if "@" in head_line else (head_line, "", "")
+    matched = [(n, TEXT_LINE.match(ln)) for n, ln in enumerate(lines[1:], start=2) if ln]
+    # a line that is not '<core path> -> <tenant path> sha256:<hex>' is reported by its line number, never dropped in silence
+    unreadable = [n for n, r in matched if not r]
+    rows = [r for _, r in matched if r]
+    pre = vendor_rel.strip("/") if vendor_rel else _vendor_prefix(dest, [r.group(2) for r in rows]) if dest is not None else ""
+    files, paths = {}, {}
+    for r in rows:
+        key = r.group(2)[len(pre) + 1:] if pre and r.group(2).startswith(pre + "/") else r.group(2)
+        files[key] = r.group(3)
+        paths[key] = r.group(1)
+    return {"form": "text", "source": source or None, "commit": commit or None, "files": files, "paths": paths, "unreadable": unreadable}
+
+
+def render_vendored(form: str, source: str, commit: str, files: dict, vendor_rel: str, paths: dict | None = None) -> str:
+    """The manifest in the form the tenant already uses (US-31-R63): JSON, or the text form with one line per file."""
+    if form == "text":
+        rows = [f"{(paths or {}).get(f, f)} -> {vendor_rel.strip('/')}/{f} sha256:{h}" for f, h in sorted(files.items())]
+        return f"{source}@{commit}\n" + "".join(r + "\n" for r in rows)
+    return json.dumps({"schema": "vendored-from/1", "source": source, "commit": commit, "files": files}, indent=1, sort_keys=True) + "\n"
+
+
 def check(dest: Path) -> list[str]:
-    m = json.loads((dest / MANIFEST).read_text())
-    bad = []
+    m = parse_vendored((dest / MANIFEST).read_text(), dest=dest)
+    bad = [f"unreadable record line {n}" for n in m.get("unreadable", [])]
     for f, h in m["files"].items():
         p = dest / f
         if not p.exists():
             bad.append(f"missing {f}")
+        elif h is None:
+            bad.append(f"no hash for {f}")  # every writer records one, so a line without it cannot prove the file is unedited
         elif sha(p) != h:
             bad.append(f"changed {f}")
     return bad

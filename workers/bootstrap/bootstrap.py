@@ -773,12 +773,14 @@ class Boot:
     def report(self) -> str:
         ok = sum(1 for s in self.log if s["status"] == "ok")
         blocked = [s["stage"] for s in self.log if s["status"] == "blocked"]
-        lines = [
-            f"Happened: seed {VERSION} booted '{getattr(self, 'org_name', '?')}' ({'apply' if self.apply else 'dry run'}): "
-            f"{ok}/{len(self.log)} stages ok" + (f", blocked: {', '.join(blocked)}" if blocked else "") + ".",
-            f"Decided: {len(getattr(self, 'roles', []))} role instances on models {getattr(self, 'models', {})}.",
-            "Next: " + ("the Worker cron runs the tick every 10 minutes." if self.apply and not blocked
-                        else "run with --apply once the gate cards below are closed."),
+        models = getattr(self, "models", {}) or {}
+        lines = [  # US-10-R15: the report is read by a person too, so it names no flag, mode or variable
+            f"Happened: seed {VERSION} {'set up and started' if self.apply and not blocked else 'tried to set up' if self.apply else 'planned'} "
+            f"'{getattr(self, 'org_name', '?')}' ({ok}/{len(self.log)} stages ok" + (f", blocked: {', '.join(blocked)}" if blocked else "") + ")"
+            + ("" if self.apply else "; nothing is switched on yet") + ".",
+            f"Decided: {len(getattr(self, 'roles', []))} role instances" + (" (" + ", ".join(f"{k} {v}" for k, v in models.items()) + ")" if models else "") + ".",
+            "Next: " + ("the system runs its own check every 10 minutes." if self.apply and not blocked
+                        else "the system starts itself once the steps below are done; until then each one's default is in effect."),
             f"Open: {len(getattr(self, 'items', []))} backlog item(s), {len(self.state['gate_cards'])} gate card(s): "
             + "; ".join(c.get("say") or c["what"] for c in self.state["gate_cards"]) + "."  # US-10-R15: the report is read by a person too,
         ]

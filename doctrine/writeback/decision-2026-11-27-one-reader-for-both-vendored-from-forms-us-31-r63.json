@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-one-reader-for-both-vendored-from-forms-us-31-r63",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "One reader for both VENDORED_FROM forms (US-31-R63)",
+  "body": "workers/tools/vendor.py parse_vendored reads the JSON and the text form, keyed by the path inside the vendor directory; tenant_sync.py reads through it and revendor writes the form the tenant uses. Proven by node --test workers/tools/spec-31-vendor.test.mjs.",
+  "probe": "grep:workers/tools/vendor.py::def parse_vendored",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "decision",
+ "title": "One reader for both VENDORED_FROM forms (US-31-R63)",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}

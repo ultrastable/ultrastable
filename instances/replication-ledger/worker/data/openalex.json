@@ -1,14 +1,14 @@
 {
  "_doc": "Written by openalex-mirror.mjs on a GitHub runner (workflow ledger-openalex.yml), read by the Worker's beat when OpenAlex refuses it (mirror.js). Do not edit by hand.",
  "version": 1,
- "generated_at": "2026-11-26T15:46:12.749Z",
+ "generated_at": "2026-11-27T15:35:25.415Z",
  "route": "github-actions",
  "findings": {
   "ego-depletion": {
    "doi": "10.1037/0022-3514.74.5.1252",
    "openalex": "https://openalex.org/W2123817056",
    "is_retracted": false,
-   "cited_by_count": 6634,
+   "cited_by_count": 6641,
    "works": [
     {
      "id": "https://openalex.org/W7238751062",
@@ -169,7 +169,7 @@
    "doi": "10.1037/0022-3514.54.5.768",
    "openalex": "https://openalex.org/W2169284121",
    "is_retracted": false,
-   "cited_by_count": 2223,
+   "cited_by_count": 2226,
    "works": [
     {
      "id": "https://openalex.org/W7222897309",
@@ -325,7 +325,7 @@
    "doi": "10.1177/0956797610383437",
    "openalex": "https://openalex.org/W2152928398",
    "is_retracted": false,
-   "cited_by_count": 1229,
+   "cited_by_count": 1232,
    "works": [
     {
      "id": "https://openalex.org/W7239408936",
@@ -488,7 +488,7 @@
    "doi": "10.1037/0022-3514.71.2.230",
    "openalex": "https://openalex.org/W4249924107",
    "is_retracted": false,
-   "cited_by_count": 4045,
+   "cited_by_count": 4052,
    "works": [
     {
      "id": "https://openalex.org/W7233553129",
@@ -639,7 +639,7 @@
    "doi": "10.1126/science.185.4157.1124",
    "openalex": "https://openalex.org/W4292157289",
    "is_retracted": false,
-   "cited_by_count": 41547,
+   "cited_by_count": 41688,
    "works": [
     {
      "id": "https://openalex.org/W7239360975",
@@ -798,7 +798,7 @@
    "doi": "10.1126/science.7455683",
    "openalex": "https://openalex.org/W2096452841",
    "is_retracted": false,
-   "cited_by_count": 22542,
+   "cited_by_count": 22588,
    "works": [
     {
      "id": "https://openalex.org/W7237332307",
@@ -898,7 +898,7 @@
      "title": "Choice and goal framing effects in food evaluation: The roles of positive–negative asymmetry and decision sequence",
      "publication_year": 2026,
      "authors": [
-      "YIMENG JIN",
+      "Yimeng Jin",
       "Ji Xu",
       "Tianyang Xiao",
       "Jan Lauwereyns"
@@ -965,7 +965,7 @@
    "doi": "10.1111/j.1467-9280.2006.01693.x",
    "openalex": "https://openalex.org/W2163569782",
    "is_retracted": false,
-   "cited_by_count": 4051,
+   "cited_by_count": 4060,
    "works": [
     {
      "id": "https://openalex.org/W7237225438",
@@ -1133,7 +1133,7 @@
    "doi": "10.1037/0012-1649.26.6.978",
    "openalex": "https://openalex.org/W2033674186",
    "is_retracted": false,
-   "cited_by_count": 1578,
+   "cited_by_count": 1579,
    "works": [
     {
      "id": "https://openalex.org/W7203635371",
@@ -1213,7 +1213,7 @@
     },
     {
      "id": "https://openalex.org/W7128135011",
-     "doi": "https://doi.org/10.71548/25098",
+     "doi": null,
      "title": "The Marshmallow Test and Contemporary Issues in Psychology",
      "publication_year": 2024,
      "authors": [
@@ -1294,7 +1294,7 @@
    "doi": "10.1037/h0040525",
    "openalex": "https://openalex.org/W1969900674",
    "is_retracted": false,
-   "cited_by_count": 6509,
+   "cited_by_count": 6521,
    "works": [
     {
      "id": "https://openalex.org/W4399934621",
@@ -1384,6 +1384,17 @@
      "abstract": ""
     },
     {
+     "id": "https://openalex.org/W7236968766",
+     "doi": null,
+     "title": "The Merging of Stress Reactivity and Pain Regulation Paradigms",
+     "publication_year": 2026,
+     "authors": [
+      "Peter Pavlov"
+     ],
+     "venue": "NVA (Nasjonalt vitenarkiv)",
+     "abstract": "Stress and chronic pain are closely linked phenomena, yet research on their interaction is limited and time-consuming. The present study represents a method development aimed at developing and evaluating a novel stress-pain paradigm with a main focus on merging two pre-existing tests to improve efficiency. By merging the Maastricht Acute Stress Test (MAST) and the Conditioned Pain Modulation (CPM), a single, efficient and valuable test was developed. Experiments were done with a small sample for this pilot, tested at the Cognitive Lab at UiS, with measurements of heart rate, blood pressure, saliva (cortisol and alpha-amylase levels) and subjective ratings (NRS). The findings suggest that the new stress-pain paradigm was able to elicit physiological and psychological stress and pain responses, while reducing overall testing time. This is seen in cortisol and alpha-amylase responses and a positive CPM-effect in over half of participants. A large focus is on the development process itself, reviewing of literature, replicating and adapting paradigms, and assessing feasibility. The developed paradigm shows promise as an efficient research tool, however, further validation with larger samples is needed."
+    },
+    {
      "id": "https://openalex.org/W4405036134",
      "doi": "https://doi.org/10.1145/3800683",
      "title": "From Individual to Society: A Survey on Social Simulation Driven by Large Language Model-based Agents",
@@ -1433,18 +1444,6 @@
      ],
      "venue": "SSRN Electronic Journal",
      "abstract": ""
-    },
-    {
-     "id": "https://openalex.org/W4417102704",
-     "doi": "https://doi.org/10.3389/fpsyg.2025.1701188",
-     "title": "Moral dilemmas in virtual reality: a narrative review of findings and methodological challenges",
-     "publication_year": 2025,
-     "authors": [
-      "Margherita Pucci",
-      "Lorenzo Gagliardi"
-     ],
-     "venue": "Frontiers in Psychology",
-     "abstract": "Moral dilemmas have long been challenging to study, as different methods often produce results that are hard to compare depending on how questions are framed and responses elicited. Over the past two decades, however, Virtual Reality (VR) has revolutionized this field by the means of immersive and ecologically valid simulations that better reflect real-life scenarios. This literature review examines the use of VR technologies to investigate moral dilemmas, focusing on how immersive environments affect moral decision-making. By analyzing 29 empirical and theoretical studies, we explore how VR enhances ecological validity, bridges the gap between moral judgment and action, and allows researchers to simulate ethically challenging scenarios that would be impossible to recreate in real life. The review covers classic dilemmas-such as the trolley and footbridge problems-as well as applied contexts like driving scenarios, autonomous vehicle decision-making, and professional ethics training. Across these settings, VR studies consistently reveal a general trend toward utilitarian choices, modulated by contextual factors (e.g., age of victims, time pressure), individual differences, and emotional salience. Furthermore, the paper highlights VR's capacity to integrate multimodal data, such as physiological responses and eye-tracking, providing a richer picture of moral cognition. In a dedicated section, we review the main methodological arguments in favor of using VR, along with critiques concerning ecological validity, replicability, and ethical risks linked to virtually real experiences. We conclude by outlining recommendations for future research, emphasizing the importance of expanding VR applications, improving methodological standardization, and developing ethically responsible immersive paradigms."
     }
    ]
   },
@@ -1452,7 +1451,7 @@
    "doi": "10.1056/NEJM199109123251102",
    "openalex": "https://openalex.org/W2972867833",
    "is_retracted": false,
-   "cited_by_count": 2172,
+   "cited_by_count": 2174,
    "works": [
     {
      "id": "https://openalex.org/W7203778790",
@@ -1629,7 +1628,7 @@
    "doi": "10.1038/290201a0",
    "openalex": "https://openalex.org/W2004794022",
    "is_retracted": false,
-   "cited_by_count": 1694,
+   "cited_by_count": 1692,
    "works": [
     {
      "id": "https://openalex.org/W4389861075",
@@ -1790,7 +1789,7 @@
    "doi": "10.1056/NEJM199305203282003",
    "openalex": "https://openalex.org/W2334903440",
    "is_retracted": false,
-   "cited_by_count": 2155,
+   "cited_by_count": 2158,
    "works": [
     {
      "id": "https://openalex.org/W4407280144",
@@ -1966,7 +1965,7 @@
    "doi": "10.1016/S0140-6736(94)90566-5",
    "openalex": "https://openalex.org/W4246764494",
    "is_retracted": false,
-   "cited_by_count": 6851,
+   "cited_by_count": 6868,
    "works": [
     {
      "id": "https://openalex.org/W7223688410",
@@ -2161,7 +2160,7 @@
    "doi": "10.1016/j.ijantimicag.2020.105949",
    "openalex": "https://openalex.org/W3010930696",
    "is_retracted": true,
-   "cited_by_count": 5593,
+   "cited_by_count": 5604,
    "works": [
     {
      "id": "https://openalex.org/W7165726859",
@@ -2342,7 +2341,7 @@
    "doi": "10.1056/NEJMoa2021436",
    "openalex": "https://openalex.org/W3042270788",
    "is_retracted": false,
-   "cited_by_count": 11872,
+   "cited_by_count": 11880,
    "works": [
     {
      "id": "https://openalex.org/W7171489707",
@@ -2527,7 +2526,7 @@
    "doi": "10.1257/aer.100.2.573",
    "openalex": "https://openalex.org/W2157028860",
    "is_retracted": false,
-   "cited_by_count": 4421,
+   "cited_by_count": 4426,
    "works": [
     {
      "id": "https://openalex.org/W7215108259",
@@ -2680,7 +2679,7 @@
    "doi": "10.1086/250037",
    "openalex": "https://openalex.org/W2152534713",
    "is_retracted": false,
-   "cited_by_count": 2310,
+   "cited_by_count": 2316,
    "works": [
     {
      "id": "https://openalex.org/W7166876262",
@@ -2832,7 +2831,7 @@
    "doi": "10.1111/j.1468-0262.2004.00481.x",
    "openalex": "https://openalex.org/W2104972618",
    "is_retracted": false,
-   "cited_by_count": 2769,
+   "cited_by_count": 2776,
    "works": [
     {
      "id": "https://openalex.org/W7214730992",
@@ -2997,7 +2996,7 @@
    "doi": "10.1016/0022-0728(89)80006-3",
    "openalex": "https://openalex.org/W2131132747",
    "is_retracted": false,
-   "cited_by_count": 1402,
+   "cited_by_count": 1404,
    "works": [
     {
      "id": "https://openalex.org/W7167022911",
@@ -3152,7 +3151,7 @@
    "doi": "10.1016/j.physletb.2012.08.020",
    "openalex": "https://openalex.org/W1858542512",
    "is_retracted": false,
-   "cited_by_count": 17185,
+   "cited_by_count": 17198,
    "works": [
     {
      "id": "https://openalex.org/W7118561163",
@@ -3613,7 +3612,7 @@
    "doi": "10.1038/s41586-021-03819-2",
    "openalex": "https://openalex.org/W3177828909",
    "is_retracted": false,
-   "cited_by_count": 51531,
+   "cited_by_count": 51634,
    "works": [
     {
      "id": "https://openalex.org/W7239737848",
@@ -3767,7 +3766,7 @@
      "title": "Parasite-induced ER-PVM contacts promote CERT-dependent ceramide delivery to the apicomplexan vacuole",
      "publication_year": 2026,
      "authors": [
-      "VAISAK MOHAN",
+      "Vaisak Mohan",
       "Ilaksha Pahwa",
       "Veeda Narahari",
       "Ajmal P Mustafa",
@@ -3812,7 +3811,7 @@
    "doi": "10.1016/j.jalz.2011.03.005",
    "openalex": "https://openalex.org/W2115017507",
    "is_retracted": false,
-   "cited_by_count": 17840,
+   "cited_by_count": 17853,
    "works": [
     {
      "id": "https://openalex.org/W7233584635",
@@ -4011,7 +4010,7 @@
    "doi": "10.1210/jc.2013-1279",
    "openalex": "https://openalex.org/W2062206625",
    "is_retracted": false,
-   "cited_by_count": 451,
+   "cited_by_count": 453,
    "works": [
     {
      "id": "https://openalex.org/W7221119443",
@@ -4051,7 +4050,7 @@
       "Glenn A. Maston",
       "Carol A. Hoffman",
       "Jennifer Ellen Posey",
-      "MARIA JOSE REDONDO",
+      "Maria Jose Redondo",
       "Mustafa Tosur"
      ],
      "venue": "Hormone Research in Paediatrics",
@@ -4123,7 +4122,7 @@
    "doi": "10.1103/physrevd.92.123516",
    "openalex": "https://openalex.org/W1819346083",
    "is_retracted": false,
-   "cited_by_count": 857,
+   "cited_by_count": 858,
    "works": [
     {
      "id": "https://openalex.org/W7162268638",
@@ -4201,7 +4200,7 @@
      "authors": [
       "Katalin Grajzel",
       "Selçuk Acar",
-      "Gage Singer"
+      "Gage Anthony Singer"
      ],
      "venue": "Personality and Individual Differences",
      "abstract": ""
@@ -4293,7 +4292,7 @@
    "doi": "10.1145/3462757.3466088",
    "openalex": "https://openalex.org/W3186492090",
    "is_retracted": false,
-   "cited_by_count": 493,
+   "cited_by_count": 497,
    "works": [
     {
      "id": "https://openalex.org/W7225223693",

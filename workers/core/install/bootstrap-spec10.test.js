@@ -80,6 +80,9 @@ function snapshot(dir) {
   return out;
 }
 const maskTime = s => s.replace(/\d{4}-\d{2}-\d{2}(?:[T ][\d:.+Z-]+)?/g, 'TIME');
+// The measured free disk space (surfaces.disk_free_gb in the boot log) moves whenever anything else writes to disk between the two runs; it is
+// a reading, not something the run wrote, so it is masked like a timestamp and every other byte of every written file is still compared.
+const maskMeasured = s => s.replace(/("disk_free_gb"\s*:\s*)-?\d+(?:\.\d+)?/g, '$1MEASURED');
 
 const COUNTED = ['org', 'roles', 'items', 'gate_cards', 'trust_ledger', 'predictions', 'doctrine_lineage'];
 function seeded(sql) {
@@ -99,7 +102,7 @@ test('US-10-T01 / US-10-R04: two dry runs write the same files and the seed appl
   assert.equal(b.status, 0, b.stderr);
   const second = snapshot(join(root, 'org'));
   assert.deepEqual(Object.keys(second).sort(), Object.keys(first).sort());
-  for (const f of Object.keys(first)) assert.equal(maskTime(second[f]), maskTime(first[f]), `${f} differs between runs`);
+  for (const f of Object.keys(first)) assert.equal(maskMeasured(maskTime(second[f])), maskMeasured(maskTime(first[f])), `${f} differs between runs`);
   assert.equal(readFileSync(join(root, 'adapters/cloudflare/src/config.js'), 'utf8'), config);
   const sql = b.org('seed.sql');
   for (const line of sql.split('\n').filter(l => l.trim() && !l.startsWith('--'))) assert.match(line, /^INSERT OR IGNORE INTO /, 'the seed holds inserts only');
@@ -167,7 +170,7 @@ test('US-10-T05: budget picks the model tier and the role-instance count follows
   }
 });
 
-test('US-10-T06 / US-10-R16: the nothing-public constraint adds KIT-6 at priority 5 and no id repeats in the backlog', () => {
+test('US-10-T06 / US-10-R34: the nothing-public constraint adds KIT-6 at priority 5 and no id repeats in the backlog', () => {
   const plain = boot({ idea: TOOL_SHARE() }).json('backlog.json');
   assert.ok(!plain.some(i => i.id === 'KIT-6'));
   const held = boot({ idea: TOOL_SHARE({ constraints: ['Nothing public until the owner says so'] }) });

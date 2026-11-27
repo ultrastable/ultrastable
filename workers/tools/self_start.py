@@ -30,6 +30,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "bootstrap"))
 import ladder  # noqa: E402  (cron_silent: the alarm fallback)
+from ownerdoc import card_default, card_say  # noqa: E402  (US-10-R15: the plain lines a person reads on a card)
 
 TITLE = "GATE: start Ultrastable on Ultrastable"
 REQUIRED_TO_APPLY = ("CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID")
@@ -56,7 +57,7 @@ def doors_section(prereq: dict) -> list[str]:
 
 
 def gate_issue_body(cards: list[dict], repo: str, missing_apply: list[str], doors: list[dict] | None = None, tried: list[dict] | None = None) -> str:
-    lines = ["The organization starts itself as soon as one door below is done. Until then it stays in dry run and nothing is spent.",
+    lines = ["The organization starts itself as soon as one door below is done. Until then nothing is switched on and nothing is spent.",
              "A scheduled workflow (`self-start`) re-checks every few hours; nobody has to run anything. No door requires you to write code.", ""]
     for p in doors or []:
         if p["id"] == "cloudflare_access" and not missing_apply:
@@ -66,10 +67,16 @@ def gate_issue_body(cards: list[dict], repo: str, missing_apply: list[str], door
         lines += ["## What the system already tried", "", "| Door | Worked | Why |", "|---|---|---|"]
         lines += [f"| {t['door']} | {'yes' if t['ok'] else 'no'} | {str(t['reason']).replace(chr(124), '/')} |" for t in tried]
         lines.append("")
-    lines += ["## Everything the bootstrapper recorded", "", "| Step | Why only you | If you do nothing | Closes when |", "|---|---|---|---|"]
+    # US-10-R15: a person reads the plain lines of each card; the probes are for the machine, in a comment the tracker does not show.
+    lines += ["## Everything the bootstrapper recorded", "", "| Step | Why only you | If you do nothing |", "|---|---|---|"]
+    cell = lambda s: str(s).replace(chr(124), "/")
     for c in cards:
-        lines.append(f"| {c['what']} | {c['why_gated']} | {c['default_in_effect']} | `{c['closing_probe']}` |")
-    lines += ["", "Closing probe: file_exists:" + STARTED, ""]
+        lines.append(f"| {cell(card_say(c))} | {cell(c['why_gated'])} | {cell(card_default(c))} |")
+    hidden = lambda s: " ".join(str(s).split()).replace("-->", "- ->")  # one line, and nothing that ends the hidden block early
+    probes = "; ".join(hidden(f"{c.get('id', '?')}={c['closing_probe']}") for c in cards)
+    # The closing probe stays on a line of its own inside the hidden block: tools/loop_closer.py reads only a line that starts
+    # with `Closing probe:`, and that probe is what closes this issue once the organization has started.
+    lines += ["", "<!--", f"card probes: {probes}", "Closing probe: file_exists:" + STARTED, "-->", ""]
     return chr(10).join(lines)
 
 

@@ -98,7 +98,7 @@ test('US-19-R30 the report says whether a signature was checked: a present signa
   assert.equal(JSON.parse(out[1]).signature, 'unchecked');
 });
 
-test('US-19-R16 a network or disk error while reading the release is exit 2 with a problem line and a JSON report, never a crash', async () => {
+test('US-19-R30 a network or disk error while reading the release is exit 2 with a problem line and a JSON report, never a crash', async () => {
   const down = await verifyRelease({ read: async () => { throw new Error('connect ECONNREFUSED 127.0.0.1:1'); } });
   assert.equal(down.exit, 2);
   assert.match(down.problems.join(), /bundle\.js could not be read: connect ECONNREFUSED/);
@@ -108,4 +108,18 @@ test('US-19-R16 a network or disk error while reading the release is exit 2 with
   const report = JSON.parse(out[0]);
   assert.equal(report.ok, false);
   assert.match(report.problems[0], /could not be read: fetch failed/);
+});
+
+test('US-19-R30 the signature is reported verified only when it was checked: an unreadable manifest, a required signature with nothing to check, and a missing one under --require-signature', async () => {
+  const { priv, pub } = keys();
+  const unreadable = await verifyRelease({ read: release({ sign: priv, tamper: { 'manifest.json': '{not json' } }).read, publicKey: pub });
+  assert.deepEqual({ exit: unreadable.exit, signature: unreadable.signature, problems: unreadable.problems }, { exit: 3, signature: 'unchecked', problems: ['manifest_unreadable'] }, 'nothing was checked, so nothing is verified');
+  const nothing = await verifyRelease({ read: release().read, requireSignature: true });
+  assert.deepEqual({ exit: nothing.exit, signature: nothing.signature }, { exit: 3, signature: 'absent' }, 'no key and no manifest.sig: the signature is absent, not unchecked');
+  const missing = await verifyRelease({ read: release().read, publicKey: pub, requireSignature: true });
+  assert.deepEqual({ exit: missing.exit, signature: missing.signature, problems: missing.problems }, { exit: 3, signature: 'absent', problems: ['signature_missing'] }, '--require-signature refuses with exit 3');
+  const tampered = await verifyRelease({ read: release({ sign: priv, tamper: { 'bundle.js': BUNDLE + ' ' } }).read, publicKey: pub });
+  assert.deepEqual({ exit: tampered.exit, signature: tampered.signature }, { exit: 3, signature: 'verified' }, 'the signature matched; the bundle digest is what failed');
+  const forged = await verifyRelease({ read: release({ sign: keys().priv }).read, publicKey: pub });
+  assert.notEqual(forged.signature, 'verified');
 });
