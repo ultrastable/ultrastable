@@ -1,5 +1,5 @@
 {
- "at": "2026-11-27T10:28:14Z",
+ "at": "2026-11-27T10:32:35Z",
  "gaps": 7,
  "match_share": 0.988,
  "sources": {
@@ -973,9 +973,7 @@
    {
     "checks": 2,
     "external": [],
-    "failing": [
-     "python3 -m foundation stdgen --check: sbom.cdx.json: out of date with the registers; run `python3 -m foundation stdgen --gen`"
-    ],
+    "failing": [],
     "id": "STANDARDS-1",
     "missing": [
      "worker/linked.js",
@@ -1122,7 +1120,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 116.9 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 117.0 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
