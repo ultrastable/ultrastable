@@ -25,6 +25,16 @@ class DeployDrift(unittest.TestCase):
         self.assertEqual(d.read(TOPO, {"a": "1" * 40}, behind=boom)[0]["status"], "unmeasured")
 
 
+    def test_versions_probe_skips_failed_uploads_and_names_unprobed_rows(self):
+        import json
+        from foundation import deploydrift as d
+        rows = [json.dumps(r) for r in (
+            {"at": "2026-11-27", "worker": "ok", "version": "v1", "live_matches_commit": True},
+            {"at": "2026-11-27", "worker": "failed", "error": "migration"},
+            {"at": "2026-11-27", "worker": "noversion", "live_matches_commit": True},
+            {"at": "2026-11-01", "worker": "old"})]
+        self.assertEqual(d.unprobed(rows, "2026-11-20"), ["2026-11-27 noversion"])
+
 if __name__ == "__main__":
     unittest.main()
 
