@@ -555,9 +555,16 @@ export const isSchemaError = (e) => /no such table|no such column|has no column 
 
 export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null, budget = null } = {}) {
   const startedIso = iso(new Date(now));
+  const ctx = { db, wake, ai, budget, config, env, now, nowIso: startedIso, tickId: null, notes: [], errors: [], dispatched: 0, openGates: 0 };
+  // MIGRATE-FIRST-1: the schema comes before the heartbeat row. An empty database has no tick_runs table, so when this tick's config carries
+  // migrations (today the core tick's config, handoff.js tickConfigSource) the migrate step runs before the INSERT and the tick builds its own
+  // first schema. A seed's config carries none yet: its root package.json deploy script applies worker/migrations by binding right after
+  // `wrangler deploy` creates the database, and until then this INSERT fails and the next cron slot runs again. The step's outcome is kept and
+  // reported as the migrate step below, so it runs once per tick, counts once, and a failure is still recorded and filed like any other step's.
+  let premigrate = null;
+  try { await STEPS.migrate(db, ctx); } catch (e) { premigrate = e; }
   const ins = await run(db, `INSERT INTO tick_runs (started_at, steps_total) VALUES (?, ?)`, startedIso, STEP_ORDER.length);
-  const tickId = ins.meta.last_row_id;
-  const ctx = { db, wake, ai, budget, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
+  const tickId = ctx.tickId = ins.meta.last_row_id;
   let completed = 0;
   try { ctx.costBreach = await over_budget(db, config && config.cost_budgets, now); } catch (e) { ctx.costBreach = null; ctx.notes.push(`cost check failed: ${String(e && e.message).slice(0, 120)}`); }
   try { ctx.freeTier = await freeTierLevel(db, now, planOf(config || {}, env || {})); } catch (e) { ctx.freeTier = null; ctx.notes.push(`free-tier check failed: ${String(e && e.message).slice(0, 120)}`); }
@@ -594,7 +601,7 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
     if (name === 'dispatch') workRan = true;
     try {
       try {
-        await STEPS[name](db, ctx);
+        if (name === 'migrate') { if (premigrate) throw premigrate; } else await STEPS[name](db, ctx);  // MIGRATE-FIRST-1: migrate already ran before the tick_runs row
       } catch (e0) {
         // SCHEMA-HEAL-1 (Q-RECUR-9ead069526, Q-RECUR-b680afd12d): measure and criticality threw on a table their migration never created and
         // filed TICKFAIL every hour. A missing table or column is healed here: migrate runs again and the step is retried once in the same tick.

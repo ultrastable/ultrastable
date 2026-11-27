@@ -213,16 +213,20 @@ class FleetMapAndManifest(unittest.TestCase):
         with mock.patch.object(fleetmap, "named_repos", return_value=extra):
             self.assertTrue(any("ultrastable/new-one: named in github/org-settings.json and has no row" in e for e in fleetmap.check(ROOT)))
 
+    # a manifest in the schema's shape: drift reads it on both paths (a clone's file, or the branch through GitHub)
+    MANIFEST = json.dumps({"identity": {"name": "p", "runs_as": [], "visibility": "public", "visibility_reason": "DISCOVER-1: public by default"}}) + "\n"
+
     def world(self):
         d = tmp(self)
         put(d, "seed/a.txt", "A\n")
-        put(d, "seed/ultrastable.json", "{}\n")
+        put(d, "seed/ultrastable.json", self.MANIFEST)
         row = {"synced_from": [{"kind": "tree", "source_repo": "o/p", "source": "seed", "direction": "down", "workflow": "w.yml", "keep": ["keepme"]}], "instructions": {"kind": "none"}}
         return d, row
 
     def tree(self, files=None, **extra):
-        files = {"a.txt": "A\n", "ultrastable.json": "{}\n", **(files or {})}
-        return lambda url: {"tree": [{"path": p, "type": "blob", "sha": fleetmap.blob_sha(c.encode())} for p, c in files.items() if c is not None], **extra}
+        files = {"a.txt": "A\n", "ultrastable.json": self.MANIFEST, **(files or {})}
+        listing = {"tree": [{"path": p, "type": "blob", "sha": fleetmap.blob_sha(c.encode())} for p, c in files.items() if c is not None], **extra}
+        return lambda url: json.loads(files["ultrastable.json"]) if url.endswith("/ultrastable.json") else listing
 
     def test_US_31_R39_a_copy_is_read_against_its_source_as_equal_drifted_or_unmeasured_and_a_copy_that_cannot_be_read_is_never_equal(self):
         d, row = self.world()
@@ -285,9 +289,11 @@ class FleetMapAndManifest(unittest.TestCase):
         put(d, "ultrastable.json", (ROOT / "seed/ultrastable.json").read_text())
         put(d, "standards/system.schema.json", (ROOT / "seed/standards/system.schema.json").read_text())
         put(d, "README.md", "# A system\n\nIts own words.\n")
+        put(d, "LICENSE", (ROOT / "seed/LICENSE").read_text())  # the copyright holder is read from it, never guessed
         self.assertEqual(eng.check_manifest(d), [])
         wrote = eng.render(d)
-        self.assertEqual(sorted(wrote), [".ultrastable/github.json", "CITATION.cff", "README.md", "catalog-info.yaml", "publiccode.yml"])
+        self.assertEqual(sorted(wrote), [".ultrastable/github.json", "CHANGELOG.md", "CITATION.cff", "CONTRIBUTING.md", "LICENSES/LicenseRef-Ultrastable-USL-1.0.txt",
+                                         "README.md", "REUSE.toml", "SECURITY.md", "catalog-info.yaml", "codemeta.json", "llms.txt", "publiccode.yml"])
         self.assertEqual(eng.check(d), [])
         self.assertEqual(eng.render(d), [], "a second render changes nothing")
         text = (d / "README.md").read_text()
@@ -317,7 +323,7 @@ class FleetMapAndManifest(unittest.TestCase):
         del m["identity"]["summary"]
         put(d, "ultrastable.json", m)
         self.assertTrue(any("summary" in e for e in eng.check_manifest(d)))
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(eng.Unrenderable):  # nothing is written from a manifest that is not valid; the CLI exits 1 with the reasons
             eng.render(d)
         self.assertIn("github", eng.plan(ident, "github"))
 

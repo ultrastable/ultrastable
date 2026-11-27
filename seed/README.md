@@ -90,6 +90,8 @@ Source-available under the [Ultrastable License v1.0 (USL-1.0)](LICENSE): free f
 
 **How it bootstraps.** One file, `IDEA.md`, states the idea and its system test (a loop to close, a measure that can be wrong, upkeep that never ends, a running cost the owner accepts). `bootstrap/bootstrap.py` reads it with `ultrastable.json` and `autonomy/policy.json`, qualifies the idea, hires the roles, writes the Worker's configuration and database, and deploys the tick Worker. No person runs a command.
 
+**Run your own copy.** [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/ultrastable/seed)
+
 **How it becomes autonomous.** Two ladders, both computed from evidence the system records, never declared:
 
 - ignition (read every tick, reported at `/health`): `unseeded` → `seeded` → `ticking` → `looping` → `closing` → `instrumented` → `critical` → `self-sustaining`. `instrumented` and above means bootstrapped; the first unmet stage is filed as its own work item.

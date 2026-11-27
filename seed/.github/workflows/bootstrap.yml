@@ -59,6 +59,10 @@ jobs:
           git config user.name "ultrastable-bootstrap"
           git config user.email "bootstrap@users.noreply.github.com"
           git add IDEA.md org
+          # IDENTITY-AT-BIRTH-1: the identity the boot adopted (scripts/surfaces.py adopt) is the system's own; it is kept, not lost with the runner
+          for f in ultrastable.json README.md CITATION.cff publiccode.yml catalog-info.yaml llms.txt REUSE.toml LICENSES codemeta.json CHANGELOG.md CONTRIBUTING.md SECURITY.md .ultrastable; do
+            if [ -e "$f" ]; then git add -- "$f"; fi
+          done
           git diff --cached --quiet || { git commit -m "bootstrap: record boot (the idea, org/ charter, roles, backlog, gate cards)"; git push; }
       - name: Tell the owner in plain words
         if: always() && steps.need.outputs.run == '1'
