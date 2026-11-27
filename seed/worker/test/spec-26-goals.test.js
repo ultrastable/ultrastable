@@ -93,12 +93,13 @@ test('US-26-R39: an off-target goal moves one knob one step toward its target, n
   const a = db.raw.prepare('SELECT * FROM goal_adjustments').get();
   assert.equal(a.prediction, 'core.t moves toward >= 0.5 (from 0.2) within 24 h'); assert.equal(a.baseline, 0.2); assert.equal(a.review_after, t0 + 24 * H);
   const r2 = await run(db, cfg, t0 + H); assert.equal(r2.adjusted.length, 0, 'an unreviewed move holds the goal');
-  // a lower-is-better goal and an effect +1 knob go the other way; a knob at its bound cannot move
+  // a lower-is-better goal and an effect +1 knob go the other way; a knob at its bound in the declared direction never passes the bound, and the
+  // step-function search takes the nearest value on the other side (ASHBY-KERNEL-1: any change will do, the review afterwards selects)
   vals.y = 0.9;
   const db2 = makeDb(); const c2 = { goals: [goal('core.y', { spec: 'y', op: '<=', target: 0.5 })], knobs: [knob('core.up', 'core.y', { effect: 1, value: 3 })] };
   assert.equal((await run(db2, c2, t0)).adjusted[0].new, 2);
   const db3 = makeDb(); const c3 = { goals: [goal('core.t')], knobs: [knob('core.floor', 'core.t', { value: 1 })] };
-  assert.equal((await run(db3, c3, t0)).adjusted.length, 0);
+  assert.deepEqual((await run(db3, c3, t0)).adjusted, [{ knob: 'core.floor', old: 1, new: 2, goal: 'core.t', search: true }]);
   // three goals a tick at most, however many are off target
   const db4 = makeDb(); const names = ['x', 'y', 'z', 'w'];
   const c4 = { goals: names.map(n => goal('core.' + n, { spec: n })), knobs: names.map(n => knob('core.k' + n, 'core.' + n)) };
@@ -117,10 +118,13 @@ test('US-26-R40: after its review time a move is kept when the goal is met or im
   const k = await one(db, "SELECT * FROM goal_knobs WHERE id='core.k'");
   assert.equal(k.value, 4, 'reverted to the old value'); assert.equal(k.hold_dir, -1); assert.equal(k.hold_until, t0 + 25 * H + 7 * DAY);
   assert.equal(r.adjusted.length, 0, 'the same direction rests');
-  assert.equal((await run(db, cfg, t0 + 6 * DAY)).adjusted.length, 0);
-  assert.equal((await run(db, cfg, t0 + 33 * H + 7 * DAY)).adjusted.length, 1, 'after the rest it may try again');
+  // ASHBY-KERNEL-1: the direction rests, the search does not. After the cooldown the nearest untried value on the other side is tried, and a
+  // value that failed is not tried again in the same episode.
+  assert.deepEqual((await run(db, cfg, t0 + 6 * DAY)).adjusted, [{ knob: 'core.k', old: 4, new: 5, goal: 'core.t', search: true }]);
+  const back = await run(db, cfg, t0 + 7 * DAY + H); assert.deepEqual(back.reviewed, [{ knob: 'core.k', kept: false }]); assert.equal(back.adjusted.length, 0);
+  assert.deepEqual((await run(db, cfg, t0 + 33 * H + 7 * DAY)).adjusted, [{ knob: 'core.k', old: 4, new: 2, goal: 'core.t', search: true }], 'both neighbours failed: the declared side is searched one step further out');
   const v = await readGoals(db, { now: t0 + 9 * DAY, loops: false });
-  assert.deepEqual(v.adjustments.map(x => x.verdict).sort(), ['pending', 'reverted']);
+  assert.deepEqual(v.adjustments.map(x => x.verdict).sort(), ['pending', 'reverted', 'reverted']);
   // improved by more than 1 percent of the target (0.005): kept, the knob stays
   const db2 = makeDb(); vals.x = 0.2; await run(db2, cfg, t0); vals.x = 0.21;
   const kept = await run(db2, cfg, t0 + 25 * H);

@@ -119,6 +119,34 @@
       "unit": "days",
       "op": ">=",
       "target": 365
+    },
+    {
+      "id": "core.adapt",
+      "parent_id": "core.mission",
+      "level": "objective",
+      "statement": "The regulator keeps the variety and the structure it needs to adapt: every disturbance class meets a response that holds, and no set of step-functions too large to search must come right at once (ASHBY-KERNEL-1, after W. Ross Ashby's journal)."
+    },
+    {
+      "id": "core.adapt.variety",
+      "parent_id": "core.adapt",
+      "level": "target",
+      "statement": "Disturbance classes of the last 14 days that no response held: fix items a detector filed that stood open past 72 hours (worker/src/regulation.js).",
+      "source": "builtin",
+      "spec": "unregulated_disturbances_14d",
+      "unit": "classes",
+      "op": "<=",
+      "target": 0
+    },
+    {
+      "id": "core.adapt.joint",
+      "parent_id": "core.adapt",
+      "level": "target",
+      "statement": "The largest set of step-functions that can only be judged together, from declared links and confirmed upsets (worker/src/goals.js structureOf).",
+      "source": "builtin",
+      "spec": "largest_joint_component",
+      "unit": "step-functions",
+      "op": "<=",
+      "target": 8
     }
   ],
   "knobs": [

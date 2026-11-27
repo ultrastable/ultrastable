@@ -14,6 +14,8 @@
 import { record } from './auditchain.js';
 import { beatStats24h } from './beatstats.js';  // READ-BUDGET-9
 import { dampedCooldown, errorBudget } from './control.js';  // CONTROL-1: knob damping, goal error budgets
+import { nextTrial, upsets, accessibility, reducibility, searchBudget, jointRest, cylindrance, protocol } from './ashby.js';  // ASHBY-KERNEL-1
+import { varietyReading } from './regulation.js';  // ASHBY-KERNEL-1: requisite variety read from the work queue
 export const DDL = [
   `CREATE TABLE IF NOT EXISTS goals (id TEXT PRIMARY KEY, tenant TEXT NOT NULL DEFAULT 'core', parent_id TEXT, level TEXT NOT NULL, statement TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'none', spec TEXT, unit TEXT, op TEXT, target REAL, deadline TEXT, status TEXT NOT NULL DEFAULT 'active', origin TEXT NOT NULL DEFAULT 'seed', last_value REAL, last_at INTEGER, met INTEGER NOT NULL DEFAULT 0, streak INTEGER NOT NULL DEFAULT 0, achieved_at INTEGER, stretch_id TEXT, missed_at INTEGER, retired_reason TEXT, created_at INTEGER NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS goals_tenant ON goals (tenant, status)`,
@@ -23,6 +25,11 @@ export const DDL = [
   `CREATE TABLE IF NOT EXISTS goal_knobs (id TEXT PRIMARY KEY, goal_id TEXT NOT NULL, tenant TEXT NOT NULL DEFAULT 'core', what TEXT, config_path TEXT, value REAL NOT NULL, default_value REAL NOT NULL, min REAL NOT NULL, max REAL NOT NULL, step REAL NOT NULL, effect INTEGER NOT NULL DEFAULT 1, cooldown_h REAL NOT NULL DEFAULT 24, review_h REAL NOT NULL DEFAULT 24, last_changed_at INTEGER, hold_dir INTEGER, hold_until INTEGER)`,
   `CREATE TABLE IF NOT EXISTS goal_adjustments (id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER NOT NULL, knob_id TEXT NOT NULL, goal_id TEXT NOT NULL, old REAL NOT NULL, new REAL NOT NULL, why TEXT, prediction TEXT, baseline REAL, review_after INTEGER NOT NULL, reviewed_at INTEGER, kept INTEGER, measured REAL)`,
   `CREATE INDEX IF NOT EXISTS goal_adjustments_at ON goal_adjustments (at)`,
+  // ASHBY-KERNEL-1: one row for each variable a step upset. exonerated NULL = the undo is still being read; 0 = the variable came back when the
+  // step was undone (confirmed); 1 = it stayed out, so the step was not the cause.
+  `CREATE TABLE IF NOT EXISTS goal_interference (id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER NOT NULL, adjustment_id INTEGER, knob_id TEXT NOT NULL, goal_id TEXT NOT NULL, upset_goal TEXT NOT NULL, dir INTEGER NOT NULL DEFAULT 0, check_after INTEGER NOT NULL, exonerated INTEGER, checked_at INTEGER)`,
+  `CREATE INDEX IF NOT EXISTS goal_interference_open ON goal_interference (exonerated, check_after)`,
+  `CREATE INDEX IF NOT EXISTS goal_interference_goal ON goal_interference (goal_id, at)`,
 ];
 const ensured = new WeakSet();
 export async function ensure(db) { if (ensured.has(db)) return; for (const s of DDL) await db.prepare(s).run(); ensured.add(db); }
@@ -31,8 +38,11 @@ const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).re
 const first = (db, sql, ...a) => db.prepare(sql).bind(...a).first();
 const OPS = { '>=': (a, b) => a >= b, '<=': (a, b) => a <= b, '>': (a, b) => a > b, '<': (a, b) => a < b, '=': (a, b) => a === b };
 export const LEVELS = ['mission', 'objective', 'target'];
-export const DEFAULTS = { stale_days: 14, achieve_after: 12, max_adjust_per_run: 3, max_stretch_per_day: 2, keep_samples_days: 30, tenant_limits: { goals: 40, knobs: 80 } };
-const cfgOf = c => ({ ...DEFAULTS, ...((c && c.control) || {}) });
+export const DEFAULTS = { stale_days: 14, achieve_after: 12, max_adjust_per_run: 3, max_stretch_per_day: 2, keep_samples_days: 30, tenant_limits: { goals: 40, knobs: 80 },
+  veto: { hold: 3, confirm: 2, lookback_h: 6 },  // ASHBY-KERNEL-1: a variable holds after 3 readings inside its limits and is upset after 2 outside them
+  forget_days: 30 };  // a value that failed is not tried again for this long, or until a change is kept
+const cfgOf0 = c => ({ ...DEFAULTS, ...((c && c.control) || {}) });
+const cfgOf = c => { const o = cfgOf0(c); return { ...o, veto: { ...DEFAULTS.veto, ...(o.veto || {}) } }; };
 const ID = /^[a-z0-9][a-z0-9._+-]{1,60}$/;
 const needOf = op => (op === '>=' || op === '>') ? 1 : (op === '<=' || op === '<') ? -1 : 0;
 const num = v => (v === null || v === undefined || v === '' || !Number.isFinite(Number(v))) ? null : Number(v);
@@ -148,11 +158,31 @@ export function trend(samples) {  // samples oldest first: [{at, value}]; slope 
 }
 const eps = g => 0.01 * Math.max(Math.abs(g.target || 0), 0.01);
 
+// ASHBY-KERNEL-1: the variables of the same tenant that were holding inside their limits before the step at a.at and have left them since.
+async function vetoers(db, g, a, c) {
+  const rows = await all(db, `SELECT s.goal_id, s.at, s.value, o.op, o.target FROM goal_samples s JOIN goals o ON o.id = s.goal_id WHERE s.at >= ? AND o.tenant = ? AND o.status = 'active' AND o.level = 'target' AND o.id != ? ORDER BY s.at`, a.at - c.veto.lookback_h * 3600e3, g.tenant, g.id);
+  const series = {};
+  for (const r of rows) if (OPS[r.op]) (series[r.goal_id] ||= []).push({ at: r.at, ok: OPS[r.op](r.value, r.target) });
+  return upsets({ at: a.at, own: g.id }, series, c.veto);
+}
+
 // ---- the control loop ----
 export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null } = {}) {
-  await ensure(db); const c = cfgOf(cfg), now = ctx.now || Date.now(), out = { read: 0, met: 0, off: 0, adjusted: [], reviewed: [], stretch: [], retired: [], filed: [] };
+  await ensure(db); const c = cfgOf(cfg), now = ctx.now || Date.now(), out = { read: 0, met: 0, off: 0, adjusted: [], reviewed: [], stretch: [], retired: [], filed: [], vetoed: [], settled: [] };
   if (cfg) await seedGoals(db, cfg, { now });
   if (cfg && cfg.tenant_feeds && cfg.tenant_feeds.length) out.feeds = await pullFeeds(db, cfg.tenant_feeds, { fetchFn: ctx.fetch || (ctx.env && ctx.env.fetch) || fetch, now });
+  // ASHBY-KERNEL-1: settle each veto once the upset variable has been read after the undo, before any step-function moves in this tick. It came
+  // back: the step was the cause, the direction rests for a week and the step-function is offered less readily. It stayed out: the step is
+  // exonerated and may be tried again. Until it is settled the step-function does not move, so the undo is read alone.
+  for (const i of await all(db, `SELECT i.*, u.met AS umet, u.last_at AS uat FROM goal_interference i JOIN goals u ON u.id = i.upset_goal WHERE i.exonerated IS NULL AND i.check_after <= ?`, now)) {
+    if (!(i.uat > i.at)) continue;
+    const confirmed = i.umet === 1;
+    await run(db, 'UPDATE goal_interference SET exonerated=?, checked_at=? WHERE id=?', confirmed ? 0 : 1, now, i.id);
+    if (confirmed) await run(db, 'UPDATE goal_knobs SET hold_until=? WHERE id=? AND hold_dir=?', now + 7 * 86400e3, i.knob_id, i.dir);
+    else await run(db, 'UPDATE goal_knobs SET hold_dir=NULL, hold_until=NULL WHERE id=? AND hold_dir=?', i.knob_id, i.dir);
+    await record(db, { kind: 'goal.veto.settled', actor: 'goals', ref: i.knob_id, summary: `${i.knob_id} and ${i.upset_goal}: ${confirmed ? 'confirmed, the variable returned inside its limits once the step was undone' : 'exonerated, the variable stayed outside its limits after the step was undone'}`, data: { goal: i.goal_id, upset: i.upset_goal, confirmed } }, { now });
+    out.settled.push({ knob: i.knob_id, upset: i.upset_goal, confirmed });
+  }
   const goals = await all(db, `SELECT * FROM goals WHERE status='active' AND level='target'`);
   let adjusts = 0;
   for (const g of goals) {
@@ -172,46 +202,60 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
     await run(db, 'UPDATE goals SET last_value=?, last_at=?, met=?, streak=? WHERE id=?', v, now, met ? 1 : 0, streak, g.id);
     met ? out.met++ : out.off++;
     // review: the last unreviewed change of each knob of this goal, once its review time has passed
-    const due = await all(db, `SELECT a.*, k.value AS kval, k.cooldown_h FROM goal_adjustments a JOIN goal_knobs k ON k.id = a.knob_id WHERE a.goal_id=? AND a.reviewed_at IS NULL AND a.review_after <= ?`, g.id, now);
+    const due = await all(db, `SELECT a.*, k.value AS kval, k.cooldown_h, k.review_h AS krev FROM goal_adjustments a JOIN goal_knobs k ON k.id = a.knob_id WHERE a.goal_id=? AND a.reviewed_at IS NULL AND a.review_after <= ?`, g.id, now);
     for (const a of due) {
       const improved = met || (need !== 0 && need * (v - a.baseline) > eps(g));
-      if (!improved) {
-        if (a.kval === a.new) await run(db, 'UPDATE goal_knobs SET value=?, last_changed_at=?, hold_dir=?, hold_until=? WHERE id=?', a.old, now, Math.sign(a.new - a.old), now + 7 * 86400e3, a.knob_id);
+      // ASHBY-KERNEL-1: every essential variable holds a veto. A step that moved its own goal but knocked out a variable that was holding is undone,
+      // and the undo is itself a trial: the upset variable is read again after one review period (settled below).
+      const veto = improved && a.kval === a.new ? await vetoers(db, g, a, c) : [];
+      const kept = improved && !veto.length, sdir = Math.sign(a.new - a.old);
+      if (!kept) {
+        if (a.kval === a.new) await run(db, 'UPDATE goal_knobs SET value=?, last_changed_at=?, hold_dir=?, hold_until=? WHERE id=?', a.old, now, sdir, now + (veto.length ? Math.max(a.krev, 1) * 3600e3 : 7 * 86400e3), a.knob_id);
         await run(db, 'UPDATE goal_adjustments SET reviewed_at=?, kept=0, measured=? WHERE id=?', now, v, a.id);
       } else await run(db, 'UPDATE goal_adjustments SET reviewed_at=?, kept=1, measured=? WHERE id=?', now, v, a.id);
-      await record(db, { kind: 'goal.review', actor: 'goals', ref: g.id, summary: `${a.knob_id} change ${a.old} -> ${a.new} ${improved ? 'kept' : 'reverted'}: ${g.id} ${a.baseline} -> ${v}`, data: { knob: a.knob_id, kept: improved } }, { now });
-      out.reviewed.push({ knob: a.knob_id, kept: improved });
+      for (const u of veto) await run(db, 'INSERT INTO goal_interference (at, adjustment_id, knob_id, goal_id, upset_goal, dir, check_after) VALUES (?,?,?,?,?,?,?)', now, a.id, a.knob_id, g.id, u, sdir, now + Math.max(a.krev, 1) * 3600e3);
+      if (veto.length) { out.vetoed.push({ knob: a.knob_id, goal: g.id, upset: veto }); await record(db, { kind: 'goal.veto', actor: 'goals', ref: a.knob_id, summary: `${a.knob_id} change ${a.old} -> ${a.new} undone: it moved ${g.id} (${a.baseline} -> ${v}) and ${veto.join(', ')} left its limits; ${veto.join(', ')} returns inside its limits within ${Math.max(a.krev, 1)} h`, data: { goal: g.id, upset: veto } }, { now }); }
+      await record(db, { kind: 'goal.review', actor: 'goals', ref: g.id, summary: `${a.knob_id} change ${a.old} -> ${a.new} ${kept ? 'kept' : 'reverted'}: ${g.id} ${a.baseline} -> ${v}`, data: { knob: a.knob_id, kept } }, { now });
+      out.reviewed.push({ knob: a.knob_id, kept });
     }
     // item that closes itself
     const itemId = `GOAL-${g.id}`.slice(0, 80);
     if (met) { await run(db, `UPDATE items SET status='done', disposition=?, updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, `fixed: goal ${g.id} met (${v} ${g.op} ${g.target})`, ctx.nowIso || new Date(now).toISOString(), itemId).catch(() => {}); }
     const knobs = await all(db, 'SELECT * FROM goal_knobs WHERE goal_id=?', g.id);
     if (!met && need !== 0) {
-      let moved = false;
+      let moved = false, searching = false;
       const pending = await first(db, `SELECT COUNT(*) AS n FROM goal_adjustments WHERE goal_id=? AND reviewed_at IS NULL`, g.id);
       if (!(pending && pending.n) && adjusts < c.max_adjust_per_run) {
         const cand = [];
-        const recent = await all(db, `SELECT knob_id, at, old, new FROM goal_adjustments WHERE goal_id=? AND at >= ?`, g.id, now - 30 * 86400e3);
+        const recent = await all(db, `SELECT id, knob_id, at, old, new, kept FROM goal_adjustments WHERE goal_id=? AND at >= ?`, g.id, now - 30 * 86400e3);
+        // ASHBY-KERNEL-1: the step-function search. The episode runs from the last change that was kept (or forget_days back): a value that failed
+        // in it is not tried again, a step exonerated of an upset is, and a step-function with confirmed upsets is offered less readily.
+        const inter = await all(db, `SELECT adjustment_id, knob_id, exonerated FROM goal_interference WHERE goal_id=? AND at >= ?`, g.id, now - 90 * 86400e3);
+        const cleared = new Set(inter.filter(i => i.exonerated === 1).map(i => i.adjustment_id));
+        const since = Math.max(now - c.forget_days * 86400e3, ...recent.filter(m => m.kept === 1).map(m => m.at));
         for (const k of knobs) {
-          const damp = dampedCooldown(k.cooldown_h, recent.filter(m => m.knob_id === k.id));  // CONTROL-1: a chattering knob slows down
-          const dir = need * (k.effect < 0 ? -1 : 1), nv = Math.min(k.max, Math.max(k.min, k.value + dir * k.step));
-          if (nv === k.value) continue;
+          if (inter.some(i => i.knob_id === k.id && i.exonerated == null)) continue;  // its undo is still being read
+          const mine = recent.filter(m => m.knob_id === k.id), damp = dampedCooldown(k.cooldown_h, mine);  // CONTROL-1: a chattering knob slows down
           if (k.last_changed_at && now - k.last_changed_at < damp.cooldown_h * 3600e3) { if (damp.damped) (out.damped ||= []).push({ knob: k.id, reversals: damp.reversals, cooldown_h: damp.cooldown_h }); continue; }
-          if (k.hold_dir === dir && k.hold_until && now < k.hold_until) continue;
-          cand.push({ k, dir, nv, room: Math.abs(nv - k.value) / Math.max(k.max - k.min, 1e-9) + Math.abs(k.max - k.min) * 1e-6 });
+          const declared = need * (k.effect < 0 ? -1 : 1), last = mine.filter(m => m.kept === 1).sort((x, y) => y.at - x.at)[0];
+          const dir = last && last.new !== last.old ? Math.sign(last.new - last.old) : declared;  // the direction that last held is the memory of this step-function
+          const t = nextTrial(k, { dir, rejected: mine.filter(m => m.kept === 0 && m.at >= since && !cleared.has(m.id)).map(m => m.new), heldDir: k.hold_dir && k.hold_until && now < k.hold_until ? k.hold_dir : 0 });
+          if (!t) continue;
+          const nv = t.value, open = accessibility(inter.filter(i => i.knob_id === k.id && i.exonerated === 0).length);
+          cand.push({ k, dir, nv, search: t.exploratory, room: open * (Math.abs(nv - k.value) / Math.max(k.max - k.min, 1e-9) + Math.abs(k.max - k.min) * 1e-6) });
         }
         cand.sort((x, y) => y.room - x.room);
         if (cand.length) {
-          const { k, nv } = cand[0], pred = `${g.id} moves toward ${g.op} ${g.target} (from ${v}) within ${k.review_h} h`;
+          const { k, nv, search } = cand[0], pred = `${g.id} moves toward ${g.op} ${g.target} (from ${v}) within ${k.review_h} h`;
           await run(db, 'UPDATE goal_knobs SET value=?, last_changed_at=? WHERE id=?', nv, now, k.id);
-          const r = await run(db, `INSERT INTO goal_adjustments (at, knob_id, goal_id, old, new, why, prediction, baseline, review_after) VALUES (?,?,?,?,?,?,?,?,?)`, now, k.id, g.id, k.value, nv, `${g.id} reads ${v}; target ${g.op} ${g.target}`, pred, v, now + k.review_h * 3600e3);
+          const r = await run(db, `INSERT INTO goal_adjustments (at, knob_id, goal_id, old, new, why, prediction, baseline, review_after) VALUES (?,?,?,?,?,?,?,?,?)`, now, k.id, g.id, k.value, nv, `${g.id} reads ${v}; target ${g.op} ${g.target}${search ? '; the declared direction is spent, searching the remaining values' : ''}`, pred, v, now + k.review_h * 3600e3);
           await record(db, { kind: 'goal.knob', actor: 'goals', ref: k.id, summary: `${k.id}: ${k.value} -> ${nv} to move ${g.id} (${v} vs ${g.op} ${g.target}); ${pred}`, data: { goal: g.id, old: k.value, new: nv, adjustment: r && r.meta && r.meta.last_row_id } }, { now });
-          out.adjusted.push({ knob: k.id, old: k.value, new: nv, goal: g.id }); adjusts++; moved = true;
+          out.adjusted.push({ knob: k.id, old: k.value, new: nv, goal: g.id, ...(search ? { search: true } : {}) }); adjusts++; moved = true; searching = search;
         }
       }
       const resting = pending && pending.n;
-      if (!moved && !resting && ensureItem && g.tenant === 'core') {
-        const f = await ensureItem(db, { id: itemId, kind: 'fix', priority: 6, owner_role: 'product-manager', title: `Goal ${g.id} reads ${v}; target ${g.op} ${g.target}${g.deadline ? ' by ' + g.deadline : ''}. No knob can move it now (${knobs.length ? 'all at a bound, resting after a revert, or cooling down' : 'none attached'}). Build a lever for it: ${g.statement}`.slice(0, 400), done_check: `goal ${g.id} reads ${g.op} ${g.target}`, closing_probe: `SELECT COUNT(*) FROM goals WHERE id='${g.id}' AND met=1`, surface: 'goals' });
+      if (((!moved && !resting) || searching) && ensureItem && g.tenant === 'core') {  // searching: the designed lever failed, so the lever is filed for while the search goes on
+        const f = await ensureItem(db, { id: itemId, kind: 'fix', priority: 6, owner_role: 'product-manager', title: `Goal ${g.id} reads ${v}; target ${g.op} ${g.target}${g.deadline ? ' by ' + g.deadline : ''}. ${searching ? 'Its knobs failed in their declared direction and the remaining values are being searched' : `No knob can move it now (${knobs.length ? 'every value tried, resting after a revert, or cooling down' : 'none attached'})`}. Build a lever for it: ${g.statement}`.slice(0, 400), done_check: `goal ${g.id} reads ${g.op} ${g.target}`, closing_probe: `SELECT COUNT(*) FROM goals WHERE id='${g.id}' AND met=1`, surface: 'goals' });
         if (f) out.filed.push(itemId);
       }
     }
@@ -239,6 +283,37 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
   return out;
 }
 
+// ---- ASHBY-KERNEL-1: the structure of the regulator, read from its own tables ----
+// parts: the irreducible wholes the goals and step-functions fall into (declared links plus confirmed upsets), with the trials each would take at
+// once and part by part, and whether its settings can be searched inside a year. rest: how often every goal is inside its limits at once against
+// the product of the parts. joint_order: how many goals must be looked at together to account for the states seen. black_box: knob moves whose
+// result is not fixed by what is recorded. variety: the disturbance classes the work queue let through. Every reading is null when unmeasured.
+export async function jointLinks(db) {
+  await ensure(db);
+  const knobs = await all(db, `SELECT id, goal_id, min, max, step, review_h, cooldown_h FROM goal_knobs`);
+  const upset = await all(db, `SELECT DISTINCT knob_id, upset_goal FROM goal_interference WHERE exonerated = 0`);
+  return { knobs, links: [...knobs.map(k => ({ knob: k.id, goal: k.goal_id })), ...upset.map(u => ({ knob: u.knob_id, goal: u.upset_goal }))] };
+}
+export const largestJoint = db => jointLinks(db).then(j => reducibility(j.links).largest_joint);
+export async function structureOf(db, { now = Date.now(), samples = null, max_joint } = {}) {
+  const { knobs, links } = await jointLinks(db), red = reducibility(links, max_joint ? { max_joint } : {}), kb = Object.fromEntries(knobs.map(k => [k.id, k]));
+  const parts = red.components.map(c => { const ks = c.knobs.map(id => kb[id]).filter(Boolean);
+    return { ...c, search: searchBudget(ks.map(k => Math.round((k.max - k.min) / k.step) + 1), { trial_h: Math.max(1, ...ks.map(k => k.review_h + k.cooldown_h)) }) }; });
+  const gs = await all(db, `SELECT id, op, target FROM goals WHERE status = 'active' AND level = 'target'`), spec = Object.fromEntries(gs.filter(g => OPS[g.op]).map(g => [g.id, g]));
+  const rowsAt = new Map();
+  for (const x of samples || await all(db, `SELECT goal_id, at, value FROM goal_samples WHERE at >= ? ORDER BY at`, now - 14 * 86400e3)) { const g = spec[x.goal_id]; if (!g) continue; const r = rowsAt.get(x.at) || {}; r[x.goal_id] = OPS[g.op](x.value, g.target); rowsAt.set(x.at, r); }
+  const ids = Object.keys(spec).sort(), full = [...rowsAt.values()].filter(r => ids.every(i => i in r)), over = ids.slice(0, 10);
+  const moves = await all(db, `SELECT knob_id, old, new, kept FROM goal_adjustments WHERE reviewed_at IS NOT NULL ORDER BY id DESC LIMIT 200`);
+  const box = protocol(moves.map(m => ({ state: 'off target', input: `${m.knob_id} ${m.old} -> ${m.new}`, next: m.kept ? 'kept' : 'reverted' })));
+  const inter = await all(db, `SELECT at, knob_id, goal_id, upset_goal, exonerated FROM goal_interference ORDER BY id DESC LIMIT 20`);
+  return { source: "W. Ross Ashby's journal, https://ashby.info/journal/index/index.html (ASHBY-KERNEL-1); each reading is computed from this system's own tables",
+    parts, largest_joint: red.largest_joint, max_joint: red.max_joint, irreducible: red.irreducible,
+    rest: jointRest(full), joint_order: full.length >= 12 && over.length ? { goals: over, k: cylindrance(full.map(r => over.map(i => r[i]))), readings: full.length } : null,
+    black_box: { repeated: box.repeated, determinate_share: box.determinate_share, hidden: box.hidden.slice(0, 10) },
+    variety: await varietyReading(db, now).then(v => ({ disturbances: v.disturbances, covered: v.covered, uncovered: v.uncovered, uncovered_n: v.uncovered_n, pending: v.pending, regulated_share: v.regulated_share, deficit_bits: v.deficit_bits, window_d: v.window_d, grace_h: v.grace_h }), () => null),
+    interference: inter.map(i => ({ at: new Date(i.at).toISOString(), knob: i.knob_id, goal: i.goal_id, upset: i.upset_goal, verdict: i.exonerated == null ? 'pending' : i.exonerated ? 'exonerated' : 'confirmed' })) };
+}
+
 // ---- the public view ----
 export async function readGoals(db, { builtins = {}, loops = true, now = Date.now(), slo = 0.9 } = {}) {
   await ensure(db);
@@ -258,6 +333,7 @@ export async function readGoals(db, { builtins = {}, loops = true, now = Date.no
     knobs: knobs.map(k => ({ id: k.id, tenant: k.tenant, goal_id: k.goal_id, what: k.what, value: k.value, default: k.default_value, min: k.min, max: k.max, step: k.step, effect: k.effect, cooldown_h: k.cooldown_h, config_path: k.config_path, last_changed_at: k.last_changed_at ? new Date(k.last_changed_at).toISOString() : null, resting_until: k.hold_until && k.hold_until > now ? new Date(k.hold_until).toISOString() : null })),
     adjustments: adj.map(a => ({ at: new Date(a.at).toISOString(), knob: a.knob_id, goal: a.goal_id, old: a.old, new: a.new, why: a.why, prediction: a.prediction, baseline: a.baseline, measured: a.measured, verdict: a.reviewed_at == null ? 'pending' : (a.kept ? 'kept' : 'reverted') })),
     loops: beats.map(b => ({ loop: b.loop, runs_24h: b.runs, ok_runs_24h: b.ok_runs, acted_24h: b.acted, last_ok: b.last_ok, closed: b.runs > 0 && b.ok_runs > 0 && (b.ok_runs / b.runs) >= 0.9 ? 'closing' : (b.ok_runs > 0 ? 'degraded' : 'not closing') })),
-    audit: 'every knob change, review, proposal and retirement is a row in the hash-chained audit log (kinds goal.*); head at /api/audit/head',
+    structure: await structureOf(db, { now, samples }).catch(e => ({ error: String(e && e.message).slice(0, 120) })),
+    audit: 'every knob change, review, veto, proposal and retirement is a row in the hash-chained audit log (kinds goal.*); head at /api/audit/head',
   };
 }
