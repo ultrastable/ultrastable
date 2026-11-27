@@ -1,24 +1,23 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """US-SPEC-15: US-15-R22, an idea passes the system test of VISION.md before any project is started, and one that fails it is answered plainly as
 not a fit. The implementation is the seed bootstrapper's `qualify` stage (seed/bootstrap/bootstrap.py), which hires nothing and provisions nothing
 when the idea fails; the front door's `systemTest` (site/worker.js) is its twin and is covered by site/site.test.mjs.
 
 Run from the repository root: python3 -m unittest discover -s tests/foundation -p test_spec_15_qualify.py"""
-import atexit
 import shutil
 import sys
-import tempfile
 import unittest
 from pathlib import Path
 
-from _repo import ROOT
+from _repo import ROOT, scratch
 
 sys.path.insert(0, str(ROOT / "seed" / "bootstrap"))
 import bootstrap as bs  # noqa: E402
 
 
 def boot(idea_text: str):
-    d = Path(tempfile.mkdtemp())
-    atexit.register(shutil.rmtree, d, True)
+    d = scratch()
     seed = ROOT / "seed"
     (d / "ultrastable.json").write_bytes((seed / "ultrastable.json").read_bytes())
     (d / "autonomy").mkdir()

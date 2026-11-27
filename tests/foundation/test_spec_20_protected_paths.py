@@ -1,4 +1,5 @@
-# SPDX-License-Identifier: LicenseRef-Ultrastable
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """US-20-R07 (US-SPEC-20): the automated protected-path gate, scripts/protected_paths.py, which replaces human CODEOWNERS approval
 (CLOSED-LOOP-AXIOM). It is exercised on a throwaway git repository: no network, nothing outside the temporary directory."""
 import os

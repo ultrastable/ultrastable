@@ -1,11 +1,11 @@
-# SPDX-License-Identifier: LicenseRef-Ultrastable
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """US-23-R13, US-23-R14 and US-23-R16 (US-SPEC-23): code with no write-back fails, a loop needs the full record and a server-side owner, and an ask
 of a person needs an exhaustion proof. The engines are foundation/writeback.py, foundation/loops.py, foundation/loopowner.py and
 foundation/pathfinder.py; their wider suites are test_writeback.py, test_loops.py, test_loopowner.py and test_pathfinder.py in this folder."""
 import json
 import shutil
 import sys
-import tempfile
 import unittest
 from pathlib import Path
 
@@ -49,8 +49,7 @@ class LoopRegistry(unittest.TestCase):
         self.assertEqual(loops.verify(ROOT), [])
 
     def test_us_23_r14_a_loop_whose_only_owner_is_a_client_session_fails(self):
-        d = Path(tempfile.mkdtemp())
-        self.addCleanup(shutil.rmtree, d, True)
+        d = scratch()
         (d / "doctrine").mkdir()
         (d / "instances/ultrastable").mkdir(parents=True)
         shutil.copy(ROOT / "doctrine/loop-ownership.json", d / "doctrine")

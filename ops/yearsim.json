@@ -1,5 +1,5 @@
 {
- "at": "2026-11-26T23:55:09Z",
+ "at": "2026-11-27T00:17:01Z",
  "days": 730,
  "drills": {
   "actions-billing": {
@@ -128,9 +128,9 @@
   }
  ],
  "horizon": {
-  "capacity_year_p50": 0.693,
+  "capacity_year_p50": 0.73,
   "killers": {
-   "token-revoked": 16
+   "token-revoked": 12
   },
   "p10": 730,
   "p50": 730,
@@ -177,10 +177,10 @@
   "window_days": 14
  },
  "self_rate_per_day": 0.786,
- "self_releases_year_p50": 198.8,
+ "self_releases_year_p50": 209.4,
  "sensitivity": {
   "base": {
-   "p10": 730,
+   "p10": 648,
    "survive_year": 1.0
   },
   "ranked": [
@@ -192,76 +192,42 @@
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": -0.083,
-      "p10": 415,
-      "survive_year": 0.917
+      "d_survive": -0.067,
+      "p10": 397,
+      "survive_year": 0.933
      }
     },
     "id": "token-revoked",
     "rate": 1,
-    "swing": 0.083
+    "swing": 0.067
    },
    {
     "effect": {
      "0.5": {
-      "d_survive": -0.033,
-      "p10": 648,
-      "survive_year": 0.967
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": 0.0,
-      "p10": 669,
-      "survive_year": 1.0
+      "d_survive": -0.033,
+      "p10": 700,
+      "survive_year": 0.967
      }
     },
-    "id": "merge-conflict",
-    "rate": 150.3,
+    "id": "actions-outage",
+    "rate": 24,
     "swing": 0.033
    },
    {
     "effect": {
      "0.5": {
-      "d_survive": -0.017,
-      "p10": 730,
-      "survive_year": 0.983
-     },
-     "2.0": {
-      "d_survive": 0.0,
-      "p10": 613,
-      "survive_year": 1.0
-     }
-    },
-    "id": "actions-outage",
-    "rate": 24,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
       "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
       "d_survive": -0.017,
-      "p10": 714,
-      "survive_year": 0.983
-     }
-    },
-    "id": "ai-quota",
-    "rate": 60,
-    "swing": 0.017
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.0,
-      "p10": 719,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": -0.017,
-      "p10": 662,
+      "p10": 631,
       "survive_year": 0.983
      }
     },
@@ -278,7 +244,7 @@
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 724,
+      "p10": 730,
       "survive_year": 1.0
      }
     },
@@ -290,12 +256,29 @@
     "effect": {
      "0.5": {
       "d_survive": 0.0,
-      "p10": 720,
+      "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 724,
+      "p10": 730,
+      "survive_year": 1.0
+     }
+    },
+    "id": "ai-quota",
+    "rate": 60,
+    "swing": 0.0
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 730,
       "survive_year": 1.0
      }
     },
@@ -312,11 +295,28 @@
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 730,
+      "p10": 720,
       "survive_year": 1.0
      }
     },
     "id": "cost-spike",
+    "rate": 6,
+    "swing": 0.0
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 648,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 648,
+      "survive_year": 1.0
+     }
+    },
+    "id": "dependency-break",
     "rate": 6,
     "swing": 0.0
    },
@@ -333,15 +333,15 @@
       "survive_year": 1.0
      }
     },
-    "id": "dependency-break",
-    "rate": 6,
+    "id": "merge-conflict",
+    "rate": 141.9,
     "swing": 0.0
    },
    {
     "effect": {
      "0.5": {
       "d_survive": 0.0,
-      "p10": 709,
+      "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
@@ -363,7 +363,7 @@
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 649,
+      "p10": 621,
       "survive_year": 1.0
      }
     },
@@ -375,14 +375,14 @@
   "runs": 60
  },
  "strict": {
-  "capacity_year_p50": 0.463,
+  "capacity_year_p50": 0.559,
   "killers": {
-   "domain-renewal": 68,
-   "token-revoked": 132
+   "domain-renewal": 85,
+   "token-revoked": 115
   },
-  "p10": 33,
-  "p50": 218,
-  "p90": 349,
+  "p10": 43,
+  "p50": 255,
+  "p90": 348,
   "survive_year": 0.0
  },
  "target_days": 365

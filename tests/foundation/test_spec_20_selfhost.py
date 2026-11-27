@@ -1,4 +1,5 @@
-# SPDX-License-Identifier: LicenseRef-Ultrastable
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """US-20-R19 (US-SPEC-20): the organization boots from its own repository alone. The verifier (foundation/selfhost.py) passes on this
 checkout, and the data files it reads are in the repository. The verifier's failure cases are tested in tests/foundation/test_selfhost.py."""
 import json

@@ -4,7 +4,7 @@
 the shipped session-reaper policy (R57), the executor's deny list by file name (R61), the completion sweep (R101) and the workflow-file credential route
 of the Actions lane (R102). Every GitHub call is a fake; every git
 repository is a scratch one. Each test names the requirement it proves."""
-import json, os, shutil, stat, subprocess, sys, tempfile, unittest
+import json, os, shutil, stat, subprocess, sys, unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -19,9 +19,8 @@ NEEDS_SHELL = unittest.skipUnless(shutil.which("bash") and shutil.which("jq") an
 
 
 def tmp(test):
-    d = Path(tempfile.mkdtemp(prefix="ultrastable-test-spec33r-"))
-    test.addCleanup(shutil.rmtree, d, True)
-    return d
+    from _repo import scratch
+    return scratch()
 
 
 class LaneWatchHolds(unittest.TestCase):

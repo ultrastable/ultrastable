@@ -8,13 +8,13 @@ fails is recorded without the secret. Fast cases against Runtime with a fake tra
 import json
 import shutil
 import sys
-import tempfile
 import unittest
 from pathlib import Path
 
 SEED = Path(__file__).resolve().parents[2] / "seed"
 sys.path.insert(0, str(SEED))
 from plugins.api import Runtime, Action, SCOPE  # noqa: E402
+from _repo import scratch  # noqa: E402
 from plugins.email import plugin as email  # noqa: E402
 from plugins.gcp import plugin as gcp  # noqa: E402
 
@@ -37,8 +37,7 @@ class Plugins(unittest.TestCase):
         def default(req):
             self.calls.append(req)
             return 200, {"ok": True}, {}
-        d = tempfile.mkdtemp()
-        self.addCleanup(shutil.rmtree, d)
+        d = str(scratch())
         return Runtime(cfg(mode, rung), state_dir=d, env=env, transport=transport or default, now=lambda: 1_700_000_000)
 
     def test_us_21_r19_dry_run_is_the_default_and_sends_nothing(self):

@@ -1,4 +1,5 @@
-# SPDX-License-Identifier: LicenseRef-Ultrastable
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """US-22-R13 to US-22-R15 (US-SPEC-22): a public statement is bound to a probe, a generated block follows the code and a shipped behaviour that
 no surface mentions fails. The engines are foundation/claimcode.py and foundation/claims.py; their wider suites are tests/foundation/test_claimcode.py
 and tests/foundation/test_claims.py. The same rules for tenants are seed/worker/src/contract.js (US-22-R16, seed/worker/test/spec-22-contract.test.js)."""
