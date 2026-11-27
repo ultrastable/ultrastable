@@ -168,5 +168,38 @@ class Experiment1Instrumentation(unittest.TestCase):
         self.assertGreater(s.cache_read_share(), 0.5)
 
 
+class MultiLanguage(unittest.TestCase):
+    """HANDOFF roadmap 2: JS and TS files are indexed with symbols and resolved import edges."""
+    def test_js_edges_symbols_and_impact(self):
+        d = make_repo({
+            "app/util.js": "export function helper(x) { return x; }\nexport const K = 1;\n",
+            "app/main.ts": "import { helper } from './util.js';\nexport class Main {}\n",
+            "app/index.js": "import './main';\n",
+            "app/test/main.test.js": "import { Main } from '../main.ts';\n",
+            "app/test/other.test.js": "import x from '../zzz.js';\n",
+        })
+        m = RepoModel(Store(), d)
+        self.assertEqual(m.update()["parsed"], 5)
+        rows = {r["path"]: r for r in m.files()}
+        self.assertIn("def helper", rows["app/util.js"]["symbols"])
+        self.assertIn("const K", rows["app/util.js"]["symbols"])
+        self.assertIn("class Main", rows["app/main.ts"]["symbols"])
+        e = m.import_edges()
+        self.assertEqual(e["app/main.ts"], {"app/util.js"})
+        self.assertEqual(e["app/index.js"], {"app/main.ts"})
+        tests, mode = affected_tests(m, ["app/util.js"])
+        self.assertEqual((tests, mode), (["app/test/main.test.js"], "impact_set"))
+
+
+class ByteStableMap(unittest.TestCase):
+    """P11: the same tree gives the same map bytes, run to run and through a fresh store."""
+    def test_identical_across_runs(self):
+        d = make_repo(REPO)
+        a = RepoModel(Store(), d); a.update()
+        b = RepoModel(Store(), d); b.update()
+        self.assertEqual(a.render_map(budget_tokens=500), b.render_map(budget_tokens=500))
+        self.assertEqual(a.render_map(["api/handler.py"]), b.render_map(["api/handler.py"]))
+
+
 if __name__ == "__main__":
     unittest.main()

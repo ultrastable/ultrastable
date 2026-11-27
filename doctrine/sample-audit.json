@@ -1,8 +1,10 @@
 {
- "_doc": "SAMPLE-AUDIT-1: sampling rate for the System 3* audit of merged PRs, read by foundation/sampleaudit.py. Protected-path PRs are always audited. The rate starts at base, multiplies by step_up for each defect among the last `window` verdicts, and stays between floor and ceiling. Starting values are a first guess, not a measured optimum; the verdicts this loop records are what to tune them from.",
+ "_doc": "SAMPLE-AUDIT-1: sampling rate for the System 3* audit of merged PRs, read by foundation/sampleaudit.py. Protected-path PRs are always audited. The rate starts at base, multiplies by step_up for each defect among the last `window` verdicts, and stays between floor and ceiling. Starting values are a first guess, not a measured optimum; the verdicts this loop records are what to tune them from. max_open caps unaudited Q-AUDIT items so a slow reviewer cannot be buried; max_per_day caps new ones per pass, protected-path PRs first.",
  "base": 0.2,
  "floor": 0.1,
  "ceiling": 1.0,
  "step_up": 2.0,
- "window": 20
+ "window": 20,
+ "max_open": 10,
+ "max_per_day": 5
 }

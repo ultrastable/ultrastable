@@ -501,6 +501,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["redmerge"]:  # RED-MERGE-1: foundation/redmerge.py
         from . import redmerge
         return redmerge.main(_av[1:])
+    if _av[:1] == ["statesink"]:  # STATE-SINK-1: foundation/statesink.py
+        from . import statesink
+        return statesink.main(_av[1:])
     if _av[:1] == ["jobtrust"]:  # JOB-TRUST-1: foundation/jobtrust.py
         from . import jobtrust
         return jobtrust.main(_av[1:])
