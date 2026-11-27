@@ -6843,6 +6843,15 @@
    "body": "deploy-oidc.mjs exits 1 when the tick /health does not answer after a deploy.",
    "probe": "grep:deploy/deploy-oidc.mjs::HEALTH-GATE-1",
    "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "lesson-2026-11-27-two-studies-on-one-canon-source-are-one-study-ashby-journal-",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Two studies on one canon source are one study: ashby-journal carries the concept-binding finding as J7",
+   "body": "Tests pass and research --check verified 13 studies: a second study with the same source_id as the canon study was folded into it, so each source has one paper.",
+   "probe": "grep:research/studies/ashby-journal.json::ashby_concepts_bound_share",
+   "session": "session_0156nqDsxJd4poRv2mkbug9e"
   }
  ]
 }
