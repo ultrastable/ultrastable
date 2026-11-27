@@ -152,3 +152,6 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **phased-large-change** (Rowan, 2026-11-26): Any change too large for one author runs one phased shape: audit, coverage, implement, verify by an evidence and an adversarial reader who did not write it, fix only what was found, integrate, and a final gate on the whole change. The shape is data a session, a workflow or the Worker all follow.
   - detector: `autonomy/phases.json`, `worker/src/orchestrate.js`
   - remediation: `scripts/phasework.py`, `worker/src/orchestrate.js`
+- **every-essential-variable-holds-a-veto** (Rowan, 2026-11-27): A change the second loop makes is judged by every essential variable, not only the one it was made for: a step that knocks a variable that was holding out of its limits is undone, and the undo is read as a trial. The search for a value that holds goes on past a knob's declared direction, and the regulator reads its own variety and structure from its own tables. The mechanisms are taken from W. Ross Ashby's journal and cite its pages.
+  - detector: `worker/src/ashby.js`, `worker/src/regulation.js`
+  - remediation: `worker/src/goals.js`, `worker/src/ashby.js`

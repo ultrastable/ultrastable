@@ -202,6 +202,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **ORCHESTRATE-1**: Large work is planned and worked in steps on the server. In this kit: `worker/src/executor.js`, `worker/src/orchestrate.js`, `worker/test/orchestrate.test.js`.
 - **WORK-RECORD-1**: Every piece of work has one server-side record. In this kit: checked by the platform.
 - **PHASED-WORK-1**: Large change is phased: audit, coverage, implement, verify, fix, integrate, final gate. In this kit: `autonomy/phases.json`, `scripts/phasework.py`, `tests/test_phasework.py`, `worker/src/orchestrate.js`.
+- **ASHBY-KERNEL-1**: Ashby's journal runs as kernel mechanisms. In this kit: `worker/src/ashby.js`, `worker/src/goals.js`, `worker/src/regulation.js`, `worker/test/ashby-loop.test.js`.
 - **DOC-CONSUMED-1**: Every document is consumed by code. In this kit: checked by the platform.
 - **CLOSED-LOOP-1**: Closed loops only; nobody reads, reviews or decides. In this kit: `autonomy/policy.json`.
 - **NO-FABRICATION-1**: No made-up numbers. In this kit: `doctrine/claims.json`, `scripts/claims.py`.

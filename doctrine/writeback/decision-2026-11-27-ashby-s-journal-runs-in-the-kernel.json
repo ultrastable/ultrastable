@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-ashby-s-journal-runs-in-the-kernel",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "Ashby's journal runs in the kernel",
+  "body": "ASHBY-KERNEL-1: the kernel goal loop vetoes a step that upsets a holding variable (confirm or exonerate by reading the undo), searches past a knob's declared direction to the nearest untried value, reads requisite variety from the work queue and reducibility from goals and knobs. 41 concepts in doctrine/ashby-concepts.json cite journal pages; 4 are gaps on Q-ASHBY items. The archive's text is not copied: own wording, page numbers, links.",
+  "probe": "grep:seed/worker/src/ashby.js::export function upsets",
+  "session": "session_0156nqDvC5egisoaWX278iM6"
+ },
+ "kind": "decision",
+ "title": "Ashby's journal runs in the kernel",
+ "session": "session_0156nqDvC5egisoaWX278iM6"
+}
