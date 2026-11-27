@@ -195,3 +195,19 @@ test('US-15-R20: a condition registered for a gate is run by advancePhase and ch
   registerGateExtra('G1', 'fixture-condition', async () => []);                                         // replaced by name
   assert.deepEqual(gateExtraNames('G1'), ['fixture-condition']); assert.deepEqual(await advancePhase(db, 'p1', 'planning'), { ok: true, phase: 'planning' });
 });
+
+// Last in this file: it registers conditions under the module's names, and a registration lasts for the process.
+test('US-15-R20, US-15-T11: a database that holds the lifecycle-gates store refuses a gate in a process that has not loaded the module, one item per missing condition, and passes once they are loaded', async () => {
+  const bare = kdb(); await project(bare); await produceAndReview(bare, 'p1', 'initiating');
+  assert.deepEqual(await advancePhase(bare, 'p1', 'planning'), { ok: true, phase: 'planning' });          // no module store in this database: the artifact conditions are all there are
+  const db = kdb(); db.raw.exec(`CREATE TABLE lifecycle_artifact_content (project_id TEXT, kind TEXT, content TEXT, at TEXT, PRIMARY KEY (project_id, kind))`);
+  await project(db); await produceAndReview(db, 'p1', 'initiating');
+  const r = await advancePhase(db, 'p1', 'planning', { extras: false, config: { require_readiness: false } });   // no call option reaches around it
+  assert.equal(r.ok, false);
+  assert.deepEqual(r.filed.sort(), ['GATE-p1-planning-condition-charter-probe-not-loaded', 'GATE-p1-planning-condition-readiness-not-loaded']);
+  assert.match(r.reasons[0], /not loaded in this process/);
+  assert.equal(one(db, `SELECT current_phase FROM kernel_projects WHERE id = 'p1'`).current_phase, 'initiating');
+  assert.deepEqual((await checkGate(db, 'p1', 'G1')).extras.map(e => e[0]), ['condition-charter-probe-not-loaded', 'condition-readiness-not-loaded']);
+  registerGateExtra('G1', 'charter-probe', async () => []); registerGateExtra('G1', 'readiness', async () => []);
+  assert.deepEqual(await advancePhase(db, 'p1', 'planning'), { ok: true, phase: 'planning' });
+});

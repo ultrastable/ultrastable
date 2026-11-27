@@ -3,6 +3,8 @@
 // The code-host port of core/ghcost over the REST API (US-SPEC-24). Every call is a bounded retry (US-24-R53): at most
 // `maxAttempts` tries, then the error is the caller's finding. The token is read from env by NAME at request time and is
 // never stored, returned or put in an error. org and repository names come from configuration.
+import { projectPort } from './projects-graphql.js';
+
 export function githubPort({ fetch, env = {}, org, tokenEnv = 'VCS_TOKEN', apiBase = 'https://api.github.com', maxAttempts = 2, jobsVariable = 'DISABLED_JOBS' }) {
   if (typeof fetch !== 'function') throw new Error('ghcost: a fetch port is required');
   if (!/^[\w.-]+$/.test(String(org || ''))) throw new Error('ghcost: config.ghcost.org is required');
@@ -19,6 +21,12 @@ export function githubPort({ fetch, env = {}, org, tokenEnv = 'VCS_TOKEN', apiBa
       } catch (e) { if (e.final) throw e; last = e; }
     }
     throw last;
+  };
+  // Projects (v2) is GraphQL only (US-24-R03). A 200 answer that carries `errors` is a failure; the token is never in the message.
+  const graphql = async (query, variables) => {
+    const r = await call('POST', '/graphql', { query, variables });
+    if (Array.isArray(r?.errors) && r.errors.length) throw new Error('ghcost: graphql: ' + r.errors.map(e => String(e?.message || e)).join('; ').slice(0, 240));
+    return r?.data;
   };
   const split = wf => { const [file, job] = String(wf).split(':'); return { file, job }; };
   const disabledJobs = async repo => {
@@ -57,6 +65,7 @@ export function githubPort({ fetch, env = {}, org, tokenEnv = 'VCS_TOKEN', apiBa
     setOrgWorkflowPermissions: body => call('PUT', `/orgs/${org}/actions/permissions/workflow`, body),
     setForkApproval: policy => call('PUT', `/orgs/${org}/actions/permissions/fork-pr-contributor-approval`, { approval_policy: policy }),
     patchRepo: (repo, body) => call('PATCH', `/repos/${org}/${repo}`, body),
+    ...projectPort({ graphql, org }),
     releases: async repo => (await call('GET', `/repos/${org}/${repo}/releases?per_page=30`)) || [],
   };
 }

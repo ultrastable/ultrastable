@@ -176,3 +176,66 @@ test('US-27-T06: leads that survive downstream checks raise their generator\'s w
   const before = run().candidates.map(c => c.id), after = run({ spec: { kindWeight: w } }).candidates.map(c => c.id);
   assert.notDeepEqual(after, before, 'the learned weights change the order or the content of the shortlist');
 });
+
+test('US-27-R47: every model route sends its texts in batches of its own size (Workers AI 50, keyless HTTP 50, GitHub Models 64) and keeps their order', async () => {
+  const texts = Array.from({ length: 150 }, (_, i) => `t${i}`), sizes = { http: [], ghm: [] };
+  const f = async (url, init) => {
+    const b = JSON.parse(init.body);
+    if (url.includes('github')) { sizes.ghm.push(b.input.length); return Response.json({ data: b.input.map((t, i) => ({ index: i, embedding: [Number(t.slice(1)), 1] })) }); }
+    sizes.http.push(b.embed.length); return Response.json({ vectors: b.embed.map(t => [Number(t.slice(1)), 1]) });
+  };
+  const g = await C.githubModelsEmbedder({ token: 't', fetch: f }).embed(texts), h = await C.httpEmbedder({ url: 'https://m/llm', fetch: f }).embed(texts);
+  assert.deepEqual(sizes.ghm, [64, 64, 22], 'GitHub Models: batches of 64'); assert.deepEqual(sizes.http, [50, 50, 50], 'keyless HTTP: batches of 50');
+  for (const out of [g, h]) { assert.equal(out.length, 150); assert.ok(C.dot(out[0], C.unit([0, 1])) > C.dot(out[149], C.unit([0, 1])), 'input order kept across batches'); }
+  assert.deepEqual(sizes.ghm.length + sizes.http.length, 6);
+});
+
+test('US-27-R52: closure weights each shared problem by how specific it is, and a target that clearly does not mean what the solution means is vetoed', () => {
+  // s and s2 both address p (two solvers, so the weight is 1 / ln(2 + 2)); s2 also addresses q-near and q-far; s itself does not.
+  const items = [{ id: 's', kind: 'solution', label: 'S', v: vec(1, 0, 0) }, { id: 's2', kind: 'solution', label: 'S2', v: vec(1, 0.2, 0) }, { id: 'p', kind: 'problem', label: 'P', v: vec(1, 0, 0) },
+    { id: 'q-near', kind: 'problem', label: 'Near', v: vec(0.9, 0.4, 0) }, { id: 'q-far', kind: 'problem', label: 'Far', v: vec(0.05, 0.3, 1) }];
+  const edges = [['s', 'p'], ['s2', 'p'], ['s2', 'q-near'], ['s2', 'q-far']].map(([src, dst]) => ({ src, rel: 'addresses', dst, status: 'confirmed', provenance: [P] }));
+  const only = { z: { transfer: 100, bridge: 100 } };
+  const r = C.discover({ items, edges, vectors: new Map(items.map(i => [i.id, i.v])), spec: only });
+  const near = r.candidates.find(c => c.a === 's' && c.b === 'q-near');
+  assert.ok(near && near.found_by.length === 1 && near.found_by[0] === 'closure', 'transfer and bridge are out of reach here, so closure alone found it');
+  assert.equal(near.sims.adamic_adar, Math.round(1 / Math.log(4) * 1000) / 1000, 'one over ln(2 + the solvers of the shared problem)');
+  assert.deepEqual(near.via, ['p', 's2']);
+  assert.ok(!r.candidates.some(c => c.b === 'q-far'), 'a meaning far below the run\'s own background vetoes the structural lead');
+  assert.ok(r.stats.cutoff.closure > 0.1 && C.dot(vec(1, 0, 0), vec(0.05, 0.3, 1)) < r.stats.cutoff.closure);
+  // more solvers on the shared problem make it less specific, so it counts for less
+  const crowd = [...items, ...[1, 2, 3, 4].map(i => ({ id: 'x' + i, kind: 'solution', label: 'X' + i, v: vec(0, 0, 1) }))], crowdEdges = [...edges, ...[1, 2, 3, 4].map(i => ({ src: 'x' + i, rel: 'addresses', dst: 'p', status: 'confirmed', provenance: [P] }))];
+  const c2 = C.discover({ items: crowd, edges: crowdEdges, vectors: new Map(crowd.map(i => [i.id, i.v])), spec: only }).candidates.find(c => c.a === 's' && c.b === 'q-near');
+  assert.ok(c2 && c2.sims.adamic_adar < near.sims.adamic_adar && c2.sims.adamic_adar === Math.round(1 / Math.log(8) * 1000) / 1000);
+});
+
+test('US-27-R54: the shortlist uses an item at most twice, however many candidates it is in', () => {
+  const items = [{ id: 's', kind: 'solution', label: 'S', weight: 1, v: vec(1, 0.1, 0) }, { id: 'p0', kind: 'problem', label: 'P0', v: vec(1, 0.2, 0) },
+    ...[1, 2, 3, 4, 5, 6].map(i => ({ id: 'q' + i, kind: 'problem', label: 'Q' + i, v: vec(1, 0.2 + i / 20, 0) }))];
+  const edges = [{ src: 's', rel: 'addresses', dst: 'p0', status: 'confirmed', provenance: [P] }];
+  const r = C.discover({ items, edges, vectors: new Map(items.map(i => [i.id, i.v])), spec: { z: { transfer: -5, bridge: 0 }, limit: 100, duplicate: 1 } });
+  assert.ok(r.stats.by_kind.transfer >= 5, 'five or more transfers were scored, all from the one solution');
+  assert.equal(r.candidates.filter(c => c.a === 's').length, 2, 'only two of them are kept');
+  assert.equal(C.discover({ items, edges, vectors: new Map(items.map(i => [i.id, i.v])), spec: { z: { transfer: -5, bridge: 0 }, limit: 100, duplicate: 1, perItem: 4 } }).candidates.filter(c => c.a === 's').length, 4, 'perItem is a setting');
+});
+
+// Defect 8 of US-SPEC-27 section 7 (core/connect/index.js, the `bridge` generator takes max(graph novelty, 0.85) across groups). The test states the
+// requirement and fails today, so it is a `todo`: node:test reports it and the suite stays green. When bridge skips a pair already joined by a confirmed
+// edge of its own relation, it passes: remove the `todo` option and the PLANNED mark of R52 in the same change.
+test('US-27-R52: bridge does not propose a pair that a confirmed edge of its own relation already joins, even across groups', { todo: 'defect 8: bridge floors novelty at 0.85 across groups, so a linked pair is proposed again' }, () => {
+  const items = [{ id: 'A', kind: 'solution', label: 'A', group: 'g1' }, { id: 'B', kind: 'solution', label: 'B', group: 'g2' }];
+  const vectors = new Map([['A', vec(1, 0.2)], ['B', vec(0.9, 0.3)]]);
+  const linked = [{ src: 'A', rel: 'shares_mechanism', dst: 'B', status: 'confirmed', provenance: [P] }];
+  assert.equal(C.discover({ items, edges: [], vectors, spec: { z: { bridge: 0 } } }).candidates.filter(c => c.kind === 'bridge').length, 1, 'unlinked, across groups: proposed');
+  assert.deepEqual(C.discover({ items, edges: linked, vectors, spec: { z: { bridge: 0 } } }).candidates.filter(c => c.kind === 'bridge'), [], 'linked by shares_mechanism: not proposed again');
+});
+
+test('US-27-R52: a pair one hop apart in the same group has graph novelty 0 and is not bridged; across groups bridge floors novelty at 0.85 even when another relation links the pair', () => {
+  const vectors = new Map([['A', vec(1, 0.2)], ['B', vec(0.9, 0.3)]]), edge = [{ src: 'A', rel: 'cites', dst: 'B', status: 'confirmed', provenance: [P] }];
+  const make = gB => [{ id: 'A', kind: 'solution', label: 'A', group: 'g1' }, { id: 'B', kind: 'solution', label: 'B', group: gB }];
+  const bridges = (gB, edges) => C.discover({ items: make(gB), edges, vectors, spec: { z: { bridge: 0 } } }).candidates.filter(c => c.kind === 'bridge');
+  assert.equal(bridges('g1', edge).length, 0, 'same group and linked: graph novelty 0');
+  assert.deepEqual(bridges('g2', []).map(c => c.novelty), [1], 'unreachable: fully novel');
+  assert.deepEqual(bridges('g2', edge).map(c => c.novelty), [0.85], 'across groups the novelty is floored at 0.85 even when another relation links the pair');
+  assert.equal(C.distanceNovelty(1), 0); assert.equal(C.distanceNovelty(2), 0.5); assert.equal(C.distanceNovelty(undefined), 1);
+});

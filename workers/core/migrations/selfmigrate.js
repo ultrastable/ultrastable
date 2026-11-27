@@ -32,19 +32,22 @@ export async function applyPending(db, files, allow, nowIso, table = 'applied_mi
     if (done.has(name)) continue;
     if (!(name in files)) { report.push({ name, ok: false, error: 'file not bundled' }); continue; }
     if (applied >= max) { report.push({ name, ok: false, waiting: true, error: 'waiting for the next run' }); continue; }
-    applied++;
+    // The cap counts files that were applied or that failed while being applied: a destructive file refused for want of an exporter, or by an export that
+    // did not verify, spends none of the run's allowance. Counted before the refusal it let `max` refused files at the head of the list starve every
+    // additive migration behind them, run after run.
     try {
       const mark = db.prepare(`INSERT OR REPLACE INTO ${table} (name, at) VALUES (?,?)`).bind(name, nowIso);
       if (classify(files[name]).destructive) {
         if (!exporter) { report.push({ name, ok: false, refused: 'destructive migration needs an export store', error: 'drops or rewrites data and no object store was given to export it first' }); continue; }
         const r = await exporter.applyMigration(name, files[name], { also: [mark] });
         report.push(r.ok ? { name, ok: true, exported: r.exports.length } : { name, ok: false, refused: r.refusal, error: String(r.reason || r.refusal).slice(0, 200) });
+        if (r.ok) applied++;
         continue;
       }
       if (typeof db.batch === 'function') await db.batch([...splitSql(files[name]).map(st => db.prepare(st)), mark]);
       else { for (const st of splitSql(files[name])) await db.prepare(st).run(); await mark.run(); }
-      report.push({ name, ok: true });
-    } catch (e) { report.push({ name, ok: false, error: String(e.message).slice(0, 200) }); }
+      report.push({ name, ok: true }); applied++;
+    } catch (e) { applied++; report.push({ name, ok: false, error: String(e.message).slice(0, 200) }); }
   }
   return report;
 }

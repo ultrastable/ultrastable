@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-slice-wk-of-the-specification-run-shipped-on-its-own",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "Slice WK of the specification run shipped on its own",
+  "body": "The workers' ratchets and specification-citing tests, applied to the latest main after FT merged, with the conformance manifest and generated bundles regenerated from the tree as it is now.",
+  "probe": "file:workers/core/conformance/manifest.json",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "lesson",
+ "title": "Slice WK of the specification run shipped on its own",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}

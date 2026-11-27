@@ -40,3 +40,20 @@ test('US-30-R53: a real environment value wins over the vault, and any text can 
   assert.equal(await v.redact(`error calling with ${SECRET} and again ${SECRET}; also ${OTHER}`), 'error calling with [redacted] and again [redacted]; also [redacted]');
   assert.equal(await v.redact('nothing secret here'), 'nothing secret here');
 });
+
+// The reference vault stores a value as given (core/vault/index.js header: anyone who can read the database can read it). Closing probe of the PLANNED part of
+// the specification: the vault takes a key the deploy binds (the `key` option, 32 bytes in base64, like CREDENTIAL_KEY) and seals every value under it; the key
+// is never written to the database, so a copy of the database alone opens nothing. It stays a todo until createVault seals under that key. It deliberately
+// names no requirement id.
+test('the vault seals a value at rest under a key held outside the database (closing probe of the PLANNED part of the specification)', { todo: 'createVault takes no key and vault_secrets.value holds the value as given' }, async () => {
+  const b64 = bytes => Buffer.from(bytes).toString('base64');
+  const key = b64(crypto.getRandomValues(new Uint8Array(32)));
+  const db = makeDb([MIG]), v = createVault({ db, key });
+  await v.put('ANTHROPIC_API_KEY', SECRET);
+  const dump = JSON.stringify(db.raw.prepare("SELECT name FROM sqlite_master WHERE type = 'table'").all().map(t => db.raw.prepare(`SELECT * FROM "${t.name}"`).all()));
+  assert.ok(!dump.includes(SECRET), 'no table holds the value as given');
+  assert.ok(!dump.includes(key), 'the key is not kept beside the values it seals');
+  assert.equal(await v.read('ANTHROPIC_API_KEY'), SECRET, 'the value reads back with the key');
+  const other = createVault({ db, key: b64(new Uint8Array(32)) });
+  assert.notEqual(await other.read('ANTHROPIC_API_KEY').catch(() => null), SECRET, 'another key does not open it');
+});
