@@ -502,7 +502,7 @@
           "unit": "levels of three (effective, attractive, consistent) that hold now",
           "first_order": [
             "executor",
-            "criticality"
+            "criticality-loop"
           ],
           "why": "FREELY-ADAPTIVE-1 (Pérez López, Organizational Theory: A Cybernetic Approach, IESE WP 5, 1974): an organization survives only if it is effective, attractive and consistent at once; one level alone buys time until it needs more to motivate its members than it obtains. Read by foundation/freeadapt.py.",
           "ladder": [

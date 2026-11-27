@@ -309,7 +309,7 @@ export default {
     {
      "first_order": [
       "executor",
-      "criticality"
+      "criticality-loop"
      ],
      "id": "survival_levels",
      "max": null,

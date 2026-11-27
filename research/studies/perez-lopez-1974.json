@@ -193,7 +193,7 @@
     {
       "id": "P7",
       "concern": "The member knowing better than the organization",
-      "claim": "Organizational values forbid tasks that do not satisfy a member's needs \"even though that fact may not be known to the individual\", and \"an organization will be successful insofar as it knows better than the individual himself what actions by the individual will satisfy the individual's needs.\" Each time the owner has to step in and correct the system, the reverse held.",
+      "claim": "Organizational values forbid tasks that do not satisfy a member's needs \"even though that fact may not be known to the individual\", and \"an organization will be successful insofar as it knows better than the individual himself what actions by the individual will satisfy the individual's needs.\" Every owner intervention that corrects the system is a case where the reverse held.",
       "where": "Chapter V, page 20",
       "perspective": "oversight",
       "mechanisms": [

@@ -1794,7 +1794,7 @@ export default {
      "Repeating actions whose side effects keep growing. \"An ultrastable system is one that has a built-in mechanism which ensures consistency, that is to say, a mechanism which systematically discards action alternatives that have been found to have decreasing efficiency after they were tried.\" [1]",
      "Surviving on one level only. \"An organization, to survive, must accomplish goals at all three levels\": effective (it must generate more resources than are needed to motivate membership), attractive (it must create enough motivation in its members to persuade them to cooperate) and consistent (otherwise it lasts only as long as it can buy back lost attractiveness with greater rewards, until it needs more resources to motivate people than it obtains). [1]",
      "A memory that leaves past mistakes out. Selective use of memory is central: an evoked set can leave out what shows that previous actions were wrong. The working paper defines \"pride\" as the attitude \"which tends to eliminate from the 'evoked set' all those elements in memory which show that previous actions were wrong\". A system that records its mistakes but lets nothing act on them has that blind spot. [1]",
-     "The member knowing better than the organization. Organizational values forbid tasks that do not satisfy a member's needs \"even though that fact may not be known to the individual\", and \"an organization will be successful insofar as it knows better than the individual himself what actions by the individual will satisfy the individual's needs.\" Each time the owner has to step in and correct the system, the reverse held. [1]"
+     "The member knowing better than the organization. Organizational values forbid tasks that do not satisfy a member's needs \"even though that fact may not be known to the individual\", and \"an organization will be successful insofar as it knows better than the individual himself what actions by the individual will satisfy the individual's needs.\" Every owner intervention that corrects the system is a case where the reverse held. [1]"
     ],
     "approach": [
      "The approach follows Ashby's ultrastable system [2]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
@@ -2082,7 +2082,7 @@ export default {
     {
      "id": "P7",
      "concern": "The member knowing better than the organization",
-     "claim": "Organizational values forbid tasks that do not satisfy a member's needs \"even though that fact may not be known to the individual\", and \"an organization will be successful insofar as it knows better than the individual himself what actions by the individual will satisfy the individual's needs.\" Each time the owner has to step in and correct the system, the reverse held.",
+     "claim": "Organizational values forbid tasks that do not satisfy a member's needs \"even though that fact may not be known to the individual\", and \"an organization will be successful insofar as it knows better than the individual himself what actions by the individual will satisfy the individual's needs.\" Every owner intervention that corrects the system is a case where the reverse held.",
      "where": "Chapter V, page 20",
      "perspective": "oversight",
      "mechanisms": [
@@ -2175,16 +2175,16 @@ export default {
     },
     {
      "finding": "P7",
-     "rule": "FRONT-BACKED-1",
-     "score": 0.113
+     "rule": "BREADTH-1",
+     "score": 0.125
     },
     {
      "finding": "P7",
-     "rule": "BREADTH-1",
-     "score": 0.107
+     "rule": "DOC-CONSUMED-1",
+     "score": 0.122
     }
    ],
-   "leads_route": "lexical-512-1p4i28i",
+   "leads_route": "lexical-512-zmptr8",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],

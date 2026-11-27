@@ -733,7 +733,7 @@ export default {
      "reading": "freeadapt.levels",
      "regulators": [
       "executor",
-      "criticality"
+      "criticality-loop"
      ],
      "steps": [
       {
@@ -895,7 +895,6 @@ export default {
    "ciwatch",
    "claims-conformance",
    "cost-guard",
-   "criticality",
    "criticality-loop",
    "deploy-workers",
    "executor",
