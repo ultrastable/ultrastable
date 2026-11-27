@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: feat(checks): tests-protected guard (ZHC-R11) (#2689)
+- 2026-11-27: fix(executor): carry the trailers into the squash merge (ZHC-R7) (#2688)
+- 2026-11-27: fix(executor): a model-level failure no longer downs the provider route; retire GitHub Models rungs (LADDER-1) (#2680)
 - 2026-11-27: feat(executor): canary every coder route before trusting it (ZHC-R14) (#2687)
 - 2026-11-27: perf(tick): serve goal samples and live changes from keyed caches (READ-BUDGET-11) (#2665)
 - 2026-11-27: fix(sweeper): refresh behind PRs only where the base requires it (ZHC-R3) (#2681)
