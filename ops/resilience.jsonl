@@ -576,3 +576,8 @@
 {"at": "2026-11-27T07:14:19Z", "clocks": 47, "kind": "beat", "seq": 574, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
 {"at": "2026-11-27T07:29:53Z", "clocks": 47, "kind": "beat", "seq": 575, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
 {"at": "2026-11-27T07:34:58Z", "clocks": 47, "kind": "beat", "seq": 576, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-27T07:49:47Z", "clocks": 47, "kind": "beat", "seq": 577, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"age_s": null, "at": "2026-11-27T07:54:50Z", "clock": "unlearn-beat", "detail": "ultrastable-unlearn.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 578}
+{"age_s": null, "at": "2026-11-27T07:54:50Z", "clock": "what-works-beat", "detail": "ultrastable-what-works.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 579}
+{"age_s": null, "at": "2026-11-27T07:54:50Z", "clock": "replication-ledger-beat", "detail": "ultrastable-replication-ledger.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 580}
+{"at": "2026-11-27T07:54:50Z", "clocks": 47, "kind": "beat", "seq": 581, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}

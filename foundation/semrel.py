@@ -83,9 +83,10 @@ def apply(root=REPO) -> dict:
     if not p["bump"]:
         return p
     f = Path(root) / "CHANGELOG.md"
-    old = f.read_text(encoding="utf-8") if f.exists() else HEAD
+    old = (f.read_text(encoding="utf-8") if f.exists() else HEAD).replace("\n## [Unreleased]\n", "\n")
     body = old.split("\n## [", 1)
-    new = (body[0] if len(body) > 1 else old).rstrip("\n") + "\n\n" + render(p) + ("\n## [" + body[1] if len(body) > 1 else "")
+    # Keep a Changelog 1.1: an [Unreleased] heading stays on top of the newest release (REPO-CONFORM-1 reads it)
+    new = (body[0] if len(body) > 1 else old).rstrip("\n") + "\n\n## [Unreleased]\n\n" + render(p) + ("\n## [" + body[1] if len(body) > 1 else "")
     f.write_text(new.rstrip("\n") + "\n", encoding="utf-8")
     (Path(root) / "VERSION").write_text(p["version"] + "\n", encoding="utf-8")
     return p

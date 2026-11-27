@@ -21,19 +21,14 @@ COST = "ops/agent-cost.jsonl"
 DOWN: set[str] = set()  # FREE-LLM-5: adapters whose transport failed in this process; the rest of the run skips them so a dead free tier does not spend every repair attempt
 
 
-def route_down(a: dict, e: Exception) -> bool:
-    """LADDER-ROUTE-1 (measured 2026-11-27): one 502 from workers-ai-glm marked the whole workers-ai route DOWN, so the healthy llama, qwen and gpt-oss rungs
-    were never asked and 13 of 30 executor runs failed. A failure takes the whole provider route down only when it is provider-wide: GitHub Models, a
-    401, or a reply that is not JSON at all. A 5xx, a timeout or a rate limit is that model's, so only that rung is skipped."""
-    s = str(e)
-    return a.get("route") == "github-models" or getattr(e, "code", None) == 401 or "non-JSON" in s or "empty response" in s
-
-
-# DECISION-METRIC: work-queue-priority (which rungs the executor keeps asking after a failure; every call is a row in ops/agent-cost.jsonl, scored by whether the run produced a change)
-def mark_down(a: dict, e: Exception) -> None:
-    DOWN.add(a["id"])
-    if route_down(a, e):
-        DOWN.add(a.get("route"))
+def down_keys(a: dict, e: Exception) -> set:
+    """LADDER-ROUTE-SCOPE-1 (2026-11-27): which keys a transport failure marks DOWN. A provider-wide answer (401, 403, 429, a 200 with a non-JSON body,
+    as GitHub Models gave every request from 2026-11-19) downs the whole provider route. A failure of one model (a 5xx, a timeout) downs only that model:
+    glm-4.7-flash answered 502 and took qwen-coder and llama-3.3 on the same Workers AI route down with it, so the executor failed 14 of 15 runs
+    on 2026-11-27 while llama-3.3 answered fine when probed directly."""
+    code = getattr(e, "code", None)
+    provider_wide = code in (401, 403, 429) or "non-JSON" in str(e) or "empty response" in str(e)
+    return {a["id"], a.get("route")} if provider_wide else {a["id"]}
 
 
 def rungs(root=REPO, env=None) -> list[dict]:
@@ -111,7 +106,7 @@ def _call_one(prompt: str, a: dict, role: str, root, env, send, forced: bool = F
                 body = f"(error body unreadable: {type(e2).__name__})"
         log_cost(root, {"role": role, "adapter": a["id"], "model": a["model"], "family": a["family"], "ok": False, "why": f"{type(e).__name__}: {str(e)[:120]} {body}".strip(), "usd": 0})
         if not adapter:
-            mark_down(a, e)  # LADDER-ROUTE-1: this rung, and its provider route only when the failure is provider-wide
+            DOWN.update(down_keys(a, e))
         raise
     meta = {"adapter": a["id"], "model": a["model"], "family": a["family"], "usd": cost_usd(a, usage, prompt, text), "priced": a.get("usd_per_m_in") is not None}
     log_cost(root, {"role": role, "ok": True, **meta})
@@ -141,7 +136,7 @@ def review(issue: dict, out: dict, author_family: str, root=REPO, env=None, send
         except ValueError as e:  # an unusable verdict: the reviewer answered, so do not ask another
             return {"approve": True, "reasons": [], "skipped": type(e).__name__ + ": " + str(e)[:120]}
         except (RuntimeError, OSError, KeyError) as e:
-            mark_down(a, e)
+            DOWN.update(down_keys(a, e))
             skipped.append(f"{a['id']}: {type(e).__name__}: {str(e)[:100]}")
             continue
         return {"approve": bool(r.get("approve", True)), "reasons": [str(x)[:300] for x in (r.get("reasons") or [])][:5], "model": meta["model"], "family": meta["family"]}

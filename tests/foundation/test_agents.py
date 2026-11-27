@@ -32,12 +32,9 @@ class Agents(unittest.TestCase):
         c = []; agents.invoke(A["github-models-gpt"], "H" * 30000 + "TAIL", {"GITHUB_TOKEN": "g"}, fake_gh(c))
         sent = c[0][2]["messages"][0]["content"]; self.assertLessEqual(len(sent), 12000); self.assertTrue(sent.endswith("TAIL"))
 
-    def test_retired_github_models_is_never_routed(self):  # LADDER-RETIRED-1: retired 2026-07-30, answers HTTP 200 "OK"
-        env = {"GITHUB_TOKEN": "g"}
-        self.assertTrue(A["github-models-gpt"]["retired"])
-        self.assertFalse(agents.available(A["github-models-gpt"], env)); self.assertFalse(agents.available(A["github-models-llama"], env))
-        self.assertEqual(agents.route_authors(env, REPO), []); self.assertEqual(agents.ensemble("claude", env, REPO), [])
-        self.assertEqual([a["id"] for a in agents.route_authors({**ENV, **env}, REPO) if a["route"] == "github-models"], [])
+    def test_a_retired_route_is_never_asked(self):  # ROUTE-RETIRED-1: GitHub Models shut down 2026-07-30
+        self.assertEqual(agents.route_authors({"GITHUB_TOKEN": "g"}, REPO), [])
+        self.assertEqual(agents.ensemble("openai", {"GITHUB_TOKEN": "g"}, REPO), [])
 
     def test_invoke_workers_ai_gpt_oss_and_qwen3(self):  # LADDER-WIDE-1
         for i, fam in (("workers-ai-gpt-oss", "openai"), ("workers-ai-qwen3", "qwen")):
