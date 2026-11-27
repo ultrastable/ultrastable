@@ -7027,6 +7027,31 @@
    "body": "Audit of the regulator's failure modes: seven fixes, each with a test. Evidence outside the repository raises an error; a broken symlink is skipped by the index; dot-slash paths keep the impact set; an exhausted step menu opens one escalation; the token hook drops bad input and exits 0; CLI usage errors exit 2; the ledger connection closes. Ran 27 regulator tests, they pass. Root cause of most: input shape trusted at a boundary. Concurrent writers on one SQLite file are now covered: WAL plus a 5 second busy timeout, tested with three processes writing 300 rows and none lost. Remaining scope to audit next: very large repositories, tracked as the next probe.",
    "probe": "grep:foundation/regulator/ledger_hook.py::def safe_record",
    "session": "session_0156nqDsD3rf97bBozkQVuW7"
+  },
+  {
+   "id": "decision-2026-11-27-kernel-9-0-0-pinned-by-kernel-lock",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Kernel 9.0.0 pinned by kernel.lock",
+   "body": "Kernel 9.2.0 text (supersedes 9.1.0 and 9.0.0, both archived; 24 KiB budget) lives verbatim in doctrine/kernel-9.2.0.md and is pinned by sha256 in doctrine/kernel.lock; kernel --check fails on drift. 8.2.1 stays as the machine-checked form until 9.0.0 gets its kernel.json. Owner-owned EV registry and step repertoire are protected without a human gate: executor and loops cannot write them, changes come only through a separate slow-loop identity gated by replay and rollback (follow-up item).",
+   "probe": "grep:foundation/kernel.py::def check_lock"
+  },
+  {
+   "id": "decision-2026-11-27-repo-conform-2-stage-3-of-3-the-system-definition-names-mach",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "REPO-CONFORM-2 stage 3 of 3: the system definition names machine-readable by birth; one tenant repository standard",
+   "body": "SYSTEM.md now says what machine-readable by birth means and where it is checked; the tenant repository standard (scaffold, tenantstd, fleetmap normalize and drift) is one definition. system.py and constitution.py follow the CLAUDE.md @import chain (AGENT-ENTRY-1). Session: session_0156nqDuSa1pdM6rAaTQ1irE",
+   "probe": "file:seed/scripts/system.py"
+  },
+  {
+   "id": "lesson-2026-11-27-pr-gates-diff-against-the-merge-parent",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "PR gates diff against the merge parent",
+   "body": "On a pull_request run HEAD is the merge ref. base.sha goes stale when main moves, so BASE_SHA...HEAD counted main's commits as the PR's (PR 2755 showed 87 files for a 5-file change). The gates now use HEAD^1...HEAD.",
+   "probe": "grep:.github/workflows/checks.yml::prsize.py --range \"HEAD.1",
+   "session": "session_0156nqDvPawiALe47iATg79o"
   }
  ]
 }
