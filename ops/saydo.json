@@ -1,9 +1,17 @@
 {
- "at": "2026-11-27T06:21:45Z",
+ "at": "2026-11-27T06:28:58Z",
  "gaps": 6,
  "match_share": 0.989,
  "sources": {
   "changes": [
+   {
+    "did": [
+     "actions-budget.json"
+    ],
+    "id": "54d6e57e7d0c",
+    "ok": true,
+    "said": "Implement active hard-limit regulation in free-tier meter config to automatically divert spend on breach and ensure the "
+   },
    {
     "did": [
      "site/lite.js",
@@ -1101,7 +1109,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 112.8 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 112.9 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1170,7 +1178,7 @@
  "summary": {
   "changes": {
    "gaps": 1,
-   "total": 17
+   "total": 18
   },
   "claims": {
    "gaps": 0,
@@ -1189,5 +1197,5 @@
    "total": 2
   }
  },
- "total": 562
+ "total": 563
 }
