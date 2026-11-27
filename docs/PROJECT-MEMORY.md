@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: feat(storage): tenant store statement classes, vector port, migration apply and export classifier (#2827)
 - 2026-11-27: feat(seed): bootstrap policy guard, runtime manifest, dashboard connection status and test citations (#2825)
 - 2026-11-27: feat(fleet): kernel lock per tenant and canary-first pin bump (R8, R9) (#2817)
 - 2026-11-27: Protect the owner-owned kernel registries in the protected-path gate (#2822)
