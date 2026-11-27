@@ -241,7 +241,7 @@ export async function applyRungChange(db, { item_id, merged_by, policy, now = Da
 }
 
 /**
- * US-06-R20: close the ladder loop. `merged` is a port, `async () => [{ item_id, merged_by }]`, that lists the reviewed rung
+ * US-06-R24: close the ladder loop. `merged` is a port, `async () => [{ item_id, merged_by }]`, that lists the reviewed rung
  * changes that merged. Each listed item with a proposed transition is applied through applyRungChange (so a merge by the agent
  * that opened the item, a rung above the ceiling or a rung not on the ladder is refused and recorded). An applied change writes
  * the rung to the ledger, closes the item with a disposition that names the merging agent and writes one verified `outcomes`
@@ -456,7 +456,7 @@ export async function authorize(db, a, { policy, now = Date.now(), config = {} }
   }
   const def = policy.surfaces?.[a.surface]?.actions?.[a.action_class];
   if (!def) return { allowed: false, refused: 'not_in_policy', reason: `${a.surface}/${a.action_class} is not an action the policy states` };
-  // Policy denial (US-06-R23): a denied action is refused whatever its reversibility, so a reversible path never turns a standing denial into an allow.
+  // Policy denial (US-06-R27): a denied action is refused whatever its reversibility, so a reversible path never turns a standing denial into an allow.
   if (def.denied) return { allowed: false, refused: 'denied', reason: def.reason || 'denied by policy' };
   // 2. The interrupt gate. Reversibility is engineered before an action is classed irreversible.
   let via = def.reversible ? 'reversible' : null;
@@ -493,7 +493,7 @@ export async function authorize(db, a, { policy, now = Date.now(), config = {} }
 }
 
 /**
- * US-06-R21: the port core/deploy asks before it publishes. `authorizer({ surface, action_class, target, executor })` runs
+ * US-06-R25: the port core/deploy asks before it publishes. `authorizer({ surface, action_class, target, executor })` runs
  * authorize() with the rung the action needs (default `autonomous`: a production deploy is the action the ladder defines as an agent
  * executing and merging on green checks; `assisted` means a reviewer merges, so it must be named by the caller) and returns { allowed, reason, gate_card, next }. `limits`
  * and `condition` may be values or functions of the request (the checks that refused this change, and the text they saw);

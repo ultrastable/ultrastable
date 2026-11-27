@@ -54,7 +54,7 @@ async function linkFiring(db, itemId, hitId) {
   await run(db, `INSERT INTO remediation_firings (item_id, hit_id, verified_at) VALUES (?,?,NULL) ON CONFLICT(item_id) DO UPDATE SET hit_id = excluded.hit_id, verified_at = NULL`, itemId, hitId);
 }
 
-// US-17-R04, R16: open the remediation for a firing. A failure mode with an open one gets none. One whose latest remediation closed
+// US-17-R04, R27: open the remediation for a firing. A failure mode with an open one gets none. One whose latest remediation closed
 // inside `relapse_window_h` has relapsed: that remediation reopens (attempts reset, item ready again) and the relapse is counted.
 // Otherwise a new remediation opens under a collision-free item id.
 async function openRemediation(db, fm, nowIso, { hitId = null, relapse_window_h = 168 } = {}) {
@@ -88,7 +88,7 @@ async function openRemediation(db, fm, nowIso, { hitId = null, relapse_window_h 
   return itemId;
 }
 
-// US-17-R14: a detector that cannot run is a finding, never a pass. One missing reading may be transient; `broken_after` consecutive
+// US-17-R25: a detector that cannot run is a finding, never a pass. One missing reading may be transient; `broken_after` consecutive
 // readings with no value (an error, or a statement that returned nothing) file DETECTOR-BROKEN-<id>, closed when a value returns.
 async function trackBroken(db, fm, hadValue, nowIso, broken_after) {
   const id = `DETECTOR-BROKEN-${fm.id}`;
@@ -106,8 +106,8 @@ async function trackBroken(db, fm, hadValue, nowIso, broken_after) {
   return reopened.meta.changes ? { filed: id, reopened: true } : null;
 }
 
-// US-17-R01: one hit row per run, fired or not. A detector error is a row too (value null), never silence, and (R14) enough rows
-// in a row with no value file DETECTOR-BROKEN-<id>. With due_only (R15) a detector runs on its own schedule: no new row while the
+// US-17-R01: one hit row per run, fired or not. A detector error is a row too (value null), never silence, and (R25) enough rows
+// in a row with no value file DETECTOR-BROKEN-<id>. With due_only (R26) a detector runs on its own schedule: no new row while the
 // newest one is younger than its interval_h. The result is the list of firings; `result.broken` (not enumerable) lists the
 // DETECTOR-BROKEN items filed or closed by this run.
 export async function runDetectors(db, { now = Date.now(), due_only = false, broken_after = 2, relapse_window_h = 168 } = {}) {
@@ -221,7 +221,7 @@ async function verifyFiring(db, r, contract, nowIso) {
   await run(db, `UPDATE remediation_firings SET verified_at = ? WHERE item_id = ?`, nowIso, r.item_id);
 }
 
-// US-17-R17: closure needs the probe to pass `passes_to_close` times in a row (contract field, default 1); once a failure mode has
+// US-17-R28: closure needs the probe to pass `passes_to_close` times in a row (contract field, default 1); once a failure mode has
 // relapsed three times the default is 2 (`passes_after_reopen`), so a flapping fix is not closed on one lucky reading.
 async function passesNeeded(db, r, contract) {
   if (!(await hasTable(db, 'remediation_passes')) || !(await hasTable(db, 'remediation_relapses'))) return 1;
@@ -311,7 +311,7 @@ const breakerLog = async (db, target, signature, at, event, detail = null) => {
   if (await hasTable(db, 'remediation_breaker_log')) await run(db, `INSERT INTO remediation_breaker_log (target, signature, at, event, detail) VALUES (?,?,?,?,?)`, target, signature, iso(at), event, detail);
 };
 
-// May the next attempt happen? An open breaker refuses until its half-open time. With `source_hash` (US-17-R18) an open breaker whose
+// May the next attempt happen? An open breaker refuses until its half-open time. With `source_hash` (US-17-R29) an open breaker whose
 // recorded hash differs is re-armed: the thing that kept failing has changed, so one fresh attempt is allowed and the breaker closes.
 export async function canAttempt(db, target, signature, now = Date.now(), { source_hash = null } = {}) {
   const b = await first(db, `SELECT * FROM kernel_breakers WHERE target = ? AND signature = ?`, target, signature);
@@ -330,7 +330,7 @@ export async function canAttempt(db, target, signature, now = Date.now(), { sour
   return parseIso(b.half_open_at) <= now ? { allowed: true, half_open: true } : { allowed: false, until: b.half_open_at };
 }
 
-// US-17-R08, R18: count failures of one (target, signature) since its last success or source change, inside the window. At k the breaker
+// US-17-R08, R29: count failures of one (target, signature) since its last success or source change, inside the window. At k the breaker
 // opens, a root-cause item is filed and a half-open probe is scheduled. A failure recorded while it is open doubles the interval only
 // when it is the half-open probe itself (at or after half_open_at); a failure earlier than that changes nothing.
 export async function recordAttempt(db, { target, signature, ok, now = Date.now(), k = 3, window_h = 24, half_open_h = 24, source_hash = null }) {

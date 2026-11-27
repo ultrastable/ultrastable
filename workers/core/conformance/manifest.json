@@ -436,7 +436,7 @@
    "tests": [
     {
      "file": "core/predict/predict.test.js",
-     "name": "US-05-T01, US-05-R02, US-05-R15 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row and a seed outcomes row that feeds the trust ledger; one not yet due is left alone"
+     "name": "US-05-T01, US-05-R02, US-05-R20 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row and a seed outcomes row that feeds the trust ledger; one not yet due is left alone"
     }
    ]
   },
@@ -482,10 +482,6 @@
    "id": "US-05-T05",
    "spec": "US-SPEC-05",
    "tests": [
-    {
-     "file": "core/predict/predict.test.js",
-     "name": "US-05-R17, US-05-T05: the fail condition and the null expectation are evaluated: a reading of 3 reaches observed, -1 records a failure, 0 matches the null expectation"
-    },
     {
      "file": "../seed/worker/test/measure.test.js",
      "name": "OBJECTIVES-1 (US-05-R16, US-05-T05): a metric outside its healthy condition files its own remedy and closes it on recovery"
@@ -590,10 +586,6 @@
    "id": "US-06-T07",
    "spec": "US-SPEC-06",
    "tests": [
-    {
-     "file": "core/trust/ladder-loop.test.js",
-     "name": "US-06-R20, US-06-T07: 12 scored predictions become outcomes, the tick proposes the ladder item, the merge by a different agent applies it (decision to rung, one database); the same agent is refused"
-    },
     {
      "file": "../seed/worker/test/tick.test.js",
      "name": "US-06-R07, US-06-T07: a severe outcome older than the stated window no longer demotes, and one inside it does"
@@ -1143,7 +1135,7 @@
    "tests": [
     {
      "file": "core/graph/wiring.test.js",
-     "name": "US-12-T06, US-12-R12 and US-12-R17: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers and blast radius follows them"
+     "name": "US-12-T06, US-12-R12 and US-12-R24: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers and blast radius follows them"
     }
    ]
   },
@@ -2227,10 +2219,6 @@
    "id": "US-24-T11",
    "spec": "US-SPEC-24",
    "tests": [
-    {
-     "file": "core/ghcost/ghcost-ext.test.js",
-     "name": "US-24-T11 US-24-R22 a renamed usage field is shape drift, files an item and keeps the last decision"
-    },
     {
      "file": "../seed/worker/test/watchdog.test.js",
      "name": "US-24-R58 US-24-T11: a stalled GitHub watchdog is dispatched again (stall recovery)"
@@ -3861,11 +3849,11 @@
    "tests": [
     {
      "file": "core/predict/org-wiring.test.js",
-     "name": "US-05-R02, US-05-R15, US-06-R20: one organization tick scores a due decision, writes the outcome the trust step reads, and proposes the ladder item"
+     "name": "US-05-R02, US-05-R20, US-06-R24: one organization tick scores a due decision, writes the outcome the trust step reads, and proposes the ladder item"
     },
     {
      "file": "core/predict/predict.test.js",
-     "name": "US-05-T01, US-05-R02, US-05-R15 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row and a seed outcomes row that feeds the trust ledger; one not yet due is left alone"
+     "name": "US-05-T01, US-05-R02, US-05-R20 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row and a seed outcomes row that feeds the trust ledger; one not yet due is left alone"
     }
    ]
   },
@@ -4085,14 +4073,6 @@
     {
      "file": "../seed/worker/test/measure.test.js",
      "name": "OBJECTIVES-1 (US-05-R15, US-05-R18, US-05-T06): an sql probe that is not one SELECT is refused and counts as a breach"
-    },
-    {
-     "file": "core/predict/org-wiring.test.js",
-     "name": "US-05-R02, US-05-R15, US-06-R20: one organization tick scores a due decision, writes the outcome the trust step reads, and proposes the ladder item"
-    },
-    {
-     "file": "core/predict/predict.test.js",
-     "name": "US-05-T01, US-05-R02, US-05-R15 a due prediction items_done >= 1 with one done item scores hit, observed 1, and writes an outcome row and a seed outcomes row that feeds the trust ledger; one not yet due is left alone"
     }
    ]
   },
@@ -4112,18 +4092,6 @@
     {
      "file": "../seed/worker/test/measure.test.js",
      "name": "OBJECTIVES-1 (US-05-R15, US-05-R16, US-05-T06): liveness gets grace, then a silent clock breaches; a declared measure with no probe always breaches"
-    },
-    {
-     "file": "core/kernel/metrics-decisions.test.js",
-     "name": "US-05-R16: a target gain with every guard intact is kept"
-    },
-    {
-     "file": "core/kernel/metrics-decisions.test.js",
-     "name": "US-05-R16: a breached guard metric blocks a target-metric gain from being kept (conformance)"
-    },
-    {
-     "file": "core/kernel/metrics-decisions.test.js",
-     "name": "US-05-R16: a guard that worsened but is still on target also blocks the gain"
     }
    ]
   },
@@ -4143,14 +4111,6 @@
     {
      "file": "../seed/worker/test/metricfresh.test.js",
      "name": "US-17-R17, US-05-R17, Q-LESSON-METRIC-FRESH: a probe that keeps failing keeps its old reading time and goes stale"
-    },
-    {
-     "file": "core/predict/predict.test.js",
-     "name": "US-05-R17, US-05-T05: the fail condition and the null expectation are evaluated: a reading of 3 reaches observed, -1 records a failure, 0 matches the null expectation"
-    },
-    {
-     "file": "core/predict/predict.test.js",
-     "name": "US-05-R17: a null expectation that is the pass condition, in the same words or with the same operator and number, is refused at record time"
     }
    ]
   },
@@ -4166,22 +4126,6 @@
     {
      "file": "../seed/worker/test/measure.test.js",
      "name": "OBJECTIVES-1 (US-05-R15, US-05-R18, US-05-T06): an sql probe that is not one SELECT is refused and counts as a breach"
-    },
-    {
-     "file": "core/predict/audit.test.js",
-     "name": "US-05-R18: the migration is idempotent and the audit table is predict_ prefixed"
-    },
-    {
-     "file": "core/predict/audit.test.js",
-     "name": "US-05-R18: the export gives an outside party the scored rows with the decision text and revert path, and its hash is stable for the same rows"
-    },
-    {
-     "file": "core/predict/audit.test.js",
-     "name": "US-05-R18: an auditor equal to the decision actor is refused, and an unscored prediction cannot be audited"
-    },
-    {
-     "file": "core/predict/audit.test.js",
-     "name": "US-05-R18: a disagreeing verdict files one item with its probe; an agreeing one files nothing; agreement is counted per auditor and cannot-tell counts for neither side"
     }
    ]
   },
@@ -4561,18 +4505,6 @@
     {
      "file": "../seed/worker/test/tick.test.js",
      "name": "US-06-R05, US-06-R20, US-06-T08: a crossing that repeats after its ladder item closed opens a new dated item; the rung is still not changed by the tick"
-    },
-    {
-     "file": "core/predict/org-wiring.test.js",
-     "name": "US-05-R02, US-05-R15, US-06-R20: one organization tick scores a due decision, writes the outcome the trust step reads, and proposes the ladder item"
-    },
-    {
-     "file": "core/trust/ladder-loop.test.js",
-     "name": "US-06-R20, US-06-T07: 12 scored predictions become outcomes, the tick proposes the ladder item, the merge by a different agent applies it (decision to rung, one database); the same agent is refused"
-    },
-    {
-     "file": "core/trust/ladder-loop.test.js",
-     "name": "US-06-R20: settleLadder with no port changes nothing; an item with no proposed transition is reported, not invented; a rung above the ceiling is refused with the reason as the blocker; a crash between the two writes is repaired"
     }
    ]
   },
@@ -4592,14 +4524,6 @@
     {
      "file": "../seed/worker/test/tenant-isolation.test.js",
      "name": "US-06-R21: accrue_trust: a trust row of another tenant is neither read nor overwritten; an own row accrues and carries no tenant"
-    },
-    {
-     "file": "core/trust/trust.test.js",
-     "name": "US-06-R21: deployAuthorizer allows an action at the rung it needs, refuses below it, and carries the gate card and the refusal advice back"
-    },
-    {
-     "file": "core/trust/trust.test.js",
-     "name": "US-06-R21: the deploy authorizer defaults to the autonomous rung, so a pair that has earned nothing cannot deploy to production"
     }
    ]
   },
@@ -4624,14 +4548,9 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/trust/trust.test.js",
-     "name": "US-06-R23: a denied action is refused even when it is reversible or names a reversible path, and the validator flags the combination"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-07-R01",
@@ -5060,18 +4979,6 @@
     {
      "file": "../seed/worker/test/zero-minutes.test.js",
      "name": "US-07-R22: gate: secrets, guard paths and unmarked workflow edits fail; a clean diff passes"
-    },
-    {
-     "file": "core/governance/governance.test.js",
-     "name": "US-07-R22: a false-stop rate above 0 over 10 or more scans files one item per rate and day, and not a second one the same day; its closing probe is a query the tick can run"
-    },
-    {
-     "file": "core/governance/governance.test.js",
-     "name": "US-07-R22: with fewer scans than min_scans the rates are unmeasured and nothing is filed; the step reports them"
-    },
-    {
-     "file": "core/governance/governance.test.js",
-     "name": "US-07-R22: the self-adoption rate is adoptions over adoptions plus deferral hits; it files when under target, is unmeasured with no observations or no trust module, and has a tolerance"
     }
    ]
   },
@@ -5091,18 +4998,6 @@
     {
      "file": "../seed/worker/test/mergenow.test.js",
      "name": "US-07-R23: a real code conflict is reported, never forced"
-    },
-    {
-     "file": "core/governance/scan.test.js",
-     "name": "US-07-R23: a draft from a declared source is scanned once across two passes, and a clean draft is scanned too"
-    },
-    {
-     "file": "core/governance/scan.test.js",
-     "name": "US-07-R23: a source that throws is reported and the other sources still run; the same ref in two sources is scanned once each"
-    },
-    {
-     "file": "core/governance/scan.test.js",
-     "name": "US-07-R23: the limit truncates openly: a draft past the limit is listed, not marked scanned, and the next pass takes it"
     }
    ]
   },
@@ -5750,10 +5645,6 @@
      "name": "US-09-R11: a banned model written as a plain string is a finding; only the list between the markers and a marked line are skipped"
     },
     {
-     "file": "core/ladder/fixes.test.js",
-     "name": "US-09-R11: an exemption row naming the whole model id covers the finding for its role and never for a reader-facing role"
-    },
-    {
      "file": "core/ladder/floorguard.test.js",
      "name": "US-09-R11: a banned model pattern in a worker source files an item and exits 1"
     },
@@ -5764,6 +5655,10 @@
     {
      "file": "core/ladder/floorguard.test.js",
      "name": "US-09-R11: comment-only lines, the banned list own declarations and marked lines are skipped"
+    },
+    {
+     "file": "core/ladder/floorguard.test.js",
+     "name": "US-09-R11: an unreadable worker is unmeasured, never clean; a clean scan exits 0 and closes the earlier item"
     }
    ]
   },
@@ -5920,10 +5815,6 @@
     {
      "file": "../seed/worker/test/spec-09-throttle-halt-gate.test.js",
      "name": "US-09-R19: no level stops the clock, the queue, the merge lane or deploys, and the level springs back when use falls"
-    },
-    {
-     "file": "core/ladder/fixes.test.js",
-     "name": "US-09-R19 an entry whose source changed is a miss and is removed; with the same source an identical call is a hit with no model call"
     }
    ]
   },
@@ -5939,10 +5830,6 @@
     {
      "file": "../seed/worker/test/subreq.test.js",
      "name": "US-09-R20: guarded: a loop that no longer fits, or hits the cap with nothing done, is deferred and carried, never failed"
-    },
-    {
-     "file": "core/ladder/router-ports.test.js",
-     "name": "US-09-R20 when the model asked for is retired the successor serves and that is no canary of the original"
     }
    ]
   },
@@ -5958,6 +5845,18 @@
     {
      "file": "../seed/worker/test/spec-09-throttle-halt-gate.test.js",
      "name": "US-09-R21 US-09-T11: HTTP 410 or a deprecation error retires the model for seven days, the next rung serves and the failed call is charged nothing"
+    },
+    {
+     "file": "core/airouter/airouter.test.js",
+     "name": "US-09-R21 US-09-T11: a deprecated model is retired after one refusal and charged nothing, the next model answers, and it is probed again after the window"
+    },
+    {
+     "file": "core/airouter/airouter.test.js",
+     "name": "US-09-R21: a governor refusal is charged nothing; a model that answered badly still is"
+    },
+    {
+     "file": "core/ladder/router-ports.test.js",
+     "name": "US-09-R21 when the model asked for is retired the successor serves and that is no canary of the original"
     }
    ]
   },
@@ -6977,7 +6876,7 @@
    "tests": [
     {
      "file": "core/graph/wiring.test.js",
-     "name": "US-12-T06, US-12-R12 and US-12-R17: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers and blast radius follows them"
+     "name": "US-12-T06, US-12-R12 and US-12-R24: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers and blast radius follows them"
     },
     {
      "file": "core/graph/wiring.test.js",
@@ -7025,30 +6924,9 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/graph/fleet-graph.test.js",
-     "name": "US-12-R15: the scan reads JS, TS and Python files and skips vendored directories and other file types"
-    },
-    {
-     "file": "core/graph/graph.test.js",
-     "name": "US-12-R15: no single route: a failing source is reported, the other still builds the graph"
-    },
-    {
-     "file": "core/graph/graph.test.js",
-     "name": "US-12-R15: re-ingesting a file replaces only its own source's edges and keeps declared edges"
-    },
-    {
-     "file": "core/graph/graph.test.js",
-     "name": "US-12-R15: Python relative imports, TypeScript type imports and dynamic import() are topology edges"
-    },
-    {
-     "file": "core/graph/graph.test.js",
-     "name": "US-12-R15: a file the source no longer lists loses its edges and node; other sources, declared edges and a failed listing keep theirs"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-12-R16",
@@ -7056,30 +6934,9 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/graph/fleet-graph.test.js",
-     "name": "US-12-R16: the command line prints what depends on a change, across languages, and a declared edge joins the graph"
-    },
-    {
-     "file": "core/graph/graph.test.js",
-     "name": "US-12-R16: blast radius is transitive and cycle safe"
-    },
-    {
-     "file": "core/graph/graph.test.js",
-     "name": "US-12-R16: the bound stops the walk, the result says it truncated, and a node already visited is not counted twice"
-    },
-    {
-     "file": "core/graph/graph.test.js",
-     "name": "US-12-R16: blast radius follows Python, TypeScript and extensionless importers back to the changed file"
-    },
-    {
-     "file": "core/graph/graph.test.js",
-     "name": "US-12-R16: one hub with many dependents never returns more than maxNodes, and says it truncated"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-12-R17",
@@ -7097,10 +6954,6 @@
     {
      "file": "../seed/worker/test/datagraph.test.js",
      "name": "US-12-R17: a quiet second pass writes nothing; a changed row is rewritten; a removed row is closed, not deleted; the item closes when the kind connects"
-    },
-    {
-     "file": "core/graph/wiring.test.js",
-     "name": "US-12-T06, US-12-R12 and US-12-R17: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers and blast radius follows them"
     }
    ]
   },
@@ -7417,9 +7270,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../dashboard/test/dashboard.test.mjs",
+     "name": "US-13-R17: login, one-tap done, undo, delegate, step-up expiry"
+    }
+   ]
   },
   {
    "id": "US-13-R18",
@@ -7427,9 +7285,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../dashboard/test/dashboard.test.mjs",
+     "name": "US-13-R18 and OWNER-DASH-3: overview needs no database or session; a dead database gives plain words, never a 500"
+    },
+    {
+     "file": "../dashboard/test/dashboard.test.mjs",
+     "name": "US-13-R18 and GATE-SETTLE-2: the owner page drops a gate whose measured dependencies are all closed, and keeps one that is still open"
+    }
+   ]
   },
   {
    "id": "US-14-R01",
@@ -8819,18 +8686,6 @@
     {
      "file": "../seed/worker/test/selfaudit.test.js",
      "name": "US-17-R14, US-17-T07: a red probe files FM-<id>; green closes it with evidence; a closed item with a red probe is reopened"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R14: two consecutive runs of a detector over a missing table open DETECTOR-BROKEN-<id> once"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R14: one erroring run followed by a good run opens nothing"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R14: the item closes with a disposition when the detector returns a value again, and reopens if it breaks again"
     }
    ]
   },
@@ -8850,18 +8705,6 @@
     {
      "file": "../seed/worker/test/selfaudit.test.js",
      "name": "US-17-R15: while the probe is red the first fix not done is filed; when every fix is done and it is still red ESCALATE-<id> asks for a different approach; green closes the mode and the escalation"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R15: with due_only a detector with interval_h 1 run twice 10 minutes apart writes one hit row; 61 minutes later it writes a second"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R15: without due_only every call writes a row as before"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R15: a due_only run that skipped everything still lets detectStaleDetectors fire after 2 intervals of silence"
     }
    ]
   },
@@ -8877,14 +8720,6 @@
     {
      "file": "../seed/worker/test/selfaudit.test.js",
      "name": "US-17-R16: a probe that cannot run (not one SELECT, an error, no number) is a red finding with its error recorded, never read as healthy"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R16: a closed remediation whose detector fires again is reopened and counts one relapse"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R16: a closure outside the relapse window is a new remediation, not a reopen"
     }
    ]
   },
@@ -8912,10 +8747,6 @@
     {
      "file": "../tests/foundation/test_spec_17_failure_ladder.py",
      "name": "test US-17-R17 a relapsed item needs more than one consecutive pass"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R17: after three relapses closure needs two consecutive passes of the closing probe"
     }
    ]
   },
@@ -8935,18 +8766,6 @@
     {
      "file": "../seed/worker/test/pulse.test.js",
      "name": "US-17-R18, US-17-T08: pulse: every loop that runs every slot is ticking; a loop that stops is found, filed as MISSED-<loop>, and closed when it runs again"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R18: after 3 failures, a success and one new failure inside the window the breaker stays closed"
-    },
-    {
-     "file": "core/kernel/failure.test.js",
-     "name": "US-17-R18: a changed source_hash re-arms an open breaker and the next attempt is allowed"
-    },
-    {
-     "file": "core/remediation/remediation.test.js",
-     "name": "US-17-R18: breakerFromLedger passes a row source_hash so a changed source re-arms the writer retry"
     }
    ]
   },
@@ -8962,10 +8781,6 @@
     {
      "file": "../seed/worker/test/pulse.test.js",
      "name": "US-17-R19, IDLE-IS-NOT-OK-1: a loop that returns without doing its work is a failed beat, and one working route of several is a good one"
-    },
-    {
-     "file": "core/remediation/remediation.test.js",
-     "name": "US-17-R19: an ok row whose error is an empty string is not counted by FM-MASKED; a numeric 0 success is not a failure either"
     }
    ]
   },
@@ -8975,30 +8790,9 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/remediation/remediation.test.js",
-     "name": "US-17-R20: FM-COVERAGE fires when the probe log names 10 of 82 registered names in the last hour (0.12 < 0.8) and not at 70 of 82"
-    },
-    {
-     "file": "core/remediation/remediation.test.js",
-     "name": "US-17-R20: FM-COVERAGE counts only registered names, so 80 ghost names in the probe log do not hide 95 of 100 registered names that stopped reporting"
-    },
-    {
-     "file": "core/remediation/remediation.test.js",
-     "name": "US-17-R20: FM-SHADOW fires for two candidates of one worker with different hashes and a stale earlier candidate, and not when the hashes are equal"
-    },
-    {
-     "file": "core/remediation/remediation.test.js",
-     "name": "US-17-R20: FM-STALE-PREDICATE fires for an alarm naming 496 stuck rows while the recount is 0, and not when the recount matches"
-    },
-    {
-     "file": "core/remediation/remediation.test.js",
-     "name": "US-17-R20: an unreadable candidates or alarms port fires instead of passing"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-18-R01",
@@ -9286,9 +9080,30 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../dashboard/test/agent.test.mjs",
+     "name": "US-18-R13: safeSelect allows one bounded SELECT over the allow-list and nothing else"
+    },
+    {
+     "file": "../dashboard/test/agent.test.mjs",
+     "name": "US-18-R13: a plain-English question is answered from real rows, with its steps, read-only"
+    },
+    {
+     "file": "../dashboard/test/agent.test.mjs",
+     "name": "US-18-R13: a changing command needs a fresh code; with one it runs through the audited, undoable path"
+    },
+    {
+     "file": "../dashboard/test/agent.test.mjs",
+     "name": "US-18-R13: a model that returns nothing never produces an empty answer"
+    },
+    {
+     "file": "../dashboard/test/agent.test.mjs",
+     "name": "US-18-R13: without the AI binding an unknown line says what is missing; real commands still work"
+    }
+   ]
   },
   {
    "id": "US-19-R01",
@@ -11439,7 +11254,7 @@
     },
     {
      "file": "core/ghcost/ghcost-ext.test.js",
-     "name": "US-24-T11 US-24-R22 a renamed usage field is shape drift, files an item and keeps the last decision"
+     "name": "US-24-T15 US-24-R22 a renamed usage field is shape drift, files an item and keeps the last decision"
     },
     {
      "file": "core/ghcost/ghcost-ext.test.js",
@@ -11627,7 +11442,7 @@
    "tests": [
     {
      "file": "core/ghcost/ghcost-ext.test.js",
-     "name": "US-24-R33 discussions are judged only when the configuration states a wish (a MAY)"
+     "name": "US-24-R33 discussions are judged only when the configuration states a wish, and a stated wish is read back"
     },
     {
      "file": "core/ghcost/tools-bridge.test.js",

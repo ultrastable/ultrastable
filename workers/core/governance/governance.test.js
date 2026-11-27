@@ -417,7 +417,7 @@ test('section 3.2 similarity: 10 tokens sharing 6 with a 14-token goal give Jacc
   assert.ok(Math.abs(G.scoreGoal({ falsifiability: 1, leverage: 0.5, novelty: 0 }) - 0.6) < 1e-9);
 });
 
-// ---- US-07-R22: triggers on the recognition rates and the self-adoption rate ----
+// ---- US-07-R30: triggers on the recognition rates and the self-adoption rate ----
 const WIN7 = `datetime('now', '-7 days')`;
 const at = (probe, fromMs) => probe.split(WIN7).join(`'${new Date(fromMs).toISOString().replace('T', ' ').slice(0, 19)}'`); // the probe reads the clock of the tick that runs it; fix it here
 async function mkBare() { const db = makeDb([MIG]); await G.seedRegister(db, { now: NOW - 30 * DAY }); return db; } // no trust tables: the self-adoption rate is unmeasured here
@@ -425,7 +425,7 @@ async function scans(db, n, offers) {
   for (let i = 0; i < n; i++) await G.recognize(db, { draft: i < offers ? 'The fix is merged. Shall I continue' : 'The fix is merged and the probe passes.', source: `doer-${i % 3}` }, { now: NOW - H * (n - i) });
 }
 
-test('US-07-R22: a false-stop rate above 0 over 10 or more scans files one item per rate and day, and not a second one the same day; its closing probe is a query the tick can run', async () => {
+test('US-07-R30: a false-stop rate above 0 over 10 or more scans files one item per rate and day, and not a second one the same day; its closing probe is a query the tick can run', async () => {
   const db = await mkBare();
   await scans(db, 12, 3);
   const r = await G.checkRates(db, { now: NOW });
@@ -446,7 +446,7 @@ test('US-07-R22: a false-stop rate above 0 over 10 or more scans files one item 
   assert.deepEqual(l.breaches, ['conditional_offer_rate']);
 });
 
-test('US-07-R22: with fewer scans than min_scans the rates are unmeasured and nothing is filed; the step reports them', async () => {
+test('US-07-R30: with fewer scans than min_scans the rates are unmeasured and nothing is filed; the step reports them', async () => {
   const db = await mkBare();
   await scans(db, 5, 5);
   const r = await G.checkRates(db, { now: NOW });
@@ -460,7 +460,7 @@ test('US-07-R22: with fewer scans than min_scans the rates are unmeasured and no
   assert.deepEqual([m.rates_measured, m.rate_items.sort()], [true, ['GOV-conditional-offer-rate-2026-11-11', 'GOV-false-stop-rate-2026-11-11']]);
 });
 
-test('US-07-R22: the self-adoption rate is adoptions over adoptions plus deferral hits; it files when under target, is unmeasured with no observations or no trust module, and has a tolerance', async () => {
+test('US-07-R30: the self-adoption rate is adoptions over adoptions plus deferral hits; it files when under target, is unmeasured with no observations or no trust module, and has a tolerance', async () => {
   const db = await mk();
   const adopt = (i) => Trust.adoptDefault(db, { question: `q${i}`, recommended_default: `do ${i}`, revert_path: 'undo', reversible: true, in_scope: true, surface: 'repo', action_class: 'open_pr' }, { now: NOW - H, execute: async () => ({ verified: true, evidence: 'ok' }) });
   assert.equal(await G.selfAdoptionRate(db, { now: NOW }), null, 'no observation: unmeasured, not zero');

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// US-05-R18: the outside audit of the scorer, with a fake auditor. No network, no real second party.
+// US-05-R23: the outside audit of the scorer, with a fake auditor. No network, no real second party.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -23,14 +23,14 @@ async function scored() {
   return { db, hit: ids[0].id, miss: ids[1].id };
 }
 
-test('US-05-R18: the migration is idempotent and the audit table is predict_ prefixed', () => {
+test('US-05-R23: the migration is idempotent and the audit table is predict_ prefixed', () => {
   const db = makeDb([MIG]);
   const sql = readFileSync(MIG + '0002_audit.sql', 'utf8');
   db.raw.exec(sql); db.raw.exec(sql);
   for (const m of sql.matchAll(/CREATE TABLE IF NOT EXISTS (\w+)/g)) assert.match(m[1], /^predict_/);
 });
 
-test('US-05-R18: the export gives an outside party the scored rows with the decision text and revert path, and its hash is stable for the same rows', async () => {
+test('US-05-R23: the export gives an outside party the scored rows with the decision text and revert path, and its hash is stable for the same rows', async () => {
   const { db, hit } = await scored();
   const a = await P.exportForAudit(db);
   assert.equal(a.count, 2);
@@ -44,7 +44,7 @@ test('US-05-R18: the export gives an outside party the scored rows with the deci
   assert.equal((await P.exportForAudit(db, { limit: 1 })).count, 1);
 });
 
-test('US-05-R18: an auditor equal to the decision actor is refused, and an unscored prediction cannot be audited', async () => {
+test('US-05-R23: an auditor equal to the decision actor is refused, and an unscored prediction cannot be audited', async () => {
   const { db, hit } = await scored();
   const self = await P.recordAudit(db, { prediction_id: hit, auditor: 'agent-1', verdict: 'hit', evidence: 'looked again' }, { now: NOW });
   assert.equal(self.ok, false);
@@ -57,7 +57,7 @@ test('US-05-R18: an auditor equal to the decision actor is refused, and an unsco
   assert.equal(one(db, `SELECT COUNT(*) AS n FROM predict_audits`).n, 0);
 });
 
-test('US-05-R18: a disagreeing verdict files one item with its probe; an agreeing one files nothing; agreement is counted per auditor and cannot-tell counts for neither side', async () => {
+test('US-05-R23: a disagreeing verdict files one item with its probe; an agreeing one files nothing; agreement is counted per auditor and cannot-tell counts for neither side', async () => {
   const { db, hit, miss } = await scored();
   assert.deepEqual(await P.auditAgreement(db), { n: 0, agreed: 0, share: null, per_auditor: [] }, 'no outside party has acted: nothing is claimed');
   const ok = await P.recordAudit(db, { prediction_id: hit, auditor: 'outside-1', verdict: 'hit', evidence: 'queue_depth read 3' }, { now: NOW });

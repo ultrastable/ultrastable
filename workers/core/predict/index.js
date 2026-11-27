@@ -230,7 +230,7 @@ export async function gateConfidence(db, { decision_type, confidence, threshold 
 }
 
 /**
- * US-05-R13, US-06-R21: the port core/deploy asks before an autonomous deploy. The request carries the stated confidence
+ * US-05-R13, US-06-R25: the port core/deploy asks before an autonomous deploy. The request carries the stated confidence
  * (`req.confidence`, else `default_confidence`) and a decision type; the answer is gateConfidence()'s: allowed only when the
  * calibrated value meets the threshold. No stated confidence at all is not allowed. core/deploy never imports this module.
  */
@@ -290,7 +290,7 @@ function passes(value, condition) {
   if (!m || value === null || !Number.isFinite(value)) return null;
   return CMP[m[1]](value, Number(m[2]));
 }
-// US-05-R17: a null expectation that is the pass condition (same text, or the same operator and number) can never discriminate.
+// US-05-R22: a null expectation that is the pass condition (same text, or the same operator and number) can never discriminate.
 function sameCondition(a, b) {
   const ma = COND.exec(a ?? ''), mb = COND.exec(b ?? '');
   if (ma && mb) return ma[1] === mb[1] && Number(ma[2]) === Number(mb[2]);
@@ -341,7 +341,7 @@ export async function observe(db, findingId, { now = Date.now(), read, verified_
     value = value === null || value === undefined || typeof value === 'boolean' || !Number.isFinite(Number(value)) ? null : Number(value);
   } catch (e) { reason = `deciding query failed: ${String(e && e.message).slice(0, 120)}`; }
   const ok = passes(value, a.pass_condition);
-  // US-05-R17: the fail condition and the null expectation are evaluated, not only stored. A reading that meets the fail condition
+  // US-05-R22: the fail condition and the null expectation are evaluated, not only stored. A reading that meets the fail condition
   // is recorded as a failure (a staged row, so closeFinding leaves the finding pending); a reading that meets the null
   // expectation is what production shows without the fix, so it never reaches observed, even when it also meets the pass condition.
   if (passes(value, a.fail_condition) === true) {

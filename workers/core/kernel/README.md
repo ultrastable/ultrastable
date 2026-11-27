@@ -3,7 +3,7 @@
 
 # core/kernel: the L2 managerial layer
 
-A small, generic implementation of the L2 requirements of `US-SPEC-03` s4, `04`, `05`, `15` and `17`. It extends the seed tick (`core/src/tick.js`) and never changes its behavior: the eight L1 steps and their tests are untouched (the seed's own 19-step tick is specified in US-SPEC-03 of `ultrastable/spec`).
+A small, generic implementation of the L2 requirements of `US-SPEC-03` s4, `04`, `05`, `15` and `17`. It extends the seed tick (`core/src/tick.js`) and never changes its behavior: the eight L1 steps and their tests are untouched (the seed's own tick, whose step list is `STEP_ORDER` in `../seed/worker/src/tick.js`, is specified in US-SPEC-03 of `ultrastable/spec`).
 
 ```js
 import { runTick } from '../src/tick.js';
@@ -50,6 +50,13 @@ BUILT means implemented and covered by a passing test in this directory. Nothing
 | US-17-R08 loop breaker with root-cause item and half-open probe | BUILT | `recordAttempt`, `canAttempt` (k, window, interval configurable) |
 | US-17-R09 probation for a detector whose firings are mostly refuted | BUILT | `confirmFiring`, `reviewProbation` |
 | US-17-T06 structured payload classification | BUILT | `payloadIsFailure` |
+| US-17-R21 the prediction of a closed item is scored; a scoring failure does not block the closure | BUILT | `consumeRemediations` calls the optional `scorePrediction` port; the kernel's own `remediate` step does not pass it yet |
+| US-17-R24 retention of the register's append-only tables | BUILT | `pruneHits` keeps the newest hit of every mode and the hits of an open remediation |
+| US-17-R25 a detector that cannot produce a reading is a finding after consecutive empty readings | BUILT | `runDetectors` files `DETECTOR-BROKEN-<id>` after `broken_after` empty runs and closes it when a value returns |
+| US-17-R26 a detector runs on its own schedule | BUILT, opt-in | `runDetectors({ due_only: true })` writes no row while the newest is younger than `interval_h`; the kernel's `detectors` step does not pass it yet |
+| US-17-R27 a relapse reopens the remediation or opens a new one, and is counted | BUILT | `openRemediation` reopens inside the relapse window; an id already taken in the same hour gets a numeric suffix |
+| US-17-R28 more than one consecutive pass to close after repeated relapses | BUILT in part | `passes_after_reopen`, `passes_to_close`; the "probe seen failing" half is in `../foundation/contracts.py` |
+| US-17-R29 the breaker counts failures since the last success or source change and doubles only on a failed half-open probe | BUILT | `recordAttempt`, `canAttempt` with `source_hash` re-arm |
 | Remedy not moving its metric in its window is replaced, not repeated | BUILT | `proposeRemedy`, `judgeRemedies` (refuses a repeat of a replaced remedy; one active remedy per metric) |
 | US-17-R10..R12, R13 external host, visibility ratio, roster, repository-only closure | NOT COVERED | L3 / deploy path |
 | US-15-R01 delivery mode with reason | BUILT | `createProject` |

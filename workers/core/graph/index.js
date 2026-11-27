@@ -63,7 +63,7 @@ export async function ingest(ctx) {
         await ctx.db.prepare("DELETE FROM graph_edges WHERE src = ? AND source = ?").bind(f.path, s.name).run();
         for (const d of extractEdges(f.path, f.text, { known })) await ctx.db.prepare("INSERT OR IGNORE INTO graph_edges (src, dst, rel, source) VALUES (?,?, 'imports', ?)").bind(f.path, d, s.name).run();
       }
-      // A file the source no longer lists loses the edges this source produced for it (US-12-R15); only after a listing that succeeded,
+      // A file the source no longer lists loses the edges this source produced for it (US-12-R22); only after a listing that succeeded,
       // so a failing source never erases the graph. Its node goes too when no other source still has an edge from it.
       const listed = new Set(files.map(f => f.path)), pruned = [];
       for (const r of (await ctx.db.prepare('SELECT DISTINCT src FROM graph_edges WHERE source = ?').bind(s.name).all()).results || []) {

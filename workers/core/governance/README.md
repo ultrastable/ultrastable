@@ -39,7 +39,7 @@ BUILT means implemented here and covered by a passing test in `governance.test.j
 | Classifier-port matching | BUILT as a port | `recognize({ classifier })`; no classifier model ships |
 | Threshold proposals (3 in 7 days from one source, friction once), weekly audit item | BUILT | `scanThresholds`, `auditItem` |
 | Event-weighted trust deductions per recognition | BUILT | `governance_deductions` and the `deduct` port (wired to `core/trust` in the test) |
-| US-07-R22 rates and the self-adoption rate, each with a trigger | BUILT | `rates`, `selfAdoptionRate`, `checkRates` (`triggers.js`): a breach files one item per number and day, an unmeasured number files nothing |
-| US-07-R23 recognition scan over declared sources, each draft once | BUILT | `scanSources` (`scan.js`), table `governance_scan_cursor` (`migrations/0002_scan.sql`) |
+| US-07-R30 rates and the self-adoption rate, each with a trigger | BUILT | `rates`, `selfAdoptionRate`, `checkRates` (`triggers.js`): a breach files one item per number and day, an unmeasured number files nothing |
+| US-07-R31 recognition scan over declared sources, each draft once | BUILT | `scanSources` (`scan.js`), table `governance_scan_cursor` (`migrations/0002_scan.sql`) |
 | US-07-R24 daily goal cycle: signals become falsifiable candidates before adoption | BUILT | `goalCycle`; an optional `synthesize` port adds model candidates |
 | Model ports (`generate`, `redteam`, `classifier`, `revise`) over the model ladder | BUILT with a fake fetch | `model-ports.js` (`createModelPorts`), `model-ports.test.js`; running it live needs a provider key and a deployed organization and stays PLANNED (probe: `SELECT COUNT(*) FROM router_calls WHERE kind='reviewer' AND outcome='ok'` > 0 on that account) |

@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeDb } from '../_shared/testdb.js';
-import { createRouter } from './index.js';
+import { createRouter, ensure, RETIRE_MS } from './index.js';
 
 const NOW = Date.UTC(2026, 10, 17, 12);
 const free = (id, over = {}) => ({ id, model: id, tier: 'free', ...over });
@@ -46,4 +46,29 @@ test('the task verify() is part of the gate, and the daily free-neuron cap stops
   assert.equal(x.model, 'mid');
   const c = setup({ cheap: 'hello there' }, { neurons_day_cap: 0 });
   await assert.rejects(c.r.call({ prompt: 'z' }), /daily free neurons/);
+});
+
+test('US-09-R21 US-09-T11: a deprecated model is retired after one refusal and charged nothing, the next model answers, and it is probed again after the window', async () => {
+  const db = makeDb(); await ensure(db);
+  let t = NOW; const seen = [];
+  const ai = { run: async model => { seen.push(model); if (model === 'gone') throw new Error('5028: gone was deprecated on 2026-11-20. See the model catalog.'); return { response: 'answer' }; } };
+  const r = createRouter({ db, ai, now: () => t, models: [free('gone', { neurons_out: 0.01 }), free('live')] });
+  assert.equal((await r.call({ kind: 'k', prompt: 'one '.repeat(400), cache: false })).model, 'live');
+  const row = db.raw.prepare(`SELECT neurons, ok FROM airouter_calls WHERE model='gone'`).get();
+  assert.deepEqual([row.neurons, row.ok], [0, 0], 'no model ran, so nothing is charged');
+  assert.ok(db.raw.prepare(`SELECT 1 AS x FROM airouter_retired WHERE model='gone'`).get());
+  seen.length = 0; await r.call({ kind: 'k', prompt: 'two', cache: false });
+  assert.deepEqual(seen, ['live'], 'the retired model is not called inside the window');
+  t += RETIRE_MS + 1000; seen.length = 0; await r.call({ kind: 'k', prompt: 'three', cache: false });
+  assert.equal(seen[0], 'gone', 'after the window it is probed again');
+  assert.equal(RETIRE_MS, 7 * 864e5);
+});
+
+test('US-09-R21: a governor refusal is charged nothing; a model that answered badly still is', async () => {
+  const db = makeDb(); await ensure(db);
+  const ai = { run: async model => { if (model === 'refused') throw new Error('AI budget: lean mode allows one model call per tick'); return { response: '' }; } };
+  const r = createRouter({ db, ai, now: () => NOW, models: [free('refused'), free('empty')] });
+  await assert.rejects(() => r.call({ kind: 'k', prompt: 'p '.repeat(500), cache: false }), /no model passed/);
+  assert.equal(db.raw.prepare(`SELECT neurons FROM airouter_calls WHERE model='refused'`).get().neurons, 0);
+  assert.ok(db.raw.prepare(`SELECT neurons FROM airouter_calls WHERE model='empty'`).get().neurons > 0);
 });

@@ -49,7 +49,10 @@ export function stem(word) {
 // so -5, 5, 5% and >5 are four different tokens. A hyphen between digits (a range such as 5-10) is not a sign.
 const NUM = String.raw`\p{N}+(?:[.,]\p{N}+)*`;
 const TOKEN_RE = new RegExp(String.raw`(?:[<>]=?|!=)\s*[-+]?${NUM}(?:\s?%)?|(?<![\p{L}\p{N}])[-+]${NUM}(?:\s?%)?|${NUM}(?:\s?%)?|\p{L}+`, 'gu');
-export const stemWords = text => (String(text).toLowerCase().replace(/\u2212/g, '-').replace(/\u2265/g, '>=').replace(/\u2264/g, '<=').replace(/\u2260/g, '!=')
+// A typeset en dash or figure dash written as a minus (directly before a digit, with no letter or digit before it) is the minus sign too;
+// between two digits it is a range and stays out of the number.
+export const stemWords = text => (String(text).toLowerCase().replace(/\u2212/g, '-').replace(/(?<![\p{L}\p{N}])[\u2012\u2013](?=\p{N})/gu, '-')
+  .replace(/\u2265/g, '>=').replace(/\u2264/g, '<=').replace(/\u2260/g, '!=')
   .match(TOKEN_RE) || []).map(t => stem(t.replace(/\s+/g, '')));
 /** True when the assertion's stems occur as one contiguous run in the content's stems; numbers must match exactly, with their sign, percent sign and comparison operator. */
 export function assertionPresent(content, assertion) {

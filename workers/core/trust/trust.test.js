@@ -378,7 +378,7 @@ test('US-06-R15: an open card with no identity-bound line files one item per day
   assert.equal(one(db, `SELECT status FROM gate_cards WHERE id='G10'`).status, 'open');
 });
 
-test('US-06-R21: deployAuthorizer allows an action at the rung it needs, refuses below it, and carries the gate card and the refusal advice back', async () => {
+test('US-06-R25: deployAuthorizer allows an action at the rung it needs, refuses below it, and carries the gate card and the refusal advice back', async () => {
   const db = mk();
   const auth = T.deployAuthorizer({ db, policy: POLICY, required_rung: 'delegated', now: () => NOW });
   const low = await auth({ surface: 'runtime', action_class: 'deploy_production', target: 'api', executor: 'agent-a' });
@@ -393,7 +393,7 @@ test('US-06-R21: deployAuthorizer allows an action at the rung it needs, refuses
   assert.deepEqual([(await limited({ surface: 'runtime', action_class: 'deploy_production', target: 'api' })).refused, (await limited({ surface: 'runtime', action_class: 'deploy_production', target: 'web' })).allowed], ['classifier', true]);
 });
 
-test('US-06-R23: a denied action is refused even when it is reversible or names a reversible path, and the validator flags the combination', async () => {
+test('US-06-R27: a denied action is refused even when it is reversible or names a reversible path, and the validator flags the combination', async () => {
   const db = mk();
   const pol = JSON.parse(JSON.stringify(POLICY));
   pol.surfaces.runtime.actions.force_push_default_branch = { reversible: false, identity_bound: false, denied: true, reversible_path: 'git reflog restore', reason: 'never' };
@@ -408,7 +408,7 @@ test('US-06-R23: a denied action is refused even when it is reversible or names 
   assert.deepEqual(T.validatePolicy(POLICY), [], 'the shipped policy states no such combination');
 });
 
-test('US-06-R21: the deploy authorizer defaults to the autonomous rung, so a pair that has earned nothing cannot deploy to production', async () => {
+test('US-06-R25: the deploy authorizer defaults to the autonomous rung, so a pair that has earned nothing cannot deploy to production', async () => {
   const db = mk();
   const auth = T.deployAuthorizer({ db, policy: POLICY, now: () => NOW });
   const fresh = await auth({ surface: 'runtime', action_class: 'deploy_production', target: 'api', executor: 'brand-new-agent' });

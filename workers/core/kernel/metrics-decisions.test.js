@@ -90,12 +90,12 @@ async function scenario({ usage = 120, errsBefore = 1, errsAfter = 1, guardMax =
   return { db, res: await evaluateDecision(db, 'D', { now: NOW() }) };
 }
 
-test('US-05-R16: a target gain with every guard intact is kept', async () => {
+test('US-05-R21: a target gain with every guard intact is kept', async () => {
   const { res } = await scenario({});
   assert.equal(res.status, 'kept');
 });
 
-test('US-05-R16: a breached guard metric blocks a target-metric gain from being kept (conformance)', async () => {
+test('US-05-R21: a breached guard metric blocks a target-metric gain from being kept (conformance)', async () => {
   const { db, res } = await scenario({ usage: 140, errsAfter: 9 });
   assert.equal(res.status, 'reverted');
   assert.match(res.outcome, /blocked_by_guard: errs/);
@@ -103,12 +103,12 @@ test('US-05-R16: a breached guard metric blocks a target-metric gain from being 
   assert.ok(it); assert.equal(it.priority, 0); assert.match(it.done_check, /git revert/);
 });
 
-test('US-05-R16: a guard that worsened but is still on target also blocks the gain', async () => {
+test('US-05-R21: a guard that worsened but is still on target also blocks the gain', async () => {
   const { res } = await scenario({ usage: 140, errsBefore: 1, errsAfter: 4, guardMax: 5 });
   assert.equal(res.status, 'reverted');
 });
 
-test('US-05-R16: a missed prediction is reverted; an unmeasured target is not kept', async () => {
+test('US-05-R21: a missed prediction is reverted; an unmeasured target is not kept', async () => {
   const miss = await scenario({ usage: 100 });
   assert.equal(miss.res.status, 'reverted');
   const db = kdb();
@@ -118,7 +118,7 @@ test('US-05-R16: a missed prediction is reverted; an unmeasured target is not ke
   db.raw.exec(`DELETE FROM t_vals`);
   const r = await evaluateDecision(db, 'D', { now: NOW() });
   assert.equal(r.status, 'unmeasured');
-  // US-05-R16: an unmeasured decision files its revert item (it is not left applied and unverified) and is not evaluated twice.
+  // US-05-R21: an unmeasured decision files its revert item (it is not left applied and unverified) and is not evaluated twice.
   assert.equal(r.item_id, 'REVERT-D');
   const it = one(db, `SELECT * FROM items WHERE id='REVERT-D'`);
   assert.ok(it, 'the revert item exists'); assert.match(it.title, /unmeasured/); assert.match(it.done_check, /revert applied via: r/);

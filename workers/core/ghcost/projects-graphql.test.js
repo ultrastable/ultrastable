@@ -14,18 +14,19 @@ const dirs = ['./migrations/', '../deploy/migrations/'].map(d => fileURLToPath(n
 const T0 = Date.parse('2026-11-15T12:00:00Z');
 
 // A fake of the slice of the Projects v2 API the adapter uses. Fields: Status is single-select, Program and Probe are text.
-function fakeBoard({ pageSize = 100, options = ['open', 'ready', 'blocked'], noProject = false, errorOn = null } = {}) {
+function fakeBoard({ pageSize = 100, options = ['open', 'ready', 'blocked'], noProject = false, errorOn = null, extraFields = 0, fieldsPage = 50, valuesPage = 100 } = {}) {
   const items = [], log = []; let seq = 0;
-  const FIELDS = [{ id: 'F-status', name: 'Status', dataType: 'SINGLE_SELECT', options: options.map(n => ({ id: 'O-' + n, name: n })) }, { id: 'F-prog', name: 'Program', dataType: 'TEXT' }, { id: 'F-probe', name: 'Probe', dataType: 'TEXT' }];
+  const FIELDS = [{ id: 'F-status', name: 'Status', dataType: 'SINGLE_SELECT', options: options.map(n => ({ id: 'O-' + n, name: n })) }, { id: 'F-prog', name: 'Program', dataType: 'TEXT' }, { id: 'F-probe', name: 'Probe', dataType: 'TEXT' },
+    ...Array.from({ length: extraFields }, (_, i) => ({ id: 'F-x' + i, name: 'Extra ' + i, dataType: 'TEXT' }))];
   const fetch = async (url, init) => {
     assert.equal(url, 'https://api.github.com/graphql');
     assert.match(init.headers.authorization, /^Bearer /);
     const { query, variables: v } = JSON.parse(init.body); const ok = data => new Response(JSON.stringify({ data }), { status: 200 });
     if (errorOn && query.includes(errorOn)) return new Response(JSON.stringify({ errors: [{ message: 'Resource not accessible by personal access token' }] }), { status: 200 });
-    if (query.includes('fields(first:50)')) return ok({ organization: { projectV2: noProject ? null : { id: 'PROJ', fields: { nodes: FIELDS } } } });
+    if (query.includes('fields(first:50)')) return ok({ organization: { projectV2: noProject ? null : { id: 'PROJ', fields: { pageInfo: { hasNextPage: FIELDS.length > fieldsPage }, nodes: FIELDS.slice(0, fieldsPage) } } } });
     if (query.includes('items(first:')) {
       const start = v.after ? Number(v.after) : 0, slice = items.slice(start, start + pageSize);
-      return ok({ organization: { projectV2: { items: { pageInfo: { hasNextPage: start + pageSize < items.length, endCursor: String(start + pageSize) }, nodes: slice.map(i => ({ id: i.id, content: { title: i.title }, fieldValues: { nodes: Object.entries(i.fields).map(([name, val]) => (name === 'Status' ? { name: val, field: { name } } : { text: val, field: { name } })) } })) } } } });
+      return ok({ organization: { projectV2: { items: { pageInfo: { hasNextPage: start + pageSize < items.length, endCursor: String(start + pageSize) }, nodes: slice.map(i => { const vals = Object.entries(i.fields); return { id: i.id, content: { title: i.title }, fieldValues: { pageInfo: { hasNextPage: vals.length > valuesPage }, nodes: vals.slice(0, valuesPage).map(([name, val]) => (name === 'Status' ? { name: val, field: { name } } : { text: val, field: { name } })) } }; }) } } } });
     }
     if (query.includes('addProjectV2DraftIssue')) { const it = { id: 'I-' + ++seq, title: v.title, fields: {} }; items.push(it); log.push('add:' + v.title); return ok({ addProjectV2DraftIssue: { projectItem: { id: it.id } } }); }
     if (query.includes('updateProjectV2ItemFieldValue')) {
@@ -87,4 +88,14 @@ test('US-24-R03 the token is read by name, sent as a bearer and never appears in
   const fake = fakeBoard({ errorOn: 'addProjectV2DraftIssue' });
   await assert.rejects(() => port(fake).upsertProjectItem({ project: 7, itemId: 'A', fields: {} }), e => { assert.doesNotMatch(String(e.message), /tok-secret-123/); assert.match(e.message, /graphql: Resource not accessible/); return true; });
   await assert.rejects(() => githubPort({ fetch: fake.fetch, env: {}, org: 'example-org' }).projectItems(7), /VCS_TOKEN is not set/);
+});
+
+test('US-24-R03 a field list or a value list longer than one page is refused, not read in part', async () => {
+  const wide = fakeBoard({ extraFields: 48 }); // 51 fields: one more than a page of 50
+  await assert.rejects(() => port(wide).upsertProjectItem({ project: 7, itemId: 'A', fields: { Status: 'open' } }), /more than 50 fields; refusing a partial read/);
+  const full = fakeBoard({ extraFields: 47 }); // exactly 50 fields: one page, read whole
+  assert.deepEqual(await port(full).upsertProjectItem({ project: 7, itemId: 'A', fields: { Status: 'open' } }), { id: 'I-1' });
+  const busy = fakeBoard({ valuesPage: 2 });
+  busy.items.push({ id: 'I-9', title: 'B-1', fields: { Status: 'open', Program: 'p', Probe: 'q' } }); // three values, a page of two
+  await assert.rejects(() => port(busy).projectItems(7), /item B-1 of project 7 has more than 100 field values; refusing a partial read/);
 });

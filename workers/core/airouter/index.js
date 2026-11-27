@@ -9,11 +9,13 @@
 //  5. it learns: each call is recorded (cost, neurons, pass/fail, reason) and the stats reorder the next routing, demote a failing model for a kind,
 //     and let a model that keeps passing skip the dearer rungs. Ports: db, now, ai (env.AI-shaped), models[]; paid models bring their own run().
 // The router never reads a secret: a paid model is a function the tenant binds (it holds its own key). Hard cap is enforced before the call.
+export const RETIRE_MS = 7 * 864e5;
 export const DEFAULTS = { monthly_usd_cap: 0, neurons_day_cap: 8000, cache_ttl_ms: 6 * 3600e3, min_calls_to_judge: 8, free_give_up: 0.2 };
 export const DDL = [
   'CREATE TABLE IF NOT EXISTS airouter_cache (key TEXT PRIMARY KEY, kind TEXT NOT NULL, text TEXT NOT NULL, model TEXT NOT NULL, at INTEGER NOT NULL, hits INTEGER NOT NULL DEFAULT 0)',
   'CREATE TABLE IF NOT EXISTS airouter_calls (id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER NOT NULL, kind TEXT NOT NULL, model TEXT NOT NULL, tier TEXT NOT NULL, neurons REAL NOT NULL DEFAULT 0, usd REAL NOT NULL DEFAULT 0, ok INTEGER NOT NULL, reason TEXT)',
   'CREATE INDEX IF NOT EXISTS airouter_calls_at ON airouter_calls (at)',
+  'CREATE TABLE IF NOT EXISTS airouter_retired (model TEXT PRIMARY KEY, at INTEGER NOT NULL, reason TEXT)',
   'CREATE INDEX IF NOT EXISTS airouter_cache_at ON airouter_cache (at)',
   'CREATE TABLE IF NOT EXISTS airouter_stats (kind TEXT NOT NULL, model TEXT NOT NULL, calls INTEGER NOT NULL DEFAULT 0, passes INTEGER NOT NULL DEFAULT 0, usd REAL NOT NULL DEFAULT 0, PRIMARY KEY (kind, model))',
 ];
@@ -59,6 +61,13 @@ export function createRouter({ db, ai, models, now = () => Date.now(), config = 
   const stats = async kind => { const r = await db.prepare('SELECT model, calls, passes FROM airouter_stats WHERE kind=?1').bind(kind).all(); return Object.fromEntries((r.results || []).map(x => [x.model, x])); };
   const rate = s => s && s.calls >= cfg.min_calls_to_judge ? s.passes / s.calls : null;
 
+  // AIROUTER-NO-RUN-1 (measured 2026-11-20): 35 calls to a model the platform deprecated that day and 14 refusals by the spend governor were charged
+  // 1,561 estimated neurons although no model ran, which used a fifth of the day's free allowance and stopped the code agent early. A call that was
+  // refused before any model ran costs nothing; a model the platform says is gone is retired for RETIRE_MS and probed again after that.
+  const neverRan = reason => /^error: (\d+: .*was deprecated|AI budget:|Too many subrequests)/.test(String(reason || ''));
+  const isGone = reason => /^error: (5028:|\d+: .*was deprecated)/.test(String(reason || ''));
+  const retired = async () => { const r = await db.prepare('SELECT model FROM airouter_retired WHERE at>=?1').bind(now() - RETIRE_MS).all(); return new Set((r.results || []).map(x => x.model)); };
+
   async function record(kind, m, neurons, usd, ok, reason) {
     await db.prepare('INSERT INTO airouter_calls (at,kind,model,tier,neurons,usd,ok,reason) VALUES (?1,?2,?3,?4,?5,?6,?7,?8)').bind(now(), kind, m.model, m.tier, neurons, usd, ok ? 1 : 0, reason || null).run();
     await db.prepare('INSERT INTO airouter_stats (kind,model,calls,passes,usd) VALUES (?1,?2,1,?3,?4) ON CONFLICT(kind,model) DO UPDATE SET calls=calls+1, passes=passes+?3, usd=usd+?4').bind(kind, m.model, ok ? 1 : 0, usd).run();
@@ -68,7 +77,9 @@ export function createRouter({ db, ai, models, now = () => Date.now(), config = 
   // paid models follow, cheapest first. Paid ones are only reached after the free ones fail this call.
   async function plan(kind) {
     const st = await stats(kind), free = [], paid = [], dropped = [];
+    const gone = await retired();
     for (const m of models) {
+      if (gone.has(m.model)) continue;
       const r = rate(st[m.model]);
       if (m.tier === 'paid') paid.push({ m, r }); else if (r === null || r >= cfg.free_give_up) free.push({ m, r: r ?? 0.5 }); else dropped.push({ m, r });
     }
@@ -102,7 +113,9 @@ export function createRouter({ db, ai, models, now = () => Date.now(), config = 
         let res, text, reason = null;
         try { res = m.run ? await m.run(input) : await ai.run(m.model, input); text = textOf(res); reason = replyProblem(res, text); if (!reason && verify) { const v = await verify(text); if (v !== true && v != null) reason = typeof v === 'string' ? v : 'verify failed'; } }
         catch (e) { reason = 'error: ' + String(e && e.message).slice(0, 100); if (e && e.name === 'BudgetExhausted') stop = true; }  // the tenant's own governor said stop: no further model is tried
-        const neurons = m.tier === 'paid' ? 0 : neuronsOf(m, res, text, prompt), usd = usdOf(m, res, text, prompt);
+        const noRun = !res && neverRan(reason);
+        const neurons = m.tier === 'paid' || noRun ? 0 : neuronsOf(m, res, text, prompt), usd = noRun ? 0 : usdOf(m, res, text, prompt);
+        if (isGone(reason)) await db.prepare('INSERT INTO airouter_retired (model,at,reason) VALUES (?1,?2,?3) ON CONFLICT(model) DO UPDATE SET at=excluded.at, reason=excluded.reason').bind(m.model, now(), reason.slice(0, 200)).run();
         neuronsUsed += neurons; if (capSpent !== null) capSpent += usd;
         await record(kind, m, neurons, usd, !reason, reason);
         if (reason && onFail) { try { onFail(m, reason); } catch (e) { tried.push('hook: ' + String(e && e.message).slice(0, 60)); } }  // a hook never breaks routing; its error is in the exhausted message

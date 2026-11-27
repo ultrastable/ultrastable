@@ -4,17 +4,18 @@
 // projectItems(project) -> [{ id, itemId, fields }], upsertProjectItem({ project, itemId, fields }), deleteProjectItem({ project, id }).
 // `project` is the project number inside the organization. A ledger item is one draft issue whose title is the ledger item id,
 // so the board holds no second copy of anything but the three mirrored fields; a board larger than `maxPages` pages is refused
-// rather than read in part, and a field the board does not have (or a single-select option it lacks) is an error, never a
-// silent skip. `graphql(query, variables)` is the port github.js supplies (it carries the token, the retry and the error check).
-const PAGE = 100;
+// rather than read in part, and so is a board whose field list or an item whose value list is longer than one page (a value read
+// in part would show as endless drift, a field read in part as missing); a field the board does not have (or a single-select
+// option it lacks) is an error, never a silent skip. `graphql(query, variables)` is the port github.js supplies (it carries the token, the retry and the error check).
+const PAGE = 100, FIELDS_PAGE = 50, VALUES_PAGE = 100;
 
-const META = `query($org:String!,$n:Int!){organization(login:$org){projectV2(number:$n){id fields(first:50){nodes{
+const META = `query($org:String!,$n:Int!){organization(login:$org){projectV2(number:$n){id fields(first:${FIELDS_PAGE}){pageInfo{hasNextPage}nodes{
   ... on ProjectV2Field{id name dataType}
   ... on ProjectV2SingleSelectField{id name dataType options{id name}}
   ... on ProjectV2IterationField{id name dataType}}}}}}`;
 const ITEMS = `query($org:String!,$n:Int!,$after:String){organization(login:$org){projectV2(number:$n){items(first:${PAGE},after:$after){pageInfo{hasNextPage endCursor}nodes{id
   content{... on DraftIssue{title} ... on Issue{title} ... on PullRequest{title}}
-  fieldValues(first:30){nodes{
+  fieldValues(first:${VALUES_PAGE}){pageInfo{hasNextPage}nodes{
     ... on ProjectV2ItemFieldTextValue{text field{... on ProjectV2FieldCommon{name}}}
     ... on ProjectV2ItemFieldSingleSelectValue{name field{... on ProjectV2FieldCommon{name}}}}}}}}}}`;
 const ADD = `mutation($project:ID!,$title:String!){addProjectV2DraftIssue(input:{projectId:$project,title:$title}){projectItem{id}}}`;
@@ -33,6 +34,7 @@ export function projectPort({ graphql, org, maxPages = 20 }) {
     if (metas.has(n)) return metas.get(n);
     const p = (await graphql(META, { org, n }))?.organization?.projectV2;
     if (!p?.id) throw new Error(`ghcost: project ${n} was not found in ${org} (or the token has no project scope)`);
+    if (p.fields?.pageInfo?.hasNextPage) throw new Error(`ghcost: project ${n} has more than ${FIELDS_PAGE} fields; refusing a partial read`);
     const m = { id: p.id, fields: new Map((p.fields?.nodes || []).filter(f => f?.name).map(f => [f.name, { id: f.id, options: f.options ? new Map(f.options.map(o => [String(o.name).toLowerCase(), o.id])) : null }])) };
     metas.set(n, m);
     return m;
@@ -46,6 +48,7 @@ export function projectPort({ graphql, org, maxPages = 20 }) {
       const items = (await graphql(ITEMS, { org, n, after }))?.organization?.projectV2?.items;
       if (!items) throw new Error(`ghcost: project ${n} items could not be read`);
       for (const node of items.nodes || []) {
+        if (node.fieldValues?.pageInfo?.hasNextPage) throw new Error(`ghcost: item ${String(node.content?.title ?? node.id).slice(0, 60)} of project ${n} has more than ${VALUES_PAGE} field values; refusing a partial read`);
         const fields = {};
         for (const v of node.fieldValues?.nodes || []) { const name = v?.field?.name; if (name) fields[name] = v.text ?? v.name ?? ''; }
         const itemId = node.content?.title ?? null;

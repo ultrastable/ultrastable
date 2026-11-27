@@ -26,13 +26,16 @@ const SKIP = new Set(['node_modules', '.git', '.wrangler', 'dist', '__pycache__'
 const JS_TEST = /\.test\.(js|mjs)$/;
 const PY_TEST = /^test_.*\.py$/;
 
-/** Roots beside this repository that hold tests proving requirements implemented there (the seed kernel and the foundation commands). `cwd` is where
- *  their own suites are run from (the seed's tests assume the seed; the foundation's, the repository root). */
+/** Roots beside this repository that hold tests proving requirements implemented there (the seed kernel, the foundation commands, the owner dashboard
+ *  and the front door). `cwd` is where their own suites are run from (the seed's tests assume the seed; the others, the repository root). */
 export const EXTRA_ROOTS = [
   { dir: '../seed/worker/test', test: JS_TEST, cwd: '../seed/worker' },
   { dir: '../seed/worker/src', test: JS_TEST, cwd: '../seed/worker' },
   { dir: '../seed/tests', test: PY_TEST, cwd: '../seed' },
   { dir: '../tests/foundation', test: PY_TEST, cwd: '..' },
+  // The platform owner dashboard's and the hosted front door's tests, run from the repository root as checks.yml runs them (US-13-R17, R18, US-18-R13, US-19-R24, R25).
+  { dir: '../dashboard/test', test: JS_TEST, cwd: '..' },
+  { dir: '../site', test: JS_TEST, cwd: '..' },
 ];
 
 /** Where the specifications are (US-00-R03: the check must run in every layout, never skip silently). The first directory that exists,

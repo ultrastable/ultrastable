@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // The two clocks of the self-amending loop that gather their own input (US-SPEC-07 sections 3 and 3.2). scanSources is the
-// recognition scan of US-07-R23: drafts come from declared sources (item comments, pull request bodies, runner summaries,
+// recognition scan of US-07-R31: drafts come from declared sources (item comments, pull request bodies, runner summaries,
 // console messages), each is scanned once, and no model is needed. goalCycle is the daily goal cycle of US-07-R24: signals
 // (metrics in breach, failing probes, tick errors) become falsifiable candidate goals that pass through adoptGoals, with an
 // optional model port that adds candidates. Ports: db, now, sources [{ name, read(sinceIso, limit) }], signals [{ name, read() }], synthesize.
@@ -10,7 +10,7 @@ import { recognize } from './engine.js';
 import { adoptGoals, similarity } from './objectives.js';
 
 /**
- * US-07-R23. Each source returns [{ ref, draft, at?, scope?, ctx? }] for the drafts written at or after the time it is given (`at` is the draft's own ISO time). A draft whose
+ * US-07-R31. Each source returns [{ ref, draft, at?, scope?, ctx? }] for the drafts written at or after the time it is given (`at` is the draft's own ISO time). A draft whose
  * (source, ref) was scanned before is skipped; the others go through recognize(), which stores the scan, records hits and
  * applies the redirect. A source that throws is reported in `errors` and the other sources still run. At most `limit` drafts are scanned per call.
  * `ports` are recognize()'s own (classifier, deduct, execute, dispatch, ...). Returns { scanned, skipped, hits, errors, truncated }.

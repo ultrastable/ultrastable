@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Outside audit of the scorer (US-SPEC-05 section 3.2, US-05-R18). The system scores its own predictions, so its hit rate is
+// Outside audit of the scorer (US-SPEC-05 section 3.2, US-05-R23). The system scores its own predictions, so its hit rate is
 // self-reported; this module is the path by which a party that is not the system re-reads them. exportForAudit gives the
 // auditor the scored rows with the decision text and the revert path (and a hash so both sides can show they read the same
 // rows); recordAudit takes the auditor's verdict. The auditor is a port: a person, another organization's system, a held-out

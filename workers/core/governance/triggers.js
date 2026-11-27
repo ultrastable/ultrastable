@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Triggers on the numbers of US-SPEC-07 section 3.1 (US-07-R22): the five recognition rates (target 0) and the self-adoption
+// Triggers on the numbers of US-SPEC-07 section 3.1 (US-07-R30): the five recognition rates (target 0) and the self-adoption
 // rate (target 1). A breach files one work item per number and day, with the target as its done check and a SQL closing probe
 // the tick can run; a number with too few observations is reported as unmeasured and files nothing.
 // Ports: db, now (ms), config { min_scans, days, targets, min_self_adoption, self_adoption_tolerance, owner_role }.
@@ -40,7 +40,7 @@ async function file(db, it, nowIso) {
 }
 
 /**
- * US-07-R22. Reads the rates over `days` and the self-adoption rate and files one item per breached number and day. Returns
+ * US-07-R30. Reads the rates over `days` and the self-adoption rate and files one item per breached number and day. Returns
  * { measured, scans, rates, self_adoption, breaches[], filed[] }. With fewer than `min_scans` scans the rates are unmeasured
  * (`measured: false`) and nothing is filed for them; the self-adoption rate is unmeasured without observations.
  */
