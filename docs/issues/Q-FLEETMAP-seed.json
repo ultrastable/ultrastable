@@ -1,7 +1,7 @@
 {
   "id": "Q-FLEETMAP-seed",
-  "title": "Q-FLEETMAP-seed: ultrastable/seed is not equal to its source (1 file(s) differ, 0 missing, 0 only in the copy)",
-  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe seed\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** open\n\nultrastable/seed is a copy and is not equal to its source (FLEET-MAP-1): 1 file(s) differ, 0 missing, 0 only in the copy.\n\n- differ: SECURITY.md\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe seed\n",
+  "title": "Q-FLEETMAP-seed: ultrastable/seed is not equal to its source (31 file(s) differ, 1 missing, 0 only in the copy)",
+  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe seed\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** open\n\nultrastable/seed is a copy and is not equal to its source (FLEET-MAP-1): 31 file(s) differ, 1 missing, 0 only in the copy.\n\n- differ: SECURITY.md, autonomy/system.json, bootstrap/bootstrap.py, bootstrap/cases.json, tests/test_seed.py, ultrastable.json, worker/test/budget.test.js, worker/test/criticality.test.js, worker/test/datagraph.test.js, worker/test/decisions.test.js, worker/test/doer.test.js, worker/test/ghfetch.test.js ...\n- missing: tests/test_policy_guard.py\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe seed\n",
   "labels": [
     "p1",
     "agent-ready",
