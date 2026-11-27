@@ -6984,6 +6984,24 @@
    "body": "16 open Q-AUDIT items failed specgate (spec_quality 0.59); tests pass after the template gained all three parts and a regression test verified it.",
    "probe": "grep:foundation/sampleaudit.py::Closing probe",
    "session": "session_0156nqDsxJd4poRv2mkbug9e"
+  },
+  {
+   "id": "lesson-2026-11-27-code-regulator-1-sampled-audit-and-d1-schema-export",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "CODE-REGULATOR-1 sampled audit and D1 schema export",
+   "body": "Adds P8 audit sampling (protected paths always, others by a deterministic rate that doubles on a defect and halves on a clean audit) and the ledger SQL for a D1 mirror. Ran 20 regulator tests, they pass. Nothing calls the sampler yet, so the hypothesis that sampled audit lowers reviewer cost is untested.",
+   "probe": "grep:foundation/regulator/audit.py::def should_audit",
+   "session": "session_0156nqDsD3rf97bBozkQVuW7"
+  },
+  {
+   "id": "lesson-2026-11-27-code-regulator-1-stray-ledger-file-committed",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "CODE-REGULATOR-1 stray ledger file committed",
+   "body": "CI openstd check failed on a committed .regulator.sqlite: the schema command opened the default database in the working directory and git add -A then picked it up. Fixed at the cause: schema answers before any database is opened, the local ledger and its WAL files are ignored by git, and the open-standards check passes. Ran 20 regulator tests, they pass and leave no file behind. The test_ideas failure on this PR also fails on main, so it is not this change.",
+   "probe": "grep:foundation/regulator/cli.py::do not create the default database file",
+   "session": "session_0156nqDsD3rf97bBozkQVuW7"
   }
  ]
 }
