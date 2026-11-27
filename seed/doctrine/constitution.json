@@ -1061,6 +1061,34 @@
           "has": "safeClose"
         }
       ]
+    },
+    {
+      "id": "short-agent-entry",
+      "rule": "An agent loads one short entry file before its first step, inside a byte and line budget, and fetches the standing rules that govern the paths it will change. The rules stay enforced by their checks; nothing depends on an agent having read all of them.",
+      "source": "Rowan, 2026-11-27",
+      "covers": [
+        "AGENT-ENTRY-1"
+      ],
+      "detector": [
+        {
+          "file": "scripts/agentrules.py",
+          "has": "def check("
+        },
+        {
+          "file": "autonomy/agent-entry.json",
+          "has": "max_closure_bytes"
+        }
+      ],
+      "remediation": [
+        {
+          "file": "scripts/agentrules.py",
+          "has": "def for_paths("
+        },
+        {
+          "file": "AGENTS.md",
+          "has": "agentrules.py --for"
+        }
+      ]
     }
   ]
 }

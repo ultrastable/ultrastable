@@ -249,9 +249,11 @@ def check(root: Path = KIT) -> list[str]:
         errs.append(f"not_in_kit lists rules that are now enforced here or gone; remove them (shrink-only): {', '.join(stale)}")
     if _read(root, OUT) != render(root):
         errs.append(f"{OUT} is stale: run python3 scripts/system.py --write")
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import agentrules  # AGENT-ENTRY-1: the entry names the definition; an agent fetches it when the task needs it
     for f in ("CLAUDE.md", "AGENTS.md"):
-        if (root / f).exists() and "SYSTEM.md" not in _read(root, f):
-            errs.append(f"{f} does not load SYSTEM.md, so an agent here starts without the definition")
+        if (root / f).exists() and OUT not in agentrules.named(root, f):
+            errs.append(f"{f} neither imports nor names {OUT}, so an agent here cannot find the definition")
     return errs
 
 

@@ -2,7 +2,7 @@
 
 > Ultrastable is the foundation for any autonomous system.
 
-This is the canonical definition every Ultrastable system is born with. The core template carries it, every agent loads it through `CLAUDE.md` (the
+This is the canonical definition every Ultrastable system is born with. The core template carries it, every agent finds it from `AGENTS.md`, the entry `CLAUDE.md` loads (the
 copy at `doctrine/SYSTEM.md` in the seed is the same text), and `python3 -m foundation coldstart --check` fails when this text, the contract in
 `doctrine/coldstart.json` (JSON Schema `doctrine/schemas/coldstart.schema.json`) or the code they name drift apart. The owner never supplies any of it.
 
