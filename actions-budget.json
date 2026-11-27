@@ -1,15 +1,21 @@
 {
-  "_doc": "Actions minute budget and kill switch. See docs/ops/ACTIONS-BUDGET.md. Private-repo minutes bill 1x for Linux; public repos are free. Public repositories are exempt in scripts/actions_guard.py (free minutes).",
-  "paused": true,
-  "paused_workflows": [],
-  "essential": [
-    "checks",
-    "lane",
-    "deploy-site",
-    "actions-budget"
-  ],
-  "monthly_free_minutes": 2000,
-  "plan": "GitHub Free (verify at https://docs.github.com/en/billing/managing-billing-for-your-products/managing-billing-for-github-actions/about-billing-for-github-actions)",
-  "warn_at_pct": 60,
-  "pause_at_pct": 85
+  "id": "free-tier-meter:spend",
+  "schema": 2.0,
+  "owner": "executor",
+  "trigger": "ladder_exhausted",
+  "budget": {
+    "currency": "USD",
+    "monthly_cap": 59.99
+  },
+  "regulation": {
+    "mode": "auto_redirected",
+    "response_on_breach": "divert_to_void",
+    "on_recover": "resume_full_cap",
+    "hysteresis_pct": 0.05
+  },
+  "probe": {
+    "active": true,
+    "condition": "spend <= monthly_cap",
+    "failure_action": "file_ticket_Q-ULTRA-free-tier-meter-spend-REDESIGN"
+  }
 }
