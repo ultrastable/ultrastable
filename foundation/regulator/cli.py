@@ -27,6 +27,10 @@ def main(argv=None):
     ap.add_argument("--budget", type=int, default=1024)
     a = ap.parse_args(argv)
 
+    if a.cmd == "schema":  # no ledger needed: do not create the default database file as a side effect
+        from .store import schema_sql
+        print(schema_sql(), end="")
+        return 0
     s = Store(a.db)
     try:
         return _run(a, ap, s)
@@ -63,9 +67,6 @@ def _run(a, ap, s):
         import sys
         from .ledger_hook import safe_record
         safe_record(s, sys.stdin.read())  # always exit 0: a hook must not fail the tool call
-    elif a.cmd == "schema":
-        from .store import schema_sql
-        print(schema_sql(), end="")
     elif a.cmd == "tokens":
         print(json.dumps({"share_by_kind": s.token_share_by_kind(),
                           "cache_read_share": s.cache_read_share()}))
