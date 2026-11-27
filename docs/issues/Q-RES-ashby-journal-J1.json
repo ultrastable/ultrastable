@@ -1,0 +1,12 @@
+{
+  "id": "Q-RES-ashby-journal-J1",
+  "title": "Q-RES-ashby-journal-J1: Many parts adapting on one shared setting at once (measured 0.466, target <= 0)",
+  "body": "**Owner:** product-manager\n**Trigger:** research pass: ashby-journal finding J1 is not-met (measured 0.466)\n**Done check:** cmd:python3 -m foundation research --probe ashby-journal:J1\n**Prediction:** second_loop_collision_share_7d <= 0 within 168 h\n**Out of scope:** editing the study, its target or the paper to match the code; the measurement is changed only by changing the mechanism\n**Closing probe:** `python3 -m foundation research --probe ashby-journal:J1`\n**Status:** open\n\nConcern: Many parts adapting on one shared setting at once. The study: Ashby: parts of a multistable system can adapt simultaneously provided channel width is adequate and a disperser is provided (p. 4641); separate clusters adapt in the way that gives minimal interaction (p. 4178); trials within a larger trial only if functionally disconnected while they run (p. 4547). Two variables trying changes on the same step-function at once each judge the other's change as their own.\n\nMechanisms that should answer it: MULTISTABLE-1 (foundation/ultrastability.py).\n\nMetric: share of the second loop's parameter steps in the last 7 days that changed a step-function another variable's trial already held (MULTISTABLE-1), target <= 0. Improve the mechanism (or add one) until the probe passes; the white paper at /research updates itself from the same measurement.",
+  "labels": [
+    "role:product-manager",
+    "research",
+    "plus"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

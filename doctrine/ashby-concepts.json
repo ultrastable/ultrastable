@@ -55,7 +55,8 @@
         "foundation/ashbymap.py::def interference",
         "doctrine/ultrastability.json::\"tenant\"",
         "seed/worker/src/goals.js::async function vetoers",
-        "seed/worker/test/ashby-loop.test.js::veto: a step that moved its own goal"
+        "seed/worker/test/ashby-loop.test.js::veto: a step that moved its own goal",
+        "foundation/ultrastability.py::def disperse"
       ],
       "reading": "interference_share",
       "status": "implemented",
@@ -78,10 +79,11 @@
     {
       "id": "dispersion",
       "url": "https://ashby.info/journal/index/index.html#dispersion",
-      "summary": "Corrective feedback goes to the part that failed, not to everything. Each tenant is a sandbox and each variable has its own ladder.",
+      "summary": "Corrective feedback goes to the part that failed, not to everything. Each tenant is a sandbox and each variable has its own ladder. Within one system, the second loop runs one trial per step-function at a time, so two variables never adapt on the same setting at once (MULTISTABLE-1).",
       "mechanisms": [
         "seed/worker/src/tenant.js::tenant",
-        "foundation/ultrastability.py::def common_mode"
+        "foundation/ultrastability.py::def common_mode",
+        "foundation/ultrastability.py::def disperse"
       ],
       "status": "implemented",
       "pages": [3851, 5356, 5606]

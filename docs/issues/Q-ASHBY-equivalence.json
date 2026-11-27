@@ -1,0 +1,12 @@
+{
+  "id": "Q-ASHBY-equivalence",
+  "title": "Q-ASHBY-equivalence: dispose of Ashby keyword Equivalence relation",
+  "body": "**Owner:** product-manager\n**Trigger:** ashbyarchive pass: Ashby's keyword \"Equivalence relation\" (13 references, pages 4041, 4478, 4778, 5084, 5148, 5165, 5712, 6116, 6167, 6171, 6254, 6505) shares pages with the systems categories and has no disposition\n**Done check:** cmd:python3 -m foundation ashbyarchive --probe equivalence\n**Prediction:** archive_triaged_share >= 1.0 within 720 h\n**Out of scope:** copying the journal's wording into the repository; marking a keyword not-applicable without a reason a reader can check\n**Status:** open\n\nRead the cited pages (https://ashby.info/journal/index/index.html#equivalence; page images at https://ashby.info/journal/page/NNNN.html, transcribed summaries at https://ashby.info/journal/summaries) and dispose of the keyword in doctrine/ashby-archive.json: add it to a principle (our own statement, the pages, the code that carries it, a probe), or to `not_applicable` with the reason. A principle whose code does not exist yet is status item, with its own item.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ashbyarchive --probe equivalence`\n",
+  "labels": [
+    "research",
+    "plus",
+    "role:product-manager"
+  ],
+  "milestone": "Next",
+  "workstream": "Research"
+}

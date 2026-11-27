@@ -1,0 +1,12 @@
+{
+  "id": "Q-RES-ashby-journal-J5",
+  "title": "Q-RES-ashby-journal-J5: Taking from an archive what is convenient (measured 0.996, target >= 1.0)",
+  "body": "**Owner:** product-manager\n**Trigger:** research pass: ashby-journal finding J5 is not-met (measured 0.996)\n**Done check:** cmd:python3 -m foundation research --probe ashby-journal:J5\n**Prediction:** archive_triaged_share >= 1 within 2160 h\n**Out of scope:** editing the study, its target or the paper to match the code; the measurement is changed only by changing the mechanism\n**Closing probe:** `python3 -m foundation research --probe ashby-journal:J5`\n**Status:** open\n\nConcern: Taking from an archive what is convenient. The study: Ashby's index is the map of his journal; a system that says it has incorporated the journal has to account for every entry of that map, not only the ones it liked.\n\nMechanisms that should answer it: ASHBY-ARCHIVE-1 (foundation/ashbyarchive.py).\n\nMetric: share of Ashby's index keywords and Other Index categories with a disposition in doctrine/ashby-archive.json (ASHBY-ARCHIVE-1), target >= 1.0. Improve the mechanism (or add one) until the probe passes; the white paper at /research updates itself from the same measurement.",
+  "labels": [
+    "role:product-manager",
+    "research",
+    "plus"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}
