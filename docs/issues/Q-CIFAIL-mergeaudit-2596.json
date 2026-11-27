@@ -1,7 +1,7 @@
 {
   "id": "Q-CIFAIL-mergeaudit-2596",
   "title": "Q-CIFAIL-mergeaudit-2596: PR #2596 merged without a green checks run",
-  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 2596\n**Status:** open\n\nMERGE-AUDIT-1: PR #2596 (queue: closing-probe verdicts for 25 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]) merged at 2026-11-27T00:04:41Z with its `checks` run at `missing` on head bfaab62. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 2596\n**Status:** closed\n\nMERGE-AUDIT-1: PR #2596 (queue: closing-probe verdicts for 25 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]) merged at 2026-11-27T00:04:41Z with its `checks` run at `missing` on head bfaab62. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): green since\n",
   "labels": [
     "role:staff",
     "ci-failure"
