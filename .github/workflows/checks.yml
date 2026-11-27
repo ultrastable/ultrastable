@@ -71,6 +71,8 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           if [ -n "${BASE_SHA:-}" ]; then cd seed && python3 scripts/prsize.py --range "${BASE_SHA}...HEAD"; fi
+      - name: workflow token scopes (IDENTITIES-1, ZHC-R4)
+        run: python3 -m foundation identities --check
       - name: tests-protected (TESTS-PROTECTED-1, ZHC-R11)
         # a change may move tests but not drop cases, drop assertions or add skips in the files it touches
         env:
