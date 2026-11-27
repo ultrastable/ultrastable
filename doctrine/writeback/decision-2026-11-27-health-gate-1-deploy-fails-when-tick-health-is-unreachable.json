@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-health-gate-1-deploy-fails-when-tick-health-is-unreachable",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "HEALTH-GATE-1 deploy fails when tick health is unreachable",
+  "body": "deploy-oidc.mjs exits 1 when the tick /health does not answer after a deploy.",
+  "probe": "grep:deploy/deploy-oidc.mjs::HEALTH-GATE-1",
+  "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+ },
+ "kind": "decision",
+ "title": "HEALTH-GATE-1 deploy fails when tick health is unreachable",
+ "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+}
