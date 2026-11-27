@@ -13,9 +13,12 @@ T = dt.datetime(2026, 11, 17, 21, 30, tzinfo=dt.timezone.utc)
 
 def sandbox():
     d = scratch()
-    for f in ("doctrine/spinoff.json", "doctrine/blindspots.json", "doctrine/spinoff-ideas.json", "ops/free-tier.json", "ops/transparency.json", "ops/changelog.json", "spinoffs/registry.json", "spinoffs/live.js"):
+    for f in ("doctrine/spinoff.json", "doctrine/blindspots.json", "doctrine/spinoff-ideas.json", "ops/transparency.json", "ops/changelog.json", "spinoffs/registry.json", "spinoffs/live.js"):
         (d / f).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(REPO / f, d / f)
+    # The loop rewrites ops/free-tier.json daily with real usage, so a test reads a fixed snapshot, never the live one.
+    (d / "ops").mkdir(exist_ok=True)
+    shutil.copy(REPO / "tests/foundation/fixtures/free-tier-2026-11-17.json", d / "ops/free-tier.json")
     (d / "instances/ultrastable").mkdir(parents=True)
     shutil.copy(REPO / "instances/ultrastable/loop-registry.json", d / "instances/ultrastable/loop-registry.json")
     for s in ("base-rates", "did-it-work", "open-questions"):  # DEPTH-1 seeds
