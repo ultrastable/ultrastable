@@ -6684,6 +6684,60 @@
    "title": "SKIPPED-NOT-GREEN-1: a skipped required check is read as passed",
    "body": "Executor PR #2661 replaced actions-budget.json (the Actions kill switch) with an unrelated config. Its dispatched checks run failed, but a re-run of the pull_request run whose event said draft skipped every job, the required checks job included, and GitHub auto-merge reads skipped as passed, so it merged and main went red. The checks gate job now always runs and ends success or failure (halted and draft are failures), the lane and the Worker green guard take the newest run per check name and never count skipped as the required pass, and both kill switches are on every protected-path list.",
    "probe": "grep:.github/workflows/checks.yml::SKIPPED-NOT-GREEN-1"
+  },
+  {
+   "id": "decision-2026-11-27-repo-conform-2-stage-1-of-3-one-identity-renderer-and-a-depl",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "REPO-CONFORM-2 stage 1 of 3: one identity renderer and a deploy button that builds from the kit root",
+   "body": "Decision: the kit renders every identity file from ultrastable.json with one implementation, seed/scripts/surfaces.py (README blocks, CITATION.cff, publiccode.yml, catalog-info.yaml, llms.txt, REUSE.toml, codemeta.json, LICENSES/<id>.txt; CHANGELOG, CONTRIBUTING and SECURITY only when missing), and a copy of the template takes its own identity in the boot's adopt stage (IDENTITY-AT-BIRTH-1), so the fleet map and the kernel sync leave those files to the system. Decision: the kit root carries wrangler.jsonc and package.json with no placeholder, so the Deploy to Cloudflare button builds a fresh copy, wrangler deploy creates the D1 database, and the tick applies its own migrations before its first heartbeat row (DEPLOY-BUTTON-1, MIGRATE-FIRST-1). The whole change exceeds the SMALL-CHANGE-1 limit (seed/autonomy/prsize.json), so it lands as three sequential pull requests, each green alone; this is the first. Evidence: seed/tests/test_surfaces.py, seed/tests/test_happy_path.py (test_2b, test_2c), seed/worker/test/deploy-config.test.js, tests/foundation/test_spec_31_fleet.py and tests/foundation/test_open_standards.py pass, python3 scripts/surfaces.py --check reads the kit as equal to its render, and python3 -m foundation checksrun ran every step the session can run.",
+   "probe": "grep:seed/bootstrap/bootstrap.py::def adopt",
+   "session": "session_0156nqDuSa1pdM6rAaTQ1irE"
+  },
+  {
+   "id": "lesson-2026-11-27-pr-bound-3-a-bound-is-timed-from-when-its-condition-began-no",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "PR-BOUND-3: a bound is timed from when its condition began, not from when the pull request opened",
+   "body": "PR-BOUND-2 closed a labelled pull request by minutes since it opened, so any pull request open past 30 minutes was closed on the first lane pass that saw a conflict. #2686 was closed 17 seconds after main moved under it, with the reason 'unresolved for 90 min'; #2664 and #2615 went the same way. The age is now minutes since the label was last put on, read from the issue events; the lane adds the label once per episode and removes it when the condition clears. A label time that cannot be read is unmeasured and closes nothing. A timer on a condition must start when the condition starts.",
+   "probe": "grep:foundation/prbound.py::PR-BOUND-3",
+   "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
+  },
+  {
+   "id": "decision-2026-11-27-deploy-drift-1-live-workers-read-against-main",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "DEPLOY-DRIFT-1: live Workers read against main",
+   "body": "foundation/deploydrift.py compares each live Worker's last verified deploy sha with commits to its code since; unmeasured counts as drift. The deploy-workers.yml header no longer claims a daily probe that nothing runs.",
+   "probe": "grep:foundation/deploydrift.py::DEPLOY-DRIFT-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-reply-schema-1-executor-refuses-a-model-reply-of-the-wrong-s",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "REPLY-SCHEMA-1: executor refuses a model reply of the wrong shape",
+   "body": "check_reply_shape in foundation/executor.py runs before any path is read: string path, string content or find/replace edits, no unknown keys.",
+   "probe": "grep:foundation/executor.py::REPLY-SCHEMA-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-canon-1-cybernetics-research-program",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "CANON-1 cybernetics research program",
+   "body": "Ten primary sources (Ashby, Conant-Ashby, Wiener, McCulloch, Beer, Bateson, von Foerster, Pask, Perez Lopez) in doctrine/research.json canon; research --intake files the next one weekly as Q-RES-CANON; two papers ingested now.",
+   "probe": "grep:foundation/research.py::def canon\\(",
+   "session": "session_0156nqDsUQq8R5at568VZC1L"
+  },
+  {
+   "id": "lesson-2026-11-27-regen-parity-1-every-pure-generator-runs-at-pull-request-tim",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "REGEN-PARITY-1: every pure generator runs at pull-request time, because a pull request carries no generated file",
+   "body": "PR-NO-GENERATED-1 stopped pull requests carrying generated files. The PR-time list (scripts/regen_generated.sh) lacked six pure generators that the post-merge list runs: ultrastability data, admit, owndb, tenantcontrols, upstream contract, plugins self. A pull request that changed one of their sources failed its freshness check and had no way to pass: #2615 added an essential variable and failed on site/ultrastability-data.js. Now the six run at PR time, the eight generators that record an event or read the network are named in POST_MERGE_ONLY with a reason each, and a test fails any generator that is in neither place. Two lists of the same thing need a test that compares them.",
+   "probe": "grep:scripts/regen_generated.py::POST_MERGE_ONLY",
+   "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
   }
  ]
 }
