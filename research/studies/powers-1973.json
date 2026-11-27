@@ -1,0 +1,84 @@
+{
+ "schema": "research-study/1",
+ "id": "powers-1973",
+ "order": 10,
+ "title": "Behavior: The Control of Perception",
+ "paper_title": "Control is of what is perceived: does every goal of an AI system have a reference and an actuator?",
+ "paper_frame": "William Powers described behavior as the control of perception: a system compares what it senses with a reference and acts to reduce the difference. A goal with a target but no way to act on it is a wish, not a control loop. We count how many targets in this system have a knob the system may turn.",
+ "authors": [
+  "William T. Powers"
+ ],
+ "institution": "Aldine, Chicago",
+ "kind": "book",
+ "version": "1973",
+ "seeded_by": "owner, 2026-11-27 (CYBERNETICS-PROGRAM-1)",
+ "source_url": "https://archive.org/details/behaviorcontrolo0000powe",
+ "data": "Theory of hierarchical control, with models and experiments in tracking tasks.",
+ "summary": "A control system has a reference value, a sensed value and an output that acts on the world to reduce the difference. Higher control systems set the references of lower ones. The loop is closed only when the output can change what is sensed.",
+ "perspectives": [
+  "systems",
+  "reliability"
+ ],
+ "limits": [
+  "Reading. The source was not machine-read for this paper: its argument is stated in our own words from the publication's well-known content, with no quotation, and a reader should check the claim against the source linked above.",
+  "Interpretation. We read a target as a reference signal and a knob as an actuator; some targets here are deliberately measure-only and raise a work item instead of turning a value, because no knob could move them. The share is therefore not expected to reach one.",
+  "Counting. A knob existing is not a knob working; whether moves help is judged by the goal loop's own review, which this paper does not measure."
+ ],
+ "misperception": {
+  "belief": "Setting ambitious targets is enough to make an AI system improve.",
+  "short": "Ambitious targets make a system improve.",
+  "counter": "A target is only a reference. A control loop needs a way to act on what it senses. Counting the targets that have a bounded knob shows how many of a system's goals are loops and how many are wishes."
+ },
+ "findings": [
+  {
+   "id": "P1",
+   "concern": "A target with no actuator",
+   "claim": "A goal whose target the system cannot act on is a reference with no output. We count the target goals that have at least one bounded knob. Targets with none must file work, and that is a separate, counted path.",
+   "where": "Chapters on the hierarchy of control (our statement)",
+   "perspective": "systems",
+   "mechanisms": [
+    {
+     "rule": "GOALS-1",
+     "path": "seed/autonomy/goals.json",
+     "how": "each target has a metric, a number and the knobs the system may turn"
+    },
+    {
+     "rule": "GOALS-1",
+     "path": "seed/worker/src/goals.js",
+     "how": "the goal loop reads each goal and moves at most one knob per goal toward its target"
+    }
+   ],
+   "metric": "targets_with_knobs_share",
+   "target": {
+    "op": ">=",
+    "value": 0.5
+   },
+   "prediction": "targets_with_knobs_share >= 0.5 within 72 h"
+  },
+  {
+   "id": "P2",
+   "concern": "Control without reading the result",
+   "claim": "Output that is never compared with the result is not control. The second loop judges its own steps and keeps only those that brought the variable back in limits.",
+   "where": "Chapters on the loop (our statement)",
+   "perspective": "reliability",
+   "mechanisms": [
+    {
+     "rule": "SECOND-LOOP-2",
+     "path": "foundation/ultrastability.py",
+     "how": "every step gets a verdict"
+    },
+    {
+     "rule": "GOALS-1",
+     "path": "seed/worker/src/goals.js",
+     "how": "a knob move is reviewed and reverted when the goal did not move"
+    }
+   ],
+   "metric": "second_loop_kept_share",
+   "target": {
+    "op": ">=",
+    "value": 0.25
+   },
+   "prediction": "second_loop_kept_share >= 0.25 within 72 h"
+  }
+ ]
+}

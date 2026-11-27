@@ -56,6 +56,10 @@ METRICS = {
     "step_versatility_share": "share of declared step-functions that can still move in a direction their steps declare (ops: doctrine files the ladders name)",
     "archive_triaged_share": "share of Ashby's index keywords and Other Index categories with a disposition in doctrine/ashby-archive.json (ASHBY-ARCHIVE-1)",
     "archive_principles_built_share": "share of principles taken from Ashby's journal that are code with a passing probe (doctrine/ashby-archive.json)",
+    "failure_modes_detected_share": "share of failure modes in doctrine/registers.json that have at least one live detector in doctrine/detectors.json (CYBERNETICS-PROGRAM-1)",
+    "ashby_concepts_bound_share": "share of concepts in doctrine/ashby-concepts.json whose every named mechanism resolves to a file and marker in this repository",
+    "managers_closed_share": "share of manager roles in doctrine/managers.json that name code, a clock, a closing probe and the code that settles what they file",
+    "targets_with_knobs_share": "share of target goals in seed/autonomy/goals.json that have at least one bounded knob the system may turn",
     "research_findings_met_share": "share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1)",
 }
 NOW = lambda: dt.datetime.now(dt.timezone.utc)
@@ -201,6 +205,7 @@ def measures(root=REPO, pol=None) -> dict:
     except (OSError, ValueError, KeyError, TypeError) as e:
         print(f"research: archive register unreadable: {e}", file=sys.stderr)
         m["archive_triaged_share"] = m["archive_principles_built_share"] = {"value": None, "n": 0, "source": "doctrine/ashby-archive.json (unreadable)"}
+    m.update(_register_shares(root))
     fs = [f for st in studies(root, pol) for f in st.get("findings", []) if f.get("metric") != "research_findings_met_share"]
     met = [f for f in fs if verdict(f, m)["status"] == "met"]
     m["research_findings_met_share"] = {"value": round(len(met) / len(fs), 3) if fs else None, "n": len(fs), "source": "research/studies, each finding measured as above"}
@@ -219,6 +224,53 @@ def essential_measured(rows: list[dict], end, days=7) -> dict:
             last[r["var"]] = r
     known = sum(1 for r in last.values() if r.get("value") is not None and not r.get("unmeasured"))
     return {"value": round(known / len(last), 3) if last else None, "n": len(last), "source": f"ops/ultrastability.jsonl, latest reading per variable in the last {days} days"}
+
+
+def _json(path: Path):
+    return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else None
+
+
+def _resolves(root: Path, mech: str) -> bool:
+    """A mechanism 'path::marker' resolves when the file exists and, if a marker is named, the marker text occurs in it."""
+    path, _, marker = str(mech).partition("::")
+    f = root / path
+    if not f.is_file():
+        return False
+    return not marker or marker.strip('"') in f.read_text(encoding="utf-8", errors="replace")
+
+
+def _register_shares(root: Path) -> dict:
+    """CYBERNETICS-PROGRAM-1: the four readings the cybernetics studies stand on, each from a register in this repository; an unreadable register is n=0, never a pass."""
+    out, miss = {}, lambda src: {"value": None, "n": 0, "source": f"{src} (missing or unreadable)"}
+    try:
+        reg, det = _json(root / "doctrine/registers.json"), _json(root / "doctrine/detectors.json")
+        modes = [x["id"] for x in (reg or {}).get("failure_modes", [])]
+        covered = {x.get("failure_mode") for x in (det or {}).get("detectors", [])}
+        out["failure_modes_detected_share"] = {"value": round(sum(1 for i in modes if i in covered) / len(modes), 3), "n": len(modes), "source": "doctrine/registers.json against doctrine/detectors.json"} if modes and det else miss("doctrine/registers.json")
+    except (OSError, ValueError, KeyError) as e:
+        print(f"research: failure-mode register unreadable: {e}", file=sys.stderr)
+        out["failure_modes_detected_share"] = miss("doctrine/registers.json")
+    try:
+        cs = (_json(root / "doctrine/ashby-concepts.json") or {}).get("concepts", [])
+        out["ashby_concepts_bound_share"] = {"value": round(sum(1 for c in cs if c.get("mechanisms") and all(_resolves(root, x) for x in c["mechanisms"])) / len(cs), 3), "n": len(cs), "source": "doctrine/ashby-concepts.json, each mechanism read in the repository"} if cs else miss("doctrine/ashby-concepts.json")
+    except (OSError, ValueError, KeyError, TypeError) as e:
+        print(f"research: concept map unreadable: {e}", file=sys.stderr)
+        out["ashby_concepts_bound_share"] = miss("doctrine/ashby-concepts.json")
+    try:
+        roles = ((_json(root / "doctrine/managers.json") or {}).get("roles") or {})
+        out["managers_closed_share"] = {"value": round(sum(1 for r in roles.values() if r.get("runs") and r.get("clock") and r.get("probe") and r.get("settles")) / len(roles), 3), "n": len(roles), "source": "doctrine/managers.json"} if roles else miss("doctrine/managers.json")
+    except (OSError, ValueError, AttributeError) as e:
+        print(f"research: managers register unreadable: {e}", file=sys.stderr)
+        out["managers_closed_share"] = miss("doctrine/managers.json")
+    try:
+        g = _json(root / "seed/autonomy/goals.json") or {}
+        tg = [x["id"] for x in g.get("goals", []) if x.get("level") == "target"]
+        withk = {k.get("goal_id") for k in g.get("knobs", [])}
+        out["targets_with_knobs_share"] = {"value": round(sum(1 for i in tg if i in withk) / len(tg), 3), "n": len(tg), "source": "seed/autonomy/goals.json"} if tg else miss("seed/autonomy/goals.json")
+    except (OSError, ValueError, KeyError) as e:
+        print(f"research: goals unreadable: {e}", file=sys.stderr)
+        out["targets_with_knobs_share"] = miss("seed/autonomy/goals.json")
+    return out
 
 
 def verdict(finding: dict, ms: dict) -> dict:
