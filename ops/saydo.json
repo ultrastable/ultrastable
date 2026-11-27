@@ -1,7 +1,7 @@
 {
- "at": "2026-11-27T03:43:42Z",
- "gaps": 7,
- "match_share": 0.987,
+ "at": "2026-11-27T04:10:05Z",
+ "gaps": 9,
+ "match_share": 0.984,
  "sources": {
   "changes": [
    {
@@ -163,7 +163,7 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 432
+    "total": 434
    }
   ],
   "loops": [
@@ -246,6 +246,15 @@
     "external": [],
     "failing": [],
     "id": "DRAIN-ALL-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "PR-NEVER-LOSE-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -480,10 +489,12 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation claimcode --check: FAIL agents/AGENTS.md:42: states a number, cadence or guarantee with no registered claim and probe: - **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a proble"
+    ],
     "id": "WORDS-MATCH-CODE-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -901,6 +912,15 @@
     "checks": 1,
     "external": [],
     "failing": [],
+    "id": "ASHBY-KERNEL-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
     "id": "DOC-CONSUMED-1",
     "missing": [],
     "ok": true,
@@ -918,10 +938,12 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation claimcode --check: FAIL agents/AGENTS.md:42: states a number, cadence or guarantee with no registered claim and probe: - **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a proble"
+    ],
     "id": "NO-FABRICATION-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -1083,7 +1105,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 110.1 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 110.6 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1156,20 +1178,20 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 432
+   "total": 434
   },
   "loops": {
    "gaps": 1,
    "total": 1
   },
   "rules": {
-   "gaps": 4,
-   "total": 104
+   "gaps": 6,
+   "total": 106
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 556
+ "total": 560
 }
