@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-executor-trailers-ride-in-the-pr-body-because-squash-merges-",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "Executor trailers ride in the PR body because squash merges take it",
+  "body": "The repo squashes with PR_BODY as the message, so trailers only on the branch commit were lost at merge; standards --commits now fails an executor merge that lacks them (ZHC-R7 #2672).",
+  "probe": "grep:foundation/executor.py::ZHC-R7: squash merges take the PR body",
+  "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+ },
+ "kind": "decision",
+ "title": "Executor trailers ride in the PR body because squash merges take it",
+ "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+}

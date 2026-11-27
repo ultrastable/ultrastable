@@ -728,7 +728,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             code, o = sh(["git", "push", "--force-with-lease", "-u", "origin", branch], root)
         if code:
             raise RuntimeError("push failed: " + o[-300:])
-        body = f"Closes #{n}\n\nExecutor run {now()}. Checks passed before the PR: {', '.join(' '.join(c) for c in (checks if checks is not None else CHECKS))}.\nProvenance: {LOG} on branch loop-evidence. The lane merges on green CI."
+        body = f"Closes #{n}\n\nExecutor run {now()}. Checks passed before the PR: {', '.join(' '.join(c) for c in (checks if checks is not None else CHECKS))}.\nProvenance: {LOG} on branch loop-evidence. The lane merges on green CI.\n\n" + trailers(n, row)  # ZHC-R7: squash merges take the PR body (repo setting PR_BODY), so the trailers ride there too
         code, o = sh(["gh", "pr", "create", "-R", repo, "--draft", "--base", "main", "--head", branch, "--title", f"{out.get('summary', issue['title'])} (#{n})", "--body", body], root)
         if code:
             raise RuntimeError("pr create failed: " + o[-300:])
