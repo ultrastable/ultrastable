@@ -20,12 +20,15 @@ def _key(question):
 
 class ConclusionCache:
     def __init__(self, store, root):
-        self.s, self.root = store, os.path.abspath(root)
+        self.s, self.root = store, os.path.realpath(root)
 
     def put(self, question, answer, evidence_files):
         ev = {}
         for rel in sorted(set(evidence_files)):
-            ev[rel] = sha_file(os.path.join(self.root, rel))
+            full = os.path.realpath(os.path.join(self.root, rel))
+            if os.path.commonpath([self.root, full]) != self.root:
+                raise ValueError(f"evidence outside the repository: {rel}")  # a cached answer may not depend on files we cannot hash-check
+            ev[rel] = sha_file(full)
         self.s.db.execute(
             "INSERT OR REPLACE INTO conclusion(key,question,answer,evidence,ts,hits,audited_ok,audited_bad)"
             " VALUES(?,?,?,?,?,0,0,0)",

@@ -12,7 +12,8 @@ doctrine/constitution.json is the statement. This engine ships in every seed and
                instructions import it; a standing rule written into the instructions with no entry here fails.
   --render     write doctrine/CONSTITUTION.md from the JSON (agents import it, so a session starts knowing the system without being told).
   --assemble   write org/constitution.json: the live configuration the boot reads (rungs, tick steps, detector list, conditions).
-  --probe      run every {probe: [...]} binding in the system root; exit 1 when one fails.
+  --probe      run every {probe: [argv]} binding in the system root; exit 1 when one fails. A probe is a kit test only (`node --test <file>`
+               or `python3 -m unittest <module>`), run by scripts/system.py run_test: argv, no shell, a timeout.
 
 Binding forms: {file, has?}, {test: "path::name"}, {probe: [argv]}, and {platform: true} (verified only when a platform tree is given).
 """
@@ -20,7 +21,6 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
 import sys
 from pathlib import Path
 
@@ -53,8 +53,8 @@ def resolves(root: Path, b: dict, platform: Path | None = None) -> tuple[bool, s
         f, _, name = b["test"].partition("::")
         t = _read(root, f)
         return (t is not None and name in t), f"test {b['test']}"
-    if "probe" in b:
-        return bool(b["probe"]), f"probe {' '.join(b['probe'])}"
+    if "probe" in b:  # only a kit test, run the one way scripts/system.py runs a test (argv, no shell, a timeout)
+        return _system(root).allowed(Path(root), list(b["probe"])), f"probe {' '.join(b['probe'])} (a kit test: node --test or python3 -m unittest)"
     if "file" in b:
         t = _read(root, b["file"])
         if t is None:
@@ -89,16 +89,30 @@ def _validate(v, s: dict, at: str) -> list[str]:
     return e
 
 
+def _system(root: Path | None = None):
+    """scripts/system.py reads the code of record (tick order, boot stages) and owns the one test runner; this engine reuses it, never a copy.
+
+    It is loaded from the root being checked, so a boot that imported this module once (bootstrap.py `constitute`, cached in sys.modules)
+    still reads the system it is booting and never a tree an earlier boot used and then removed. A root with no scripts/system.py falls back to
+    the copy beside this file."""
+    import importlib.util
+    p = Path(root) / "scripts" / "system.py" if root is not None else None
+    if p is None or not p.is_file():
+        p = Path(__file__).resolve().parent / "system.py"
+    spec = importlib.util.spec_from_file_location("ultrastable_system", p)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def _steps(root: Path) -> list[str]:
-    t = _read(root, "worker/src/tick.js") or ""
-    i = t.find("export const STEPS")
-    return re.findall(r"^  (?:async )?([a-z_]+)\(db, ctx", t[i:], re.M) if i >= 0 else []
+    """The order a tick runs (STEP_ORDER in worker/src/tick.js) over the step functions STEPS defines: a name in one and not the other shows up."""
+    order, defined = _system(root).step_names(Path(root))
+    return [n for n in order if n in defined] + [n for n in defined if n not in order]
 
 
 def _boot_stages(root: Path) -> list[str]:
-    t = _read(root, "bootstrap/bootstrap.py") or ""
-    m = re.search(r"for name in \(([^)]*)\):\s*\n\s*st = boot\.guard", t)
-    return re.findall(r'"([a-z_]+)"', m.group(1)) if m else []
+    return [n for n, _ in _system(root).boot_stages(Path(root), guarded=False)]
 
 
 def _ignition_stages(root: Path) -> list[str]:
@@ -217,12 +231,12 @@ def check(root: Path = SEED, platform: Path | None = None, instruction_files: li
     if _read(root, PROSE) != render(c):
         errs.append(f"{PROSE} is stale: run python3 scripts/constitution.py --render")
     claude = _read(root, "CLAUDE.md")
-    if claude is not None and IMPORT_LINE not in claude.splitlines():
-        import sys as _sys
-        _sys.path.insert(0, str(Path(__file__).resolve().parent))
-        import agentrules  # AGENT-ENTRY-1: the entry names the constitution; an agent fetches it when the task needs it
-        if IMPORT_LINE.lstrip("@") not in agentrules.named(root, "CLAUDE.md"):
-            errs.append(f"CLAUDE.md neither imports nor names {IMPORT_LINE.lstrip('@')}: a session could not find the constitution")
+    # a CLAUDE.md that is only an @AGENTS.md pointer loads the constitution through the file it imports
+    named = claude is not None and any(
+        "doctrine/CONSTITUTION.md" in (_read(root, i) or "") for i in re.findall(r"^@(\S+)", claude, re.M)
+    )
+    if claude is not None and IMPORT_LINE not in claude.splitlines() and not named:
+        errs.append(f"CLAUDE.md does not import {IMPORT_LINE}: a session would start without the constitution")
 
     # a standing rule written into the instructions needs an entry here (the shrink-only baseline lists those not yet mapped)
     if baseline is None:
@@ -280,13 +294,13 @@ def assemble(root: Path = SEED) -> dict:
 
 
 def probes(root: Path = SEED) -> list[str]:
-    errs = []
+    errs, system = [], _system(root)
     for r in load(root)["rules"]:
         for b in r["detector"] + r["remediation"]:
             if "probe" in b:
-                p = subprocess.run(b["probe"], cwd=root, capture_output=True, text=True, timeout=300)
-                if p.returncode:
-                    errs.append(f"rule {r['id']}: probe {' '.join(b['probe'])} exited {p.returncode}: {(p.stderr or p.stdout)[-200:]}")
+                ok, why = system.run_test(Path(root), list(b["probe"]))
+                if not ok:
+                    errs.append(f"rule {r['id']}: {why}")
     return errs
 
 

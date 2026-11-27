@@ -1989,11 +1989,11 @@
       "surface": "agents/AGENTS.md",
       "text": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
       "probe": [
-        "file:AGENTS.md",
         "file:seed/SYSTEM.md",
         "file:docs/doctrine/GUIDING-DIRECTIVE.md",
         "file:doctrine/kernel-8.2.1.md",
         "file:docs/PROJECT-MEMORY.md",
+        "file:agents/PROJECT-INSTRUCTIONS.md",
         "file:docs/BOOTSTRAP-NO-MEMORY.md"
       ],
       "bound_by": "cited"
@@ -2583,7 +2583,7 @@
         "file:doctrine/coldstart.json",
         "file:seed/worker/src/visibility.js",
         "file:docs/doctrine/SYSTEM.md",
-        "file:AGENTS.md",
+        "file:CLAUDE.md",
         "file:doctrine/schemas/coldstart.schema.json",
         "file:foundation/coldstart.py"
       ],
@@ -3041,29 +3041,9 @@
       "bound_by": "cited"
     },
     {
-      "id": "cited-b4d6cc4189",
+      "id": "cited-bce1597ca0",
       "surface": "seed/doctrine/SYSTEM.md",
-      "text": "`doctrine/coldstart.json` (JSON Schema `doctrine/schemas/coldstart.schema.json`) or the code they name drift apart. The owner never",
-      "probe": [
-        "file:doctrine/coldstart.json",
-        "file:doctrine/schemas/coldstart.schema.json"
-      ],
-      "bound_by": "cited"
-    },
-    {
-      "id": "cited-94e4bb2cbb",
-      "surface": "seed/doctrine/SYSTEM.md",
-      "text": "default in effect, never a task in prose (`doctrine/open-loops.json`, `foundation/data/needs-you.json`). Anything else handed to a person",
-      "probe": [
-        "file:doctrine/open-loops.json",
-        "file:foundation/data/needs-you.json"
-      ],
-      "bound_by": "cited"
-    },
-    {
-      "id": "cited-a191183c3c",
-      "surface": "seed/doctrine/SYSTEM.md",
-      "text": "`python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability, when this",
+      "text": "Platform: `python3 -m foundation coldstart --check` runs in `checks` on every change. It fails when the seed stops carrying a capability,",
       "probe": [
         "file:foundation/coldstart.py",
         "grep:.github/workflows/checks.yml::foundation[ .]coldstart\\b"
@@ -3192,11 +3172,11 @@
       "surface": "seed/agents/AGENTS.md",
       "text": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
       "probe": [
-        "file:AGENTS.md",
         "file:seed/SYSTEM.md",
         "file:docs/doctrine/GUIDING-DIRECTIVE.md",
         "file:doctrine/kernel-8.2.1.md",
         "file:docs/PROJECT-MEMORY.md",
+        "file:agents/PROJECT-INSTRUCTIONS.md",
         "file:docs/BOOTSTRAP-NO-MEMORY.md"
       ],
       "bound_by": "mirror",
@@ -3821,7 +3801,7 @@
         "file:doctrine/coldstart.json",
         "file:seed/worker/src/visibility.js",
         "file:docs/doctrine/SYSTEM.md",
-        "file:AGENTS.md",
+        "file:CLAUDE.md",
         "file:doctrine/schemas/coldstart.schema.json",
         "file:foundation/coldstart.py"
       ],
