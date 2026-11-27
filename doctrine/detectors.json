@@ -1115,6 +1115,23 @@
       "root_cause": "a loop's clock has no reading in the published record (no route that can read its beats from this host)",
       "owner": "operations",
       "remedy": "Give the clock a route this host can read (a health field, a workflow, a token), so /demo and /live show its real status."
+    },
+    {
+      "id": "canon-late",
+      "failure_mode": "fm-paper-late",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "research",
+        "--probe-canon",
+        "--apply"
+      ],
+      "timeout": 120,
+      "root_cause": "a step of the canon research program is late or unmeasured",
+      "owner": "product-manager",
+      "remedy": "Read the probe output, fix the stalled loop, add a regression test."
     }
   ]
 }
