@@ -112,6 +112,17 @@ class Ideas(unittest.TestCase):
         self.assertFalse(r["refreshed"])
         self.assertNotIn("tok-SECRET", json.dumps(r))
 
+    def test_tick_samples_read_through_the_oidc_route_when_the_secret_is_refused(self):
+        """FREE-TIER-ROUTE-1: the same select-only read, through a call that needs no stored secret."""
+        seen = []
+        def call(path, body=None):
+            seen.append(path)
+            if body is None:
+                return {"result": [{"uuid": "u-1"}]}
+            return {"result": [{"results": [{"resource": "d1_rows_read", "u": 1200000}, {"resource": "ai_neurons", "u": 9}]}]}
+        self.assertEqual(ideas._tick_samples("acct", "", T, call=call), {"d1_rows_read": 1200000})
+        self.assertEqual(seen, ["?name=ultrastable-org", "/u-1/query"])
+
 
 if __name__ == "__main__":
     unittest.main()
