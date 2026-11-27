@@ -2426,7 +2426,7 @@ export default {
     "summary": [
      "Many people believe that more feedback loops make an autonomous system more stable. This paper argues otherwise: loops that adapt at the same time on shared settings undo each other's work. Many loops are stable only when something keeps their trials apart and judges each change against the whole system.",
      "Ashby kept a journal for 44 years: 7,189 pages, indexed by his own hand. Its entries on the multistable system, DAMS and society return again and again to one problem: many parts adapting at once, each judging its change by a common indicator, undo each other. We took the archive's index as data, stated each principle in our own words with Ashby's page numbers, checked every one against this system's code, and built what was missing: a disperser that lets only one trial run on a shared step-function, a reading of the collisions that happened before it, and a search whose noise grows with the deviation.",
-     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 6 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
+     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 7 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
     ],
     "problem": [
      "Ashby's journal works out, page by page, how a system made of many parts can adapt: a multistable system whose parts adapt separately, kept apart by dispersion, testing the whole against the whole, losing versatility as step-functions are used up, and needing noise in proportion to how far an essential variable has strayed. [1]",
@@ -2439,7 +2439,8 @@ export default {
      "Running out of step-functions. Ashby: some step-functions can be used only once, so the system tends gradually to lose versatility (p. 3436). [1]",
      "A search that ignores how far out the variable is. Ashby: an essential variable may inject noise proportional to its deviation (p. 3410), and specialised essential variables gain from using noise (p. 3383). A search that draws uniformly treats a near miss like a collapse. [1]",
      "Taking from an archive what is convenient. Ashby's index is the map of his journal; a system that says it has incorporated the journal has to account for every entry of that map, not only the ones it liked. [1]",
-     "Principles that stay words. Ashby: 'knowing' means controlling (p. 4292); knowledge must mean control if it is to be objective (p. 4303). A principle taken from the journal counts only when it is code with a probe that finds it. [1]"
+     "Principles that stay words. Ashby: 'knowing' means controlling (p. 4292); knowledge must mean control if it is to be objective (p. 4303). A principle taken from the journal counts only when it is code with a probe that finds it. [1]",
+     "A concept in the register that the code does not carry. A concept named in the register is a claim that the code implements it. We read every mechanism the register names and count the concepts whose mechanisms all resolve in the repository. [1]"
     ],
     "approach": [
      "The approach follows Ashby's ultrastable system [2]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
@@ -2451,7 +2452,8 @@ export default {
      "Running out of step-functions: versatility counts the step-functions that can still move in a declared direction (ASHBY-ARCHIVE-1, `foundation/ultrastability.py`)",
      "A search that ignores how far out the variable is: the search draws first within a window around the current value whose width grows with the deviation, then over the whole range (ASHBY-ARCHIVE-1, `foundation/ultrastability.py`)",
      "Taking from an archive what is convenient: every keyword and category gets a disposition; pending ones become work items a few per pass, most-referenced first (ASHBY-ARCHIVE-1, `foundation/ashbyarchive.py`)",
-     "Principles that stay words: each principle names the code that carries it and a probe; the check fails a built principle whose probe does not pass (ASHBY-ARCHIVE-1, `doctrine/ashby-archive.json`)"
+     "Principles that stay words: each principle names the code that carries it and a probe; the check fails a built principle whose probe does not pass (ASHBY-ARCHIVE-1, `doctrine/ashby-archive.json`)",
+     "A concept in the register that the code does not carry: each concept lists the mechanisms that implement it (ASHBY-KERNEL-1, `doctrine/ashby-concepts.json`); the check fails when a mechanism or marker is gone (ASHBY-KERNEL-1, `foundation/ashbymap.py`)"
     ],
     "practice": [
      "To apply this to your own system, one step per problem:"
@@ -2462,10 +2464,11 @@ export default {
      "Running out of step-functions. Put in place: versatility counts the step-functions that can still move in a declared direction. Check it with one number, share of declared step-functions that can still move in a direction their steps declare (ops: doctrine files the ladders name), and set a limit for it (>= 0.8 is the limit we use).",
      "A search that ignores how far out the variable is. Put in place: the search draws first within a window around the current value whose width grows with the deviation, then over the whole range. Check it with one number, share of second-order steps that brought the variable back inside its limits and were kept, and set a limit for it (>= 0.25 is the limit we use).",
      "Taking from an archive what is convenient. Put in place: every keyword and category gets a disposition; pending ones become work items a few per pass, most-referenced first. Check it with one number, share of Ashby's index keywords and Other Index categories with a disposition in doctrine/ashby-archive.json (ASHBY-ARCHIVE-1), and set a limit for it (>= 1.0 is the limit we use).",
-     "Principles that stay words. Put in place: each principle names the code that carries it and a probe; the check fails a built principle whose probe does not pass. Check it with one number, share of principles taken from Ashby's journal that are code with a passing probe (doctrine/ashby-archive.json), and set a limit for it (>= 1.0 is the limit we use)."
+     "Principles that stay words. Put in place: each principle names the code that carries it and a probe; the check fails a built principle whose probe does not pass. Check it with one number, share of principles taken from Ashby's journal that are code with a passing probe (doctrine/ashby-archive.json), and set a limit for it (>= 1.0 is the limit we use).",
+     "A concept in the register that the code does not carry. Put in place: each concept lists the mechanisms that implement it. Check it with one number, share of concepts in doctrine/ashby-concepts.json whose every named mechanism resolves to a file and marker in this repository, and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 3 of 6 of these checks pass today. Share of the second loop's parameter steps in the last 7 days that changed a step-function another variable's trial already held (MULTISTABLE-1) reads 0.462 (n = 104; source: ops/ultrastability.jsonl steps against doctrine/ultrastability.json ladders). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.875 (n = 200; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Share of declared step-functions that can still move in a direction their steps declare (ops: doctrine files the ladders name) reads 1.0 (n = 13; source: doctrine/ultrastability.json ladders and the files they name). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 3 of 7 of these checks pass today. Share of the second loop's parameter steps in the last 7 days that changed a step-function another variable's trial already held (MULTISTABLE-1) reads 0.462 (n = 104; source: ops/ultrastability.jsonl steps against doctrine/ultrastability.json ladders). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.875 (n = 200; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Share of declared step-functions that can still move in a direction their steps declare (ops: doctrine files the ladders name) reads 1.0 (n = 13; source: doctrine/ultrastability.json ladders and the files they name). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. The register is built from the archive's index pages, not from the handwritten page images; each principle cites the pages its index entries name. The journal's wording is not copied: principles are stated in our own words.",
@@ -2511,7 +2514,7 @@ export default {
     "data": "25 volumes, 7,189 pages, 678 primary keywords and an Other Index of subject categories, read from the archive's index pages at its stated crawl delay; the register is doctrine/ashby-archive.json.",
     "summary": "Ashby's journal works out, page by page, how a system made of many parts can adapt: a multistable system whose parts adapt separately, kept apart by dispersion, testing the whole against the whole, losing versatility as step-functions are used up, and needing noise in proportion to how far an essential variable has strayed."
    },
-   "abstract": "W. Ross Ashby (The W. Ross Ashby Digital Archive (The Estate of W. Ross Ashby)): Ashby's journal works out, page by page, how a system made of many parts can adapt: a multistable system whose parts adapt separately, kept apart by dispersion, testing the whole against the whole, losing versatility as step-functions are used up, and needing noise in proportion to how far an essential variable has strayed. Ashby kept a journal for 44 years: 7,189 pages, indexed by his own hand. Its entries on the multistable system, DAMS and society return again and again to one problem: many parts adapting at once, each judging its change by a common indicator, undo each other. We took the archive's index as data, stated each principle in our own words with Ashby's page numbers, checked every one against this system's code, and built what was missing: a disperser that lets only one trial run on a shared step-function, a reading of the collisions that happened before it, and a search whose noise grows with the deviation. 3 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "abstract": "W. Ross Ashby (The W. Ross Ashby Digital Archive (The Estate of W. Ross Ashby)): Ashby's journal works out, page by page, how a system made of many parts can adapt: a multistable system whose parts adapt separately, kept apart by dispersion, testing the whole against the whole, losing versatility as step-functions are used up, and needing noise in proportion to how far an essential variable has strayed. Ashby kept a journal for 44 years: 7,189 pages, indexed by his own hand. Its entries on the multistable system, DAMS and society return again and again to one problem: many parts adapting at once, each judging its change by a common indicator, undo each other. We took the archive's index as data, stated each principle in our own words with Ashby's page numbers, checked every one against this system's code, and built what was missing: a disperser that lets only one trial run on a shared step-function, a reading of the collisions that happened before it, and a search whose noise grows with the deviation. 3 of 7 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
    "window": {
     "start": "2026-11-19T01:23:24Z",
     "end": "2026-11-26T21:42:44Z",
@@ -2678,10 +2681,41 @@ export default {
      "n": 10,
      "source": "doctrine/ashby-archive.json principles and their probes",
      "item": null
+    },
+    {
+     "id": "J7",
+     "concern": "A concept in the register that the code does not carry",
+     "claim": "A concept named in the register is a claim that the code implements it. We read every mechanism the register names and count the concepts whose mechanisms all resolve in the repository.",
+     "where": "This system's concept register (our statement)",
+     "perspective": "systems",
+     "mechanisms": [
+      {
+       "rule": "ASHBY-KERNEL-1",
+       "path": "doctrine/ashby-concepts.json",
+       "how": "each concept lists the mechanisms that implement it"
+      },
+      {
+       "rule": "ASHBY-KERNEL-1",
+       "path": "foundation/ashbymap.py",
+       "how": "the check fails when a mechanism or marker is gone"
+      }
+     ],
+     "metric": "ashby_concepts_bound_share",
+     "target": {
+      "op": ">=",
+      "value": 1.0
+     },
+     "prediction": "ashby_concepts_bound_share >= 1 within 72 h",
+     "metric_label": "share of concepts in doctrine/ashby-concepts.json whose every named mechanism resolves to a file and marker in this repository",
+     "measured": 0.902,
+     "status": "not-met",
+     "n": 41,
+     "source": "doctrine/ashby-concepts.json, each mechanism read in the repository",
+     "item": "Q-RES-ashby-journal-J7"
     }
    ],
    "met": 3,
-   "total": 6,
+   "total": 7,
    "limits": [
     "Reading. The register is built from the archive's index pages, not from the handwritten page images; each principle cites the pages its index entries name. The journal's wording is not copied: principles are stated in our own words.",
     "Coverage. Every keyword and category carries a disposition (mapped, background, not applicable or pending); pending ones are filed as work a few per pass, most-referenced first, so the share triaged rises over time rather than being claimed at once.",
@@ -2712,20 +2746,30 @@ export default {
     {
      "finding": "J3",
      "rule": "ASHBY-KERNEL-1",
-     "score": 0.126
+     "score": 0.127
     },
     {
      "finding": "J3",
      "rule": "TENANT-STANDARD-1",
-     "score": 0.112
+     "score": 0.111
     },
     {
      "finding": "J5",
      "rule": "REDTEAM-1",
      "score": 0.102
+    },
+    {
+     "finding": "J7",
+     "rule": "PR-NEVER-LOSE-1",
+     "score": 0.121
+    },
+    {
+     "finding": "J7",
+     "rule": "LIVE-LINKS-1",
+     "score": 0.107
     }
    ],
-   "leads_route": "lexical-512-1awgv4d",
+   "leads_route": "lexical-512-wa7zfr",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
@@ -3361,147 +3405,6 @@ export default {
     }
    ],
    "leads_route": "lexical-512-noyd00",
-   "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
-  },
-  {
-   "study_id": "ashby-journal-2026",
-   "slug": "ashby-journal-2026",
-   "order": 11,
-   "title": "Ashby's journal as a specification: how much of it does this system's code implement?",
-   "sections": {
-    "summary": [
-     "Many people believe that the classic cybernetics literature is history; it has nothing to say about modern AI systems. This paper argues otherwise: ashby's concepts are specific enough to be implemented as code and checked: essential variables, step-functions, requisite variety, reducibility. A register that binds each concept to a mechanism shows how much of the theory a running system actually carries.",
-     "Ashby kept a research journal for forty years and indexed it by concept. The index is a list of ideas he thought worth keeping; for a system built to be ultrastable it is a list of design questions. We bound each concept we use to code and count how many of them are bound.",
-     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 1 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
-    ],
-    "problem": [
-     "The archive of Ashby's journal and card indexes is public. We took the concepts we could turn into mechanisms, stated each in our own words, linked it, and bound it to the code that implements it. Some index categories are not applied because they concern people or society, and the register says so. [2]",
-     "This matters now because the usual answer, classic cybernetics is only history, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
-     "The problems in detail:"
-    ],
-    "problem_list": [
-     "A concept in the register that the code does not carry. A concept named in the register is a claim that the code implements it. We read every mechanism the register names and count the concepts whose mechanisms all resolve in the repository. [2]"
-    ],
-    "approach": [
-     "The approach follows Ashby's ultrastable system [1]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
-     "Ultrastable is that design as working code [2]. For each problem above it uses a specific mechanism:"
-    ],
-    "approach_list": [
-     "A concept in the register that the code does not carry: each concept lists the mechanisms that implement it (ASHBY-KERNEL-1, `doctrine/ashby-concepts.json`); the check fails when a mechanism or marker is gone (ASHBY-KERNEL-1, `foundation/ashbymap.py`)"
-    ],
-    "practice": [
-     "To apply this to your own system, one step per problem:"
-    ],
-    "practice_list": [
-     "A concept in the register that the code does not carry. Put in place: each concept lists the mechanisms that implement it. Check it with one number, share of concepts in doctrine/ashby-concepts.json whose every named mechanism resolves to a file and marker in this repository, and set a limit for it (>= 1.0 is the limit we use)."
-    ],
-    "practice_note": [
-     "In our own system, 0 of 1 of these checks pass today. Share of concepts in doctrine/ashby-concepts.json whose every named mechanism resolves to a file and marker in this repository reads 0.902 (n = 41; source: doctrine/ashby-concepts.json, each mechanism read in the repository). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
-    ],
-    "tradeoffs": [
-     "Source. The archive reserves all rights, so nothing in the journal is reproduced; each concept is paraphrased and linked. Which concepts are worth implementing is our judgment.",
-     "Binding. A concept is bound when each mechanism it names resolves to a file and marker here; it does not show the mechanism works, which is the job of the other papers.",
-     "Coverage. Index categories the register lists as not applied are excluded from the count and the reason is recorded.",
-     "Source. Own R&D question set, regenerated from this system's records, version 2026-11-27."
-    ],
-    "action": [
-     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
-     "Start a system of your own on the same foundation: https://ultrastable.io/start",
-     "Follow new papers by feed: https://ultrastable.io/research.atom"
-    ]
-   },
-   "references": [
-    {
-     "key": "ashby1952",
-     "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
-     "url": "https://archive.org/details/designforbrain00ashb"
-    },
-    {
-     "key": "ultrastable",
-     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
-     "url": "https://github.com/ultrastable/ultrastable"
-    }
-   ],
-   "derived": [
-    87,
-    0
-   ],
-   "study": {
-    "title": "The W. Ross Ashby journal and its indexes, read as a design source",
-    "authors": [
-     "Ultrastable R&D"
-    ],
-    "institution": "Ultrastable",
-    "kind": "own R&D question set, regenerated from this system's records",
-    "version": "2026-11-27",
-    "data": "doctrine/ashby-concepts.json: each concept restated in our own words, bound to code and linked to the archive's index page. The archive's text is not reproduced.",
-    "summary": "The archive of Ashby's journal and card indexes is public. We took the concepts we could turn into mechanisms, stated each in our own words, linked it, and bound it to the code that implements it. Some index categories are not applied because they concern people or society, and the register says so."
-   },
-   "abstract": "Ultrastable R&D (Ultrastable): The archive of Ashby's journal and card indexes is public. We took the concepts we could turn into mechanisms, stated each in our own words, linked it, and bound it to the code that implements it. Some index categories are not applied because they concern people or society, and the register says so. Ashby kept a research journal for forty years and indexed it by concept. The index is a list of ideas he thought worth keeping; for a system built to be ultrastable it is a list of design questions. We bound each concept we use to code and count how many of them are bound. 0 of 1 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
-   "window": {
-    "start": "2026-11-19T01:23:24Z",
-    "end": "2026-11-26T21:42:44Z",
-    "days": 7.85,
-    "prs": 500,
-    "merged": 360,
-    "regime": "driven",
-    "k_self": 0.0,
-    "as_of": "2026-11-27T11:44:52.741Z"
-   },
-   "findings": [
-    {
-     "id": "J1",
-     "concern": "A concept in the register that the code does not carry",
-     "claim": "A concept named in the register is a claim that the code implements it. We read every mechanism the register names and count the concepts whose mechanisms all resolve in the repository.",
-     "where": "This system's concept register (our statement)",
-     "perspective": "systems",
-     "mechanisms": [
-      {
-       "rule": "ASHBY-KERNEL-1",
-       "path": "doctrine/ashby-concepts.json",
-       "how": "each concept lists the mechanisms that implement it"
-      },
-      {
-       "rule": "ASHBY-KERNEL-1",
-       "path": "foundation/ashbymap.py",
-       "how": "the check fails when a mechanism or marker is gone"
-      }
-     ],
-     "metric": "ashby_concepts_bound_share",
-     "target": {
-      "op": ">=",
-      "value": 1.0
-     },
-     "prediction": "ashby_concepts_bound_share >= 1 within 72 h",
-     "metric_label": "share of concepts in doctrine/ashby-concepts.json whose every named mechanism resolves to a file and marker in this repository",
-     "measured": 0.902,
-     "status": "not-met",
-     "n": 41,
-     "source": "doctrine/ashby-concepts.json, each mechanism read in the repository",
-     "item": "Q-RES-ashby-journal-2026-J1"
-    }
-   ],
-   "met": 0,
-   "total": 1,
-   "limits": [
-    "Source. The archive reserves all rights, so nothing in the journal is reproduced; each concept is paraphrased and linked. Which concepts are worth implementing is our judgment.",
-    "Binding. A concept is bound when each mechanism it names resolves to a file and marker here; it does not show the mechanism works, which is the job of the other papers.",
-    "Coverage. Index categories the register lists as not applied are excluded from the count and the reason is recorded.",
-    "Source. Own R&D question set, regenerated from this system's records, version 2026-11-27."
-   ],
-   "leads": [
-    {
-     "finding": "J1",
-     "rule": "PR-NEVER-LOSE-1",
-     "score": 0.12
-    },
-    {
-     "finding": "J1",
-     "rule": "LIVE-LINKS-1",
-     "score": 0.106
-    }
-   ],
-   "leads_route": "lexical-512-1p0kaxc",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {

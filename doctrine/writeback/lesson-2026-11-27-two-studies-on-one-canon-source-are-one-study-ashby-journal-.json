@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-two-studies-on-one-canon-source-are-one-study-ashby-journal-",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "Two studies on one canon source are one study: ashby-journal carries the concept-binding finding as J7",
+  "body": "Tests pass and research --check verified 13 studies: a second study with the same source_id as the canon study was folded into it, so each source has one paper.",
+  "probe": "grep:research/studies/ashby-journal.json::ashby_concepts_bound_share",
+  "session": "session_0156nqDsxJd4poRv2mkbug9e"
+ },
+ "kind": "lesson",
+ "title": "Two studies on one canon source are one study: ashby-journal carries the concept-binding finding as J7",
+ "session": "session_0156nqDsxJd4poRv2mkbug9e"
+}
