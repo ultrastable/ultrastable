@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: docs(handoff): what the resumed specification run shipped, and what it did not (SHIP-PLAN-1) (#2844)
 - 2026-11-27: feat(foundation): hits window, owner-action wording and spec tests (#2843)
 - 2026-11-27: feat(core): ladder, kernel, predict, trust and the other modules cite their requirements (#2839)
 - 2026-11-27: feat(core): claims, elicit, vault, sla and walkthrough reconciled with their requirements (#2838)
