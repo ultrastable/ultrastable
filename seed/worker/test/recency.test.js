@@ -25,3 +25,9 @@ test('stamp adds headers only where a handler set none', async () => {
   const own = stamp(new Response('y', { headers: { 'X-Updated-At': '2026-11-27T09:59:00Z' } }), r);
   assert.equal(own.headers.get('x-updated-at'), '2026-11-27T09:59:00Z'); assert.equal(own.headers.get('x-stale'), null);
 });
+import { tickRecency } from '../src/recency.js';
+test('a tenant stamps its newest finished tick and goes stale after 2 hours', () => {
+  assert.equal(tickRecency({ finished_at: '2026-11-27T09:50:00Z' }, NOW).stale, false);
+  assert.equal(tickRecency({ finished_at: '2026-11-27T07:00:00Z' }, NOW).stale, true);
+  assert.equal(tickRecency(null, NOW).stale, true);
+});

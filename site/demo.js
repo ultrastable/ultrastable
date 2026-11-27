@@ -7,6 +7,8 @@ import { load, overlay } from "./live.js";
 
 const esc = t => String(t == null ? "" : t).replace(/[<>&"']/g, c => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c]));
 const num = v => v == null || Number.isNaN(v) ? "not measured" : String(v);
+import { readingRecency } from "./live.js"; // RECENCY-1
+import { recencyHeaders } from "../seed/worker/src/recency.js";
 export const DEMO_CSS = ".dm-tiles{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)}@media(min-width:720px){.dm-tiles{grid-template-columns:repeat(4,1fr)}}"
   + ".dm-tile{background:var(--sf);border:1px solid var(--line);border-radius:8px;padding:14px}.dm-n{font-size:28px;font-weight:700;line-height:1.1}.dm-l{font-size:14px;color:var(--ink2)}"
   + ".dm-cap{color:var(--ink2);max-width:64ch}.dm-chart{width:100%;height:auto;max-width:720px;display:block}.dm-bar{background:var(--sf2);border-radius:6px;height:14px;overflow:hidden}.dm-bar span{display:block;height:100%;background:var(--good)}"
@@ -61,5 +63,5 @@ export async function demoResponse(u, request, env, shell, HTML, bundleAt = null
   if (request.method !== "GET" && request.method !== "HEAD") return new Response(JSON.stringify({ error: "read-only" }), { status: 405, headers: { "content-type": "application/json; charset=utf-8", allow: "GET, HEAD" } });
   const r = await load(env);
   const body = r ? demoBody(await overlay(JSON.parse(r.body), env, r.generated, Date.now(), bundleAt)) : "<div class=\"head\"><h1>Ultrastable, running right now</h1><p>The record has not been published yet. The <a href=\"/live\">live page</a> shows it as soon as it is.</p></div>";
-  return new Response(shell({ path: "/demo", title: "Demo: Ultrastable running right now", description: "The live record as a dashboard: loops, shipped code by day, backlog and system parts." }, "<style>" + DEMO_CSS + "</style>" + body), { status: r ? 200 : 503, headers: HTML });
+  return new Response(shell({ path: "/demo", title: "Demo: Ultrastable running right now", description: "The live record as a dashboard: loops, shipped code by day, backlog and system parts.", recency: readingRecency(r && r.generated) }, "<style>" + DEMO_CSS + "</style>" + body), { status: r ? 200 : 503, headers: { ...HTML, ...recencyHeaders(readingRecency(r && r.generated)) } });
 }

@@ -22,3 +22,9 @@ test("/roadmap.json carries a recency field", async () => {
   const j = await (await get("/roadmap.json")).json();
   assert.ok(j.recency.updated_at); assert.equal(j.recency.max_age_s, 26 * 3600); assert.equal(typeof j.recency.stale, "boolean");
 });
+import { readingRecency } from "./live.js";
+test("live pages carry the time of their latest reading", () => {
+  const r = readingRecency("2026-11-27T09:00:00Z", Date.parse("2026-11-27T10:00:00Z"));
+  assert.equal(r.updated_at, "2026-11-27T09:00:00Z"); assert.equal(r.stale, false); assert.match(r.schedule, /26 hours/);
+  assert.equal(readingRecency(null).stale, true);
+});

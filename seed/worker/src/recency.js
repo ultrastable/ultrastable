@@ -31,3 +31,8 @@ export function stamp(res, r) {
   for (const [k, v] of Object.entries(recencyHeaders(r))) if (!out.headers.has(k)) out.headers.set(k, v);
   return out;
 }
+
+// RECENCY-1: a tenant's freshness is its newest finished tick.
+export function tickRecency(row, now = Date.now()) {
+  return recency({ updatedAt: row && row.finished_at, maxAgeS: 2 * 3600, schedule: 'Updated by the tick every 10 minutes; older than 2 hours counts as stale', source: 'tick_runs', now });
+}
