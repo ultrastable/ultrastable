@@ -1,5 +1,5 @@
 {
- "at": "2026-11-27T10:00:34Z",
+ "at": "2026-11-27T10:08:37Z",
  "gaps": 6,
  "match_share": 0.989,
  "sources": {
@@ -184,6 +184,15 @@
    }
   ],
   "rules": [
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "AGENT-ENTRY-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
    {
     "checks": 1,
     "external": [],
@@ -1109,7 +1118,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 116.4 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 116.6 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1190,12 +1199,12 @@
   },
   "rules": {
    "gaps": 4,
-   "total": 106
+   "total": 107
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 563
+ "total": 564
 }

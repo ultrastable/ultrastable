@@ -23,7 +23,8 @@ TEMPLATE = REPO / "seed" / "instance-template"
 SEMVER = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 SKIP_PARTS = {"node_modules", "__pycache__", ".git"}
 # What an instance owns. Everything else listed in kernel_paths belongs to the core.
-OWNED = ["instance.json", "domain/", "plugins/", "docs/PROJECT-MEMORY.md", "IDEA.md", "README.md"]
+# IDENTITY-AT-BIRTH-1: the identity files a system adopts at boot (seed/scripts/surfaces.py adopt) are its own from then on.
+OWNED = ["instance.json", "domain/", "plugins/", "docs/PROJECT-MEMORY.md", "IDEA.md", "README.md", "ultrastable.json", "CITATION.cff", "publiccode.yml", "catalog-info.yaml", "llms.txt", "REUSE.toml", "codemeta.json", "CHANGELOG.md", ".ultrastable/"]
 
 
 def _sha(p: Path) -> str:

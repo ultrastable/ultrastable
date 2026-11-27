@@ -145,6 +145,23 @@
     },
     {
       "type": "library",
+      "bom-ref": "pkg:npm/seed",
+      "name": "seed",
+      "purl": "pkg:npm/seed",
+      "scope": "required",
+      "properties": [
+        {
+          "name": "ultrastable:path",
+          "value": "seed"
+        },
+        {
+          "name": "ultrastable:third-party-dependencies",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "bom-ref": "pkg:npm/ultrastable-seed-worker",
       "name": "ultrastable-seed-worker",
       "purl": "pkg:npm/ultrastable-seed-worker",
@@ -178,5 +195,5 @@
       ]
     }
   ],
-  "serialNumber": "urn:uuid:07c2ea35-f83e-5d6f-b3fa-c2f68139cf6e"
+  "serialNumber": "urn:uuid:f7e2ce2d-1a2d-594a-84bf-df5768bdf886"
 }

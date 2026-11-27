@@ -1305,7 +1305,7 @@
       "probes": [
         "file:catalog-info.yaml",
         "grep:seed/catalog-info.yaml::kind: Component",
-        "grep:seed/scripts/surfaces.py::out\\[\"catalog-info.yaml\"\\] = catalog\\(i, st\\)"
+        "grep:seed/scripts/surfaces.py::\\(\"catalog-info.yaml\", None if plat else lambda: catalog\\(i, st\\)\\)"
       ],
       "audited": "2026-11-25"
     },

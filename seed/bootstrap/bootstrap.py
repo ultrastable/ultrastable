@@ -4,6 +4,7 @@
 Stages (the AIOS boot chain, moved from a laptop to a server):
 
   read      IDEA.md + ultrastable.json + autonomy/policy.json   (AIOS: GRUB -> kernel)
+  adopt     a copy of the template takes its own identity and renders its surfaces (IDENTITY-AT-BIRTH-1; a step after read, every run)
   constitute doctrine/constitution.json checked against the code and assembled: what the system is, how it runs, its ladder and its rules (CONSTITUTION-1)
   qualify   the system test (doctrine/VISION.md): not a fit means no roles, no repos, nothing provisioned
   instrument objectives -> metrics -> probes: what the agents work toward and how the clock proves it is turning (OBJECTIVES-1)
@@ -31,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import importlib.util
 import json
 import os
 import re
@@ -175,6 +177,49 @@ class Boot:
             return "blocked", "policy invalid: " + "; ".join(problems)
         return "ok", f"org '{self.org_name}', {len(self.outcomes)} outcome(s), budget {self.budget:g} USD/month"
 
+    def adopt(self):
+        """IDENTITY-AT-BIRTH-1: a copy of the template takes its own identity before anything is decided from it. When ultrastable.json still names
+        the template and this checkout is another repository (scripts/surfaces.py own_repo: IDEA.md `repo:`, the Action's own checkout, the git
+        remote), the identity becomes this system's and every surface is rendered from it (surfaces.adopt, the one implementation the platform's
+        fill also calls). Never in the template or the platform; idempotent: after the first run only where it runs follows (the address a
+        passing verify_live recorded) and a name taken from the repository gives way to the owner's idea."""
+        path = self.root / "scripts" / "surfaces.py"
+        if not path.is_file():
+            return "degraded", "scripts/surfaces.py is missing, so the identity is not rendered"
+        spec = importlib.util.spec_from_file_location("kit_surfaces", path)
+        surf = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(surf)
+        i = self.config.get("identity") or {}
+        if i.get("layer") not in ("template", "seeded-system"):
+            return "ok", f"layer {i.get('layer')}: its identity is kept by its own registry"
+        repo, where = surf.own_repo(self.root)
+        if not repo:
+            return ("degraded", f"this copy still names the template ({i.get('repo')}): its own repository could not be read ({where}); read again next run") \
+                if i.get("layer") == "template" else ("ok", f"identity is {i.get('repo')}'s own; this checkout's repository could not be read ({where})")
+        if repo in surf.TEMPLATE_REPOS:
+            return "ok", f"{repo} is the template or the platform itself and keeps its own identity"
+        if i.get("layer") == "seeded-system" and i.get("repo") != repo:
+            return "ok", f"identity names {i.get('repo')}; this checkout reads as {repo} ({where}); a system's own identity is never rewritten here"
+        own_idea = not getattr(self, "waiting_for_idea", False) and (self.root / "IDEA.md").exists()
+        name = self.idea["front"].get("org_name") if own_idea else None  # the owner's own name for it; otherwise the repository's
+        summary = self.idea["sections"].get("idea", {}).get("prose") if own_idea else None
+        public_url = runs_as = None
+        log = self.out / "boot-log.json"
+        prev = json.loads(log.read_text()) if log.is_file() else {}
+        if any(s.get("stage") == "verify_live" and s.get("status") == "ok" for s in prev.get("stages", [])) and prev.get("live_url"):
+            from urllib.parse import urlparse
+            u = urlparse(prev["live_url"])
+            public_url = f"{u.scheme}://{u.netloc}"
+            runs_as = [{"provider": "cloudflare", "kind": "worker", "name": u.hostname.split(".")[0], "how": "deployed by its own bootstrap"}]
+        try:
+            wrote = surf.adopt(self.root, repo, name=name, summary=summary, public_url=public_url, runs_as=runs_as)
+        except ValueError as e:  # nothing was written; BOOT-2: the boot goes on with the identity it has and tries again next run
+            return "degraded", f"the identity of {repo} was not taken, because {e}; read again next run"
+        self.config = json.loads((self.root / "ultrastable.json").read_text())
+        done = f"took its own identity as {repo} (read from {where}): " + ", ".join(wrote) if wrote else f"identity is {repo}'s own (read from {where}); nothing to change"
+        waits = [msg for _, msg in surf.problems(self.root)]  # a fact the repository lacks holds back only the surfaces that need it
+        return ("degraded", done + "; still waiting: " + " | ".join(waits)) if waits else ("ok", done)
+
     def constitute(self):
         """CONSTITUTION-1: the system reads what it is before it decides anything. The constitution (doctrine/constitution.json) is checked against the
         code it describes and assembled into org/constitution.json (rungs, tick steps, detectors, criticality conditions) for the stages after it.
@@ -199,6 +244,9 @@ class Boot:
         """doctrine/VISION.md: Ultrastable is for systems. Fail closed, before any role is hired or anything is provisioned."""
         self.fit = False
         if not hasattr(self, "idea") or not self.idea["sections"].get("idea", {}).get("prose"):
+            if getattr(self, "waiting_for_idea", False):
+                self.write_config()  # DEPLOY-BUTTON-1: nobody staffed, but the Worker bundles and its first tick completes
+                return "ok", "no idea to test; waiting for IDEA.md; worker/src/config.js written with nobody staffed"
             return "ok", "no idea to test; waiting for IDEA.md"
         have = {}
         for b in self.idea["sections"].get("system test", {}).get("bullets", []):
@@ -437,6 +485,16 @@ class Boot:
         self.runtime = values
         worker = self.root / "worker"
         (worker / "wrangler.jsonc").write_text(fill((worker / "wrangler.template.jsonc").read_text(), values))
+        self.write_config()
+        reg = self.root / "funding" / "registry.json"
+        tmpl = self.root / "funding" / "registry.template.json"
+        if tmpl.exists() and not reg.exists():  # idempotent: never overwrite a maintained registry
+            reg.write_text(tmpl.read_text())
+        return "ok", f"wrote {self.out.relative_to(self.root) if self.out.is_relative_to(self.root) else self.out}/ and worker config"
+
+    def write_config(self):
+        """worker/src/config.js, which worker/src/index.js imports. Written by `write` for a planned system, and by `qualify` while the system
+        waits for its owner's idea (managers null: nobody staffed), so a fresh copy still bundles and deploys (DEPLOY-BUTTON-1)."""
         cfg = {
             "org_slug": self.slug,
             "claim_ttl_minutes": 120,
@@ -448,14 +506,9 @@ class Boot:
             "failure_modes": json.loads((self.root / "autonomy" / "failure-modes.json").read_text()),
             "managers": getattr(self, "managers", None),
         }
-        (worker / "src" / "config.js").write_text(
+        (self.root / "worker" / "src" / "config.js").write_text(
             "// Generated by bootstrap/bootstrap.py from ultrastable.json and autonomy/policy.json. Do not edit.\n"
             f"export default {json.dumps(cfg, indent=2)};\n")
-        reg = self.root / "funding" / "registry.json"
-        tmpl = self.root / "funding" / "registry.template.json"
-        if tmpl.exists() and not reg.exists():  # idempotent: never overwrite a maintained registry
-            reg.write_text(tmpl.read_text())
-        return "ok", f"wrote {self.out.relative_to(self.root) if self.out.is_relative_to(self.root) else self.out}/ and worker config"
 
     def seed_sql(self) -> str:
         lines = ["-- Generated by bootstrap/bootstrap.py. Idempotent (INSERT OR IGNORE).", ""]
@@ -817,6 +870,8 @@ def main(argv=None) -> int:
         st = boot.guard(name, getattr(boot, name))
         if name == "read" and st == "blocked" and not hasattr(boot, "idea"):
             break  # nothing to plan from; the report says why
+        if name == "read":
+            boot.guard("adopt", boot.adopt)  # IDENTITY-AT-BIRTH-1: the copy's own identity before anything is decided from the manifest
         if name == "qualify" and not getattr(boot, "fit", False):
             break  # not a system: stop before staffing or provisioning anything
     boot.finalize()
