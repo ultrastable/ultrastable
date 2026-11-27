@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-the-backup-site-deploy-script-must-ship-the-stamped-entry-mo",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "The backup site deploy script must ship the stamped entry module",
+  "body": "deploy/deploy-site.mjs uploaded site/worker.js directly, so a deploy through it would have dropped the recency stamp that lives in site/edge.js. It now collects modules from site/edge.js and takes main_module and the VERSION check from the collected modules.",
+  "probe": "grep:deploy/deploy-site.mjs::site/edge.js",
+  "session": "session_0156nqDtsm3xWA5HrxzuWq8X"
+ },
+ "kind": "lesson",
+ "title": "The backup site deploy script must ship the stamped entry module",
+ "session": "session_0156nqDtsm3xWA5HrxzuWq8X"
+}
