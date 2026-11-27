@@ -47,10 +47,11 @@ def takeable(repo: str, root=None) -> list[dict]:
     """Open eligible issues of the repository, [] when the daily cap is used."""
     if prs_today(repo) >= MAX_PRS_PER_DAY:
         return []
-    code, out = _gh(["issue", "list", "-R", repo, "--state", "open", "--limit", "200", "--json", "number,title,body,labels,updatedAt"])
+    # REST, not `gh issue list`: it carries author_association and user, which executor.trusted() reads (RULE-OF-TWO-1)
+    code, out = _gh(["api", f"repos/{repo}/issues?state=open&per_page=100"])
     if code:
-        raise RuntimeError("gh issue list failed: " + out[-300:])
-    return [dict(i, updated_at=i["updatedAt"]) for i in json.loads(out) if eligible(i)]
+        raise RuntimeError("gh api issues failed: " + out[-300:])
+    return [i for i in json.loads(out) if "pull_request" not in i and eligible(i)]
 
 
 def pr_body(n: int, row: dict, at: str) -> str:

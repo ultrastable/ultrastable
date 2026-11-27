@@ -1,0 +1,5 @@
+{
+ "id": "Q-REPO-agents-map",
+ "title": "Q-REPO-agents-map: agents/AGENTS.md (155 KB), its seed copy and PROJECT-INSTRUCTIONS.md (104 KB) are past the 32 KiB point where Codex stops reading",
+ "body": "**Owner:** product-manager\n**Trigger:** INSTRUCTIONS-BUDGET-1 merged\n**Done check:** cmd:python3 scripts/instructions_budget.py --zero\n**Closing probe:** cmd:python3 scripts/instructions_budget.py --zero\n**Prediction:** instructions_budget_baseline_files <= 0 within 336 h\n**Out of scope:** changing what any rule requires; deleting a rule that has no code enforcing it\n**Status:** open\n\nProblem: Each standing rule becomes a registry row in doctrine/rules.json with its enforcing check (the 100 rules already name their code); AGENTS.md becomes a map of about 100 lines that points to the registry and the checks; the worker-gate size limit then stops blocking rule edits (Q-ASHBY-rule-text). Work it by PHASED-WORK-1, one slice per rule family, each verified by a different agent."
+}

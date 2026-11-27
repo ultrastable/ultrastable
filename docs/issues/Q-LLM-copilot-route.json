@@ -1,0 +1,5 @@
+{
+ "id": "Q-LLM-copilot-route",
+ "title": "Q-LLM-copilot-route: no key-less frontier route exists after GitHub Models; add Copilot CLI on GITHUB_TOKEN as the first rung where the org policy allows it",
+ "body": "**Owner:** product-manager\n**Trigger:** GitHub Models retired 2026-07-30\n**Done check:** cmd:git grep -q copilot-actions -- doctrine/code-agents.json\n**Closing probe:** cmd:git grep -q copilot-actions -- doctrine/code-agents.json\n**Prediction:** executor_runs_failed_share_7d <= 0.1 within 168 h\n**Out of scope:** buying a model key; changing the Workers AI rungs\n**Status:** open\n\nProblem: Copilot CLI in Actions needs `copilot-requests: write` and an org Copilot plan plus the policy 'Allow use of Copilot CLI billed to the organization'. The adapter must be health-checked with a canary reply validated against a schema each run and demoted for the run on failure (route_down in foundation/agent_ladder.py). The org plan is identity-bound: if the canary fails for policy, file one gate with the default (Workers AI rungs) in effect."
+}

@@ -10,7 +10,7 @@
 //   clean and green (GREEN-GUARD-1) -> squash-merged on the exact head commit.
 // Every call is counted against the invocation's subrequest budget (Workers Free: 50 per invocation).
 import { notGreen } from './greenguard.js';
-import { GENERATED } from './generated.js';
+import { GENERATED, isGenerated } from './generated.js';
 import { ghFetch, mergedAnyway } from './ghfetch.js';  // GH-RETRY-1
 
 const API = 'https://api.github.com';
@@ -52,7 +52,7 @@ export async function reconcile(gh, repo, pr, { generated = GENERATED } = {}) {
   const tree = [];
   for (const f of files.json) {
     const p = f.filename;
-    if (generated.includes(p)) {
+    if (isGenerated(p, generated)) {  // GENERATED-BY-PATTERN-1: a named file or a class of generator-owned files
       const m = await content(gh, repo, p, 'main');
       if (m.error) return { result: 'error', why: m.error };
       tree.push(m.missing ? { path: p, mode: '100644', type: 'blob', sha: null } : { path: p, mode: '100644', type: 'blob', sha: m.sha });

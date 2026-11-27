@@ -39,10 +39,10 @@ const sweepWorld = (prs, detail, extra = {}) => github(
   (m, p) => { const x = /\/git\/ref\/archive\/pr-(\d+)-/.exec(p); return m === 'GET' && x ? [200, { object: { sha: 'sha' + x[1] } }] : null; }, (m, p) => m === 'POST' && p.endsWith('/ready_for_review') ? [200, {}] : null,
   (m, p) => m === 'PATCH' && /\/pulls\/\d+$/.test(p) ? [200, {}] : null, (m, p) => m === 'POST' && p.endsWith('/comments') ? [201, {}] : null, (m) => m === 'DELETE' ? [204, null] : null);
 
-test('US-33-R50: the sweeper owns every pull request on a client branch: it readies a draft, refreshes a branch that is behind, merges a green one, holds one still running, files a tracked item for a loop left open a day, and leaves other branches alone', async () => {
+test('US-33-R50: the sweeper owns every pull request on a client branch: it readies a draft, refreshes a branch that is behind on a strict base, merges a green one, holds one still running, files a tracked item for a loop left open a day, and leaves other branches alone', async () => {
   const prs = [pr(1, 'claude/a'), pr(2, 'feature/b'), pr(3, 'agent/c', { head: { ref: 'agent/c', sha: 'sha3' } }), pr(4, 'worker/d'), pr(5, 'parked/e'), pr(6, 'dependabot/f', { updated_at: ago(30 * 60), created_at: ago(30 * 60) })];
   const detail = { 1: { mergeable_state: 'clean' }, 2: { mergeable_state: 'clean' }, 3: { mergeable_state: 'behind' }, 4: { draft: true, mergeable_state: 'clean' }, 5: { mergeable_state: 'clean' }, 6: { mergeable_state: 'unstable' } };
-  const w = sweepWorld(prs, detail); const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: w.f, now: NOW });
+  const w = sweepWorld(prs, detail); const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: w.f, now: NOW, strictRepos: ['o/r'] });
   assert.deepEqual(r.merged.sort(), ['o/r#1', 'o/r#4', 'o/r#5'].filter(t => t !== 'o/r#4' || true).sort(), 'clean client pull requests merge, a draft first marked ready');
   assert.ok(has(w.calls, 'POST', /\/pulls\/4\/ready_for_review$/)); assert.deepEqual(r.refreshed, ['o/r#3']); assert.ok(has(w.calls, 'PUT', /\/pulls\/3\/update-branch$/));
   assert.ok(!w.calls.some(c => /\/pulls\/2($|\/)/.test(c.path)), 'a branch outside the five client prefixes is never touched');

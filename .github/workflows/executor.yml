@@ -25,7 +25,6 @@ permissions:
   issues: write
   actions: write
   id-token: write  # AI-OIDC-1: Workers AI through the site Worker's /__internal/cf route; the repo's Cloudflare secrets name the retired account
-  models: read  # FREE-LLM-1: GitHub Models over the built-in token, the first and free rung of the code-agent ladder
 jobs:
   # SPARK-QUEUE-1: the chain cap is decided outside the executor's concurrency group, so a capped spark never displaces a queued dispatch (measured 2026-11-17: capped workflow_run sparks cancelled manual and Worker dispatches)
   spark:
@@ -66,6 +65,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - run: pip install pyyaml
+      - name: Canary every coder route (ROUTE-CANARY-1); a failed rung sits out 6 h
+        if: needs.spark.outputs.go == 'true'
+        continue-on-error: true  # a dead route is recorded in ops/route-health.jsonl and demoted, never a stop
+        run: python3 -m foundation routehealth --run --apply
       - name: Gate and feed the agent (budget caps, kill switch, Q-UNK work)
         id: work
         if: needs.spark.outputs.go == 'true'

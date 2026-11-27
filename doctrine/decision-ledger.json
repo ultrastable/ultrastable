@@ -6525,6 +6525,139 @@
    "body": "seed/worker/src/secondloop.js and organization.js carry the concepts as pure functions; the tick step ashby enforces the second goal from the metrics table. Blind random re-draw is not copied: the homeostat test shows the fully joined search growing far faster than the gated one. The archive forbids reproduction, so seed/autonomy/secondloop.json keeps page numbers and our own statements only.",
    "probe": "grep:seed/worker/src/secondloop.js::export async function secondGoalStep",
    "session": "session_0156nqDsxJd4poRv2mkbug9e"
+  },
+  {
+   "id": "decision-2026-11-27-executor-closed-q-ultra-free-tier-meter-spend-redesign-imple",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Executor closed Q-ULTRA-free-tier-meter-spend-REDESIGN: Implement active hard-limit regulation in free-tier meter config to automatically di",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: actions-budget.json.",
+   "probe": "file:actions-budget.json"
+  },
+  {
+   "id": "lesson-2026-11-27-a-model-authored-change-replaced-actions-budget-json-and-tur",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "A model-authored change replaced actions-budget.json and turned main red",
+   "body": "Executor commit 54d6e57e7 (Q-ULTRA-free-tier-meter-spend-REDESIGN) overwrote the workflow kill-switch config with an unrelated document; test_lint_workflows, test_launch and silentfail then raised KeyError on every PR. Restored from 22e4d4800; the executor now refuses a change that drops top-level keys of an existing JSON object (SCHEMA-KEEP-1); tests pass.",
+   "probe": "grep:foundation/executor.py::def contract_gap",
+   "session": "session_0156nqDsxJd4poRv2mkbug9e"
+  },
+  {
+   "id": "decision-2026-11-27-github-models-is-retired-not-down",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "GitHub Models is retired, not down",
+   "body": "GitHub retired GitHub Models on 2026-07-30 (github.blog changelog). Its rungs carry retired and available() never routes them; the 200 OK body is the shutdown, not an outage.",
+   "probe": "grep:foundation/agents.py::ROUTE-RETIRED-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "lesson-2026-11-27-one-model-s-5xx-must-not-down-its-whole-provider-route",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "One model's 5xx must not down its whole provider route",
+   "body": "On 2026-11-27 glm-4.7-flash returned 502 and the ladder marked all Workers AI down, so working models were never asked; executor failed 14 of 15 runs. Sessions made 302 of 349 merges in the week before. down_keys now scopes a 5xx to the model.",
+   "probe": "grep:foundation/agent_ladder.py::def down_keys",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-sweeper-refreshes-behind-prs-only-on-strict-bases",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Sweeper refreshes behind PRs only on strict bases",
+   "body": "Non-strict main ruleset merges behind PRs as is; update-branch restarted CI on every main merge (ZHC-R3 #2668).",
+   "probe": "grep:seed/worker/src/sweeper.js::strictRepos.includes"
+  },
+  {
+   "id": "lesson-2026-11-27-repeated-whole-window-d1-scans-keep-the-tick-lean-cache-clos",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Repeated whole-window D1 scans keep the tick lean; cache closed hours and key reads on content",
+   "body": "goal_samples was scanned for 14 days (18,590 rows) on every goals read and live_changes was re-read each tick because its refresh time moved; both are now served from keyed caches (closed-hour buckets, a content signature). Tests pass: 1091 seed worker tests; the cap is not raised.",
+   "probe": "grep:seed/worker/src/goalsamples.js::export async function goalSamples14d",
+   "session": "session_0156nqDsxJd4poRv2mkbug9e"
+  },
+  {
+   "id": "decision-2026-11-27-coder-routes-are-canaried-and-a-failed-one-sits-out-six-hour",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Coder routes are canaried and a failed one sits out six hours",
+   "body": "GitHub Models answered 200 OK with no JSON for eight days; a known-schema canary demotes such a route before the executor spends attempts on it (ZHC-R14 #2679).",
+   "probe": "grep:foundation/agent_ladder.py::routehealth.demoted",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "lesson-2026-11-27-executor-ladder-a-model-level-failure-must-not-down-the-prov",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Executor ladder: a model-level failure must not down the provider route",
+   "body": "13 of 30 executor runs failed because one 502 from workers-ai-glm marked the whole workers-ai route DOWN, so llama, qwen and gpt-oss were never asked; GitHub Models (retired 2026-07-30) answered 200 OK and was routed first. Fixed with route_down (provider-wide failures only), retired adapters never routed, content-null handling and two added Workers AI rungs; tests pass (53 ladder tests) and the two new models were probed live through the account AI endpoint.",
+   "probe": "grep:foundation/agent_ladder.py::def down_keys",
+   "session": "session_0156nqDsxJd4poRv2mkbug9e"
+  },
+  {
+   "id": "decision-2026-11-27-executor-trailers-ride-in-the-pr-body-because-squash-merges-",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Executor trailers ride in the PR body because squash merges take it",
+   "body": "The repo squashes with PR_BODY as the message, so trailers only on the branch commit were lost at merge; standards --commits now fails an executor merge that lacks them (ZHC-R7 #2672).",
+   "probe": "grep:foundation/executor.py::ZHC-R7: squash merges take the PR body",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-tests-an-agent-touches-cannot-lose-cases-assertions-or-gain-",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Tests an agent touches cannot lose cases, assertions or gain skips",
+   "body": "checks runs tests-protected on every PR; counts are summed over the change so moves pass (ZHC-R11 #2676).",
+   "probe": "grep:.github/workflows/checks.yml::foundation testguard",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-an-executor-pr-that-only-undoes-main-s-last-day-is-refused",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "An executor PR that only undoes main's last day is refused",
+   "body": "CHURN-GUARD-1 (ZHC-R13 #2678): checks runs churn --gate --executor; a change whose every file returns to a pre-commit state of the last 24 h fails. redmain repairs and non-executor PRs are not gated.",
+   "probe": "grep:.github/workflows/checks.yml::foundation churn --gate",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-the-coder-job-takes-only-issues-its-own-organization-wrote-a",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "The coder job takes only issues its own organization wrote, and reads issue text fenced as data",
+   "body": "RULE-OF-TWO-1 (ZHC-R12 #2677): executor.pick skips issues not by an owner, member, collaborator or the org's own bots; crossrepo reads REST issues so the author is known; issue text is wrapped in a random-marker data block.",
+   "probe": "grep:foundation/executor.py::def trusted",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-workflow-tokens-no-new-top-level-write-identities-registered",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Workflow tokens: no new top-level write, identities registered",
+   "body": "IDENTITIES-1 (ZHC-R4 #2669): 52 workflows grant write at the top today and are listed; the list only shrinks, a new one fails checks. Merge, agent and administration identities with scopes and never-lists are in doctrine/identities.json.",
+   "probe": "grep:.github/workflows/checks.yml::foundation identities --check",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "lesson-2026-11-27-a-window-in-seconds-against-a-millisecond-column-read-the-wh",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "A window in seconds against a millisecond column read the whole ultrastable-ops hits table on every call",
+   "body": "READ-BUDGET-12: growthHits bound a seconds window to hits.at (milliseconds), so the three aggregate queries matched every row: all-time counts and about 24,000 rows read per query, every 90 seconds, 3.4M rows an hour against a 50,000 budget; the D1 query analytics named the queries. Fixed: a millisecond window and a 10-minute Cache API entry; tests pass (site/growth-hits.test.mjs), verified by the second call making no database read.",
+   "probe": "grep:site/worker.js::READ-BUDGET-12",
+   "session": "https://claude.ai/code/session_0156nqDsxJd4poRv2mkbug9e"
+  },
+  {
+   "id": "lesson-2026-11-27-pr-no-generated-1-a-pull-request-does-not-carry-generator-ow",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "PR-NO-GENERATED-1: a pull request does not carry generator-owned files; main's post-merge job is their one writer",
+   "body": "The fast job of checks regenerated files and pushed them onto the pull request. Main regenerated the same files minutes later, so the pull request conflicted; the Worker's resolver knew generated files only by a hand-written list that missed newer papers and ledgers, so it reported a code conflict; each bot push cancelled the run in progress, so no run finished; and the closer shut the pull request after its bound (#2664 after 35 minutes, #2615 three times). The regenerate step now works in the run's workspace and pushes nothing, the Worker and the Python resolver treat papers, site data modules and ops ledgers as classes of generator-owned files, the post-merge generators also own the kit's SYSTEM.md and claims file, and the fast job's limit is above its measured duration.",
+   "probe": "grep:seed/worker/src/generated.js::GENERATED_PATTERNS",
+   "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
   }
  ]
 }

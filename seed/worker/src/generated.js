@@ -30,4 +30,12 @@ export const GENERATED = [
   "doctrine/triggers.json",
   "seed/self/SELF.md",
   "seed/self/self.json",
+  "seed/SYSTEM.md",
+  "seed/docs/claims.json",
 ];
+// GENERATED-BY-PATTERN-1 (2026-11-27): the list above names files one by one, so a paper added after it was written (second-loop-2026,
+// perez-lopez-1974) and every ledger a generator appends to were read as hand-written code. A conflict on one was reported as code-conflict,
+// nothing resolved it, and the closer shut the pull request (#2664 after 35 minutes, #2615 three times). A class of generator-owned files is
+// a pattern: every paper, every site data module, every append-only ledger under ops/ and the snapshots the loops rewrite there.
+export const GENERATED_PATTERNS = [/^research\/papers\/[^/]+\.md$/, /^site\/[^/]+-data\.js$/, /^ops\/.+\.jsonl$/, /^ops\/(?:transparency|trajectory|runway|saydo|yearsim|balance)\.json$/];
+export const isGenerated = (p, list = GENERATED) => list.includes(p) || GENERATED_PATTERNS.some(r => r.test(p));

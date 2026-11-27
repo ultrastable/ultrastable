@@ -34,6 +34,8 @@ def oidc_route(env) -> bool:
 
 def available(a: dict, env=None) -> bool:
     env = os.environ if env is None else env
+    if a.get("retired"):  # ROUTE-RETIRED-1: a provider that shut down is never asked, whatever it still answers
+        return False
     if a["route"] == "workers-ai" and not all(env.get(s) for s in a["secrets"]):
         return oidc_route(env)
     return a["route"] != "session" and all(env.get(s) for s in a["secrets"])
@@ -104,7 +106,14 @@ def build_request(a: dict, prompt: str, env=None) -> tuple[str, dict, dict]:
 def parse_text(a: dict, resp: dict) -> str:
     if a["route"] == "workers-ai":
         r = resp["result"]
-        return r.get("response") or (r.get("choices") or [{}])[0].get("message", {}).get("content") or ""
+        ch = (r.get("choices") or [{}])[0]
+        t = r.get("response")
+        if t in (None, "", {}, []):
+            t = (ch.get("message") or {}).get("content")
+        if t in (None, ""):
+            # LADDER-CONTENT-1 (measured 2026-11-27): a reasoning model whose thinking used the whole token budget answers content null; its reasoning is not the answer
+            raise ValueError(f"empty model content (finish_reason={ch.get('finish_reason')}); the model spent its tokens on reasoning")
+        return t if isinstance(t, str) else json.dumps(t)  # llama and qwen-coder return the JSON object itself for a JSON prompt
     if a["route"] == "github-models":
         return resp["choices"][0]["message"]["content"]
     return resp["content"][0]["text"]
@@ -280,7 +289,7 @@ def check(root=REPO) -> list[str]:
                 bad.append(f"{a.get('id', '?')}: missing {k}")
         if a.get("id") and f'"{a["id"]}"' not in tests:
             bad.append(f"{a['id']}: no test invokes it")
-    if len({a["family"] for a in d["adapters"] if "reviewer" in a["roles"]}) < d["routing"]["ensemble"]["min_models"]:
+    if len({a["family"] for a in d["adapters"] if "reviewer" in a["roles"] and not a.get("retired")}) < d["routing"]["ensemble"]["min_models"]:
         bad.append("fewer reviewer families than the ensemble minimum")
     return bad
 

@@ -4,6 +4,8 @@ generated-by: python3 -m foundation semrel --apply
 
 All notable changes, in the Keep a Changelog 1.1 format; versions follow Semantic Versioning 2.0.
 
+## [Unreleased]
+
 ## [0.1.0] - 2026-11-26
 
 ### Added
