@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.io/schemas/doctrine/job-trust.schema.json",
+  "title": "job-trust (doctrine/job-trust.json)",
+  "description": "Contract for doctrine/job-trust.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "type": "object",
+  "properties": {
+    "baseline": {
+      "type": "array"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "baseline"
+  ]
+}
