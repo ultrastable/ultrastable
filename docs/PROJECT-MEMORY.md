@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: foundation: CODE-REGULATOR-1 failure-mode hardening (stacked on #2766) (#2768)
+- 2026-11-27: Write the perception-cost ledger as CloudEvents; fixes red main (#2803)
 - 2026-11-27: foundation: CODE-REGULATOR-1 sampled audit (P8) and D1 schema export (#2766)
 - 2026-11-27: feat(kit): machine-readable conformance reader and core-root conformance (REPO-CONFORM-2 2/3) (#2743)
 - 2026-11-27: SPEC-AUDIT-ITEMS-1: audit items meet the spec gate (#2787)
