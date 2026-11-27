@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { openTenantSql } from '../../sqlite/tenant-sqlite.js';
-import { doSqlPort, tenantStub, makeTenantDO } from './tenant-do.js';
+import { doSqlPort, tenantStub, makeTenantDO, MIN_FLUSH_DELAY_MS } from './tenant-do.js';
 
 // A fake Durable Object storage over node:sqlite: exec returns a cursor with rowsRead and rowsWritten, transactionSync rolls back on a throw.
 function fakeCtx({ name = null, sql = openTenantSql() } = {}) {
@@ -165,11 +165,11 @@ test('US-25-R21: one alarm is armed per burst, none while nothing is unflushed, 
   assert.equal(sql.raw.prepare('SELECT * FROM _budget').all().length, 0, 'nothing is in the store before the alarm');
   d.alarm();
   const stored = sql.raw.prepare("SELECT requests FROM _budget WHERE period LIKE 'd:%'").get();
-  assert.equal(stored.requests, 3, 'the alarm wrote the three requests to the store');
+  assert.equal(stored.requests, 4, 'the alarm wrote the three requests and its own, charged to the tenant (chargeFlush)');
   d.query('acme', 'SELECT 1');
   assert.equal(alarms.length, 2, 'a new burst arms a new alarm');
   const d2 = mkDO(fakeCtx({ sql }), budgets({ acme: {} }));
-  assert.equal(d2.status('acme').value.day.requests, 3, 'a new object over the same storage reloads the flushed usage');
+  assert.equal(d2.status('acme').value.day.requests, 4, 'a new object over the same storage reloads the flushed usage');
 });
 
 test('US-25-R21: a failure to arm the alarm is recorded in status, never thrown into the request', async () => {
@@ -180,4 +180,63 @@ test('US-25-R21: a failure to arm the alarm is recorded in status, never thrown 
   assert.equal(d.status('acme').value.flushError, 'alarm refused');
   d.alarm();
   assert.equal(d.status('acme').value.flushError, null);
+});
+
+test('US-25-R21 US-25-R02: spaced bursts cost the account nothing outside the budget: every alarm is charged, and the budget stops them', () => {
+  const sql = openTenantSql(), alarms = [];
+  const ctx = fakeCtx({ sql }); ctx.storage.setAlarm = (t) => { alarms.push(t); };
+  const d = mkDO(ctx, budgets({ acme: { day: { requests: 300, writes: 1000 } } }));
+  let ok = 0, refused = null;
+  for (let i = 0; i < 1000 && refused === null; i++) {   // one operation per burst: its alarm fires before the next operation
+    const r = d.query('acme', i === 0 ? 'CREATE TABLE t(x)' : 'INSERT INTO t VALUES (?)', i === 0 ? [] : [i]);
+    if (r.ok) ok++; else refused = r.error;
+    d.alarm();
+  }
+  assert.equal(refused && refused.code, 'budget_exceeded', 'the budget stops spaced bursts');
+  assert.equal(refused.limit, 'requests');
+  const day = d.status('acme').value.day;
+  assert.equal(alarms.length, ok, 'one alarm per spaced burst that was served; the refused call arms none');
+  assert.ok(day.requests >= 2 * ok && day.requests <= 300 + 1, `each alarm is one request of the tenant's own: ${day.requests} for ${ok} operations`);
+  assert.ok(day.writes >= (ok - 1) + 2 * ok, `each alarm counts the two rows it writes: ${day.writes} written for ${ok - 1} rows of data`);
+  assert.ok(ok <= 150, `the budget held ${ok} spaced operations, half of 300, because the alarms are inside it`);
+});
+
+test('US-25-R21 US-25-R02: a caller that keeps retrying past a spent budget arms no alarm and writes no row: one platform request per call', () => {
+  const sql = openTenantSql(), alarms = [];
+  const ctx = fakeCtx({ sql }); ctx.storage.setAlarm = (t) => { alarms.push(t); };
+  const d = mkDO(ctx, budgets({ acme: { day: { requests: 20, writes: 1000 } } }));
+  let spentAt = null;
+  for (let i = 0; i < 100 && spentAt === null; i++) { const r = d.query('acme', 'SELECT 1'); d.alarm(); if (!r.ok) spentAt = i; }
+  assert.ok(spentAt !== null, 'the budget was spent');
+  const a0 = alarms.length;
+  const changes = () => Number(sql.raw.prepare('SELECT total_changes() n').get().n);
+  const w0 = changes();
+  for (let k = 0; k < 1000; k++) { const r = d.query('acme', 'SELECT 1'); assert.equal(r.error && r.error.code, 'budget_exceeded'); d.alarm(); }   // each retry spaced past the alarm delay
+  assert.equal(alarms.length - a0, 0, 'a refusal arms no alarm');
+  assert.equal(changes() - w0, 0, 'and writes no row: neither an alarm flush nor a count flush');
+  const before = { ...d.status('acme').value.day };
+  assert.ok(before.requests <= 20 + 2, `requests stay at the budget plus the first refusal and one alarm: ${before.requests}`);
+  d.store('acme').flush();
+  const stored = sql.raw.prepare("SELECT denied FROM _budget WHERE period LIKE 'd:%'").get();
+  assert.ok(stored.denied >= 1000, `the refusals are counted and written with the next flush: ${stored.denied}`);
+});
+
+test('US-25-R21: arming the alarm is charged as one row written, because the platform bills each setAlarm as a row', () => {
+  const sql = openTenantSql(), alarms = [];
+  const ctx = fakeCtx({ sql }); ctx.storage.setAlarm = (t) => { alarms.push(t); };
+  const d = mkDO(ctx, budgets({ acme: {} }));
+  d.query('acme', 'SELECT 1');                          // reads and writes no row of data
+  assert.equal(alarms.length, 1);
+  assert.equal(d.status('acme').value.day.writes, 1, 'the setAlarm row is charged when the alarm is armed');
+  d.alarm();
+  assert.equal(sql.raw.prepare("SELECT writes FROM _budget WHERE period LIKE 'd:%'").get().writes, 3, 'and the alarm adds the two rows its flush writes');
+});
+
+test('US-25-R21: TENANT_FLUSH_MS has a floor, so a zero cannot make every request its own burst', () => {
+  const at = [];
+  const ctx = fakeCtx(); ctx.storage.setAlarm = (t) => { at.push(t); };
+  const d = mkDO(ctx, { TENANT_FLUSH_MS: '0', ...budgets({ acme: {} }) });
+  const t0 = Date.now(); d.query('acme', 'SELECT 1');
+  assert.equal(at.length, 1);
+  assert.ok(at[0] - t0 >= MIN_FLUSH_DELAY_MS, `armed ${at[0] - t0} ms ahead`);
 });

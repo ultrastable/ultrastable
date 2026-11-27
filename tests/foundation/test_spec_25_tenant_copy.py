@@ -24,6 +24,7 @@ PAIRS = [
     ("tenantstore/vector.js", REF_STORE / "vector.js", []),
     ("src/tenant-do.js", REF_CF / "tenant-do.js", [
         ("'../../../core/tenantstore/store.js'", "'../tenantstore/store.js'", "the store sits beside src/ in the deployed tree"),
+        ("'../../../core/tenantstore/sqlclass.js'", "'../tenantstore/sqlclass.js'", "the classifier sits beside the store in the deployed tree"),
     ]),
     ("src/index.js", REF_CF / "tenants-worker.js", [
         ("import { DurableObject } from 'cloudflare:workers';\n",
@@ -33,13 +34,13 @@ PAIRS = [
     ]),
 ]
 # Modules the reference store imports that the deployed tree must also carry once it is refreshed.
-NEW_IN_REFERENCE = [("tenantstore/vectorport.js", REF_STORE / "vectorport.js")]
+NEW_IN_REFERENCE = [("tenantstore/vectorport.js", REF_STORE / "vectorport.js"), ("tenantstore/sqlclass.js", REF_STORE / "sqlclass.js")]
 
-# Files whose reference moved ahead (US-25-R12 pin and halt, R13, R14 vector counter, R15 caps and storage ceiling, R09 promotion) and whose
-# deployed copy has not been refreshed yet. Integration request: copy the reference files (and vectorport.js) into tenants/ with the
-# substitutions above, add the halt and resume routes to src/index.js, then empty this set.
-PENDING_REFRESH = {"tenantstore/budget.js", "tenantstore/rollup.js", "tenantstore/store.js", "tenantstore/vector.js", "src/tenant-do.js"}
-PENDING_NEW = {"tenantstore/vectorport.js"}
+# Files whose reference moved ahead and whose deployed copy has not been refreshed yet. The integration of round 2 refreshed every file
+# (budget, rollup, store, vector, tenant-do) and added vectorport.js and sqlclass.js, so both sets are empty; a new entry may only be added
+# with its reason and is removed in the change that refreshes it.
+PENDING_REFRESH = set()
+PENDING_NEW = set()
 
 
 def expected(ref: Path, subs):
@@ -65,6 +66,8 @@ class TenantCopyParity(unittest.TestCase):
 
     def test_us_25_r18_a_module_the_reference_adds_is_pending_until_the_copy_carries_it(self):
         for rel, ref in NEW_IN_REFERENCE:
+            self.assertIn(f"./{Path(rel).name}", (REF_STORE / "store.js").read_text() + (REF_CF / "tenant-do.js").read_text().replace("../../../core/tenantstore/", "./"),
+                          f"{rel} is imported by the reference store or adapter")
             self.assertTrue(ref.exists(), f"{ref} is the reference for {rel}")
             exists = (DEPLOYED / rel).exists()
             if rel in PENDING_NEW:

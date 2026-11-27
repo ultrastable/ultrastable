@@ -152,3 +152,29 @@ test('US-01-R04: files refused for want of an exporter do not spend the per-run 
   assert.ok(ledgered(db, 'z_add'), 'the additive file behind four refused ones is applied in the same run');
   assert.ok(has(db, 'org'));
 });
+
+test('US-01-R04: selfmigrate runs the pieces the classifier read, so a drop hidden behind a backtick name never runs as an additive file', async () => {
+  const { applyPending } = await import('./selfmigrate.js');
+  const { db } = world();
+  const files = { 'h_hidden.sql': 'CREATE TABLE IF NOT EXISTS `a/*b` (x);\nDROP TABLE org; CREATE TABLE IF NOT EXISTS `c*/` (y);' };
+  const r = await applyPending(db, files, ['h_hidden.sql'], 't1');
+  assert.equal(r[0].ok, false); assert.equal(r[0].refused, 'destructive migration needs an export store');
+  assert.ok(has(db, 'org') && !has(db, 'a/*b'), 'nothing of the file ran');
+  const multi = { 'm_lines.sql': 'CREATE TABLE IF NOT EXISTS m1 (x); CREATE TABLE IF NOT EXISTS m2 (x);\nCREATE TABLE IF NOT EXISTS m3 (x);' };
+  assert.deepEqual((await applyPending(db, multi, ['m_lines.sql'], 't2')).map(x => x.ok), [true]);
+  assert.ok(has(db, 'm1') && has(db, 'm2') && has(db, 'm3'), 'two statements on one line both ran');
+});
+
+test('US-01-R04: selfmigrate reads the triggers the store holds, so an insert that fires one that empties a table is destructive', async () => {
+  const { applyPending } = await import('./selfmigrate.js');
+  const { db } = world();
+  db.raw.exec(`CREATE TABLE t (a); CREATE TABLE kept (x); INSERT INTO kept VALUES (1); CREATE TRIGGER tr AFTER INSERT ON t BEGIN DELETE FROM kept; END;`);
+  const r = await applyPending(db, { 'i_insert.sql': 'INSERT INTO t VALUES (1);' }, ['i_insert.sql'], 't1');
+  assert.equal(r[0].ok, false); assert.equal(r[0].refused, 'destructive migration needs an export store');
+  assert.equal(db.raw.prepare(`SELECT COUNT(*) AS n FROM kept`).get().n, 1);
+  const files = { 'j_trig.sql': 'CREATE TRIGGER IF NOT EXISTS tr2 AFTER INSERT ON t BEGIN DELETE FROM kept; END;', 'k_insert.sql': 'INSERT INTO t VALUES (2);' };
+  const two = world(); two.db.raw.exec(`CREATE TABLE t (a); CREATE TABLE kept (x); INSERT INTO kept VALUES (1);`);
+  const r2 = await applyPending(two.db, files, ['j_trig.sql', 'k_insert.sql'], 't1');
+  assert.deepEqual(r2.map(x => [x.name, x.ok]), [['j_trig.sql', true], ['k_insert.sql', false]], 'a trigger an earlier file of the same run created is known to the later one');
+  assert.equal(two.db.raw.prepare(`SELECT COUNT(*) AS n FROM kept`).get().n, 1);
+});

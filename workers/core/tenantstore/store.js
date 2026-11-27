@@ -18,7 +18,7 @@ import { BudgetGuard, BudgetError, DEFAULT_BUDGET } from './budget.js';
 import { VectorIndex } from './vector.js';
 import { Rollups } from './rollup.js';
 import { TenantVectors } from './vectorport.js';
-import { isWriteStatement, freesSpace } from './sqlclass.js';
+import { isWriteStatement, freesSpace, isMultiStatement } from './sqlclass.js';
 
 export const PIN_ROWS = 1;
 const TENANT_SCHEMA = `CREATE TABLE IF NOT EXISTS _tenant (k TEXT PRIMARY KEY, v TEXT NOT NULL);`;
@@ -59,6 +59,9 @@ export class TenantStore {
   // statement scanned more than perQueryReads or wrote more than perQueryWrites (rolled back where the adapter can), and when a write
   // would grow a store already at its storage ceiling. A refused statement is charged for the rows it touched (TS-3).
   query(text, params = []) {
+    // One statement per call (US-25-R03): a second statement after a ';' would run outside the classification below. Refused before it runs,
+    // after the halt and the budget, and charged as one request.
+    if (isMultiStatement(text)) { this.guard.check(); this.guard.record({}); throw coded('multiple_statements'); }
     const write = isWriteStatement(text);        // a WITH ... INSERT is a write (sqlclass.js), so the ceiling and the write cap apply to it
     if (write && !freesSpace(text)) this.guard.checkWrite(); else this.guard.check();
     const b = this.guard.budget;

@@ -11,7 +11,8 @@ import { crossCheck, sumSelf } from './crosscheck.js';
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PAID_PLAN_BUDGET, FREE_PLAN_BUDGET } from './budget.js';
+import { DatabaseSync } from 'node:sqlite';
+import { PAID_PLAN_BUDGET, FREE_PLAN_BUDGET, worstCaseDay } from './budget.js';
 import { doSqlPort, tenantStub, makeTenantDO } from '../../adapters/cloudflare/src/tenant-do.js';
 
 const mk = (budget = {}, now) => new TenantStore({ tenantId: 'acme', sql: openTenantSql(), budget, now });
@@ -86,6 +87,12 @@ test('US-25-R08 TS-8 US-25-R01 TS-1: DO port aborts a runaway cursor and tenant 
 test('US-25-R02 free profile: five tenants fit inside the free plan account-wide daily limits, and metering is batched', () => {
   const sum = (f) => 5 * FREE_PLAN_BUDGET.day[f];
   assert.ok(sum('requests') <= 100_000 && sum('writes') <= 100_000 && sum('reads') <= 5_000_000);
+  // The worst case, not only the budget: one statement past what is left, the count flushes and the alarm after the refusal (worstCaseDay).
+  const w = worstCaseDay(FREE_PLAN_BUDGET);
+  assert.ok(5 * w.writes <= 100_000, `five tenants' worst case writes ${5 * w.writes} rows`);
+  assert.ok(5 * w.requests <= 100_000, `five tenants' worst case is ${5 * w.requests} requests`);
+  assert.ok(5 * w.reads <= 5_000_000, `five tenants' worst case reads ${5 * w.reads} rows`);
+  assert.ok(5 * worstCaseDay({ ...FREE_PLAN_BUDGET, perQueryWrites: 5_000 }).writes > 100_000, 'a wider statement cap would break the bound, which is why the Free cap is 3,000');
   const s = new TenantStore({ tenantId: 'acme', sql: openTenantSql(), budget: {} });
   s.query('CREATE TABLE a(x)');
   const before = s.sql.exec('SELECT COUNT(*) n FROM _budget').rows[0].n;
@@ -236,6 +243,22 @@ test('US-25-R03: an UPDATE without an index over more than perQueryReads rows is
   assert.equal(s.sql.exec('SELECT COUNT(*) n FROM a').rows[0].n, 50);
 });
 
+test('US-25-R03 US-25-R02: the SQLite adapter reads the query plan first and turns down a scanning write past the per-query read cap without executing it, leaving no rows to roll back', () => {
+  const s = mk({ perQueryReads: 100, perQueryWrites: 3000, day: { writes: 100_000, reads: 1_000_000 } });
+  s.query('CREATE TABLE t(x INTEGER)');
+  s.sql.raw.exec('WITH RECURSIVE c(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM c WHERE x < 1200) INSERT INTO t SELECT x FROM c');
+  const changes = () => Number(s.sql.raw.prepare('SELECT total_changes() n').get().n);
+  for (const text of ['UPDATE t SET x = x + 1', 'DELETE FROM t WHERE x > 0', 'CREATE TABLE copy AS SELECT * FROM t', 'INSERT INTO t SELECT x FROM t']) {
+    const c0 = changes();
+    let err = null; try { s.sql.exec(text, [], { maxRowsRead: 100, maxRowsWritten: 3000 }); } catch (e) { err = e; }
+    assert.equal(err && err.code, 'statement_too_wide', text);
+    assert.deepEqual([err.rowsRead, err.rowsWritten], [1200, 0], `${text}: refused on its plan's scan, with nothing written`);
+    assert.equal(changes() - c0, 0, `${text}: the statement never ran`);
+  }
+  assert.throws(() => s.query('UPDATE t SET x = x + 1'), (e) => e.code === 'query_too_wide' && e.rowsRead === 1200 && e.rowsWritten === 0);
+  assert.equal(s.sql.raw.prepare('SELECT SUM(x) n FROM t').get().n, 1200 * 1201 / 2, 'the table is as it was');
+});
+
 test('US-25-R15: an INSERT ... SELECT writing more than perQueryWrites rows is refused, charged and rolled back', () => {
   const s = mk({ perQueryReads: 1000, perQueryWrites: 20 });
   s.query('CREATE TABLE a(x)'); s.query('CREATE TABLE b(x)');
@@ -249,7 +272,7 @@ test('US-25-R15: an INSERT ... SELECT writing more than perQueryWrites rows is r
 
 test('US-25-R15: a tenant that states day.writes gets a statement write cap of a third of it, and a profile states its own', () => {
   assert.equal(mk({ day: { writes: 900 } }).guard.budget.perQueryWrites, 300);
-  assert.equal(FREE_PLAN_BUDGET.perQueryWrites, Math.floor(FREE_PLAN_BUDGET.day.writes / 3));
+  assert.ok(FREE_PLAN_BUDGET.perQueryWrites <= Math.floor(FREE_PLAN_BUDGET.day.writes / 3), 'the Free profile states a cap no wider than a third of its day');
   assert.equal(PAID_PLAN_BUDGET.perQueryWrites, Math.floor(PAID_PLAN_BUDGET.day.writes / 3));
   assert.equal(mk({ perQueryWrites: 7, day: { writes: 900 } }).guard.budget.perQueryWrites, 7);
 });
@@ -417,7 +440,7 @@ test('US-25-R10: declared overhead (the hourly self-test calls) is added before 
 });
 
 // ---------------- statement classification: a CTE write is a write (US-25-R03, R15) ----------------
-import { statementKind, isWriteStatement, freesSpace } from './sqlclass.js';
+import { statementKind, isWriteStatement, freesSpace, stripSql } from './sqlclass.js';
 
 test('US-25-R15: statementKind reads past the first keyword: WITH ... INSERT, UPDATE and DELETE are DML, a WITH ... SELECT using replace() is a read', () => {
   assert.equal(statementKind('SELECT 1'), 'read');
@@ -449,6 +472,84 @@ test('US-25-R15: a WITH ... INSERT at the storage ceiling is refused like a plai
   assert.throws(() => s.query(cte(2)), (e) => e.code === 'budget_exceeded' && e.limit === 'storage');
   assert.equal(s.sql.raw.prepare('SELECT COUNT(*) n FROM t').get().n, 5);
   assert.doesNotThrow(() => s.query('WITH c AS (SELECT 1 x) SELECT x FROM c'));         // reads still work at the ceiling
+});
+
+test('US-25-R03: a -- or /* inside a string literal is text, so it hides neither a CTE write nor a later keyword (one left-to-right scan)', () => {
+  const dash = "WITH RECURSIVE n(note) AS (SELECT '--'), c(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM c WHERE x < 100) INSERT INTO t SELECT x FROM c";
+  const block = "WITH n(note) AS (SELECT '/*'), c(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM c WHERE x < 100) INSERT INTO t SELECT x FROM c -- */";
+  assert.equal(statementKind(dash), 'dml');
+  assert.equal(statementKind(block), 'dml');
+  assert.equal(statementKind("SELECT 'it''s -- text' FROM t"), 'read');
+  assert.equal(statementKind('SELECT "insert" FROM t'), 'read', 'a quoted identifier is a name, not a keyword');
+  assert.equal(stripSql("a '--' b /* c */ d -- e\nf"), "a '' b   d  \nf");
+  for (const q of [dash, block]) {
+    const s = mk({ day: { writes: 3000 }, perQueryWrites: 10 });
+    s.query('CREATE TABLE t(x INTEGER)');
+    assert.throws(() => s.query(q), (e) => e.code === 'write_too_wide', q);               // capped per statement ...
+    assert.equal(s.sql.raw.prepare('SELECT COUNT(*) n FROM t').get().n, 0);              // ... and rolled back
+    s.guard.budget.maxStorageBytes = 1;                                                  // the store is full
+    assert.throws(() => s.query(q), (e) => e.code === 'budget_exceeded' && e.limit === 'storage', q);
+  }
+});
+
+test('US-25-R03: CREATE TABLE ... AS SELECT on the SQLite adapter is metered and capped: its scan and the rows it copies count, and a refused one is rolled back', () => {
+  const s = mk({ day: { writes: 100000, reads: 100000 }, perQueryReads: 50, perQueryWrites: 10 });
+  s.query('CREATE TABLE src(a INTEGER)');
+  s.sql.raw.exec('WITH RECURSIVE c(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM c WHERE x < 3000) INSERT INTO src SELECT x FROM c');
+  assert.throws(() => s.query('CREATE TABLE copy AS SELECT * FROM src'), (e) => e.code === 'query_too_wide' || e.code === 'write_too_wide');
+  assert.equal(s.sql.raw.prepare(`SELECT COUNT(*) n FROM sqlite_master WHERE name = 'copy'`).get().n, 0, 'the refused CTAS left no table');
+  assert.ok(s.status().day.reads >= 3000, 'the refused CTAS was charged for what it read');
+  const before = s.status().day.writes;
+  const r = s.query('CREATE TABLE few AS SELECT * FROM src WHERE rowid <= 5');
+  assert.equal(r.rowsWritten, 5);
+  assert.equal(s.status().day.writes - before, 5, 'the rows a CTAS copies are metered as written');
+});
+
+// A fake ctx.storage.sql with the platform's documented exec semantics: every ';'-separated statement runs, and the returned cursor (rows,
+// rowsRead, rowsWritten) is the last statement's. The test texts hold no ';' inside a literal, so a plain split is enough here.
+function multiExecStorage() {
+  const raw = new DatabaseSync(':memory:');
+  const isRead = (t) => /^\s*(select|with|values|pragma)/i.test(t) && !/\b(insert|update|delete)\b/i.test(t);
+  return {
+    raw,
+    sql: {
+      get databaseSize() { return raw.prepare('PRAGMA page_count').get().page_count * raw.prepare('PRAGMA page_size').get().page_size; },
+      exec(text, ...params) {
+        const parts = text.split(';').map(s => s.trim()).filter(Boolean);
+        for (const p of parts.slice(0, -1)) raw.exec(p);
+        const last = parts[parts.length - 1], st = raw.prepare(last);
+        const rows = isRead(last) ? st.all(...params) : [], written = isRead(last) ? 0 : Number(st.run(...params).changes);
+        return { rowsRead: rows.length, rowsWritten: written, [Symbol.iterator]() { return rows[Symbol.iterator](); } };
+      },
+    },
+    transactionSync(fn) { raw.exec('SAVEPOINT t'); try { const v = fn(); raw.exec('RELEASE t'); return v; } catch (e) { raw.exec('ROLLBACK TO t'); raw.exec('RELEASE t'); throw e; } },
+  };
+}
+
+test('US-25-R03: a text of several statements is refused with multiple_statements before it runs, on the Durable Object and the SQLite adapter, and charged as a request', () => {
+  const ctas = 'SELECT 1; CREATE TABLE c2 AS SELECT * FROM src; SELECT 1', ins = 'INSERT INTO src SELECT x FROM src; SELECT 1';
+  const fill = (raw) => raw.exec('CREATE TABLE src(x); WITH RECURSIVE c(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM c WHERE x < 5000) INSERT INTO src SELECT x FROM c');
+  const budget = { day: { writes: 30, reads: 1_000_000, requests: 1000 }, perQueryWrites: 10, perQueryReads: 50_000 };
+  // Durable Object adapter: the store is not full, then full. Both texts are refused and change nothing.
+  const storage = multiExecStorage(); fill(storage.raw);
+  const d = new (makeTenantDO(class {}))({ storage, id: { name: 'acme' } }, { TENANT_BUDGETS: JSON.stringify({ acme: budget }) });
+  for (const full of [false, true]) {
+    if (full) { d.store('acme').guard.budget.maxStorageBytes = 1; assert.equal(d.query('acme', 'CREATE TABLE c1 AS SELECT * FROM src').error.code, 'budget_exceeded'); }
+    for (const t of [ctas, ins]) {
+      const before = { ...d.status('acme').value.day };                         // a copy: status returns the live row
+      const r = d.query('acme', t);
+      assert.deepEqual([r.ok, r.error && r.error.code], [false, 'multiple_statements'], `${t} (store full: ${full})`);
+      const after = d.status('acme').value.day;
+      assert.deepEqual([after.requests - before.requests, after.writes - before.writes], [1, 0], 'charged as one request, nothing written');
+    }
+    assert.equal(storage.raw.prepare(`SELECT COUNT(*) n FROM sqlite_master WHERE name = 'c2'`).get().n, 0, 'the hidden CTAS never ran');
+    assert.equal(storage.raw.prepare('SELECT COUNT(*) n FROM src').get().n, 5000, 'the hidden INSERT ... SELECT never ran');
+  }
+  // SQLite adapter: the same refusal, before node:sqlite sees the text.
+  const s = mk(budget); fill(s.sql.raw);
+  for (const t of [ctas, ins]) assert.throws(() => s.query(t), (e) => e.code === 'multiple_statements', t);
+  // One statement with a trailing ';', a trailing comment, or a ';' inside a literal or a quoted name is still one statement.
+  for (const t of ['SELECT 1;', 'SELECT 1; -- note', "SELECT ';' AS x", 'SELECT 1 AS "a;b"', 'SELECT 1; /* end */  ']) assert.doesNotThrow(() => s.query(t), t);
 });
 
 // ---------------- promotion writes are metered (US-25-R14) ----------------
