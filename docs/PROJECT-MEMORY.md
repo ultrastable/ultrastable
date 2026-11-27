@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-27
 
+- 2026-11-27: perf(tick): serve goal samples and live changes from keyed caches (READ-BUDGET-11) (#2665)
 - 2026-11-27: fix(sweeper): refresh behind PRs only where the base requires it (ZHC-R3) (#2681)
 - 2026-11-27: feat(repos): core reads 15/15 standard files; design questions answered with probes (#2663)
 - 2026-11-27: fix(ci): restore actions-budget.json and refuse executor changes that drop a config key (SCHEMA-KEEP-1) (#2682)

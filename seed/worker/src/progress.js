@@ -7,7 +7,7 @@
 // progress_cadence, and repairs a slow or stalled system: it dispatches the workflows that produce that system's work (at most once per
 // cooldown) and, when stalled, files STALL-<system>, which only the same reading can close. Nothing is ever reported as shipped that did not merge.
 import { cadence, normalize, pulse } from './vendor/core/progress.js';
-import { ensureSubstance } from './livechanges.js';  // SUBSTANCE-1
+import { ensureSubstance, readLiveChanges } from './livechanges.js';  // SUBSTANCE-1
 
 const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
@@ -37,7 +37,7 @@ export async function progressStep({ db, config, token, ensureItem, fetchImpl = 
   const nowIso = new Date(now).toISOString(), cooldown = (cfg.cooldown_hours || 6) * 3600e3, out = { systems: {}, healed: [], filed: [], closed: [] };
   const prev = Object.fromEntries((await all(db, `SELECT system, healed_at FROM progress_cadence`)).map(r => [r.system, r.healed_at]));
   for (const sys of cfg.systems) {
-    const rows = await all(db, `SELECT n, title, by_origin, merged_at, url, substance FROM live_changes WHERE repo = ? ORDER BY merged_at DESC LIMIT 200`, sys.repo);
+    const rows = (await readLiveChanges(db, sys.repo)).changes.slice(0, 200).map(c => ({ n: c.n, title: c.title, by_origin: c.by, merged_at: c.merged_at, url: c.url, substance: c.substance }));  // READ-BUDGET-11: the shared kept reading, not 200 rows per system per pass
     const meta = await db.prepare(`SELECT refreshed_at FROM live_changes_meta WHERE repo = ?`).bind(sys.repo).first();
     const c = cadence(rows.map(x => eventOf(sys, x)), { now, expect_hours: sys.expect_hours || cfg.expect_hours || 24, stall: cfg.stall || 2 });
     let heal = null, healedAt = prev[sys.id] || null;
