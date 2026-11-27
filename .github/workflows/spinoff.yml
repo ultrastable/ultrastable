@@ -39,6 +39,14 @@ jobs:
       - run: python3 -m foundation spinoff --rebuild
       - run: python3 -m foundation ideas --roadmap --apply
       - run: python3 -m foundation spinoff --promote --apply
+      - name: Test the data before it can reach main (SPINOFF-DATA-GATE-1)
+        # A bot data PR gets no check run of its own, so a snapshot that breaks a suite reached main and turned it red (#2765, 2026-11-27). The consistency
+        # checks and the two suites that read this data run here, on the files the loop just wrote; a failure stops the run before any PR opens.
+        run: |
+          python3 -m foundation ideas --check
+          python3 -m foundation spinoff --check
+          python3 -m unittest discover -s tests/foundation -p "test_ideas.py"
+          python3 -m unittest discover -s tests/foundation -p "test_spinoff.py"
       - name: Ledgers and registry to a PR the lane merges
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
