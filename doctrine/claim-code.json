@@ -541,17 +541,8 @@
       }
     },
     {
-      "id": "recency-import-line",
-      "source": "site/worker.js",
-      "quote": "RECENCY-1: every page says when it was last updated and how often",
-      "probe": {
-        "file": "site/recency.test.mjs",
-        "contains": "shows when it was last updated and its schedule"
-      }
-    },
-    {
       "id": "recency-page-schedule",
-      "source": "site/worker.js",
+      "source": "site/edge.js",
       "quote": "Rebuilt after every merge and live within 26 hours",
       "probe": {
         "file": "site/recency.test.mjs",

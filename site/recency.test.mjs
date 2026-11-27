@@ -3,7 +3,7 @@
 // RECENCY-1: a page or API with no recency stamp, or one past its schedule at build time, fails the site gate (scripts/site_tests.sh).
 import test from "node:test";
 import assert from "node:assert/strict";
-import worker from "./worker.js";
+import worker from "./edge.js";
 
 const env = {};
 const get = (p) => worker.fetch(new Request("https://ultrastable.io" + p), env, { waitUntil() {} });

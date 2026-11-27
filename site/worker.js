@@ -3,8 +3,7 @@
 // Ultrastable's own records; /proof is a 301 to /live (PROOF-OWN-1). Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
 import { routeChat } from "../seed/worker/src/airoute.js"; // AI-ROUTER-1: cache, dedupe, free-first, learned routing for every site model call
-import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";
-import { recency, recencyText, stamp } from "../seed/worker/src/recency.js"; // RECENCY-1: every page says when it was last updated and how often  // SPEND-GOVERNOR-1: site model calls spend from the owner's budget
+import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: site model calls spend from the owner's budget
 import USER_PATH from "./userpath.js";
 import SH from "./stakeholders.js"; // STAKEHOLDERS-1
 import BRIEF from "./platformbrief.js";
@@ -107,7 +106,6 @@ function shell(opts, body) {
     + "</head><body><a class=\"skip-link\" href=\"#main\">Skip to content</a>"
     + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet hide-sm\" href=\"/for\">Find your path</a><a class=\"btn btn-quiet\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet\" href=\"/research\">Research</a><a class=\"btn btn-quiet\" href=\"/live\">Live proof</a><a class=\"btn btn-quiet\" href=\"/progress\">What's new</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
-    + "<p class=\"meta\" id=\"recency\">" + esc(recencyText(opts.recency || pageRecency())) + " <a href=\"/api/freshness\">Freshness check</a></p>"
     + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/live\">See the checks</a> · <a href=\"/progress\">What shipped</a> · <a href=\"/research\">White papers</a> · <a href=\"/research.atom\">Papers feed</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
     + "<div class=\"us-foot\" id=\"family\">The Ultrastable family: <a href=\"https://" + CANON + "/\">" + esc(SH.domains.io.host) + "</a> (platform and product) · <a href=\"/showcase/practical-solutions\">" + esc(SH.domains.org.host) + "</a> (public-benefit demos) · <a href=\"/family.json\">family.json</a></div>"
     + "<div class=\"us-foot\" id=\"credit\">Directed by <a href=\"https://rwnq8.github.io/ultrastable/\">Rowan Brad Quni-Gudzinas</a>, founder and director of Ultrastable. <a href=\"https://rwnq8.github.io\">Website</a> · <a href=\"https://github.com/rwnq8\">GitHub</a> · <a href=\"https://www.linkedin.com/in/rowan-quni\">LinkedIn</a></div>"
@@ -1095,9 +1093,6 @@ async function png(env, key) { const a = env && env.ASSETS ? await env.ASSETS.ge
 const SVG = { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age=86400", "X-Content-Type-Options": "nosniff" };
 
 const HTML = { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" };
-// RECENCY-1: bundled pages carry the commit time of their generated data. The data is rebuilt after every merge and redeployed within 26 h (CADENCE_S.pages in live.js, the same bound /api/freshness enforces).
-const PAGE_SCHEDULE = "Rebuilt after every merge and live within 26 hours";
-function pageRecency(now = Date.now()) { return recency({ updatedAt: DASH.asof_at, maxAgeS: 26 * 3600, schedule: PAGE_SCHEDULE, source: "commit " + DASH.asof, now }); }
 
 // META-SIGNAL-1: record a microphone event code or transcript text for the meta loop (doctrine/meta-loop.json); the tick drains it through foundation/metasignal.py detectors.
 const META_PER_IP_HOUR = 20, META_PER_DAY = 200; // caps on public meta-signal writes
@@ -1269,7 +1264,7 @@ const handler = {
       case "/api/decisions": return new Response(JSON.stringify(await decisionsData(env)), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } });
       case "/ops": return new Response(opsPage(shell), { headers: { ...HTML, "Cache-Control": "no-store" } });
       case "/dashboard": { const t = u.searchParams.get("tenant") || "ultrastable"; const h = await dashboard(t); return h ? new Response(h, { headers: HTML }) : new Response("No such tenant", { status: 404, headers: HTML }); }
-      case "/roadmap.json": return new Response(JSON.stringify({ recency: pageRecency(), ...ROAD, spinoffs: SPIN }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
+      case "/roadmap.json": return new Response(JSON.stringify({ ...ROAD, spinoffs: SPIN }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
       case "/faq": return new Response(faq(), { headers: HTML });
       case "/privacy": return new Response(shell({ path: "/privacy", title: "Privacy - Ultrastable", description: "What this site records and what it does not." }, PRIVACY), { headers: HTML });
       case "/accessibility": return new Response(shell({ path: "/accessibility", title: "Accessibility - Ultrastable", description: "What we build to and how to report a barrier." }, ACCESSIBILITY), { headers: HTML });
@@ -1352,4 +1347,4 @@ export function timed(res, t0, now = Date.now()) {
   if ((r.headers.get("content-type") || "").includes("text/html")) r.headers.append("Link", "</favicon.svg>; rel=preload; as=image; type=\"image/svg+xml\"");
   return r;
 }
-export default { scheduled: entry.scheduled, async fetch(request, env, ctx) { const t0 = Date.now(); return timed(stamp(await entry.fetch(request, env, ctx), pageRecency()), t0); } };
+export default { scheduled: entry.scheduled, async fetch(request, env, ctx) { const t0 = Date.now(); return timed(await entry.fetch(request, env, ctx), t0); } };
