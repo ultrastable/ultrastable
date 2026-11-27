@@ -159,6 +159,6 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **second-goal-in-code** (Rowan, 2026-11-27): The explicit goal is subordinate to the essential variables. Every objective with a target carries a guard its target does not move; a breached guard under a healthy target is repaired before the goal is pursued; a step is drawn only from untried, reversible candidates and kept only when the variables held; a task that harms the one who does it is not prescribed, and past failures are always recalled.
   - detector: `worker/src/secondloop.js`, `autonomy/secondloop.json`
   - remediation: `worker/src/secondloop.js`, `worker/src/organization.js`
-- **never-lose-unmerged-work** (Rowan, 2026-11-27): Automation never discards unmerged work: every closer reads the pull request live, never closes one that is mergeable or only behind, and pins the head under an archive ref and reads it back before a close.
+- **automation-never-discards-work** (Rowan, 2026-11-27): Automation never closes a pull request on a label, a cached state or an unknown state: it reads the pull request live, tries to update its branch, and pins the head under refs/archive before any close. A pull request automation closed that main still lacks is reopened.
   - detector: `worker/src/prsafe.js`
-  - remediation: `worker/src/sweeper.js`, `scripts/branch_cleanup.py`
+  - remediation: `worker/src/prsafe.js`, `worker/src/sweeper.js`
