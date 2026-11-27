@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// US-SPEC-16 R21 and R27: cited research through a fetch port (a fake here), and the read-back of what it cited.
+// US-SPEC-16 R27 and R30: cited research through a fetch port (a fake here), and the read-back of what it cited.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
@@ -52,7 +52,7 @@ test('US-16-R27: a free-text need takes the capture of its extract pattern; an i
   assert.equal(await createResearch({ fetch: f, sources: { name: [{ url: 'https://example.org/about', extract: '(' }] } })(n), null);
 });
 
-test('US-16-R21 and US-16-R27: derive applies the adapter\'s value with provenance researched and the cited URL, and logs the attempt', async () => {
+test('US-16-R27 and US-16-R30: derive applies the adapter\'s value with provenance researched and the cited URL, and logs the attempt', async () => {
   const { db, e } = mk(); await e.registerNeeds(P, [need('a')]);
   const research = createResearch({ fetch: web({ 'https://example.org/policy': page(200, 'members only') }), sources: SRC });
   const out = await e.derive(P, { research });
@@ -78,4 +78,36 @@ test('US-16-R27: the verifier reads each cited source again: 200 is a hit that s
   assert.deepEqual(attempts(db, 'c').at(-1), { surface: 'research_verify', result: 'error', detail: '503 https://example.org/c' });
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM elicit_assumptions WHERE need_id='b' AND reason='contradicted'").get().n, 1, 'the old value stays in the log');
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id LIKE 'ELICIT-RERUN%'").get().n, 1, 'the artifact it feeds is queued to be redone');
+});
+
+test('US-16-R27: a redirect says nothing: the adapter asks the fetch port not to follow it, and a page that was redirected or answered from another URL is not the declared page', async () => {
+  const n = { id: 'a', options: JSON.stringify(['public', 'private']), free_text: 0 };
+  const inits = [];
+  const one = res => createResearch({ fetch: async (url, init) => { inits.push(init); return res; }, sources: SRC })(n);
+  assert.equal(await one({ status: 301, url: 'https://example.org/policy', text: async () => 'open to everyone' }), null, 'a 3xx says nothing');
+  assert.equal(inits[0].redirect, 'manual', 'redirects are never followed by the adapter');
+  assert.equal(await one({ status: 200, redirected: true, text: async () => 'open to everyone' }), null, 'a page the port says it reached by a redirect is not the declared one');
+  assert.equal(await one({ status: 200, url: 'https://other.example/policy', text: async () => 'open to everyone' }), null, 'a page answered from another URL is not the declared one');
+  assert.equal((await one({ status: 200, url: 'https://example.org/policy', text: async () => 'open to everyone' })).value, 'public', 'the declared page itself still counts');
+  const bare = await createResearch({ fetch: async () => ({ status: 200, url: 'https://example.org/', text: async () => 'open to everyone' }), sources: { a: [{ url: 'https://example.org', options: { public: 'open' } }] } })(n);
+  assert.equal(bare.value, 'public', 'the same address written with or without its trailing slash is the same page');
+  const { db, e } = mk(); await e.registerNeeds(P, [need('a')]);
+  await e.derive(P, { research: createResearch({ fetch: web({ 'https://example.org/policy': page(200, 'open to everyone') }), sources: SRC }) });
+  const out = await verifyResearched({ db, elicit: e, fetch: async () => ({ status: 200, redirected: true, url: 'https://moved.example/', text: async () => 'open to everyone' }), now: () => T0 }, P);
+  assert.deepEqual(out.unreadable, ['a'], 'a cited source that now redirects is unreadable, never proof');
+  assert.equal(row(db, 'a').state, 'derived', 'and it changes nothing');
+  assert.equal(db.raw.prepare(RESEARCH_PROBE).get()['COUNT(*)'], 0);
+});
+
+test('US-16-R27: with every_hours the verifier reads a cited source at most once in that window, and again after it', async () => {
+  const { db, e, t } = mk(); await e.registerNeeds(P, [need('a')]);
+  await e.derive(P, { research: createResearch({ fetch: web({ 'https://example.org/policy': page(200, 'open to everyone') }), sources: SRC }) });
+  const seen = []; const f = web({ 'https://example.org/policy': page(200, 'open to everyone') }, seen);
+  const pass = () => verifyResearched({ db, elicit: e, fetch: f, now: () => t.v, every_hours: 24 }, P);
+  assert.deepEqual((await pass()).ok, ['a']);
+  t.v += 10 * 60e3; const second = await pass();
+  assert.equal(second.skipped, 1); assert.equal(second.checked, 0);
+  t.v += 24 * 3600e3; assert.deepEqual((await pass()).ok, ['a']);
+  assert.equal(seen.length, 2, 'two reads in a day and ten minutes, not one per pass');
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM elicit_derivations WHERE surface='research_verify'").get().n, 2);
 });

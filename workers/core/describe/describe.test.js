@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Tests for core/describe (US-SPEC-22, T22-1 to T22-5). Fake fetch and readFile; no network.
+// Tests for core/describe (US-SPEC-22, T22-1 to T22-5 and T22-10 to T22-12). Fake fetch and readFile; no network.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -342,7 +342,7 @@ test('R01 completeness: every claim id in the registry has a probe kind and expe
 
 const get = (ctx, p, method = 'GET') => handle(new Request('https://x.example' + p, { method }), ctx);
 
-test('T22-6 and US-22-R11: the feed omits non-public and withdrawn claims and its claim ids equal /describe.json', async () => {
+test('T22-10 and US-22-R19: the feed omits non-public and withdrawn claims and its claim ids equal /describe.json', async () => {
   const db = await setup();
   await addClaims(db, [{ id: 'other.secret', text: 'Private fact.', probe: 'sql:SELECT 1 AS value', expect: '>=0', public: 0 }]);
   await describeOnce(ports(db, { voiceRules: voice }));
@@ -376,7 +376,7 @@ test('US-22-R02: a claim that fails on a live re-probe leaves the feed and the p
   assert.ok(row(db, `SELECT id FROM items WHERE id = 'DESCRIBE-scope.out-of-scope'`), 'a repair item was filed');
 });
 
-test('US-22-R12: a re-probe inside the minimum interval returns 429 and runs no probe; without ports it is 503; GET is 405', async () => {
+test('US-22-R20: a re-probe inside the minimum interval returns 429 and runs no probe; without ports it is 503; GET is 405', async () => {
   const db = await setup();
   await runProbes(ports(db));
   let probes = 0;
@@ -392,7 +392,7 @@ test('US-22-R12: a re-probe inside the minimum interval returns 429 and runs no 
   assert.equal((await get({ ...ctx, now: T0 + 400e3 }, '/describe/claims/probe', 'POST')).status, 200, 'after the interval it runs');
 });
 
-test('US-22-R12: the claims page escapes claim text and evidence, carries no script, and offers the re-probe only when ports exist', async () => {
+test('US-22-R20: the claims page escapes claim text and evidence, carries no script, and offers the re-probe only when ports exist', async () => {
   const feed = { generated_at: 'now', claim_ids: ['x'], claims: [{ id: 'x', text: '<script>alert(1)</script> & "q"', probe: 'sql:SELECT 1', expect: '>=0', last_result: 'pass', last_checked_at: '2026-11-11 10:00:00', age_hours: 1, max_age_hours: 24, evidence: { detail: '<img src=x>' }, publishable: true }], withdrawn: [{ id: 'y<b>', last_result: 'fail', last_checked_at: null, withdrawn: true }] };
   const html = renderClaimsPage(feed);
   assert.ok(!/<script|<img|<b>/i.test(html.replace(/<style>[\s\S]*<\/style>/, '')), html);
@@ -423,7 +423,7 @@ test('US-22-R07: DEFAULT_VOICE_RULES equals voice-rules.json', () => {
   assert.deepEqual(DEFAULT_VOICE_RULES, voice);
 });
 
-test('T22-7: with no injected rules a banned phrase is rejected', async () => {
+test('T22-11 and US-22-R07: with no injected rules a banned phrase is rejected', async () => {
   const db = await setup();
   const compose = ({ claims }) => claims.map(c => c.sentence.replace('the heartbeat completed', 'the revolutionary heartbeat completed')).join(' ');
   const r = await describeOnce(ports(db, { compose }));   // no voiceRules at all: the defaults apply
@@ -434,7 +434,7 @@ test('T22-7: with no injected rules a banned phrase is rejected', async () => {
   assert.deepEqual(effectiveVoiceRules({ banned: ['x'] }, {}).banned, ['x'], 'injected rules still win');
 });
 
-test('T22-8: a term from the SCOPE.md out-of-scope table is rejected unless its pack is enabled', async () => {
+test('T22-12 and US-22-R08: a term from the SCOPE.md out-of-scope table is rejected unless its pack is enabled', async () => {
   const db = await setup();
   const scope = { out_of_scope: parseScopeMd('# S\n## What it does not do by default\n| Out of scope | Why |\n|---|---|\n| Run a loyalty programme | the loyalty pack is separate |\n| Write a business plan, financial model | different product |\n') };
   assert.deepEqual(scopeTerms('Write a business plan, financial model'), ['business plan', 'financial model']);
@@ -474,6 +474,7 @@ test('T22-5: the model lists cost per merged change, merged and rejected counts 
   db.raw.exec(`INSERT INTO tick_runs (started_at, finished_at, steps_completed, steps_total) VALUES ('2026-11-10 09:00:00','2026-11-10 09:00:05',7,7),('2026-11-10 10:00:00','2026-11-10 10:00:05',3,7)`);
   db.raw.exec(`INSERT INTO outcomes (item_id, surface, action_class, result, at) VALUES ('a','repo','merge','verified','2026-11-10 09:00:00'),('b','repo','merge','verified','2026-11-10 09:00:00'),('c','repo','merge','failed','2026-11-10 09:00:00')`);
   db.raw.exec(`INSERT INTO router_calls (at, cost_usd, outcome) VALUES ('2026-11-10 09:00:00', 0.5, 'ok'), ('2026-11-10 09:00:00', 0.25, 'ok')`);
+  db.raw.exec(`INSERT INTO org (key, value) VALUES ('self_hosting_stage', '{"stage":1,"claimed":0,"blocked_at":2}')`);
   const r = await runProbes(ports(db));
   assert.equal(r.unknown, 0, JSON.stringify(r));
   const model = await buildSelfModel({ db, specStatus: SPEC, now: T0 });
@@ -488,7 +489,7 @@ test('T22-5: the model lists cost per merged change, merged and rejected counts 
   assert.match(byId['operation.uptime'], /50 percent/);
 });
 
-test('US-22-R10: the cost claim is withdrawn, not published as zero, and files no repair item when nothing merged or the table is absent', async () => {
+test('US-22-R18: the cost claim is withdrawn, not published as zero, and files no repair item when nothing merged or the table is absent', async () => {
   const db = await setup();                     // no router tables at all, no merge outcome
   const r = await runProbes(ports(db));
   const c = claimRow(db, 'performance.cost-per-merged-change');
@@ -508,6 +509,30 @@ test('US-22-R10: the cost claim is withdrawn, not published as zero, and files n
   assert.deepEqual((await runProbes(ports(db))).filed, ['DESCRIBE-x.loud']);
   assert.deepEqual(splitExpect('>=0 | unmeasured:quiet'), { cond: '>=0', quiet: true });
   assert.deepEqual(splitExpect('>=0'), { cond: '>=0', quiet: false });
+});
+
+test('US-20-R13 and T20-6: the self-hosting stage is published from the stage computation, never typed, and withdrawn quietly while none is computed', async () => {
+  const { stageStep } = await import('../steward/stage.js');
+  const db = await setup();
+  db.raw.exec(`CREATE TABLE IF NOT EXISTS items (id TEXT PRIMARY KEY, title TEXT, kind TEXT, owner_role TEXT, done_check TEXT, closing_probe TEXT, priority INTEGER, status TEXT DEFAULT 'open', disposition TEXT, created_at TEXT, updated_at TEXT)`);
+  let r = await runProbes(ports(db));
+  let c = claimRow(db, 'operation.self-hosting-stage');
+  assert.equal(c.last_result, 'unknown');
+  assert.equal(c.withdrawn, 1, 'no stage computed yet: not published, and not published as zero');
+  assert.ok(!r.filed.includes('DESCRIBE-operation.self-hosting-stage'), 'a quiet claim files no repair item');
+  const contract = async () => ({ record_check: { green: 3, merged: 3 }, false_built: 0 });
+  const s = await stageStep({ db, now: () => T0, probes: { contract } }).run(db, { notes: [] });
+  assert.equal(s.stage, 1);
+  r = await runProbes(ports(db));
+  c = claimRow(db, 'operation.self-hosting-stage');
+  assert.equal(c.last_result, 'pass');
+  assert.equal(c.withdrawn, 0);
+  const out = await describeOnce(ports(db));
+  const json = JSON.parse(rows(db, `SELECT body FROM describe_outputs WHERE form = 'json' ORDER BY rowid DESC LIMIT 1`)[0].body);
+  const pub = JSON.stringify(json);
+  assert.ok(pub.includes('operation.self-hosting-stage'), 'the computed stage is in the published JSON form');
+  assert.match(pub, /self-hosting stage computed from this organization's own records is stage 1\b/);
+  assert.ok(out, 'the describe pass ran');
 });
 
 test('seed claims still name no tenant and load once, with the five new self-model claims', () => {

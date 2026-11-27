@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Merge guard (US-SPEC-07 section 4, US-07-R18): the one function a merge step calls before it merges. It is the reference
+// Merge guard (US-SPEC-07 section 4, US-07-R18 and US-07-R26): the one function a merge step calls before it merges. It is the reference
 // module's form of the platform's green guard (seed/worker/src/greenguard.js). A merge is allowed only when the review gate
 // holds no marker for the head and the head's checks are finished and green. An empty list of checks is not green: a queued
 // suite, or a head too new to have reported, holds. An answer that cannot be read holds: unknown is not green.

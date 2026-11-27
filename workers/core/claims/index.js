@@ -4,6 +4,7 @@
 // Ports only: ctx = { db, now(), config, killSwitch?(), authorize?(request) }. No platform imports.
 
 import { triggerState } from './triggers.js';
+export { triggerState };   // the one trigger rule, for a dispatcher that judges list and gate triggers (US-08-R03)
 
 const KINDS = ['work', 'deploy', 'secret'];
 const TERMINAL = ['done', 'superseded', 'cancelled'];
@@ -121,7 +122,7 @@ export async function acquire(ctx, req = {}) {
       const item = await first(ctx.db, `SELECT status, trigger_on FROM items WHERE id=?`, item_id);
       if (item) {
         if (TERMINAL.includes(item.status)) return refuse(409, 'item_terminal');
-        if (item.trigger_on) { // US-08-R03, R16: one item, several items, or gate:<card>; each must be done with a disposition
+        if (item.trigger_on) { // US-08-R03, R28: one item, several items, or gate:<card>; each must be done with a disposition
           const t = await triggerState(ctx, item.trigger_on);
           if (!t.done) return refuse(409, 'trigger_not_done', { trigger: item.trigger_on, waiting_on: t.waiting_on });
         }
@@ -149,7 +150,7 @@ export async function acquire(ctx, req = {}) {
     }
     const row = await first(ctx.db, `SELECT fence, expires_at FROM claims_lock WHERE kind=? AND key=? AND released_at IS NULL`, kind, key);
     if (kind === 'work') await mirrorIn(ctx, item_id, holder, nowS);
-    if (kind === 'work' && req.repo && Number.isInteger(Number(req.pr)) && Number(req.pr) > 0 && await hasTable(ctx.db, 'claims_pr')) { // US-08-R19: link the claim to its pull request
+    if (kind === 'work' && req.repo && Number.isInteger(Number(req.pr)) && Number(req.pr) > 0 && await hasTable(ctx.db, 'claims_pr')) { // US-08-R31: link the claim to its pull request
       const lock = await first(ctx.db, `SELECT id FROM claims_lock WHERE kind=? AND key=? AND released_at IS NULL`, kind, key);
       await run(ctx.db, `INSERT OR REPLACE INTO claims_pr (claim_id, repo, pr) VALUES (?,?,?)`, lock.id, String(req.repo).slice(0, 200), Number(req.pr));
     }
@@ -207,7 +208,7 @@ export async function release(ctx, req = {}) {
 }
 
 // ---- protected-resource check (US-08-R08): accept a write only for the live token and the current fence ----
-// While the kill switch is on the answer is invalid with reason kill-switch (US-08-R18): a holder with a live claim stops writing
+// While the kill switch is on the answer is invalid with reason kill-switch (US-08-R30): a holder with a live claim stops writing
 // when the switch flips, it does not wait for its claim to expire. The refusal is recorded at most once per 5 minutes per key.
 export async function check(ctx, req = {}) {
   const kind = req.kind || 'work', { key } = target(req);
@@ -292,9 +293,11 @@ export async function releaseTerminal(ctx) {
   return { released };
 }
 
-// ---- pull-request release (US-08-R19): a claim linked to a pull request ends with it ----
+// ---- pull-request release (US-08-R31): a claim linked to a pull request ends with it ----
 // The reference reaper that does this in production is a script bound to one code host; here the reading of a pull
 // request is a port, so any host can supply it: readPull(repo, pr) -> { state: 'open' | 'closed' | 'merged', merged_at?, closed_at? }.
+// An error text kept in the events log never carries a credential: bearer values and long token-like runs are masked.
+const scrub = v => String(v == null ? '' : v).replace(/(bearer\s+)\S+/gi, '$1[masked]').replace(/\b[A-Za-z0-9_-]{32,}\b/g, '[masked]').slice(0, 200) || 'unknown error';
 const parseAt = v => (typeof v === 'number' ? v : Date.parse(String(v).includes('T') ? String(v) : String(v).replace(' ', 'T') + 'Z'));
 
 /** Release the live claims linked to one pull request. Merged: at once. Closed unmerged: at once too when called directly (the caller knows). Idempotent. */
@@ -313,13 +316,21 @@ export async function releaseForPull(ctx, { repo, pr, merged = false } = {}) {
  */
 export async function reapClosedPulls(ctx, { readPull } = {}) {
   if (typeof readPull !== 'function') throw new Error('reapClosedPulls needs the readPull port');
-  const out = { released: [], kept: [], unmeasured: [] };
+  const out = { released: [], kept: [], unmeasured: [], reasons: {} };
   if (!(await hasTable(ctx.db, 'claims_pr'))) return out;
   const grace = (Number(cfg(ctx).pr_grace_min) >= 0 ? Number(cfg(ctx).pr_grace_min) : 30) * 60000, now = nowMs(ctx);
   for (const r of await all(ctx.db, `SELECT l.*, p.repo AS pr_repo, p.pr AS pr_no FROM claims_lock l JOIN claims_pr p ON p.claim_id = l.id WHERE l.released_at IS NULL ORDER BY l.id`)) {
-    let pull = null;
-    try { pull = await readPull(r.pr_repo, r.pr_no); } catch { pull = null; }
-    if (!pull || !pull.state) { out.unmeasured.push(r.key); continue; }
+    let pull = null, why = null;
+    try { pull = await readPull(r.pr_repo, r.pr_no); } catch (e) { pull = null; why = scrub(e && e.message ? e.message : e); }
+    if (!pull || !pull.state) {
+      // the cause is kept (a missing token, a 404 and a 5xx are different repairs), once per change of cause so a lasting fault adds no rows
+      const reason = why || (pull ? 'the reader answered with no state' : 'the reader answered nothing');
+      out.unmeasured.push(r.key); out.reasons[r.key] = reason;
+      const detail = `pull request ${r.pr_repo}#${r.pr_no} could not be read: ${reason}`;
+      const last = await first(ctx.db, `SELECT event, detail FROM claims_events WHERE kind = ? AND key = ? ORDER BY id DESC LIMIT 1`, r.kind, r.key);
+      if (!last || last.event !== 'unmeasured' || last.detail !== detail) await event(ctx, r.kind, r.key, r.holder, 'unmeasured', detail);
+      continue;
+    }
     const merged = pull.state === 'merged' || !!pull.merged_at;
     const closedAt = pull.closed_at ? parseAt(pull.closed_at) : null;
     if (!merged && !(pull.state === 'closed' && closedAt !== null && now - closedAt >= grace)) { out.kept.push(r.key); continue; }

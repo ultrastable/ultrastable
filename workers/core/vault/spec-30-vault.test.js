@@ -41,11 +41,9 @@ test('US-30-R53: a real environment value wins over the vault, and any text can 
   assert.equal(await v.redact('nothing secret here'), 'nothing secret here');
 });
 
-// The reference vault stores a value as given (core/vault/index.js header: anyone who can read the database can read it). Closing probe of the PLANNED part of
-// the specification: the vault takes a key the deploy binds (the `key` option, 32 bytes in base64, like CREDENTIAL_KEY) and seals every value under it; the key
-// is never written to the database, so a copy of the database alone opens nothing. It stays a todo until createVault seals under that key. It deliberately
-// names no requirement id.
-test('the vault seals a value at rest under a key held outside the database (closing probe of the PLANNED part of the specification)', { todo: 'createVault takes no key and vault_secrets.value holds the value as given' }, async () => {
+// The vault takes a key the deploy binds (the `key` option, 32 bytes in base64, like CREDENTIAL_KEY) and seals every value under it; the key is never written
+// to the database, so a copy of the database alone opens nothing (US-SPEC-30 section 4.5).
+test('US-30-R53: the vault seals a value at rest under a key held outside the database', async () => {
   const b64 = bytes => Buffer.from(bytes).toString('base64');
   const key = b64(crypto.getRandomValues(new Uint8Array(32)));
   const db = makeDb([MIG]), v = createVault({ db, key });
@@ -56,4 +54,46 @@ test('the vault seals a value at rest under a key held outside the database (clo
   assert.equal(await v.read('ANTHROPIC_API_KEY'), SECRET, 'the value reads back with the key');
   const other = createVault({ db, key: b64(new Uint8Array(32)) });
   assert.notEqual(await other.read('ANTHROPIC_API_KEY').catch(() => null), SECRET, 'another key does not open it');
+});
+
+test('US-30-R53: a sealing vault still reads a value stored before it had a key, seals it on the next write, redacts and fills env from sealed values, and refuses a key of the wrong size', async () => {
+  const b64 = bytes => Buffer.from(bytes).toString('base64');
+  const key = b64(crypto.getRandomValues(new Uint8Array(32)));
+  const db = makeDb([MIG]);
+  await createVault({ db }).put('OPENAI_API_KEY', OTHER);
+  const v = createVault({ db, key });
+  assert.equal(v.sealed(), true); assert.equal(createVault({ db }).sealed(), false);
+  assert.equal(await v.read('OPENAI_API_KEY'), OTHER, 'a value stored before the key is read as it was');
+  await v.put('ANTHROPIC_API_KEY', SECRET); await v.put('OPENAI_API_KEY', OTHER);
+  const stored = db.raw.prepare('SELECT value FROM vault_secrets ORDER BY name').all().map(r => r.value);
+  assert.ok(stored.every(s => s.startsWith('enc:v1:')), 'both values are sealed once written with the key');
+  assert.deepEqual(await v.withVault({ KEEP: 'k' }), { KEEP: 'k', ANTHROPIC_API_KEY: SECRET, OPENAI_API_KEY: OTHER });
+  assert.equal(await v.redact(`a ${SECRET} b ${OTHER}`), 'a [redacted] b [redacted]');
+  const keyless = createVault({ db });
+  assert.equal(await keyless.read('ANTHROPIC_API_KEY'), null, 'without the key a sealed value reads as absent, never as its sealed text');
+  assert.deepEqual(await keyless.withVault(), {});
+  assert.throws(() => createVault({ db, key: b64(new Uint8Array(16)) }), /32 bytes/);
+});
+
+test('US-30-R53: a sealed value is bound to its name, has() agrees with read(), and with legacy off an unsealed row reads as absent', async () => {
+  const b64 = bytes => Buffer.from(bytes).toString('base64');
+  const key = b64(crypto.getRandomValues(new Uint8Array(32)));
+  const db = makeDb([MIG]), v = createVault({ db, key });
+  await v.put('ANTHROPIC_API_KEY', SECRET); await v.put('OPENAI_API_KEY', OTHER);
+  // anyone who can write the database moves a sealed value to another name: it does not open there
+  const sealed = db.raw.prepare("SELECT value FROM vault_secrets WHERE name = 'ANTHROPIC_API_KEY'").get().value;
+  db.raw.prepare("UPDATE vault_secrets SET value = ? WHERE name = 'OPENAI_API_KEY'").run(sealed);
+  assert.equal(await v.read('OPENAI_API_KEY'), null, 'a value sealed for one name does not open under another');
+  assert.equal(await v.has('OPENAI_API_KEY'), false, 'has() reports what read() can use');
+  assert.equal(await v.has('ANTHROPIC_API_KEY'), true);
+  assert.equal(await createVault({ db, key: b64(new Uint8Array(32)) }).has('ANTHROPIC_API_KEY'), false, 'a key that does not open the value reads it as absent');
+  // a plain value stored before the key is sealed at its first read, and once a deployment turns legacy off a planted plain row is absent
+  db.raw.prepare("UPDATE vault_secrets SET value = ? WHERE name = 'OPENAI_API_KEY'").run(OTHER);
+  assert.equal(await v.read('OPENAI_API_KEY'), OTHER);
+  assert.ok(db.raw.prepare("SELECT value FROM vault_secrets WHERE name = 'OPENAI_API_KEY'").get().value.startsWith('enc:v1:'), 'sealed at its first read');
+  const strict = createVault({ db, key, legacy: false });
+  assert.equal(await strict.read('OPENAI_API_KEY'), OTHER, 'a sealed row still reads');
+  db.raw.prepare("UPDATE vault_secrets SET value = ? WHERE name = 'OPENAI_API_KEY'").run('planted-plain-value');
+  assert.equal(await strict.read('OPENAI_API_KEY'), null); assert.equal(await strict.has('OPENAI_API_KEY'), false);
+  assert.deepEqual(Object.keys(await strict.withVault()), ['ANTHROPIC_API_KEY'], 'a planted plain row never reaches the env');
 });

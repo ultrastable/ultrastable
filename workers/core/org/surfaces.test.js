@@ -168,3 +168,19 @@ test('T18-9 and US-18-R09: Google IAP: a request through the configured proxy wi
   assert.equal(ok.status, 200);
   assert.ok((await ok.json()).now, 'the console data is served to the proxied owner');
 });
+
+test('US-13-R13: in the composed organization the dashboard calls the host probe port for a routed target only and reports the unrouted one as unrouted', async () => {
+  const called = [];
+  const probe = async url => { called.push(url); return { ok: true, status: 200 }; };
+  const cfg = config({ dashboard: { routes: ['api.example.test'], probes: [{ id: 'api', url: 'https://api.example.test/health' }, { id: 'old', url: 'https://old.example.test/health' }] } });
+  const { org } = boot({ cfg, extra: { ports: { probe } } });
+  const anon = await org.handle(req('/console/dashboard/api/probes'));
+  assert.equal(anon.status, 401, 'the probe reading is owner-only like the rest of the dashboard');
+  assert.deepEqual(called, [], 'an anonymous caller makes no probe call');
+  const r = await org.handle(req('/console/dashboard/api/probes', { authed: true }));
+  assert.equal(r.status, 200);
+  const j = await r.json();
+  const byId = Object.fromEntries(j.results.map(x => [x.id, x.state]));
+  assert.deepEqual(byId, { api: 'up', old: 'unrouted' });
+  assert.deepEqual(called, ['https://api.example.test/health'], 'only the routed target reached the host probe port');
+});

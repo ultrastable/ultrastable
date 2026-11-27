@@ -80,7 +80,7 @@ export function buildoutSteps({ db, config = {}, now = () => Date.now(), fetch, 
     ...tenancySteps({ access: ports.access, push: ports.push }),
     // The access preflight (core/access): probes config.access.needs each tick; its database trigger already refuses unpermitted owner asks.
     ...accessSteps({ db, now: clock, fetch, env: ports.env, config }),
-    // US-16-R10, R20, R21: an overdue Ask falls to its default and every card is checked against the card rules on the tick, so none of it waits for the walkthrough to be opened.
+    // US-16-R10, R19, R29, R30: an overdue Ask falls to its default and every card is checked against the card rules on the tick, so none of it waits for the walkthrough to be opened.
     guarded('elicit_duties', 'elicit_duties', c => (ports.elicit
       ? elicitDutiesStep({ db, elicit: ports.elicit, fetch, now: clock, derive: ports.derive }).run(db, c.tick)
       : { skipped: 'no elicit instance' })),

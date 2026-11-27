@@ -33,7 +33,7 @@ import { watchOwnerSteps } from '../runner/ownerwatch.js';
 import { createAgents } from '../agents/index.js';
 import { createContainers } from '../containers/index.js';
 import { createInfra, heartbeat } from '../infra/index.js';
-import { createElicit } from '../elicit/index.js';
+import { createElicit, elicitMetrics } from '../elicit/index.js';
 import { createAudit } from '../audit/index.js';
 import { ignoranceStep } from '../ignorance/org.js';
 import { step as specloopStep } from '../specloop/index.js';
@@ -87,7 +87,9 @@ export function createOrg({
   const mergedEnv = async () => { try { return await vaultStore.withVault(env); } catch { return env; } };
   const clock = typeof now === 'function' ? now : () => now;
   const doFetch = fetch || ((...a) => globalThis.fetch(...a));
-  const packs = createPacks({ db, now: clock, config: config.packs || {}, channels, ...(importer ? { importer } : {}) });
+  // US-21-R29: the packs read the deployment's protected policy (config.packs.policy, else the whole config.policy the trust step reads), so a pack's rung is
+  // bounded by the policy surface its class maps to; US-21-R28: a pack's egress fetch is built from this organization's fetch unless the host gives another.
+  const packs = createPacks({ db, now: clock, config: { ...(config.packs || {}), policy: config.packs?.policy ?? config.policy ?? null }, channels, fetch: doFetch, ...(importer ? { importer } : {}) });
   const dcfg = config.describe || {};
   const secrets = vaultStore;
   let appReady = false; // refreshed at the start of each tick: do the vault's GitHub App credentials exist
@@ -213,7 +215,7 @@ export function createOrg({
       ...L2_EXTRA_STEPS,
       { name: 'claims_reap', run: async (_db, ctx) => { const r = await claims.reapExpired(cctx()); ctx.notes.push(`claims reaped: ${JSON.stringify(r)}`); } },
       { name: 'claims_release_terminal', run: async (_db, ctx) => { const r = await claims.releaseTerminal(cctx()); ctx.notes.push(`claims released on terminal items: ${JSON.stringify(r)}`); } },
-      // US-08-R19: a claim linked to a pull request is released when that pull request merges or has stayed closed. The reading of a pull request is a port of the host: either
+      // US-08-R31: a claim linked to a pull request is released when that pull request merges or has stayed closed. The reading of a pull request is a port of the host: either
       // `readPull(repo, number)` itself, or `pullReader({ fetch, env, tokenEnv })` that builds it from the token the organization holds (adapters/github/pulls.js githubPullReader).
       { name: 'claims_pr_reap', run: async (_db, ctx) => {
         const tokenEnv = config.vcs?.token_env || 'VCS_TOKEN';
@@ -342,7 +344,10 @@ export function createOrg({
     // US-04-R01, R05: the plus loop's reserved share is taken off the kernel's slots before it allocates, so the programs share what is left. A store without the plus tables keeps the kernel's own slots.
     let kernel = config.kernel;
     if (config.plus?.enabled !== false) { try { kernel = await plusSlotsConfig(db, { config, now: clock(), kernel: config.kernel || {} }); } catch { kernel = config.kernel; } }
-    return runTick(db, { config: { ...config, ...(kernel ? { kernel } : {}), executor_takes_targeted: runnerOn() }, env: presence(e), now: clock(), extraSteps: extraSteps(e), metrics });
+    return runTick(db, { config: { ...config, ...(kernel ? { kernel } : {}), executor_takes_targeted: runnerOn() }, env: presence(e), now: clock(), extraSteps: extraSteps(e),
+      // US-16-R19: with elicitation on, the kernel scorer reads the default-holds metric by default; a host's own metric of that name still wins.
+      metrics: { ...(elicitInst ? elicitMetrics : {}), ...metrics },
+      triggerJudge: spec => claims.triggerState({ db }, spec) });   // US-08-R03: dispatch reads list and gate triggers with the claims rule
   }
 
   async function handle(request) {

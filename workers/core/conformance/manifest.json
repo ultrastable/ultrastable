@@ -685,7 +685,7 @@
    "tests": [
     {
      "file": "core/deploy/mergeguard.test.js",
-     "name": "US-07-R18, US-07-T07: a hold marker, a queued required check, an empty list on a fresh head, an unreadable answer and a failed check each refuse; a new push with green required checks allows"
+     "name": "US-07-R18, US-07-R26, US-07-T07, US-07-T10: a hold marker, a queued required check, an empty list on a fresh head, an unreadable answer and a failed check each refuse; a new push with green required checks allows"
     },
     {
      "file": "../seed/worker/test/greenguard.test.js",
@@ -1228,10 +1228,6 @@
    "spec": "US-SPEC-13",
    "tests": [
     {
-     "file": "core/sla/sla.test.js",
-     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question (through the service-level step)"
-    },
-    {
      "file": "../seed/worker/test/spec-13-service-levels.test.js",
      "name": "US-13-T06 and US-13-R14: an agent branch request open 70 minutes and idle 40 that is not merge-ready is tier supersede; merge-ready it is ok"
     }
@@ -1241,14 +1237,6 @@
    "id": "US-13-T07",
    "spec": "US-SPEC-13",
    "tests": [
-    {
-     "file": "core/sla/wiring.test.js",
-     "name": "US-13-T07 and US-13-R19: the wired org computes the autonomy card and the stored objective on its first tick"
-    },
-    {
-     "file": "core/sla/wiring.test.js",
-     "name": "US-13-T07 and US-13-R19: through buildoutSteps with l3 supplied: the card, F and the step-budget sweep run on a tick (the behaviour the wiring must reach)"
-    },
     {
      "file": "../seed/worker/test/spec-13-service-levels.test.js",
      "name": "US-13-T07 and US-13-R16: an item created 4 hours ago at priority 40 is raised to priority 5 with one cause item for the day; a second tick files no second one"
@@ -1435,7 +1423,7 @@
    "tests": [
     {
      "file": "core/elicit/derive.test.js",
-     "name": "T16-1, US-16-R01 and US-16-R21: a need answerable from a record or a tool probe is derived and never asked, with an attempts row per surface"
+     "name": "T16-1, US-16-R01 and US-16-R30: a need answerable from a record or a tool probe is derived and never asked, with an attempts row per surface"
     },
     {
      "file": "core/elicit/elicit.test.js",
@@ -1873,6 +1861,10 @@
    "spec": "US-SPEC-20",
    "tests": [
     {
+     "file": "core/describe/describe.test.js",
+     "name": "US-20-R13 and T20-6: the self-hosting stage is published from the stage computation, never typed, and withdrawn quietly while none is computed"
+    },
+    {
      "file": "core/steward/selfhost-contract.test.js",
      "name": "T20-6 and US-20-R10: the published stage matches the highest stage whose evidence exists; a higher claim is reported"
     },
@@ -2023,32 +2015,17 @@
   {
    "id": "T22-6",
    "spec": "US-SPEC-22",
-   "tests": [
-    {
-     "file": "core/describe/describe.test.js",
-     "name": "T22-6 and US-22-R11: the feed omits non-public and withdrawn claims and its claim ids equal /describe.json"
-    }
-   ]
+   "tests": []
   },
   {
    "id": "T22-7",
    "spec": "US-SPEC-22",
-   "tests": [
-    {
-     "file": "core/describe/describe.test.js",
-     "name": "T22-7: with no injected rules a banned phrase is rejected"
-    }
-   ]
+   "tests": []
   },
   {
    "id": "T22-8",
    "spec": "US-SPEC-22",
-   "tests": [
-    {
-     "file": "core/describe/describe.test.js",
-     "name": "T22-8: a term from the SCOPE.md out-of-scope table is rejected unless its pack is enabled"
-    }
-   ]
+   "tests": []
   },
   {
    "id": "T22-9",
@@ -4065,7 +4042,7 @@
    "tests": [
     {
      "file": "core/deploy/deploy.test.js",
-     "name": "US-05-R13, US-06-R21: a stated confidence that clears the threshold uncorrected but not after the stored correction refuses the deploy"
+     "name": "US-05-R13, US-06-R25: a stated confidence that clears the threshold uncorrected but not after the stored correction refuses the deploy"
     },
     {
      "file": "core/predict/predict.test.js",
@@ -4355,7 +4332,7 @@
    "tests": [
     {
      "file": "core/deploy/deploy.test.js",
-     "name": "US-06-R21, US-06-R08: an irreversible, identity-bound class yields a gate card and publishes nothing"
+     "name": "US-06-R25, US-06-R08: an irreversible, identity-bound class yields a gate card and publishes nothing"
     },
     {
      "file": "core/trust/trust.test.js",
@@ -4466,7 +4443,7 @@
     },
     {
      "file": "core/deploy/deploy.test.js",
-     "name": "US-06-R13, US-06-R21: a standing-limit refusal is recorded and the same deploy is not resubmitted"
+     "name": "US-06-R13, US-06-R25: a standing-limit refusal is recorded and the same deploy is not resubmitted"
     },
     {
      "file": "core/trust/trust.test.js",
@@ -4617,16 +4594,12 @@
      "name": "US-06-R21: accrue_trust: a trust row of another tenant is neither read nor overwritten; an own row accrues and carries no tenant"
     },
     {
-     "file": "core/deploy/deploy.test.js",
-     "name": "US-06-R21: a deploy is refused with the reason and a ledger row when the rung is below the one required, and published when it is at or above"
+     "file": "core/trust/trust.test.js",
+     "name": "US-06-R21: deployAuthorizer allows an action at the rung it needs, refuses below it, and carries the gate card and the refusal advice back"
     },
     {
-     "file": "core/deploy/deploy.test.js",
-     "name": "US-06-R21: an authorizer that throws or answers anything but allowed refuses: unknown is not allowed"
-    },
-    {
-     "file": "core/deploy/deploy.test.js",
-     "name": "US-06-R21, US-06-R08: an irreversible, identity-bound class yields a gate card and publishes nothing"
+     "file": "core/trust/trust.test.js",
+     "name": "US-06-R21: the deploy authorizer defaults to the autonomous rung, so a pair that has earned nothing cannot deploy to production"
     }
    ]
   },
@@ -4865,7 +4838,7 @@
    "tests": [
     {
      "file": "core/deploy/mergeguard.test.js",
-     "name": "US-07-R11, US-07-R18: the guard decides from verified findings through mergeAllowed, never from a reviewer verdict"
+     "name": "US-07-R11, US-07-R26: the guard decides from verified findings through mergeAllowed, never from a reviewer verdict"
     },
     {
      "file": "core/deploy/review-ports.test.js",
@@ -5014,15 +4987,7 @@
     },
     {
      "file": "core/deploy/mergeguard.test.js",
-     "name": "US-07-R18, US-07-T07: a hold marker, a queued required check, an empty list on a fresh head, an unreadable answer and a failed check each refuse; a new push with green required checks allows"
-    },
-    {
-     "file": "core/deploy/mergeguard.test.js",
-     "name": "US-07-R18: an unreadable review gate holds, and the merge lane's own check can be ignored by name"
-    },
-    {
-     "file": "core/deploy/mergeguard.test.js",
-     "name": "US-07-R11, US-07-R18: the guard decides from verified findings through mergeAllowed, never from a reviewer verdict"
+     "name": "US-07-R18, US-07-R26, US-07-T07, US-07-T10: a hold marker, a queued required check, an empty list on a fresh head, an unreadable answer and a failed check each refuse; a new push with green required checks allows"
     }
    ]
   },
@@ -5042,18 +5007,6 @@
     {
      "file": "../seed/worker/test/handoff.test.js",
      "name": "US-07-R19, US-07-T08: a red probe rolls the deploy back and puts the item back to ready"
-    },
-    {
-     "file": "core/deploy/deploy.test.js",
-     "name": "US-07-R19: a stale expectedVersion is refused, nothing is published and the refused ledger row carries the reason"
-    },
-    {
-     "file": "core/deploy/deploy.test.js",
-     "name": "US-07-R19: loop breaker: N consecutive reverts trip a gate-style record and further deploys are refused until closed"
-    },
-    {
-     "file": "core/deploy/deploy.test.js",
-     "name": "US-07-R19: a kept deploy resets the breaker count"
     }
    ]
   },
@@ -5069,10 +5022,6 @@
     {
      "file": "../seed/worker/test/handoff.test.js",
      "name": "US-07-R20: a deploy whose live deployment did not change is rolled back through the rollback path"
-    },
-    {
-     "file": "core/deploy/deploy.test.js",
-     "name": "US-07-R20: an unverifiable rollback opens a gate record and reports failed"
     }
    ]
   },
@@ -5092,14 +5041,6 @@
     {
      "file": "../seed/worker/test/redmain.test.js",
      "name": "US-07-R21, US-07-T09: green, running, missing gate, fresh red, a revert head and an open revert PR all do nothing"
-    },
-    {
-     "file": "core/deploy/deploy.test.js",
-     "name": "US-07-R21: unlogged mutation: reconcile files a record when live differs from the ledger"
-    },
-    {
-     "file": "core/deploy/deploy.test.js",
-     "name": "US-07-R21: after a revert, reconcile expects the prior version"
     }
    ]
   },
@@ -5221,8 +5162,8 @@
      "name": "US-08-R03: a single-id trigger behaves as before: not done refuses, done admits, a claimed item is never demoted"
     },
     {
-     "file": "core/test/tick.test.js",
-     "name": "US-08-R03: a ready item whose trigger item is not done is not dispatched; one whose trigger is done with its disposition is; a list or gate trigger the tick cannot judge goes back to open undispatched"
+     "file": "core/claims/triggers.test.js",
+     "name": "US-08-R03: a dispatched item whose list or gate trigger is not done loses its claim and returns to open; a claim granted by acquire stays with its holder"
     }
    ]
   },
@@ -5454,18 +5395,6 @@
     {
      "file": "../seed/worker/test/doer.test.js",
      "name": "US-08-R16, US-08-T07: without the AI binding a generic item waits with its claim kept (loop-breaker still applies)"
-    },
-    {
-     "file": "core/claims/triggers.test.js",
-     "name": "US-08-R16: a trigger is one item, a comma list of items, or gate:<card>"
-    },
-    {
-     "file": "core/claims/triggers.test.js",
-     "name": "US-08-R16: a trigger naming two items becomes ready only when both are done with a disposition"
-    },
-    {
-     "file": "core/claims/triggers.test.js",
-     "name": "US-08-R16: a trigger gate:<card> waits for the card to close, then the item becomes ready"
     }
    ]
   },
@@ -5485,14 +5414,6 @@
     {
      "file": "../seed/worker/test/tick.test.js",
      "name": "US-08-R17: with nothing past 120 minutes no cause item is filed"
-    },
-    {
-     "file": "core/claims/triggers.test.js",
-     "name": "US-08-R17: an item held by gate card G returns to ready with its blocker cleared when G closes"
-    },
-    {
-     "file": "core/claims/triggers.test.js",
-     "name": "US-08-R17: an item blocked with another blocker text is never released by the step"
     }
    ]
   },
@@ -5512,10 +5433,6 @@
     {
      "file": "../seed/worker/test/selfaudit.test.js",
      "name": "US-08-R18, US-08-T09: loop-breaker blocks an item dispatched 3 times with no outcome and files a LOOPBREAK item"
-    },
-    {
-     "file": "core/claims/claims.test.js",
-     "name": "US-08-R18: with the kill switch on, check answers invalid with reason kill-switch, guardedWrite refuses and the router answers 503"
     }
    ]
   },
@@ -5531,22 +5448,6 @@
     {
      "file": "../seed/worker/test/doer.test.js",
      "name": "US-08-R19: claims_released_unworked_24h counts reaper releases of unworked claims"
-    },
-    {
-     "file": "core/claims/claims.test.js",
-     "name": "US-08-R19: a claim linked to a merged pull request is released at once with outcome merged and the item returns to ready"
-    },
-    {
-     "file": "core/claims/claims.test.js",
-     "name": "US-08-R19: a claim linked to a pull request closed 10 minutes ago is kept; after 30 minutes it is released as closed"
-    },
-    {
-     "file": "core/claims/claims.test.js",
-     "name": "US-08-R19: a claim on an open pull request or with no link is never touched"
-    },
-    {
-     "file": "core/claims/claims.test.js",
-     "name": "US-08-R19: an unreadable pull request releases nothing and is reported as unmeasured"
     }
    ]
   },
@@ -5566,14 +5467,6 @@
     {
      "file": "../seed/worker/test/doer.test.js",
      "name": "US-08-R20: the owner gate closes itself when no owner-only item is left"
-    },
-    {
-     "file": "core/claims/claims.test.js",
-     "name": "US-08-R20: a claim released with no heartbeat is recorded as an unworked release, and the item is parked after max_unworked_releases"
-    },
-    {
-     "file": "core/claims/claims.test.js",
-     "name": "US-08-R20: a claim that was heartbeated is released without an unworked outcome"
     }
    ]
   },
@@ -5619,7 +5512,7 @@
    "tests": [
     {
      "file": "core/deploy/deploy.test.js",
-     "name": "US-07-R19, US-09-R02: the kill switch refuses deploys, via config row or injected port"
+     "name": "US-07-R27, US-09-R02: the kill switch refuses deploys, via config row or injected port"
     },
     {
      "file": "core/router/caps/caps.test.js",
@@ -7374,11 +7267,11 @@
    "tests": [
     {
      "file": "core/sla/sla.test.js",
-     "name": "US-13-R17 and US-13-R09: a row past due is raised one priority level and the manager notified, once per missed date"
+     "name": "US-13-R28 and US-13-R09: a row past due is raised one priority level and the manager notified, once per missed date"
     },
     {
      "file": "core/sla/sla.test.js",
-     "name": "US-13-R17 and US-13-R09: a row at priority 0 is noticed once with the words \"already at top priority\"; the priority is not lowered below 0"
+     "name": "US-13-R28 and US-13-R09: a row at priority 0 is noticed once with the words \"already at top priority\"; the priority is not lowered below 0"
     }
    ]
   },
@@ -7397,7 +7290,7 @@
     },
     {
      "file": "core/sla/sla.test.js",
-     "name": "US-13-R16 and US-13-R10: a breach after the item was closed reopens it, once"
+     "name": "US-13-R27 and US-13-R10: a breach after the item was closed reopens it, once"
     }
    ]
   },
@@ -7424,7 +7317,7 @@
     },
     {
      "file": "core/sla/sla.test.js",
-     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question (through the service-level step)"
+     "name": "US-13-T10 and US-13-R27 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question (through the service-level step)"
     },
     {
      "file": "core/sla/sla.test.js",
@@ -7467,6 +7360,10 @@
     {
      "file": "core/console-l3/dashboard.test.js",
      "name": "US-13-R13: the dashboard never probes or reports down a target that is not routed"
+    },
+    {
+     "file": "core/org/surfaces.test.js",
+     "name": "US-13-R13: in the composed organization the dashboard calls the host probe port for a routed target only and reports the unrouted one as unrouted"
     }
    ]
   },
@@ -7511,18 +7408,6 @@
     {
      "file": "../seed/worker/test/spec-13-service-levels.test.js",
      "name": "US-13-T07 and US-13-R16: an item created 4 hours ago at priority 40 is raised to priority 5 with one cause item for the day; a second tick files no second one"
-    },
-    {
-     "file": "core/sla/sla.test.js",
-     "name": "US-13-R16 and US-13-R10: a breach after the item was closed reopens it, once"
-    },
-    {
-     "file": "core/sla/sla.test.js",
-     "name": "US-13-R16: weekly audit and path gap items reopen when the finding recurs"
-    },
-    {
-     "file": "core/sla/sla.test.js",
-     "name": "US-13-T06 and US-13-R16 and US-13-R11: a new over-budget run after the item and question were closed files an item and exactly one new question (through the service-level step)"
     }
    ]
   },
@@ -7532,18 +7417,9 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/sla/sla.test.js",
-     "name": "US-13-R17 and US-13-R09: a row past due is raised one priority level and the manager notified, once per missed date"
-    },
-    {
-     "file": "core/sla/sla.test.js",
-     "name": "US-13-R17 and US-13-R09: a row at priority 0 is noticed once with the words \"already at top priority\"; the priority is not lowered below 0"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-13-R18",
@@ -7551,18 +7427,9 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/sla/sla.test.js",
-     "name": "US-13-R18: weekly audit: an open row with neither a due date nor an executor fails and gets one item; the audit is stored"
-    },
-    {
-     "file": "core/sla/sla.test.js",
-     "name": "US-13-R18 and US-13-R19: a failed card or weekly audit leaves its register row due, so the next tick retries; a part after the card that throws files an item and the card is not recorded twice"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-14-R01",
@@ -8218,7 +8085,7 @@
    "tests": [
     {
      "file": "core/elicit/derive.test.js",
-     "name": "T16-1, US-16-R01 and US-16-R21: a need answerable from a record or a tool probe is derived and never asked, with an attempts row per surface"
+     "name": "T16-1, US-16-R01 and US-16-R30: a need answerable from a record or a tool probe is derived and never asked, with an attempts row per surface"
     },
     {
      "file": "core/elicit/elicit.test.js",
@@ -8264,7 +8131,7 @@
     },
     {
      "file": "core/elicit/elicit.test.js",
-     "name": "US-16-R03 and US-16-R20: reviewCards reports a stored card whose jargon is neither mapped nor defined"
+     "name": "US-16-R03 and US-16-R29: reviewCards reports a stored card whose jargon is neither mapped nor defined"
     }
    ]
   },
@@ -8332,7 +8199,7 @@
    "tests": [
     {
      "file": "core/elicit/elicit.test.js",
-     "name": "US-16-R07, US-16-R09 and US-16-R19: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary"
+     "name": "US-16-R07, US-16-R09 and US-16-R28: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary"
     },
     {
      "file": "core/elicit/elicit.test.js",
@@ -8374,7 +8241,7 @@
    "tests": [
     {
      "file": "core/elicit/elicit.test.js",
-     "name": "US-16-R07, US-16-R09 and US-16-R19: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary"
+     "name": "US-16-R07, US-16-R09 and US-16-R28: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary"
     }
    ]
   },
@@ -8401,7 +8268,7 @@
     },
     {
      "file": "core/elicit/elicit.test.js",
-     "name": "US-16-R10 and US-16-R20: expireAll defaults every project's overdue Ask once and reviewAll reports a stored card with undefined jargon across projects"
+     "name": "US-16-R10 and US-16-R29: expireAll defaults every project's overdue Ask once and reviewAll reports a stored card with undefined jargon across projects"
     },
     {
      "file": "core/org/wiring.test.js",
@@ -8463,6 +8330,10 @@
     {
      "file": "core/elicit/elicit.test.js",
      "name": "T16-8 and US-16-R13: a correction in the read-back changes the register and queues a re-run of the affected artifact"
+    },
+    {
+     "file": "core/walkthrough/readback-page.test.js",
+     "name": "US-18-R15 and US-16-R13: the read-back page asks, then sends the confirm step with a correction by button, a correction by text and the confirmation"
     }
    ]
   },
@@ -8567,8 +8438,24 @@
    "proof": "named test",
    "tests": [
     {
-     "file": "core/elicit/elicit.test.js",
-     "name": "US-16-R07, US-16-R09 and US-16-R19: the answer is stored verbatim with channel and time; Tell me more explains and keeps the same card, three times teaches the glossary"
+     "file": "core/elicit/default-prediction.test.js",
+     "name": "US-16-R19 and T16-13: in the composed organization a default still standing at its review time is graded a hit by the kernel, counted right on Progress and never a lesson"
+    },
+    {
+     "file": "core/elicit/default-prediction.test.js",
+     "name": "US-16-R19: a tick that has no reader for the default prediction files ELICIT-DEFAULT-METRIC before the prediction falls due, and closes it once the reader is there"
+    },
+    {
+     "file": "core/elicit/default-prediction.test.js",
+     "name": "US-16-R19: the composed organization passes the default-holds reader to the kernel by itself, so a host that passes no metrics still grades a held default a hit and files no ELICIT-DEFAULT-METRIC"
+    },
+    {
+     "file": "core/elicit/default-prediction.test.js",
+     "name": "US-16-R19: a metric of the same name the host passes wins over the default reader"
+    },
+    {
+     "file": "core/elicit/duties-step.test.js",
+     "name": "US-16-R19: a default prediction the tick cannot read files one item, which closes on the first pass whose tick carries the reader; rows in the older shape are rewritten"
     }
    ]
   },
@@ -8578,22 +8465,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/elicit/duties-step.test.js",
-     "name": "US-16-R20: the tick step finds a card that would leak jargon before a person sees it and files one item per card, once"
-    },
-    {
-     "file": "core/elicit/elicit.test.js",
-     "name": "US-16-R03 and US-16-R20: reviewCards reports a stored card whose jargon is neither mapped nor defined"
-    },
-    {
-     "file": "core/elicit/elicit.test.js",
-     "name": "US-16-R10 and US-16-R20: expireAll defaults every project's overdue Ask once and reviewAll reports a stored card with undefined jargon across projects"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-16-R21",
@@ -8601,30 +8475,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/elicit/derive.test.js",
-     "name": "T16-1, US-16-R01 and US-16-R21: a need answerable from a record or a tool probe is derived and never asked, with an attempts row per surface"
-    },
-    {
-     "file": "core/elicit/derive.test.js",
-     "name": "US-16-R21: research with a source derives with provenance researched and the URL; research without a source is logged no_source and the need stays open"
-    },
-    {
-     "file": "core/elicit/derive.test.js",
-     "name": "US-16-R21: a failing port is logged as an error and the next surface is still tried"
-    },
-    {
-     "file": "core/elicit/derive.test.js",
-     "name": "US-16-R21: with require_exhaustion a need is not asked or gated until every configured surface has an attempt row"
-    },
-    {
-     "file": "core/elicit/derive.test.js",
-     "name": "US-16-R21: a value that evidence contradicted is not derived again while the need is open, but another value is"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-16-R22",
@@ -8632,26 +8485,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/elicit/derive.test.js",
-     "name": "T16-11 and US-16-R22: a stated answer contradicted by evidence returns to open, keeps its history, lowers readiness and queues a re-run"
-    },
-    {
-     "file": "core/walkthrough/changed-line.test.js",
-     "name": "US-16-R22: the walkthrough card of a reopened Need carries the plain line \"This changed: ...\" and an untouched Need carries none"
-    },
-    {
-     "file": "core/walkthrough/changed-line.test.js",
-     "name": "US-16-R22: the Needs-you card built from a reopened Need keeps the line, and so does a gate card that stands for it"
-    },
-    {
-     "file": "core/walkthrough/changed-line.test.js",
-     "name": "US-16-R22: the console page draws the \"This changed\" line on its own line on the Needs-you card and on the walkthrough step, and nothing when there is none"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-16-R23",
@@ -8662,10 +8498,6 @@
    "status": "met",
    "proof": "named test",
    "tests": [
-    {
-     "file": "core/elicit/outcomes.test.js",
-     "name": "T16-10 and US-16-R23: asking a need logs a decision and a parsable prediction with confidence 1 - p_wrong and registers its metric"
-    },
     {
      "file": "core/ignorance/ignorance.test.js",
      "name": "US-16-R23: model output is untrusted: validated, capped, tagged, and refused from the author family"
@@ -10309,6 +10141,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "core/describe/describe.test.js",
+     "name": "US-20-R13 and T20-6: the self-hosting stage is published from the stage computation, never typed, and withdrawn quietly while none is computed"
+    },
+    {
      "file": "core/org/wiring.test.js",
      "name": "US-20-R10 to R13: the stage step computes the self-hosting stage when the deployment names its evidence, and says why it did not otherwise"
     },
@@ -10873,6 +10709,10 @@
     {
      "file": "core/describe/describe.test.js",
      "name": "US-22-R07: DEFAULT_VOICE_RULES equals voice-rules.json"
+    },
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "T22-11 and US-22-R07: with no injected rules a banned phrase is rejected"
     }
    ]
   },
@@ -10888,6 +10728,10 @@
     {
      "file": "core/describe/describe.test.js",
      "name": "R08: out-of-scope outputs mentioned as done are rejected unless the pack is enabled"
+    },
+    {
+     "file": "core/describe/describe.test.js",
+     "name": "T22-12 and US-22-R08: a term from the SCOPE.md out-of-scope table is rejected unless its pack is enabled"
     }
    ]
   },
@@ -10912,14 +10756,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/describe/describe.test.js",
-     "name": "US-22-R10: the cost claim is withdrawn, not published as zero, and files no repair item when nothing merged or the table is absent"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-22-R11",
@@ -10927,18 +10766,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/describe/describe.test.js",
-     "name": "T22-6 and US-22-R11: the feed omits non-public and withdrawn claims and its claim ids equal /describe.json"
-    },
-    {
-     "file": "core/org/wiring.test.js",
-     "name": "US-22-R11, R12: the claims feed, the statement and the re-probe are served; the re-probe has the host ports and answers 429 inside its interval"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-22-R12",
@@ -10946,22 +10776,9 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "met",
-   "proof": "named test",
-   "tests": [
-    {
-     "file": "core/describe/describe.test.js",
-     "name": "US-22-R12: a re-probe inside the minimum interval returns 429 and runs no probe; without ports it is 503; GET is 405"
-    },
-    {
-     "file": "core/describe/describe.test.js",
-     "name": "US-22-R12: the claims page escapes claim text and evidence, carries no script, and offers the re-probe only when ports exist"
-    },
-    {
-     "file": "core/org/wiring.test.js",
-     "name": "US-22-R11, R12: the claims feed, the statement and the re-probe are served; the re-probe has the host ports and answers 429 inside its interval"
-    }
-   ]
+   "status": "deviation",
+   "reason": "no test in this repository cites this requirement",
+   "tests": []
   },
   {
    "id": "US-22-R13",

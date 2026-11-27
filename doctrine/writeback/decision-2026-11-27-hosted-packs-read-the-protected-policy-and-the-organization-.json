@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-hosted-packs-read-the-protected-policy-and-the-organization-",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "Hosted packs read the protected policy and the organization's fetch (US-21-R28, R29)",
+  "body": "core/org/index.js passes config.packs.policy, else config.policy, and its own fetch to createPacks, so a class B pack it hosts stays at assisted under the shipped policy and its egress fetch is the org fetch limited to declared hosts. Proven by node --test workers/core/org/wiring.test.js.",
+  "probe": "grep:workers/core/org/index.js::policy: config.packs\\?\\.policy",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "decision",
+ "title": "Hosted packs read the protected policy and the organization's fetch (US-21-R28, R29)",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}

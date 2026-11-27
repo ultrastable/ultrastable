@@ -11,7 +11,7 @@
 //  - the autonomy card and the systems card (six rubrics) are recomputed monthly from tables, with evidence, limits and, for the autonomy
 //    card, the three largest gaps filed; each card is audited by a second computation and an optional attestor (R23);
 //  - the weights of F are calibrated by regression over the stored history and proposed, never adopted (R20);
-//  - a breach item or question is filed again when the same breach recurs after it was closed (R16).
+//  - a breach item or question is filed again when the same breach recurs after it was closed (R27).
 // Ports: db, now, config. The report-card writer is passed in (l3 = createConsoleL3(...)), so this module owns no card logic.
 import { fileOrReopen } from '../_shared/items.js';
 import { calibrateWeights } from './calibrate.js';
@@ -46,7 +46,7 @@ export function createSla({ db, now = () => Date.now(), config = {} } = {}) {
   const one = (sql, ...a) => db.prepare(sql).bind(...a).first();
   const run = (sql, ...a) => db.prepare(sql).bind(...a).run();
   const hours = sev => cfg.severity_hours[sev] ?? cfg.severity_hours[cfg.default_severity];
-  // Files the item, or reopens it when the same breach recurs after it was closed (US-13-R16); an open item is left alone.
+  // Files the item, or reopens it when the same breach recurs after it was closed (US-13-R27); an open item is left alone.
   const fileItem = (id, title, done_check, { kind = 'fix', project = 'sla', probe = 'manual', priority = 20, owner = cfg.manager_role } = {}) =>
     fileOrReopen(db, { id, title, kind, project, owner_role: owner, done_check, closing_probe: probe, priority, at: stamp(clock()) });
 
@@ -388,12 +388,26 @@ export function createSla({ db, now = () => Date.now(), config = {} } = {}) {
   const markRan = (name, everyDays) => run(`INSERT INTO sla_register (name, last_run_at, next_due_at) VALUES (?,?,?) ON CONFLICT(name) DO UPDATE SET last_run_at=excluded.last_run_at, next_due_at=excluded.next_due_at`,
     name, stamp(clock()), stamp(clock() + everyDays * 24 * H));
 
+  // One stored objective per card period. While the card is still due (its writer failed or threw) every tick recomputes it, but a period that
+  // already holds a row reuses that row: calibration counts stored rows as cycles, so one row per tick would pass its history refusal in hours.
+  async function periodObjective(measured) {
+    const reg = await one(`SELECT last_run_at FROM sla_register WHERE name='autonomy_card'`);
+    const row = await one(`SELECT at, f, terms, weights, calibrated, triad, good FROM sla_objective WHERE at > ? ORDER BY id DESC LIMIT 1`, reg?.last_run_at || '');
+    if (!row) return objective(measured);
+    const terms = JSON.parse(row.terms);
+    return { f: row.f, terms, weights: JSON.parse(row.weights), calibrated: !!row.calibrated, triad: JSON.parse(row.triad), good: row.good,
+      unmeasured: F_TERMS.filter(k => !terms[k]?.measured), window_days: cfg.window_days, stored_at: row.at, reused: true };
+  }
+
   // A part after the card that throws is recorded as an item (reopened when it recurs) and reported in the result; the tick goes on.
-  const guarded = async (id, what, fn) => {
+  // Each failure item closes itself: its probe is one read the tick runs (core/src/tick.js evalProbe), dated to this failure, that passes once the
+  // work it names is recorded after it. A recurrence reopens the item with a probe dated to the new failure (core/_shared/items.js).
+  const recordedSince = (table, where, at) => `SELECT COUNT(*) FROM ${table} WHERE ${where} AND ${table === 'sla_register' ? 'last_run_at' : 'at'} >= '${at}'`;
+  const guarded = async (id, what, fn, probe) => {
     try { return await fn(); }
     catch (e) {
       const reason = String(e?.message || e).slice(0, 160);
-      await fileItem(id, `Computing ${what} failed: ${reason}`, `${what} is computed on a tick`, { project: 'report-card', priority: 15 });
+      await fileItem(id, `Computing ${what} failed: ${reason}`, `${what} is computed on a tick`, { project: 'report-card', priority: 15, probe: probe(stamp(clock())) });
       return { ok: false, error: reason };
     }
   };
@@ -409,14 +423,14 @@ export function createSla({ db, now = () => Date.now(), config = {} } = {}) {
     out.path_gaps = (await processGaps()).length;
     if (l3) out.step_budget = await l3.sweepStepBudgets(await stepRuns());
     if (l3 && await due('autonomy_card')) {
-      out.objective = await objective(measured); out.card = await recomputeAutonomyCard({ l3 });
+      out.objective = await periodObjective(measured); out.card = await recomputeAutonomyCard({ l3 });
       if (out.card.ok) {
         // The card is recorded: its month is spent. The parts after it are retried by an item, never by a second card in the same month.
         await markRan('autonomy_card', cfg.card_every_days);
-        if (cfg.systems_card) out.systems_card = await guarded('SLA-SYSTEMS-CARD-FAILED', 'the systems card', () => recomputeSystemsCard({ l3 }));
-        out.card_audit = await guarded('SLA-CARD-AUDIT-FAILED', 'the card audit', () => auditCard({ name: CARD_NAME, attestor }));
+        if (cfg.systems_card) out.systems_card = await guarded('SLA-SYSTEMS-CARD-FAILED', 'the systems card', () => recomputeSystemsCard({ l3 }), at => recordedSince('l3_cards', `name='${SYSTEMS_CARD_NAME}'`, at));
+        out.card_audit = await guarded('SLA-CARD-AUDIT-FAILED', 'the card audit', () => auditCard({ name: CARD_NAME, attestor }), at => recordedSince('sla_card_audits', `name='${CARD_NAME}'`, at));
       } else {
-        await fileItem('SLA-AUTONOMY-CARD-FAILED', `The autonomy card was not recorded: ${String(out.card.errors?.join('; ') || out.card.error || 'no reason given').slice(0, 200)}`, 'the autonomy card is recorded on a tick', { project: 'report-card', priority: 15 });
+        await fileItem('SLA-AUTONOMY-CARD-FAILED', `The autonomy card was not recorded: ${String(out.card.errors?.join('; ') || out.card.error || 'no reason given').slice(0, 200)}`, 'the autonomy card is recorded on a tick', { project: 'report-card', priority: 15, probe: recordedSince('sla_register', `name='autonomy_card'`, stamp(clock())) });
       }
     }
     ctx.notes?.push(`sla: ${out.sla.rows} open rows, ${out.sla.raised} raised past due, ${out.sla.capped + out.sla.accelerated + out.sla.tightened} due dates pulled in${out.audit ? `, weekly audit ${out.audit.failing} failing` : ''}${out.card ? `, autonomy card ${out.card.overall}` : ''}`);

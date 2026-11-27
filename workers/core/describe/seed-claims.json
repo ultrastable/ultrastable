@@ -94,5 +94,13 @@
     "expect": ">=0 | unmeasured:quiet",
     "max_age_hours": 24,
     "public": 1
+  },
+  {
+    "id": "operation.self-hosting-stage",
+    "text": "As of {date}, the self-hosting stage computed from this organization's own records is stage {value}.",
+    "probe": "sql:SELECT json_extract(value, '$.stage') AS value FROM org WHERE key = 'self_hosting_stage'",
+    "expect": ">=0 | unmeasured:quiet",
+    "max_age_hours": 24,
+    "public": 1
   }
 ]

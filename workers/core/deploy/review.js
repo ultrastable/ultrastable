@@ -133,7 +133,7 @@ export function createReviewGate({ db, now = () => Date.now(), config = {}, revi
   }
 
   /**
-   * The merge step asks here. It refuses while a hold marker is open for this head (US-07-R18) and, by US-07-R25, for a head whose
+   * The merge step asks here. It refuses while a hold marker is open for this head (US-07-R26) and, by US-07-R25, for a head whose
    * hold was released only because a newer push replaced it (the held code is the same code, so it is not cleared until it is
    * reviewed again). With config.requireReview and in hold mode it also refuses a head that has no review run at all: a head nobody
    * reviewed cannot be shown not to be in a risk class (US-07-R10).
