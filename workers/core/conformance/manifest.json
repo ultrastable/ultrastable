@@ -1,7 +1,7 @@
 {
  "implementation": "ultrastable/workers",
  "declared_level": "L1",
- "generated_at": "2026-11-26",
+ "generated_at": "2026-11-27",
  "untagged_level": "L2",
  "spec_versions": {
   "US-SPEC-00": "0.2.0 (draft)",
@@ -11044,7 +11044,7 @@
    "tests": [
     {
      "file": "../seed/worker/test/spec-24-halt-and-beats.test.js",
-     "name": "US-24-R58: every job of every workflow of the platform skips when the repository variable HALT is 1, and a job without the guard is detected"
+     "name": "US-24-R58: every job of every workflow of the kit, and of the platform when present, skips when the repository variable HALT is 1, and a job without the guard is detected"
     }
    ]
   },
