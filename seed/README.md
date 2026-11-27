@@ -61,7 +61,7 @@ Engineers: the same boot runs anywhere with Python 3.11+ (`bootstrap/bootstrap.p
 | [`bootstrap/bootstrap.py`](bootstrap/bootstrap.py) | The bootstrapper: read, detect, select, plan, provision, start, report. Stdlib only, idempotent. |
 | [`worker/`](worker/) | The server-side runtime: Cloudflare Worker with the tick, D1 migrations, tests. |
 | [`plugins/`](plugins/SCOPE.json) | Optional plugin tier (email, mailing list, social, YouTube, GCP, self-description, guided communication flow). Dry-run by default, never in the core path. Spec: `docs/architecture/plugins.md`. |
-| [`tests/`](tests/) | Bootstrapper and policy tests, <!-- claim:seed-py-tests -->134<!-- /claim --> in all (`python3 -m unittest discover tests`). |
+| [`tests/`](tests/) | Bootstrapper and policy tests, <!-- claim:seed-py-tests -->147<!-- /claim --> in all (`python3 -m unittest discover tests`). |
 | [`docs/bootstrapping.md`](docs/bootstrapping.md) | The boot sequence, stage by stage, and what each stage learned from AIOS. |
 
 ## Rules the seed carries into every org it starts
@@ -89,6 +89,8 @@ Source-available under the [Ultrastable License v1.0 (USL-1.0)](LICENSE): free f
 **The loop it closes.** Every tick the system reconciles its state, takes its highest-priority item, does it, verifies it through an independent path, scores the prediction it logged and files the next improvement.
 
 **How it bootstraps.** One file, `IDEA.md`, states the idea and its system test (a loop to close, a measure that can be wrong, upkeep that never ends, a running cost the owner accepts). `bootstrap/bootstrap.py` reads it with `ultrastable.json` and `autonomy/policy.json`, qualifies the idea, hires the roles, writes the Worker's configuration and database, and deploys the tick Worker. No person runs a command.
+
+**Run your own copy.** [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/ultrastable/seed)
 
 **How it becomes autonomous.** Two ladders, both computed from evidence the system records, never declared:
 
