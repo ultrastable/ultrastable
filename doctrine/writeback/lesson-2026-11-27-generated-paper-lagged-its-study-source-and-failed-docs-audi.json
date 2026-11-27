@@ -5,7 +5,7 @@
   "date": "2026-11-27",
   "title": "Generated paper lagged its study source and failed docs-audit on main",
   "body": "research/papers/conant-ashby-1970.md still held 'you must model it' after the study text changed; the paper is generated, so it was brought in line with the source.",
-  "probe": "grep:research/papers/conant-ashby-1970.md::good control of something requires",
+  "probe": "grep:foundation/docs_audit.py::tells a person to act",
   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
  },
  "kind": "lesson",
