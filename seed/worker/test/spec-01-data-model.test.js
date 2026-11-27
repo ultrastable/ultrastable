@@ -48,7 +48,7 @@ test('US-01-R09: a declared metric with no probe is a breach and not a pass, and
 
 const m = (file, sql) => ({ file, sql });
 
-test('US-01-T05 and US-01-R12: a migration applies once and is ledgered with its hash; an applied file whose text changed is drift: reported, never re-run, and filed', async () => {
+test('US-01-T07 and US-01-R14: a migration applies once and is ledgered with its hash; an applied file whose text changed is drift: reported, never re-run, and filed', async () => {
   const db = makeDb();
   const v1 = m('0001_x.sql', `CREATE TABLE IF NOT EXISTS x1 (a);`);
   const r1 = await migrateStep(db, ctx(), [v1], ensureItem);
@@ -81,7 +81,7 @@ test('US-01-R13: a table rebuild marked atomic applies as one all-or-nothing bat
   assert.deepEqual(rows(good, 'SELECT a, b FROM t_old ORDER BY a').map(r => ({ ...r })), [{ a: 1, b: 1 }, { a: 2, b: 2 }]);
 });
 
-test('US-01-R14: a runtime acts only on rows of its own tenant: another tenant row is never dispatched, and the trust ledger keeps one row per tenant, surface and action class', async () => {
+test('US-01-R12: a runtime acts only on rows of its own tenant: another tenant row is never dispatched, and the trust ledger keeps one row per tenant, surface and action class', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('staff-1','staff',1,'m');
     INSERT INTO items (id,title,owner_role,done_check,priority,status,tenant_id) VALUES ('THEIRS','t','staff','x',1,'ready','other-tenant'), ('OWN','o','staff','x',9,'ready',NULL)`);
@@ -95,7 +95,7 @@ test('US-01-R14: a runtime acts only on rows of its own tenant: another tenant r
   assert.throws(() => ins('other-tenant'), /UNIQUE/i);
 });
 
-test('US-01-R15: the queries the tick repeats on its growing tables are served by an index, not a scan', () => {
+test('US-01-R16: the queries the tick repeats on its growing tables are served by an index, not a scan', () => {
   const db = makeDb();
   const plan = (sql, ...a) => rows(db, 'EXPLAIN QUERY PLAN ' + sql, ...a).map(r => r.detail).join(' | ');
   const own = `(tenant_id IS NULL OR tenant_id = ?)`;
@@ -109,7 +109,7 @@ test('US-01-R15: the queries the tick repeats on its growing tables are served b
   for (const [what, [sql, ...a]] of Object.entries(indexed)) assert.match(plan(sql, ...a), /USING (COVERING )?INDEX/, `${what}: ${plan(sql, ...a)}`);
 });
 
-test('US-01-T06 and US-01-R16: a daily copy of every non-secret table is stored, read back whole and counted before it counts as a copy; a copy that does not read back is reported and prunes nothing', async () => {
+test('US-01-T08 and US-01-R15: a daily copy of every non-secret table is stored, read back whole and counted before it counts as a copy; a copy that does not read back is reported and prunes nothing', async () => {
   const d1 = (raw) => ({ prepare: (s) => ({ all: async () => ({ results: raw.prepare(s).all() }) }), batch: async (list) => Promise.all(list.map(x => x.all())) });
   const r2 = (broken = false) => { const mm = new Map(); return { mm,
     head: async (k) => (mm.has(k) ? { key: k } : null),

@@ -18,8 +18,17 @@ export async function syncStatic(ctx) {
   for (const a of list) {
     if (!a.id || !a.title || !/^https:\/\//.test(a.link || '')) continue;
     const ok = a.probe ? await probeOk(ctx, a.probe) : false;
-    if (ok === true) { const row = await ctx.db.prepare('SELECT status FROM ownerlink_actions WHERE id = ?').bind('s:' + a.id).first(); if (row?.status === 'open') { await complete(ctx, 's:' + a.id); done++; } continue; }
-    if (ok === null) { unknown++; }
+    if (ok === true) {
+      const row = await ctx.db.prepare('SELECT status FROM ownerlink_actions WHERE id = ?').bind('s:' + a.id).first();
+      if (row?.status === 'open') { await complete(ctx, 's:' + a.id); done++; }
+      else if (!row) { await putAction(ctx, { id: 's:' + a.id, flow: 'static', title: a.title, why: a.why || '', link: a.link }); await complete(ctx, 's:' + a.id); } // remembered as completed, so one later unreadable probe cannot open it
+      continue;
+    }
+    if (ok === null) { // a probe that cannot be read leaves the action as it was: an open one stays open and a completed one stays completed (putAction would reopen it)
+      unknown++;
+      const row = await ctx.db.prepare('SELECT status FROM ownerlink_actions WHERE id = ?').bind('s:' + a.id).first();
+      if (row) { if (row.status === 'open') open++; continue; }
+    }
     await putAction(ctx, { id: 's:' + a.id, flow: 'static', title: a.title, why: a.why || '', link: a.link }); open++;
   }
   return { open, done, unknown };

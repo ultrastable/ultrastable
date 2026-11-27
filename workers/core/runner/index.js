@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Doer/reviewer runner (US-SPEC-11). A run is a state machine in runner_runs, advanced a little each tick (I/O only:
+// Doer/reviewer runner (US-SPEC-10). A run is a state machine in runner_runs, advanced a little each tick (I/O only:
 // verification is the repository's CI, an independent system). The runner opens DRAFT pull requests and never merges.
 // Ports: db, now (ms), config, env (presence only), router (route/call), claims (acquire/heartbeat/release),
 // vcs (getFile, createBranch, commitFiles, openDraftPr, getChecks, getDiff). `fetch` is accepted for symmetry; the

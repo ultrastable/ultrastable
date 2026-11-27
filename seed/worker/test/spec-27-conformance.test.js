@@ -69,6 +69,21 @@ test('US-27-T04: a stranger sees counts and orphan findings and the kinds a syst
   const declared = { publicKinds: ['findings', 'studies'] }; assert.ok((await readNode(db, 'findings:F-ego', declared)).neighbors.every(n => declared.publicKinds.includes(n.kind)));
 });
 
+test('US-27-T04: a private record that shares two neighbours with a public one, and the tables left out, reach a stranger as counts only', async () => {
+  const db = world();
+  // the private kind sorts after the public ones, so a lead between them has the public record as its subject
+  db.raw.exec(`CREATE TABLE zdrafts (id TEXT PRIMARY KEY, title TEXT, finding_a TEXT, finding_b TEXT); INSERT INTO zdrafts VALUES ('d-unpublished','Unpublished draft on priming','F-prime','F-ego');
+    CREATE TABLE reviews (id TEXT PRIMARY KEY, title TEXT, finding_a TEXT, finding_b TEXT); INSERT INTO reviews VALUES ('rv-1','Published review','F-prime','F-ego');`);
+  await datagraphStep({ db, ensureItem, now: NOW });
+  const owner = JSON.stringify([await readGraph(db, { open: true }), await readInsights(db, { open: true })]);
+  for (const s of ['link:fields:psych|zdrafts:d-unpublished', 'Unpublished draft on priming', 'oauth_tokens', 'human_inbox']) assert.ok(owner.includes(s), `the owner sees ${s}`);
+  for (const publicKinds of [[], ['reviews'], ['reviews', 'findings'], ['fields', 'reviews', 'findings']]) {
+    const seen = JSON.stringify([await readGraph(db, { publicKinds }), await readInsights(db, { publicKinds })]);
+    for (const s of ['d-unpublished', 'Unpublished draft', 'oauth_tokens', 'human_inbox', SECRET, MAIL, PRIVATE]) assert.ok(!seen.includes(s), `public kinds [${publicKinds}]: "${s}" reached a stranger`);
+  }
+  const g = await readGraph(db, { publicKinds: ['reviews'] }); assert.ok(Number.isInteger(g.last.dropped.tables) && g.last.dropped.tables >= 2 && g.last.read_errors === 0, 'the tables left out are counted');
+});
+
 test('US-27-T08: the AI layer can fail or be spent without stopping the data graph, and it only ever adds proposed edges', async () => {
   const db = world(); db.raw.exec(`CREATE TABLE things (id TEXT PRIMARY KEY, label TEXT)`); db.raw.exec(`INSERT INTO things VALUES ('Q-ONE-1','first'),('Q-TWO-2','Q-TWO-2 waits on Q-ONE-1')`);
   await datagraphStep({ db, ensureItem, now: NOW });

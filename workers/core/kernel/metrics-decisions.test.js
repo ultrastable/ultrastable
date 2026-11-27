@@ -8,7 +8,7 @@ import { parsePrediction, recordDecision, evaluateDecision, decisionHealth } fro
 
 const NOW = () => Date.now();
 
-test('trigger state is computed by the view, never stored (US-03, US-05)', async () => {
+test('US-05-R14: trigger state is computed by the view, never stored (US-03, US-05)', async () => {
   const db = kdb();
   assert.equal(rows(db, `PRAGMA table_info(kernel_metrics)`).some(c => /state|verdict|hit/.test(c.name)), false);
   await registerMetric(db, { id: 'usage', op: '>=', target: 10, read_probe: probe('usage') });
@@ -23,6 +23,22 @@ test('trigger state is computed by the view, never stored (US-03, US-05)', async
   assert.equal(await metricsInBreach(db), 1);
   setv(db, 'errs', 0); await readMetric(db, 'errs', NOW());
   assert.equal(await metricsInBreach(db), 0, 'the state follows the data with no stored verdict to update');
+});
+
+test('US-05-R14: the view reads the clock in the same statement as the reading, so an ageing reading flips to unmeasured with no write', async () => {
+  const db = kdb();
+  const def = one(db, `SELECT sql FROM sqlite_master WHERE type='view' AND name='kernel_v_metric_trigger_state'`).sql;
+  assert.match(def, /julianday\('now'\)/, 'the clock is part of the view statement itself');
+  assert.match(def, /max_age_h/, 'the age limit is the metric\'s own');
+  setv(db, 'fresh', 1);
+  await registerMetric(db, { id: 'aging', op: '<=', target: 5, read_probe: probe('fresh'), max_age_h: 1 });
+  await readMetric(db, 'aging', NOW());
+  assert.equal(one(db, `SELECT state FROM kernel_v_metric_trigger_state WHERE id='aging'`).state, 'on_target');
+  const before = one(db, `SELECT COUNT(*) AS n FROM kernel_metric_readings`).n;
+  // the reading is two hours old: only the stored read_at moves, nothing is written by the reader of the view
+  db.raw.exec(`UPDATE kernel_metric_readings SET read_at = datetime('now', '-2 hours')`);
+  assert.equal(one(db, `SELECT state FROM kernel_v_metric_trigger_state WHERE id='aging'`).state, 'unmeasured');
+  assert.equal(one(db, `SELECT COUNT(*) AS n FROM kernel_metric_readings`).n, before, 'reading the view wrote nothing');
 });
 
 test('a missing or stale reading is unmeasured (null), never 0 and never a pass (US-04-R09)', async () => {
@@ -74,12 +90,12 @@ async function scenario({ usage = 120, errsBefore = 1, errsAfter = 1, guardMax =
   return { db, res: await evaluateDecision(db, 'D', { now: NOW() }) };
 }
 
-test('a target gain with every guard intact is kept', async () => {
+test('US-05-R16: a target gain with every guard intact is kept', async () => {
   const { res } = await scenario({});
   assert.equal(res.status, 'kept');
 });
 
-test('a breached guard metric blocks a target-metric gain from being kept (conformance)', async () => {
+test('US-05-R16: a breached guard metric blocks a target-metric gain from being kept (conformance)', async () => {
   const { db, res } = await scenario({ usage: 140, errsAfter: 9 });
   assert.equal(res.status, 'reverted');
   assert.match(res.outcome, /blocked_by_guard: errs/);
@@ -87,12 +103,12 @@ test('a breached guard metric blocks a target-metric gain from being kept (confo
   assert.ok(it); assert.equal(it.priority, 0); assert.match(it.done_check, /git revert/);
 });
 
-test('a guard that worsened but is still on target also blocks the gain', async () => {
+test('US-05-R16: a guard that worsened but is still on target also blocks the gain', async () => {
   const { res } = await scenario({ usage: 140, errsBefore: 1, errsAfter: 4, guardMax: 5 });
   assert.equal(res.status, 'reverted');
 });
 
-test('a missed prediction is reverted; an unmeasured target is not kept', async () => {
+test('US-05-R16: a missed prediction is reverted; an unmeasured target is not kept', async () => {
   const miss = await scenario({ usage: 100 });
   assert.equal(miss.res.status, 'reverted');
   const db = kdb();
@@ -102,6 +118,11 @@ test('a missed prediction is reverted; an unmeasured target is not kept', async 
   db.raw.exec(`DELETE FROM t_vals`);
   const r = await evaluateDecision(db, 'D', { now: NOW() });
   assert.equal(r.status, 'unmeasured');
+  // US-05-R16: an unmeasured decision files its revert item (it is not left applied and unverified) and is not evaluated twice.
+  assert.equal(r.item_id, 'REVERT-D');
+  const it = one(db, `SELECT * FROM items WHERE id='REVERT-D'`);
+  assert.ok(it, 'the revert item exists'); assert.match(it.title, /unmeasured/); assert.match(it.done_check, /revert applied via: r/);
+  assert.equal(one(db, `SELECT item_id, status FROM kernel_decisions WHERE id='D'`).item_id, 'REVERT-D');
 });
 
 test('a decision is not evaluated before its window ends; health numbers are published (US-05-R08)', async () => {

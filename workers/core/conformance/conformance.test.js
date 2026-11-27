@@ -53,7 +53,7 @@ test('tests are matched to requirements by the ids their titles cite, in full or
   assert.equal(c['US-90-R05'], undefined);
 });
 
-test('US-00-R01, US-00-R02 and US-00-R12: the declaration names the level, each specification version and every requirement not met, with its reason', () => {
+test('US-00-R01, US-00-R02 and US-00-R13: the declaration names the level, each specification version and every requirement not met, with its reason', () => {
   const m = buildManifest({ specs: [SPEC], tests: TESTS, declared: 'L2', reasons: { 'US-90-R05': 'needs a live account' } });
   const d = declaration(m);
   assert.equal(d.level, 'L2'); assert.deepEqual(d.spec_versions, { 'US-SPEC-90': '0.3.0 (draft)' });
@@ -65,7 +65,7 @@ test('US-00-R01, US-00-R02 and US-00-R12: the declaration names the level, each 
   assert.equal(buildManifest({ specs: [SPEC], tests: [] }).requirements.every(r => r.status === 'deviation' && r.reason), true);
 });
 
-test('US-00-R03 and US-00-R12: the checker rejects an overstated manifest: a met with no test, a test file that is gone, a test that no longer cites it, a deviation with no reason', () => {
+test('US-00-R03 and US-00-R13: the checker rejects an overstated manifest: a met with no test, a test file that is gone, a test that no longer cites it, a deviation with no reason', () => {
   const m = buildManifest({ specs: [SPEC], tests: TESTS, declared: 'L2', reasons: { 'US-90-R05': 'needs a live account' } });
   const files = Object.fromEntries(TESTS.map(t => [t.path, t.text]));
   assert.deepEqual(check(m, { files, specs: [SPEC], tests: TESTS }), { ok: true, problems: [], stale: [], unverified: [] });
@@ -130,4 +130,38 @@ test('US-00-R03: with no specification directory the coverage check says it was 
 test('the manifest covers every requirement of every specification, at the level the specification tags', { skip: !SPECS && 'no specification directory: set US_SPEC_DIR or check the specifications out at ../specs or ../spec/specs' }, () => {
   const r = check(manifest, { files: readNamedFiles(manifest), specs: readSpecs(SPECS), tests: readTests() });
   assert.deepEqual(r.problems, []);
+});
+
+test('US-00-R03: a todo or skipped test is a closing probe, not a proof', () => {
+  const text = [
+    "test('US-91-R01 works', () => {});",
+    "test('US-91-R02 (closing probe): planned', { todo: 'PLANNED: not built' }, async () => {});",
+    "test.todo('US-91-R03 later');",
+    "test('US-91-R04 helper', todo('the helper names todo'), async () => { assert.ok(1, 'US-91-R02 is PLANNED'); });",
+    "test('US-91-R05 skipped', { skip: true }, () => {});",
+    "test('US-91-R07 runs where the seed is', { skip: !hasSeed && 'no seed here' }, () => {});",
+  ].join('\n');
+  const c = scanTests([{ path: 'a.test.js', text }]);
+  assert.deepEqual(c['US-91-R01'], [{ file: 'a.test.js', name: 'US-91-R01 works' }]);
+  for (const id of ['US-91-R02', 'US-91-R03', 'US-91-R04', 'US-91-R05']) assert.ok(c[id].every(x => x.todo), id);
+  assert.ok(!c['US-91-R07'][0].todo, 'a conditional skip is still a proof where it runs');
+  const spec = { file: 'US-SPEC-91-x.md', text: '| Version | 1 |\n- **US-91-R01** [L1] MUST a\n- **US-91-R02** [L1] MUST b\n- **US-91-R06** [L1] MUST c\n' };
+  const m = buildManifest({ specs: [spec], tests: [{ path: 'a.test.js', text }] });
+  const by = Object.fromEntries(m.requirements.map(r => [r.id, r]));
+  assert.equal(by['US-91-R01'].status, 'met');
+  assert.equal(by['US-91-R02'].status, 'deviation');
+  assert.match(by['US-91-R02'].reason, /^PLANNED: its closing probe is a todo test/);
+  assert.equal(by['US-91-R06'].reason, 'no test in this repository cites this requirement');
+  const claimed = { ...m, requirements: m.requirements.map(r => r.id === 'US-91-R02' ? { ...r, status: 'met', tests: [{ file: 'a.test.js', name: r.id }] } : r) };
+  const res = check(claimed, { files: { 'a.test.js': text } });
+  assert.ok(res.problems.some(p => /US-91-R02: a\.test\.js cites it only in a todo test/.test(p)), res.problems.join('\n'));
+  assert.deepEqual(check(m, { files: { 'a.test.js': text }, tests: [{ path: 'a.test.js', text }] }).stale, []);
+});
+
+test('US-00-R03: requirement ids above R99 are read in full, never as a shorter id', () => {
+  const text = "test('US-92-R100 and R101 hold', () => {});\ntest('US-92-R10 holds', () => {});";
+  const c = scanTests([{ path: 'b.test.js', text }]);
+  assert.deepEqual(Object.keys(c).sort(), ['US-92-R10', 'US-92-R100', 'US-92-R101']);
+  const spec = { file: 'US-SPEC-92-x.md', text: '| Version | 1 |\n- **US-92-R10** [L1] MUST a\n- **US-92-R100** [L1] MUST b\n' };
+  assert.deepEqual(parseSpecs([spec]).requirements.map(r => r.id), ['US-92-R10', 'US-92-R100']);
 });

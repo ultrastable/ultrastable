@@ -222,6 +222,24 @@ test('US-29-R28: a stalled system has one repair item that only the same reading
   assert.equal((await progressStep({ db, config: long, ensureItem, now: NOW })).filed[0].length, 80, 'an item id is at most 80 characters');
 });
 
+test('US-29-R28: an open repair item is closed only by a moving reading, not by slow or unmeasured', async () => {
+  _reset(); const db = makeDb(), f = async () => ({ status: 204 });
+  await add(db, 'o/tenant', 5, 'New solution entries', ago(60));
+  let r = await progressStep({ db, config: cfg, token: 't', ensureItem, fetchImpl: f, now: NOW });
+  assert.deepEqual(r.filed, ['STALL-tenant']); assert.equal(r.systems.tenant, 'stalled');
+  await add(db, 'o/tenant', 6, 'Another solution entry', ago(30));  // newest substantive change is now 30 h old against a 24 h interval: slow
+  r = await progressStep({ db, config: cfg, token: 't', ensureItem, fetchImpl: f, now: NOW + 1000 });
+  assert.equal(r.systems.tenant, 'slow'); assert.deepEqual(r.closed, [], 'slow does not close the item');
+  assert.equal((await item(db, 'STALL-tenant')).status, 'ready'); assert.equal((await item(db, 'STALL-tenant')).disposition, null);
+  await db.prepare("UPDATE live_changes SET substance = 'trivial' WHERE repo = 'o/tenant'").run();  // every cached change is now a literal: nothing is measurable
+  r = await progressStep({ db, config: cfg, token: 't', ensureItem, fetchImpl: f, now: NOW + 2000 });
+  assert.equal(r.systems.tenant, 'unmeasured'); assert.deepEqual(r.closed, [], 'unmeasured does not close the item');
+  assert.equal((await item(db, 'STALL-tenant')).status, 'ready');
+  await add(db, 'o/tenant', 7, 'Release', new Date(NOW + 3000).toISOString());
+  r = await progressStep({ db, config: cfg, token: 't', ensureItem, fetchImpl: f, now: NOW + 4000 });
+  assert.equal(r.systems.tenant, 'moving'); assert.deepEqual(r.closed, ['STALL-tenant'], 'only the moving reading closes it');
+});
+
 test('US-29-R29: a system with no cached substantive change is unmeasured, never moving, is not repaired blindly and files nothing', async () => {
   _reset(); const db = makeDb(), calls = [];
   await add(db, 'o/core', 1, 'regen generated files', ago(1));
@@ -332,9 +350,10 @@ test('US-29-T09: a published snapshot gone stale is repaired once, and the syste
   assert.deepEqual(await watchFreshness({ token: 't', repo: 'o/r', fetchImpl: f, now: () => T + 7200e3 }), { status: 'fresh' });
 });
 
-// A known defect, not a requirement met: freshness.js says a stale reading "goes red in the beat", but pulse.js failed() reads only an error status, an
-// ok of false, an error field or no-token, so a stale snapshot that nothing could repair leaves the beat green. The spec records it (section 7).
-test('a stale snapshot that could not be repaired makes its beat fail (defect of the freshness loop)', { todo: 'seed/worker/src/freshness.js returns status stale with no error field, which failed() in pulse.js reads as a good beat' }, async () => {
+// The closing probe of a known defect, PLANNED in section 7 (a todo test is recorded as planned, never as proof): freshness.js says a stale reading "goes red
+// in the beat", but pulse.js failed() reads only an error status, an ok of false, an error field or no-token, so a stale snapshot that nothing could repair leaves
+// the beat green.
+test('US-29-R74: a stale snapshot that could not be repaired makes its beat fail', { todo: 'seed/worker/src/freshness.js returns status stale with no error field, which failed() in pulse.js reads as a good beat' }, async () => {
   const f = async u => (u.endsWith('/api/freshness') ? new Response(JSON.stringify({ ok: false, snapshot: { stale: true, age_s: 9e5 } }), { status: 503 }) : new Response(null, { status: 204 }));
   const out = await watchFreshness({ fetchImpl: f });
   assert.equal(out.repair, 'no-token');

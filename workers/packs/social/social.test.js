@@ -84,7 +84,7 @@ test('a claim-backed draft passes the checker, is tagged with UTM and enters the
   const ctx = await loop('compose');
   const q = rows(db, `SELECT * FROM social_queue`);
   assert.equal(q.length, 1);
-  assert.match(q[0].text, new RegExp(`^Ran 42 ticks \\(as of ${new Date(T0).toISOString().slice(0, 10)}\\)\\.`));
+  assert.match(q[0].text, new RegExp(`^Ran 42 ticks \\(as of ${new Date(T0 - H).toISOString().slice(0, 10)}\\)\\.`));
   assert.ok(!q[0].text.includes('[claim:'));
   assert.match(q[0].text, /https:\/\/example\.org\/about\?utm_source=social&utm_medium=post&utm_campaign=claims/);
   assert.deepEqual(JSON.parse(q[0].claim_ids), ['operation.ticks']);
@@ -181,9 +181,9 @@ test('below the act rung a post is queued as a decision card showing its text; a
   const r = one(db, `SELECT * FROM social_queue`);
   assert.equal(r.status, 'awaiting_approval');
   const card = one(db, `SELECT * FROM gate_cards WHERE id = ?`, r.card_id);
-  assert.ok(card.what.includes(`Ran 42 ticks (as of ${new Date(T0).toISOString().slice(0, 10)})`));
+  assert.ok(card.what.includes(`Ran 42 ticks (as of ${new Date(T0 - H).toISOString().slice(0, 10)})`));
   await loop('publish');                                                                     // no second card for the same post
-  assert.equal(rows(db, `SELECT * FROM gate_cards`).length, 1);
+  assert.equal(rows(db, `SELECT * FROM gate_cards WHERE id LIKE 'guard-approve-%'`).length, 1);              // the live-trial card (US-21-R25) is a separate card
   const out = await guard.approve(r.guard_queue_id, { by: 'owner' });
   assert.equal(out.decision, 'sent');
   await loop('publish');                                                                     // reconcile records it

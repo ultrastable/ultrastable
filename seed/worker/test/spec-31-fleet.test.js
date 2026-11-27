@@ -207,6 +207,37 @@ test('US-31-R36: every host route answers 404 without the internal key, and a sc
   assert.equal((await ok.json()).token, undefined);
 });
 
+test('US-31-R36: with no internal key configured, a body that is not JSON is still a 404 and never shows the route exists', async () => {
+  const env = { INTERNAL_DEPLOY_KEY: '', DB: makeDb() };
+  for (const path of ['/host/app-repo', '/host/tenant-repo', '/host/repo-settings', '/host/template-token', '/host/repo-deployment']) {
+    const r = await handleAppHost(new Request('https://tick.internal' + path, { method: 'POST', body: 'not json' }), env);
+    assert.equal(r.status, 404, path);
+  }
+});
+
+// handleAppHost judges the method, the configured key and x-internal-key before it reads the body, so a refused request never sees a 400.
+test('US-31-R36: a body that is not JSON with a wrong or missing internal key is a 404 on every key-gated host route', async () => {
+  const env = { INTERNAL_DEPLOY_KEY: 'k'.repeat(40), DB: makeDb() };
+  for (const path of ['/host/app-repo', '/host/tenant-repo', '/host/repo-settings', '/host/template-token', '/host/repo-deployment']) {
+    for (const headers of [{}, { 'x-internal-key': 'wrong'.repeat(8) }]) {
+      const r = await handleAppHost(new Request('https://tick.internal' + path, { method: 'POST', headers, body: 'not json' }), env);
+      assert.equal(r.status, 404, path);
+    }
+    // The caller that holds the key still learns that its own body was malformed.
+    const own = await handleAppHost(new Request('https://tick.internal' + path, { method: 'POST', headers: { 'x-internal-key': env.INTERNAL_DEPLOY_KEY }, body: 'not json' }), env);
+    assert.equal(own.status, 400, path);
+    assert.equal((await own.json()).error, 'bad json');
+  }
+});
+
+test('US-31-R36: /host/app-token carries its key in the body, so a body that is not a JSON object is a 404 and never a 400', async () => {
+  const env = { INTERNAL_DEPLOY_KEY: 'k'.repeat(40), DB: makeDb() };
+  for (const body of ['not json', 'null', '"text"', '[]', '42']) {
+    const r = await handleAppHost(new Request('https://tick.internal/host/app-token', { method: 'POST', body }), env);
+    assert.equal(r.status, 404, body);
+  }
+});
+
 // ---- 4.1 and 4.4 server-side loops ---------------------------------------------------------------------------------------------------------
 
 function deployWorld({ commitAt, runs, registry }) {

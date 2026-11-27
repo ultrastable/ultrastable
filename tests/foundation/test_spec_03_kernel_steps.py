@@ -37,7 +37,7 @@ class KernelSteps(unittest.TestCase):
         self.reg = json.loads((ROOT / "doctrine/kernel.json").read_text())
         self.text = spec_files("US-SPEC-03-*.md")[0].read_text()
 
-    def test_us_03_t09_every_kernel_step_names_code_that_exists(self):
+    def test_us_03_t12_every_kernel_step_names_code_that_exists(self):
         steps = self.reg["tick_steps"]
         self.assertEqual(len(steps), 20)
         self.assertEqual(len({s["id"] for s in steps}), 20, "step ids are unique")
@@ -49,10 +49,10 @@ class KernelSteps(unittest.TestCase):
             self.assertTrue(any(p["id"] == "degraded" for p in s["paths"]), f"{s['id']} has a degraded path (no single route)")
         self.assertEqual(self.reg["tick_states"], TICK_STATES)
 
-    def test_us_03_t09_the_registry_is_the_one_foundation_kernel_check_reads(self):
+    def test_us_03_t12_the_registry_is_the_one_foundation_kernel_check_reads(self):
         self.assertEqual(kernel.check(ROOT), [])
 
-    def test_us_03_t09_the_specification_table_of_section_5_is_the_registry(self):
+    def test_us_03_t12_the_specification_table_of_section_5_is_the_registry(self):
         rows = table_rows(section(self.text, "## 5.", "## 6."))
         got = [(r[1].strip("`"), r[2].strip("`")) for r in rows if len(r) >= 3 and r[1].startswith("`")]
         want = [(s["id"], s["implemented_by"]) for s in self.reg["tick_steps"]]
@@ -60,7 +60,7 @@ class KernelSteps(unittest.TestCase):
         for state in TICK_STATES:
             self.assertIn(f"`{state}`", section(self.text, "## 5.", "## 6."))
 
-    def test_us_03_r22_the_specification_table_of_the_seed_tick_is_the_code(self):
+    def test_us_03_t12_the_specification_table_of_the_seed_tick_is_the_code(self):
         code = (ROOT / "seed/worker/src/tick.js").read_text()
         order = re.search(r"export const STEP_ORDER = \[(.*?)\];", code, re.S).group(1)
         want = re.findall(r"'([a-z_]+)'", order)
@@ -73,7 +73,7 @@ class KernelSteps(unittest.TestCase):
                 for f in files:
                     self.assertTrue((ROOT / f).is_file(), f"{r[1]} names {f}")
 
-    def test_us_03_r22_the_deferral_constants_the_specification_states_are_the_code_values(self):
+    def test_us_03_r18_the_deferral_constants_the_specification_states_are_the_code_values(self):
         code = (ROOT / "seed/worker/src/tick.js").read_text()
         essential = re.findall(r"'([a-z_]+)'", re.search(r"export const COST_ESSENTIAL_STEPS = \[(.*?)\];", code).group(1))
         lean = int(re.search(r"export const LEAN_EVERY_H = (\d+);", code).group(1))

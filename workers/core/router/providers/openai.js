@@ -24,5 +24,6 @@ export function parseResponse(json) {
     tool_calls: msg.tool_calls || [],
     tokens_in: Number(json?.usage?.prompt_tokens) || 0,
     tokens_out: Number(json?.usage?.completion_tokens) || 0,
+    resolved_model: typeof json?.model === 'string' ? json.model : null, // what the provider says it served
   };
 }

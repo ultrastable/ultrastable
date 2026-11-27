@@ -90,3 +90,70 @@ test('US-14-R02: the store handle offers prepare().bind().all()/first()/run() wi
   assert.equal(await none.prepare(`SELECT 1`).bind().first(), null);
   assert.throws(() => createPgStore({}), /query\(text, params\)/);
 });
+
+test('US-14-R14 dialect: INSERT OR REPLACE becomes ON CONFLICT (pk) DO UPDATE with every other column from excluded; a composite key and a key-only table work; an unknown key is named', () => {
+  const keys = new Map();
+  translate(`CREATE TABLE IF NOT EXISTS claims (item_id TEXT PRIMARY KEY, agent TEXT NOT NULL, claimed_at TEXT NOT NULL, heartbeat_at TEXT NOT NULL)`, { keys });
+  translate(`CREATE TABLE IF NOT EXISTS promote_metrics (tenant TEXT, day TEXT, metric TEXT, value REAL, PRIMARY KEY (tenant, day, metric))`, { keys });
+  translate(`CREATE TABLE IF NOT EXISTS pairs (a TEXT, b TEXT, PRIMARY KEY (a, b))`, { keys });
+  translate(`CREATE TABLE IF NOT EXISTS loose (x TEXT, y TEXT)`, { keys });
+  assert.deepEqual([...keys], [['claims', ['item_id']], ['promote_metrics', ['tenant', 'day', 'metric']], ['pairs', ['a', 'b']], ['loose', []]]);
+  assert.equal(translate(`INSERT OR REPLACE INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES (?,?,?,?)`, { keys }).text,
+    `INSERT INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES ($1,$2,$3,$4) ON CONFLICT (item_id) DO UPDATE SET agent = excluded.agent, claimed_at = excluded.claimed_at, heartbeat_at = excluded.heartbeat_at`);
+  assert.equal(translate(`INSERT OR REPLACE INTO promote_metrics (tenant, day, metric, value) VALUES (?,?,?,?)`, { keys }).text,
+    `INSERT INTO promote_metrics (tenant, day, metric, value) VALUES ($1,$2,$3,$4) ON CONFLICT (tenant, day, metric) DO UPDATE SET value = excluded.value`);
+  assert.match(translate(`REPLACE INTO pairs (a, b) VALUES (?, ?)`, { keys }).text, /ON CONFLICT \(a, b\) DO NOTHING$/);
+  assert.throws(() => translate(`INSERT OR REPLACE INTO nowhere (a) VALUES (?)`, { keys }), /into nowhere has no direct Postgres form here: its primary key is not known/);
+  assert.throws(() => translate(`INSERT OR REPLACE INTO loose (x) VALUES (?)`, { keys }), /loose has no direct Postgres form here: the table has no primary key/);
+  assert.throws(() => translate(`INSERT OR REPLACE INTO claims VALUES (?,?,?,?)`, { keys }), /names no columns/);
+  assert.throws(() => translate(`INSERT OR REPLACE INTO org (key, value) VALUES (?, ?)`), /no direct Postgres form/);
+  // a serial table still gets its RETURNING after the ON CONFLICT clause
+  const serial = new Set(); translate(`CREATE TABLE logs (id INTEGER PRIMARY KEY AUTOINCREMENT, n TEXT)`, { serialTables: serial, keys });
+  assert.match(translate(`INSERT OR REPLACE INTO logs (id, n) VALUES (?, ?)`, { serialTables: serial, keys }).text, /ON CONFLICT \(id\) DO UPDATE SET n = excluded\.n RETURNING id$/);
+});
+
+test('US-14-R14 dialect: sqlite_master, julianday, json_extract, IFNULL and hex(randomblob) have Postgres forms; rowid and PRAGMA are refused with a message', () => {
+  const t = x => translate(x).text;
+  assert.match(t(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`), /FROM \(SELECT tablename AS name, 'table' AS type, NULL::text AS sql, tablename AS tbl_name FROM pg_tables WHERE schemaname = current_schema\(\) UNION ALL SELECT viewname.*pg_indexes.*\) AS sqlite_master WHERE type='table' AND name=\$1$/);
+  assert.equal(t(`SELECT (julianday('now') - julianday(MAX(ts))) * 24.0 AS h FROM t`),
+    `SELECT ((EXTRACT(EPOCH FROM now()) / 86400.0 + 2440587.5) - (EXTRACT(EPOCH FROM (MAX(ts))::timestamp) / 86400.0 + 2440587.5)) * 24.0 AS h FROM t`);
+  assert.match(t(`SELECT julianday(replace(r.read_at, ' ', 'T')) FROM r`), /EXTRACT\(EPOCH FROM \(replace\(r\.read_at, ' ', 'T'\)\)::timestamp\)/);
+  assert.equal(t(`SELECT json_extract(p, '$.error') FROM e`), `SELECT (p::json ->> 'error') FROM e`);
+  assert.equal(t(`SELECT json_extract(p, '$.a.b') FROM e`), `SELECT (p::json #>> '{a,b}') FROM e`);
+  assert.throws(() => t(`SELECT json_extract(p, '$.a[0]') FROM e`), /json_extract path not supported/);
+  assert.equal(t(`SELECT IFNULL(closing_probe,'') FROM items WHERE a LIKE ?1`.replace('?1', '?')), `SELECT COALESCE(closing_probe,'') FROM items WHERE a LIKE $1`);
+  assert.match(t(`SELECT hex(randomblob(8))`), /^SELECT upper\(substr\(md5\(random\(\)::text \|\| clock_timestamp\(\)::text\) \|\| md5\(.*\), 1, 16\)\)$/);
+  assert.throws(() => t(`SELECT hex(name) FROM t`), /hex\(name\) is not supported/);
+  assert.throws(() => t(`SELECT id FROM t ORDER BY rowid DESC`), /rowid has no Postgres form/);
+  assert.throws(() => t(`PRAGMA journal_mode=WAL`), /PRAGMA has no Postgres form/);
+  assert.equal(t(`SELECT 'the rowid of a row' AS why FROM t`), `SELECT 'the rowid of a row' AS why FROM t`, 'a word in a string is not a construct');
+});
+
+test('createPgStore retries once after a dropped connection and rethrows every other error', async () => {
+  const dropped = Object.assign(new Error('Connection terminated unexpectedly'), { name: 'OperationalError' });
+  const calls = []; let drop = 1; let reconnects = 0;
+  const client = { query: async (text, params) => { calls.push(text); if (drop-- > 0) throw dropped; return { rows: [{ n: 1 }], rowCount: 1 }; } };
+  const store = createPgStore(client, { reconnect: async () => { reconnects++; } });
+  assert.deepEqual(await store.prepare('SELECT 1 AS n').bind().first(), { n: 1 });
+  assert.equal(calls.length, 2); assert.equal(reconnects, 1);
+  // a failure that is not a dropped connection is the query's own and is rethrown, with no reconnect and no second call
+  const bad = createPgStore({ query: async () => { throw Object.assign(new Error('relation "x" does not exist'), { code: '42P01' }); } }, { reconnect: async () => { reconnects++; } });
+  await assert.rejects(bad.prepare('SELECT * FROM x').bind().all(), /does not exist/); assert.equal(reconnects, 1);
+  // a second drop is rethrown: the loop does not retry without end
+  const dead = createPgStore({ query: async () => { throw Object.assign(new Error('x'), { code: 'ECONNRESET' }); } }, { reconnect: async () => { reconnects++; } });
+  await assert.rejects(dead.prepare('SELECT 1').bind().run(), /x/); assert.equal(reconnects, 2);
+  // without a reconnect hook nothing is retried
+  await assert.rejects(createPgStore({ query: async () => { throw dropped; } }).prepare('SELECT 1').bind().run(), /terminated/);
+});
+
+test('US-14-R14: the dispatch statement, which holds a template expression, translates in both of its forms and keeps its five parameters', () => {
+  const m = /`(SELECT id FROM items WHERE status='ready' AND \(owner_role=\? OR owner_role=\?\)\s+AND \(project IS NULL OR project = \? OR \? IS NULL\))\$\{ctx\.config\.executor_takes_targeted \? ` AND done_check NOT LIKE '%target:%'` : ''\}(\s+AND \(trigger_on IS NULL OR trigger_on LIKE '%,%' OR trigger_on LIKE 'gate:%' OR trigger_on IN \(SELECT id FROM items WHERE status='done' AND disposition IS NOT NULL AND disposition <> ''\)\)\s+AND id NOT IN \(SELECT item_id FROM claims\) ORDER BY \(owner_role=\?\) DESC, priority, created_at LIMIT 1)`/.exec(TICK_SRC);
+  assert.ok(m, 'the dispatch statement was found in core/src/tick.js');
+  for (const extra of ['', ` AND done_check NOT LIKE '%target:%'`]) {
+    const sql = m[1] + extra + m[2];
+    const t = translate(sql);
+    assert.equal(t.params, 5); assert.ok(!/\?/.test(t.text.replace(/'[^']*'/g, '')));
+    assert.match(t.text, /project = \$3 OR \$4 IS NULL\)/); assert.match(t.text, /trigger_on IN \(SELECT id FROM items WHERE status='done' AND disposition IS NOT NULL/); assert.match(t.text, /ORDER BY \(owner_role=\$5\) DESC/);
+    assert.equal(/target:/.test(t.text), !!extra);
+  }
+});

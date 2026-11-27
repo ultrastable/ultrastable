@@ -6,8 +6,12 @@
   python tools/github_settings.py                       # DRY RUN (default): prints the gh api commands, changes nothing
   python tools/github_settings.py --apply               # runs them
   python tools/github_settings.py --org ultrastable --repos workers spec license .github
+  python tools/github_settings.py --discussions         # also enable Discussions (US-24-R33 is a MAY: off unless asked)
 
-Only the owner runs --apply. Paths have no leading slash (Git Bash would rewrite it). Stdlib only.
+This script is the credential-free dry-run printer. `--apply` is for an organization administrator or the platform's own
+administration route (core/ghcost settingsApply reads every setting back; the platform applies repository settings server-side, see
+foundation/repostd.py and seed/worker/src/repostandard.js). It is never a step handed to a person. Paths have no leading slash
+(Git Bash would rewrite it). Stdlib only.
 Not handled here (UI or paid plan): the Actions spending limit / budget (billing pages), Pages source, Projects, rulesets on private repos.
 """
 from __future__ import annotations
@@ -20,7 +24,7 @@ import sys
 DEFAULT_REPOS = ["workers", "spec", "license", ".github"]
 
 
-def commands(org: str, repos: list[str]) -> list[list[str]]:
+def commands(org: str, repos: list[str], discussions: bool = False) -> list[list[str]]:
     c = [
         # Org: allow Actions, but only GitHub-owned and verified actions, and require full-SHA pinning is left off (tags allowed).
         ["gh", "api", "-X", "PUT", f"orgs/{org}/actions/permissions", "-f", "enabled_repositories=all", "-f", "allowed_actions=selected"],
@@ -32,7 +36,7 @@ def commands(org: str, repos: list[str]) -> list[list[str]]:
     ]
     for r in repos:
         c.append(["gh", "api", "-X", "PATCH", f"repos/{org}/{r}", "-F", "delete_branch_on_merge=true", "-F", "allow_squash_merge=true",
-                  "-F", "allow_merge_commit=false", "-F", "allow_rebase_merge=false", "-F", "has_discussions=true", "-F", "has_wiki=false"])
+                  "-F", "allow_merge_commit=false", "-F", "allow_rebase_merge=false", "-F", "has_wiki=false"] + (["-F", "has_discussions=true"] if discussions else []))
     return c
 
 
@@ -41,8 +45,9 @@ def main(argv=None) -> int:
     ap.add_argument("--org", default="ultrastable")
     ap.add_argument("--repos", nargs="*", default=DEFAULT_REPOS)
     ap.add_argument("--apply", action="store_true", help="actually run the commands (default is a dry run)")
+    ap.add_argument("--discussions", action="store_true", help="also enable Discussions on the repositories (US-24-R33, a MAY; default off)")
     a = ap.parse_args(argv)
-    cmds = commands(a.org, a.repos)
+    cmds = commands(a.org, a.repos, a.discussions)
     print(f"# {'APPLY' if a.apply else 'DRY RUN (nothing is changed; pass --apply to run)'}: {len(cmds)} command(s)")
     rc = 0
     for cmd in cmds:

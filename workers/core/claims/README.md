@@ -41,14 +41,15 @@ Migrations: `migrations/0001_claims.sql` (tables `claims_*`; a partial unique in
 | US-08-R16 several-item and gate triggers | L2 | BUILT | `triggers.js`, `gate.js`; `triggers.test.js` |
 | US-08-R17 a held item returns when its card closes | L2 | BUILT | `gate.js` `releaseHeld`; `triggers.test.js` |
 | US-08-R18 check refuses under the kill switch | L2 | BUILT | `check` answers 503 `kill-switch`; `claims.test.js` |
-| US-08-R19 claim released with its terminal item or pull request | L2 | BUILT (the pull request is read through the host's `readPull` port; no host supplies one yet) | `releaseTerminal`, `releaseForPull`, `reapClosedPulls`; `claims.test.js` |
+| US-08-R19 claim released with its terminal item or pull request | L2 | BUILT for the port and its REST reader; PLANNED for the host wiring (no step calls `reapClosedPulls` on a clock, and no host binds `restPullReader` to its API root and token) | `releaseTerminal`, `releaseForPull`, `reapClosedPulls`, `restPullReader` (`pullreader.js`); `claims.test.js`, `pullreader.test.js` |
 | US-08-R20 unworked release recorded and the item parked | L2 | BUILT in `core/src/tick.js` (`reap_claims`); proven here against the claims store | `claims.test.js` |
 | US-08-R21 test and write in one operation | L3 | BUILT | `guardedWrite`, `fenceGuardSql`; `claims.test.js` |
-| US-08-R22 retention | L3 | BUILT | `prune`, `pruneIfDue` (once a day from `reconcile`); `claims.test.js` |
-| US-08-R23 one identity-line rule across modules | L2 | BUILT | `gate.js` `cardsWithoutIdentityLine`; `identity.test.js` |
+| US-08-R22 retention | L3 | BUILT for the function; PLANNED for the schedule (nothing in the composition root calls `reconcile` or `pruneIfDue`, so tables are not pruned by a running organization until a `claims_prune` step exists) | `prune`, `pruneIfDue` (once a day, from `reconcile` when a host calls it); `claims.test.js` |
+| US-08-R23 one identity-line rule across modules | L2 | BUILT in claims; shared with `core/trust` for stored lines and `env:` probes; PLANNED in `core/trust` for a line written only into `why_gated` (trust's `rerouteUnbound` reroutes that card; recorded by the `US-08-R23 deviation` test) | `gate.js` `cardsWithoutIdentityLine`; `identity.test.js` |
 | US-08-R24 row-level tenant isolation | L3 | BUILT in the seed (seed/worker/src/tenant.js at the repository root); not in this module, whose store is one tenant's | seed/worker/test/spec-08-claims.test.js (repository root) |
 | US-08-R25 owner-only items held under one card | L2 | BUILT in the seed (seed/worker/src/doer.js at the repository root) | seed/worker/test/spec-08-claims.test.js (repository root) |
 | US-08-R26 WBS codes | L3 | BUILT, optional | `wbs.js`; `wbs.test.js` |
+| US-08-R27 trigger scan pages and reports a cut | L2 | BUILT | `gate.js` `enforceTriggers` (`trigger_scan_max`, `trigger_scan_pages`, `truncated`, `scan-truncated` event), `triggers.js` `triggered`; `triggers.test.js` |
 | US-09 kill switch refuses claims, renewals, leases | cross-ref | BUILT (via `killSwitch()` port or `config.kill_switch`) | |
 | US-14-R01 / R02 ports only | L1 | BUILT | no platform imports |
 | US-14-R11 contention on a scale-out store | L3 | NOT COVERED: proven on one SQLite handle only; a multi-writer store needs the same unique-index semantics | |

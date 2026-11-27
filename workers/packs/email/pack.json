@@ -1,8 +1,9 @@
 {
   "id": "email",
   "name": "Email list",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "class": "B",
+  "covers": ["outreach"],
   "scope": {
     "does": [
       "Accepts a subscription request and mails the person one confirmation message",
@@ -29,6 +30,10 @@
         "read_probe": "SELECT CAST((SELECT COUNT(*) FROM email_events WHERE type = 'complaint' AND at >= datetime('now', '-30 days')) AS REAL) / MAX(1, (SELECT COUNT(*) FROM guard_ledger WHERE pack = 'email' AND channel = 'email' AND decision = 'sent' AND at >= datetime('now', '-30 days'))) AS value"
       },
       {
+        "id": "email_unbacked_sentences", "op": "<=", "target": 0,
+        "read_probe": "SELECT COUNT(*) AS value FROM email_compose_rejections WHERE at >= datetime('now', '-7 days')"
+      },
+      {
         "id": "email_unsubscribe_rate", "op": "<=", "target": 0.02,
         "read_probe": "SELECT CAST((SELECT COUNT(*) FROM email_subscribers WHERE status = 'unsubscribed' AND ended_at >= datetime('now', '-30 days')) AS REAL) / MAX(1, (SELECT COUNT(*) FROM email_subscribers WHERE status IN ('confirmed','unsubscribed'))) AS value"
       }
@@ -41,7 +46,8 @@
   },
   "loops": [
     { "id": "send", "every_ticks": 1, "entry": "./loops.js#send", "outbound": true },
-    { "id": "metrics", "every_ticks": 1, "entry": "./loops.js#metrics", "outbound": false }
+    { "id": "metrics", "every_ticks": 1, "entry": "./loops.js#metrics", "outbound": false },
+    { "id": "compose", "every_ticks": 24, "entry": "./compose.js#composeLoop", "outbound": false }
   ],
   "outbound": {
     "channels": ["email", "email_confirm"],
@@ -49,12 +55,18 @@
       "email": { "per_day": 500, "per_week": 2000 },
       "email_confirm": { "per_day": 200, "per_week": 1000 }
     },
+    "hosts": ["api.cloudflare.com"],
     "consent": "double_opt_in",
     "suppression": true,
     "approval": "by_rung"
   },
-  "migrations": ["./migrations/0001_email.sql"],
+  "hooks": { "bounce": "./loops.js#onBounce" },
+  "migrations": ["./migrations/0001_email.sql", "./migrations/0002_email_compose.sql"],
   "defaults": {
+    "max_backlog": 3,
+    "repeat_days": 14,
+    "max_sentences": 3,
+    "newsletter_subject": "Latest updates",
     "batch_size": 25,
     "confirm_resend_minutes": 10,
     "subscribe_per_hour": 60

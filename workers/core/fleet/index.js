@@ -1,17 +1,20 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // Fleet runtime (US-SPEC-11): worker contract and registry reconciliation, row-driven dispatcher, typed executor with an
-// eleven-column run ledger and validated event envelopes, the batch accounting invariant as a gate, the slot-counting
-// dead-man check, one acting firing per slot, and event-triggered scheduling.
+// eleven-column run ledger and validated event envelopes (also carried as CloudEvents 1.0), the batch accounting invariant as
+// a gate, the slot-counting dead-man check, one acting firing per slot, event-triggered scheduling, automatic staggering and
+// items that close when the reading that filed them clears.
 // Ports only: ctx = { db, now(), config, fetch?, ai?({model,prompt,max_tokens}), bindings?: {name: db}, executor?(msg),
-//                     deployed?: { list() }, claims? (core/claims module), claimsCtx? }. No platform imports.
+//                     deployed?: { list() }, claims? (core/claims module), claimsCtx?, sleep?(ms) }. No platform imports.
 
-export const VERSION = '0.1.0';
+export const VERSION = '0.2.0';
 
 const DEFAULTS = {
   worker: 'fleet', scheduler_name: 'dispatcher', queued_ttl_minutes: 15, running_ttl_minutes: 60,
   max_tokens: 1024, allowed_models: [], reconcile_every_minutes: 60, deadman_window_minutes: 60,
   tick_procedure: null, auto_stagger: false, stagger_literals: false, tick_scheduler: 'platform-cron', alert_role: 'operations', result_chars: 4000, error_chars: 1000,
+  deadman_lookback_minutes: 1440, dispatch_every_minutes: 10, retry_backoff_ms: 0, max_retries: 5, stagger_auto: false, stagger_pin: [],
+  cloudevent_type_prefix: 'io.ultrastable.',
 };
 export const cfg = ctx => ({ ...DEFAULTS, ...(ctx.config || {}) });
 export const TRIGGERS = ['cron', 'http', 'event', 'manual'];
@@ -32,9 +35,18 @@ const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 const msg = e => String((e && e.message) || e);
 const slug = s => String(s).replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
 
+/** File an item. An item the same reading closed earlier (status done) is reopened when the reading recurs (US-11-R20). */
 async function openItem(ctx, id, title, doneCheck, probe, priority) {
   const r = await run(ctx.db, `INSERT OR IGNORE INTO items (id,title,kind,owner_role,done_check,closing_probe,priority,status) VALUES (?,?,'fix',?,?,?,?,'open')`,
     id, String(title).slice(0, 300), cfg(ctx).alert_role, doneCheck, probe, priority);
+  if (r.meta.changes > 0) return true;
+  const u = await run(ctx.db, `UPDATE items SET status = 'open', disposition = NULL, updated_at = ? WHERE id = ? AND status = 'done'`, iso(nowMs(ctx)), id);
+  return u.meta.changes > 0;
+}
+/** Close an item with the reading that cleared it. Only an item still in the active set is touched. */
+async function closeItem(ctx, id, reading) {
+  const r = await run(ctx.db, `UPDATE items SET status = 'done', disposition = ?, updated_at = ? WHERE id = ? AND status NOT IN ('done','superseded','cancelled')`,
+    `probe green: ${reading}`.slice(0, 1000), iso(nowMs(ctx)), id);
   return r.meta.changes > 0;
 }
 
@@ -145,9 +157,16 @@ export async function setCron(ctx, { name, expr, task_id, enabled = true }) {
     ON CONFLICT(name) DO UPDATE SET expr=excluded.expr, task_id=excluded.task_id, enabled=excluded.enabled,
       next_fire = CASE WHEN fleet_crons.expr = excluded.expr THEN fleet_crons.next_fire ELSE NULL END`, name, expr, task_id, enabled ? 1 : 0);
 }
-export async function setTask(ctx, { id, type, definition = {}, enabled = true }) {
+export async function setTask(ctx, { id, type, definition = {}, enabled = true, name, timeout_ms, retries, version }) {
+  const c = cfg(ctx);
+  if (timeout_ms !== undefined && timeout_ms !== null && !(Number.isInteger(timeout_ms) && timeout_ms > 0)) throw new Error('timeout_ms is a positive integer');
+  if (retries !== undefined && retries !== null && !(Number.isInteger(retries) && retries >= 0 && retries <= c.max_retries)) throw new Error(`retries is an integer from 0 to ${c.max_retries}`);
   await run(ctx.db, `INSERT INTO fleet_tasks (id, type, definition, enabled) VALUES (?,?,?,?)
     ON CONFLICT(id) DO UPDATE SET type=excluded.type, definition=excluded.definition, enabled=excluded.enabled`, id, String(type), JSON.stringify(definition), enabled ? 1 : 0);
+  if ([name, timeout_ms, retries, version].some(v => v !== undefined))
+    await run(ctx.db, `INSERT INTO fleet_task_options (task_id, name, timeout_ms, retries, version, updated_at) VALUES (?,?,?,?,?,?)
+      ON CONFLICT(task_id) DO UPDATE SET name=excluded.name, timeout_ms=excluded.timeout_ms, retries=excluded.retries, version=excluded.version, updated_at=excluded.updated_at`,
+      id, name ?? null, timeout_ms ?? null, retries ?? null, version ?? null, iso(nowMs(ctx)));
 }
 export async function declareProcedure(ctx, { name, expr, schedulers }) {
   if (!parseCron(expr)) throw new Error('cron expression must have five valid fields');
@@ -158,28 +177,37 @@ export async function declareProcedure(ctx, { name, expr, schedulers }) {
 
 // ---- dispatcher (US-11-R03, R04, R11) ----------------------------------------------------------
 
+/**
+ * Hand a queued run to the executor. With no `ctx.executor` port the module executes it inline (a long task blocks this
+ * invocation); a host that wants another worker to do the work passes `executor` and posts to it.
+ */
 async function post(ctx, m) {
-  if (typeof ctx.executor !== 'function') throw new Error('no executor configured');
-  const r = await ctx.executor(m);
+  const r = typeof ctx.executor === 'function' ? await ctx.executor(m) : await execute(ctx, m);
   if (r && r.ok === false && r.rejected_before_start) throw new Error(r.error || 'executor refused');
   return r;
 }
 
-/** One dispatcher invocation: fire every due row, advance next_fire and last_fired whether or not the post succeeded. */
+/**
+ * One dispatcher invocation: fire every due row, advance next_fire and last_fired whether or not the post succeeded.
+ * The cadence is the invocation cadence: a schedule finer than the interval at which the host calls this fires once per call
+ * (see `cadenceReport`). The overlap guard is one conditional insert, so two concurrent dispatchers cannot both queue a task.
+ */
 export async function dispatch(ctx) {
   const c = cfg(ctx), now = nowMs(ctx), nowS = iso(now);
   const out = { fired: [], skipped: [], errors: [] };
   const due = await all(ctx.db, `SELECT * FROM fleet_crons WHERE enabled = 1 AND (next_fire IS NULL OR next_fire <= ?) ORDER BY name`, nowS);
   for (const cr of due) {
     const nf = nextFire(cr.expr, now);
-    // US-11-R11: one live run per task. A queued or running row for the task means this firing is not dispatched.
-    const live = await first(ctx.db, `SELECT run_id FROM fleet_runs WHERE task_id = ? AND status IN ('queued','running')`, cr.task_id);
-    let runId = null, error = null;
-    if (live) out.skipped.push({ cron: cr.name, reason: 'overlap', run_id: live.run_id });
-    else {
-      const ins = await run(ctx.db, `INSERT INTO fleet_runs (worker, trigger, status, task_id, cron_name, scheduler, queued_at, evidence_refs) VALUES (?, 'cron', 'queued', ?, ?, ?, ?, '[]')`,
-        c.worker, cr.task_id, cr.name, c.scheduler_name, nowS);
-      runId = ins.meta.last_row_id;
+    // US-11-R11: one live run per task, enforced by the store: the row is inserted only when the task has no queued or running run.
+    const ins = await run(ctx.db, `INSERT INTO fleet_runs (worker, trigger, status, task_id, cron_name, scheduler, queued_at, evidence_refs)
+      SELECT ?, 'cron', 'queued', ?, ?, ?, ?, '[]' WHERE NOT EXISTS (SELECT 1 FROM fleet_runs WHERE task_id = ? AND status IN ('queued','running'))`,
+      c.worker, cr.task_id, cr.name, c.scheduler_name, nowS, cr.task_id);
+    let error = null;
+    if (!ins.meta.changes) {
+      const live = await first(ctx.db, `SELECT run_id FROM fleet_runs WHERE task_id = ? AND status IN ('queued','running') ORDER BY run_id LIMIT 1`, cr.task_id);
+      out.skipped.push({ cron: cr.name, reason: 'overlap', run_id: live ? live.run_id : null });
+    } else {
+      const runId = ins.meta.last_row_id;
       try { await post(ctx, { task_id: cr.task_id, cron_name: cr.name, run_id: runId }); out.fired.push({ cron: cr.name, run_id: runId }); }
       catch (e) { error = msg(e).slice(0, 300); out.errors.push({ cron: cr.name, run_id: runId, error }); }
     }
@@ -187,6 +215,24 @@ export async function dispatch(ctx) {
     if (nf === null) await run(ctx.db, `UPDATE fleet_crons SET enabled = 0 WHERE name = ?`, cr.name); // an expression that never fires must not be due every minute
   }
   return out;
+}
+
+/** Enabled schedules whose minimum gap between slots is shorter than the dispatch cadence: they fire once per invocation, not per slot. */
+export async function cadenceReport(ctx, { every_minutes } = {}) {
+  const c = cfg(ctx), every = every_minutes ?? c.dispatch_every_minutes, now = nowMs(ctx);
+  const coarsened = [];
+  for (const cr of await all(ctx.db, `SELECT name, expr FROM fleet_crons WHERE enabled = 1 ORDER BY name`)) {
+    let prev = nextFire(cr.expr, now), min = null;
+    for (let i = 0; i < 50 && prev !== null; i++) {
+      const nx = nextFire(cr.expr, prev);
+      if (nx === null) break;
+      const gap = (nx - prev) / MINUTE;
+      if (min === null || gap < min) min = gap;
+      prev = nx;
+    }
+    if (min !== null && min < every) coarsened.push({ cron: cr.name, expr: cr.expr, min_gap_minutes: min });
+  }
+  return { every_minutes: every, coarsened };
 }
 
 /** Stale `queued` and `running` rows end as failed with an alert item, so a silent executor is visible (US-11-R11). */
@@ -231,10 +277,66 @@ export async function validateEnvelope(env, payload) {
   if (p.sha256 !== await sha256Hex(JSON.stringify(payload ?? null))) return 'provenance.sha256 does not match the payload';
   return null;
 }
+
+// ---- CloudEvents 1.0 carriage (US-11-R22) ------------------------------------------------------
+// The fleet envelope (with its payload hash) is the integrity record; CloudEvents 1.0 is the open standard other tools read. The
+// provenance rides as extension attributes (`emitter`, `session`, `payloadsha256`, `schemaversion`: lower-case letters and digits only).
+
+const CE_NAME = /^[a-z0-9]{1,20}$/;
+const CE_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
+const CE_CONTEXT = new Set(['specversion', 'id', 'source', 'type', 'datacontenttype', 'dataschema', 'subject', 'time', 'data', 'data_base64']);
+/** Returns null when `ce` conforms to the CloudEvents 1.0 core attributes (checked locally, no library), else the reason. */
+export function validateCloudEvent(ce) {
+  if (!ce || typeof ce !== 'object' || Array.isArray(ce)) return 'not an object';
+  if (ce.specversion !== '1.0') return `specversion must be "1.0", got ${JSON.stringify(ce.specversion)}`;
+  for (const k of ['id', 'source', 'type']) if (typeof ce[k] !== 'string' || !ce[k]) return `${k} is required and must be a non-empty string`;
+  if (/\s/.test(ce.source)) return 'source must be a URI-reference without whitespace';
+  if (ce.time !== undefined && (typeof ce.time !== 'string' || !CE_TIME.test(ce.time) || Number.isNaN(Date.parse(ce.time)))) return 'time must be an RFC 3339 timestamp';
+  if (ce.datacontenttype !== undefined && (typeof ce.datacontenttype !== 'string' || !ce.datacontenttype)) return 'datacontenttype must be a non-empty string';
+  if (ce.data !== undefined && ce.data_base64 !== undefined) return 'data and data_base64 are mutually exclusive';
+  for (const [k, v] of Object.entries(ce)) {
+    if (CE_CONTEXT.has(k)) continue;
+    if (!CE_NAME.test(k)) return `attribute name ${JSON.stringify(k)} must be 1 to 20 lower-case letters or digits`;
+    if (!['string', 'number', 'boolean'].includes(typeof v)) return `attribute ${k} must be a string, number or boolean`;
+  }
+  return null;
+}
+/** The fleet envelope as a CloudEvents 1.0 event: type = prefix + kind, payload under `data`, provenance as extension attributes. */
+export function toCloudEvent(env, payload, { source = 'urn:fleet', type_prefix = DEFAULTS.cloudevent_type_prefix } = {}) {
+  const t = parseIso(env.ts);
+  return { specversion: '1.0', id: env.id, source, type: `${type_prefix}${env.kind}`, time: Number.isNaN(t) ? env.ts : new Date(t).toISOString(),
+    datacontenttype: 'application/json', data: payload ?? null,
+    schemaversion: env.schema_version, emitter: env.provenance.emitter, session: env.provenance.session, payloadsha256: env.provenance.sha256 };
+}
+/** A CloudEvent back to { envelope, payload }; `ok: false` with the reason when it does not conform or does not carry the fleet provenance. */
+export function fromCloudEvent(ce, { type_prefix = DEFAULTS.cloudevent_type_prefix } = {}) {
+  const bad = validateCloudEvent(ce);
+  if (bad) return { ok: false, error: `cloudevent: ${bad}` };
+  if (!ce.type.startsWith(type_prefix)) return { ok: false, error: `cloudevent: type must start with ${type_prefix}` };
+  if (ce.time === undefined) return { ok: false, error: 'cloudevent: the fleet envelope needs a time' };
+  if (ce.data_base64 !== undefined) return { ok: false, error: 'cloudevent: data_base64 is not carried (the payload is JSON)' };
+  const envelope = { schema_version: String(ce.schemaversion ?? '1'), kind: ce.type.slice(type_prefix.length), id: ce.id, ts: iso(Date.parse(ce.time)),
+    provenance: { emitter: ce.emitter, session: ce.session, sha256: ce.payloadsha256 } };
+  return { ok: true, envelope, payload: ce.data ?? null };
+}
+
+/**
+ * Store an event. `env` is the fleet envelope, or a CloudEvents 1.0 event (recognised by `specversion`), in which case the
+ * payload is its `data`. Valid events are stored `accepted`; anything else, a repeated id included, is stored `rejected` with the reason.
+ */
 export async function recordEvent(ctx, env, payload, { run_id = null } = {}) {
+  const str = v => (typeof v === 'string' ? v.slice(0, 200) : null);
+  if (env && typeof env === 'object' && 'specversion' in env) {
+    const conv = fromCloudEvent(env, { type_prefix: cfg(ctx).cloudevent_type_prefix });
+    if (!conv.ok) {
+      await run(ctx.db, `INSERT INTO fleet_events (event_id, schema_version, kind, ts, emitter, session, payload_sha256, payload, state, error, run_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+        str(env.id), str(env.specversion), str(env.type), str(env.time), str(env.emitter), str(env.session), str(env.payloadsha256), JSON.stringify(env.data ?? null).slice(0, 4000), 'rejected', conv.error, run_id);
+      return { accepted: false, error: conv.error };
+    }
+    env = conv.envelope; payload = conv.payload;
+  }
   let error = await validateEnvelope(env, payload);
   const e = env && typeof env === 'object' ? env : {}, p = e.provenance && typeof e.provenance === 'object' ? e.provenance : {};
-  const str = v => (typeof v === 'string' ? v.slice(0, 200) : null);
   const body = JSON.stringify(payload ?? null).slice(0, 4000);
   const put = (state, err) => run(ctx.db, `INSERT INTO fleet_events (event_id, schema_version, kind, ts, emitter, session, payload_sha256, payload, state, error, run_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
     str(e.id), str(e.schema_version), str(e.kind), str(e.ts), str(p.emitter), str(p.session), str(p.sha256), body, state, err, run_id);
@@ -248,12 +350,14 @@ export async function recordEvent(ctx, env, payload, { run_id = null } = {}) {
 
 // ---- executor (US-11-R05, R06) -----------------------------------------------------------------
 
-class TaskError extends Error { constructor(cls, m) { super(m); this.cls = cls; } }
+class TaskError extends Error { constructor(cls, m, retryable = false) { super(m); this.cls = cls; this.retryable = retryable; } }
 
 async function runSql(ctx, def) {
-  const db = def.binding ? (ctx.bindings || {})[def.binding] : ctx.db;
-  if (!db) throw new TaskError('no_binding', `binding ${def.binding} is not configured`);
-  const s = String(def.statement || '').trim().replace(/;\s*$/, '');
+  // `db` and `sql` are accepted as aliases of `binding` and `statement` (the keys of the reference deployment's rows).
+  const name = def.binding ?? def.db;
+  const db = name ? (ctx.bindings || {})[name] : ctx.db;
+  if (!db) throw new TaskError('no_binding', `binding ${name} is not configured`);
+  const s = String(def.statement ?? def.sql ?? '').trim().replace(/;\s*$/, '');
   if (!s || s.includes(';')) throw new TaskError('bad_definition', 'sql task takes exactly one statement');
   const st = db.prepare(s).bind(...(Array.isArray(def.params) ? def.params : []));
   if (/^(select|with)\b/i.test(s)) { const rows = (await st.all()).results || []; return { row_count: rows.length, rows: rows.slice(0, 3) }; }
@@ -264,7 +368,7 @@ async function runHttp(ctx, def) {
   if (!def.url) throw new TaskError('bad_definition', 'http task needs a url');
   const r = await ctx.fetch(def.url, { method: def.method || 'GET', headers: def.headers || {}, body: def.body == null ? undefined : (typeof def.body === 'string' ? def.body : JSON.stringify(def.body)) });
   const text = (await r.text()).slice(0, 500);
-  if (r.status >= 400) throw new TaskError('http_status', `status ${r.status}: ${text}`);
+  if (r.status >= 400) throw new TaskError('http_status', `status ${r.status}: ${text}`, r.status >= 500); // a 5xx may clear on a retry; a 4xx will not
   return { status: r.status, body: text };
 }
 /** The model must be on the allowed list; with none named, the cheapest allowed model is used. */
@@ -292,22 +396,42 @@ async function runTask(ctx, type, def) {
     for (let i = 0; i < steps.length; i++) {
       const s = steps[i] || {};
       if (!SIMPLE[s.type]) throw new TaskError('unknown_type', `workflow step ${i + 1} has unknown type ${s.type}`);
-      try { const r = await SIMPLE[s.type](ctx, s.definition || {}); cost += Number(r.cost) || 0; results.push({ step: i + 1, type: s.type, ...r }); }
-      catch (e) { throw new TaskError(e.cls || 'exception', `workflow step ${i + 1} (${s.type}): ${msg(e)}`); }
+      try { const r = await SIMPLE[s.type](ctx, s.definition || {}); cost += Number(r.cost) || 0; results.push({ step: i + 1, type: s.type, ...(s.name ? { name: String(s.name).slice(0, 80) } : {}), ...r }); }
+      catch (e) { throw new TaskError(e.cls || 'exception', `workflow step ${i + 1} (${s.type}): ${msg(e)}`, e instanceof TaskError ? e.retryable : true); }
     }
     return { steps: results, cost };
   }
   throw new TaskError('unknown_type', `unknown task type ${type}`);
 }
 
+const pause = (ctx, ms) => (typeof ctx.sleep === 'function' ? ctx.sleep(ms) : new Promise(r => setTimeout(r, ms)));
+/** Race `fn` against a timer. The work is not cancelled when the timer wins: the run is recorded as failed (class `timeout`). */
+async function withTimeout(ctx, ms, fn) {
+  if (!ms) return fn();
+  let timer = null;
+  const guard = new Promise((_, reject) => {
+    const boom = () => reject(new TaskError('timeout', `task did not finish within ${ms} ms`, true));
+    if (typeof ctx.sleep === 'function') ctx.sleep(ms).then(boom); else timer = setTimeout(boom, ms);
+  });
+  try { return await Promise.race([fn(), guard]); } finally { if (timer) clearTimeout(timer); }
+}
+
 /**
  * Execute one task and write its run record. m = { task_id, cron_name?, run_id?, trigger?, parent_run?, session?, task? }.
- * `task` (an inline {type, definition}) is for posted tasks; every execution, accepted or rejected, ends in a run row.
+ * `task` (an inline {type, definition, timeout_ms?, retries?}) is for posted tasks; every execution, accepted or rejected, ends in a run row.
+ * A stored task may carry options (timeout_ms, retries; `setTask`). A retry re-runs only a failure that may clear (a 5xx, a timeout, an
+ * exception); every failed earlier attempt keeps its own child run row (parent_run) and the parent row is the last attempt.
  */
 export async function execute(ctx, m = {}) {
   const c = cfg(ctx), startS = iso(nowMs(ctx));
   const trigger = m.run_id ? null : (m.trigger || 'http');
-  if (trigger && !TRIGGERS.includes(trigger)) return { ok: false, rejected_before_start: true, error: `unknown trigger ${trigger}` };
+  if (trigger && !TRIGGERS.includes(trigger)) {
+    // US-11-R05: a rejected request still leaves a record.
+    const reason = `unknown trigger ${String(trigger).slice(0, 100)}`;
+    const rej = await run(ctx.db, `INSERT INTO fleet_runs (worker, trigger, ts_start, ts_end, status, error_class, summary, task_id, cron_name, queued_at, evidence_refs, error) VALUES (?, 'http', ?, ?, 'failed', 'unknown_trigger', 'request rejected before it started', ?, ?, ?, '[]', ?)`,
+      c.worker, startS, startS, m.task_id ?? (m.task ? 'inline' : null), m.cron_name ?? null, startS, reason);
+    return { ok: false, rejected_before_start: true, run_id: rej.meta.last_row_id, error: `unknown trigger ${trigger}` };
+  }
   let runId = m.run_id;
   if (runId) {
     const u = await run(ctx.db, `UPDATE fleet_runs SET status = 'running', ts_start = ? WHERE run_id = ? AND status = 'queued'`, startS, runId);
@@ -317,30 +441,54 @@ export async function execute(ctx, m = {}) {
       c.worker, trigger, startS, m.task_id ?? (m.task ? 'inline' : null), m.cron_name ?? null, m.parent_run ?? null, startS);
     runId = ins.meta.last_row_id;
   }
-  let status = 'ok', result = null, error = null, cls = null, type = null;
+  let task = null, opts = {}, type = null, first_fail = null;
   try {
-    let task = m.task || null;
-    if (!task) {
+    task = m.task || null;
+    if (task) opts = { timeout_ms: task.timeout_ms, retries: task.retries };
+    else {
       const row = await first(ctx.db, `SELECT * FROM fleet_tasks WHERE id = ?`, m.task_id ?? '');
       if (!row) throw new TaskError('no_task', `task ${m.task_id} not found`);
       if (!row.enabled) throw new TaskError('task_disabled', `task ${m.task_id} is disabled`);
       let definition;
       try { definition = JSON.parse(row.definition); } catch { throw new TaskError('bad_definition', 'task definition is not JSON'); }
       task = { type: row.type, definition };
+      opts = (await first(ctx.db, `SELECT timeout_ms, retries FROM fleet_task_options WHERE task_id = ?`, row.id)) || {};
     }
     type = task.type;
     if (!TASK_TYPES.includes(type)) throw new TaskError('unknown_type', `unknown task type ${type}`);
-    result = await runTask(ctx, type, task.definition);
-  } catch (e) { status = 'failed'; cls = e.cls || 'exception'; error = msg(e).slice(0, c.error_chars); }
-  const endS = iso(nowMs(ctx));
+  } catch (e) { first_fail = { status: 'failed', cls: e.cls || 'exception', error: msg(e).slice(0, c.error_chars), retryable: false }; }
+  const attemptOnce = async () => {
+    const at = iso(nowMs(ctx));
+    try { const result = await withTimeout(ctx, opts.timeout_ms, () => runTask(ctx, type, task.definition)); return { status: 'ok', result, start: at, end: iso(nowMs(ctx)) }; }
+    catch (e) { return { status: 'failed', cls: e.cls || 'exception', error: msg(e).slice(0, c.error_chars), retryable: e instanceof TaskError ? Boolean(e.retryable) : true, start: at, end: iso(nowMs(ctx)) }; }
+  };
+  const tid = m.task_id ?? 'inline';
+  const attempts = [];
+  let o = first_fail || await attemptOnce();
+  attempts.push(o);
+  const budget = 1 + (Number.isInteger(opts.retries) && opts.retries > 0 ? Math.min(opts.retries, c.max_retries) : 0);
+  while (o.status === 'failed' && o.retryable && attempts.length < budget) {
+    if (c.retry_backoff_ms > 0) await pause(ctx, c.retry_backoff_ms);
+    o = await attemptOnce(); attempts.push(o);
+  }
+  if (attempts.length > 1) {
+    const parent = await first(ctx.db, `SELECT trigger FROM fleet_runs WHERE run_id = ?`, runId);
+    for (let i = 0; i < attempts.length - 1; i++) {
+      const a = attempts[i];
+      await run(ctx.db, `INSERT INTO fleet_runs (worker, trigger, ts_start, ts_end, status, error_class, summary, task_id, cron_name, parent_run, queued_at, evidence_refs, error) VALUES (?,?,?,?, 'failed', ?, ?, ?, ?, ?, ?, '[]', ?)`,
+        c.worker, parent ? parent.trigger : 'manual', a.start, a.end, a.cls, `${type} ${tid} attempt ${i + 1} of ${attempts.length} failed: ${a.cls}`, m.task_id ?? 'inline', m.cron_name ?? null, runId, a.start, a.error);
+    }
+  }
+  const endS = iso(nowMs(ctx)), result = o.status === 'ok' ? o.result : null, cls = o.status === 'ok' ? null : o.cls, error = o.status === 'ok' ? null : o.error;
   const resultText = result === null ? null : JSON.stringify(result).slice(0, c.result_chars);
-  const summary = status === 'ok' ? `${type} task ${m.task_id ?? 'inline'} ok` : `${type ?? 'task'} ${m.task_id ?? 'inline'} failed: ${cls}`;
-  const payload = { run_id: runId, task_id: m.task_id ?? null, type, status, error_class: cls };
+  const tried = attempts.length > 1 ? ` after ${attempts.length} attempts (${attempts.map((a, i) => `${i + 1} ${a.status === 'ok' ? 'ok' : a.cls}`).join(', ')})` : '';
+  const summary = (o.status === 'ok' ? `${type} task ${tid} ok` : `${type ?? 'task'} ${tid} failed: ${cls}`) + tried;
+  const payload = { run_id: runId, task_id: m.task_id ?? null, type, status: o.status, error_class: cls };
   const env = await buildEnvelope({ kind: 'fleet.run', id: `run-${runId}`, ts: endS, emitter: c.worker, session: String(m.session || `run-${runId}`), payload });
   const ev = await recordEvent(ctx, env, payload, { run_id: runId });
   await run(ctx.db, `UPDATE fleet_runs SET status = ?, ts_end = ?, error_class = ?, summary = ?, result = ?, error = ?, cost = ?, evidence_refs = ? WHERE run_id = ?`,
-    status, endS, cls, summary, resultText, error, Number(result && result.cost) || 0, JSON.stringify([`fleet_events:run-${runId}:${ev.accepted ? 'accepted' : 'rejected'}`]), runId);
-  return { ok: status === 'ok', run_id: runId, status, error_class: cls, error, result, event: ev };
+    o.status, endS, cls, summary, resultText, error, Number(result && result.cost) || 0, JSON.stringify([`fleet_events:run-${runId}:${ev.accepted ? 'accepted' : 'rejected'}`]), runId);
+  return { ok: o.status === 'ok', run_id: runId, status: o.status, error_class: cls, error, result, event: ev, attempts: attempts.length };
 }
 
 // ---- accounting invariant as a gate (US-11-R07) ------------------------------------------------
@@ -422,7 +570,14 @@ export async function fireOnce(ctx, { procedure, scheduler, expr = null, trigger
  */
 export async function deadman(ctx, { from, to } = {}) {
   const c = cfg(ctx), now = nowMs(ctx);
-  const end = to ?? now, start = from ?? end - c.deadman_window_minutes * MINUTE;
+  const end = to ?? now;
+  // Without an explicit window the check resumes from the end of its last pass (less one window, so a slot that was still open then
+  // is judged now), at most `deadman_lookback_minutes` back: slots that elapsed while the check itself did not run are not lost.
+  let start = from;
+  if (start === undefined) {
+    const prev = await first(ctx.db, `SELECT checked_to FROM fleet_deadman_state WHERE id = 1`);
+    start = prev ? Math.max(parseIso(prev.checked_to) - c.deadman_window_minutes * MINUTE, end - c.deadman_lookback_minutes * MINUTE) : end - c.deadman_window_minutes * MINUTE;
+  }
   const out = { from: iso(start), to: iso(end), procedures: [], alerts: [] };
   for (const p of await all(ctx.db, `SELECT * FROM fleet_procedures ORDER BY name`)) {
     const declared = JSON.parse(p.schedulers);
@@ -459,6 +614,8 @@ export async function deadman(ctx, { from, to } = {}) {
     for (const d of declared) row.reliability[d] = rel[d].slots ? rel[d].with_record / rel[d].slots : null;
     out.procedures.push(row);
   }
+  if (from === undefined && to === undefined)
+    await run(ctx.db, `INSERT INTO fleet_deadman_state (id, checked_to) VALUES (1, ?) ON CONFLICT(id) DO UPDATE SET checked_to = excluded.checked_to`, iso(end));
   return out;
 }
 
@@ -469,12 +626,19 @@ const HEALTH_FIELDS = ['status', 'worker', 'version', 'enabled', 'bindings_ok'];
 const HEADER_FIELDS = ['purpose', 'capabilities', 'deploy_method', 'canonical_source'];
 const REGISTRY_FIELDS = ['name', 'purpose', 'kind', 'status', 'crons', 'dependencies', 'health_url', 'autonomy_level', 'owner'];
 const parseJson = (s, d) => { if (s == null) return d; if (typeof s !== 'string') return s; try { return JSON.parse(s); } catch { return d; } };
+/** The deployed workers answer `GET /health` as {ok, ...} (the composition root and the seed) or as the contract's {status, ...}. `ok` is read as status. */
+export function normalizeHealth(h) {
+  const x = h && typeof h === 'object' ? h : {};
+  return x.status === undefined && typeof x.ok === 'boolean' ? { ...x, status: x.ok ? 'ok' : 'degraded' } : x;
+}
+
+const sameSet = (a, b) => { const x = [...new Set(a.map(String))].sort(), y = [...new Set((b || []).map(String))].sort(); return x.length === y.length && x.every((v, i) => v === y[i]); };
 
 /** The seven parts of the worker contract (section 4). Returns the list of unmet parts; empty means the member conforms. */
 export function contractGaps(reg, deployed = null) {
   const gaps = [], r = reg || {};
   if (!SEMVER.test(String(r.version || ''))) gaps.push('1 version: no semantic VERSION');
-  if (deployed) { const h = deployed.health || {}; const miss = HEALTH_FIELDS.filter(f => !(f in h)); if (miss.length) gaps.push(`2 health: missing ${miss.join(', ')}`); }
+  if (deployed) { const h = normalizeHealth(deployed.health); const miss = HEALTH_FIELDS.filter(f => !(f in h)); if (miss.length) gaps.push(`2 health: missing ${miss.join(', ')}`); }
   const header = parseJson(r.header, null) || {};
   const hm = HEADER_FIELDS.filter(f => header[f] == null || header[f] === '' || (Array.isArray(header[f]) && !header[f].length));
   if (hm.length) gaps.push(`3 header: missing ${hm.join(', ')}`);
@@ -514,13 +678,14 @@ export async function reconcile(ctx) {
     if (r.status === 'retired') { state = 'retired'; if (d) detail = 'retired in the registry but still deployed'; }
     else if (!d) { state = 'degraded'; detail = 'registered, not deployed'; ghosts.push(r.name); }
     else {
-      const h = d.health || {}, dv = d.version || h.version || null;
+      const h = normalizeHealth(d.health), dv = d.version || h.version || null;
       if (!dv) unversioned.push(r.name);
       if (r.status === 'paused' || h.enabled === false) state = 'paused';
       else if (h.status !== 'ok' || h.bindings_ok === false) { state = 'degraded'; detail = `health status ${h.status ?? 'missing'}, bindings_ok ${h.bindings_ok ?? 'missing'}`; }
       else if (!dv) { state = 'drifted'; detail = 'deployed without a version: cannot be compared'; }
       else if (dv !== r.version) { state = 'drifted'; detail = `deployed ${dv}, registry ${r.version ?? 'none'}`; }
       else if (r.source_hash && d.source_hash && r.source_hash !== d.source_hash) { state = 'drifted'; detail = 'deployed source differs from the canonical copy'; }
+      else if (Array.isArray(d.crons) && !sameSet(d.crons, parseJson(r.crons, []))) { state = 'drifted'; detail = `crons differ: deployed [${[...d.crons].sort().join(', ')}], registry [${[...parseJson(r.crons, [])].sort().join(', ')}]`; }
       else state = 'live';
     }
     counts[state]++; states[r.name] = state;
@@ -553,20 +718,158 @@ export async function setTrigger(ctx, { id, event_kind, task_id, enabled = true 
  * event starts nothing. Each started run is a `queued` row with trigger `event`, posted to the executor.
  */
 export async function emit(ctx, env, payload) {
+  if (env && typeof env === 'object' && 'specversion' in env) { // a CloudEvent: start tasks by the converted envelope
+    const conv = fromCloudEvent(env, { type_prefix: cfg(ctx).cloudevent_type_prefix });
+    if (conv.ok) { env = conv.envelope; payload = conv.payload; }
+  }
   const ev = await recordEvent(ctx, env, payload);
   const out = { accepted: ev.accepted, error: ev.error || null, started: [], skipped: [], errors: [] };
   if (!ev.accepted) return out;
   const c = cfg(ctx), nowS = iso(nowMs(ctx));
   for (const t of await all(ctx.db, `SELECT * FROM fleet_triggers WHERE enabled = 1 AND event_kind = ? ORDER BY id`, env.kind)) {
-    const live = await first(ctx.db, `SELECT run_id FROM fleet_runs WHERE task_id = ? AND status IN ('queued','running')`, t.task_id);
-    if (live) { out.skipped.push({ trigger: t.id, reason: 'overlap', run_id: live.run_id }); continue; }
-    const ins = await run(ctx.db, `INSERT INTO fleet_runs (worker, trigger, status, task_id, scheduler, queued_at, evidence_refs, summary) VALUES (?, 'event', 'queued', ?, ?, ?, ?, ?)`,
-      c.worker, t.task_id, `event:${t.id}`, nowS, JSON.stringify([`fleet_events:${env.id}`]), `started by event ${env.kind}`);
+    const ins = await run(ctx.db, `INSERT INTO fleet_runs (worker, trigger, status, task_id, scheduler, queued_at, evidence_refs, summary)
+      SELECT ?, 'event', 'queued', ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM fleet_runs WHERE task_id = ? AND status IN ('queued','running'))`,
+      c.worker, t.task_id, `event:${t.id}`, nowS, JSON.stringify([`fleet_events:${env.id}`]), `started by event ${env.kind}`, t.task_id);
+    if (!ins.meta.changes) {
+      const live = await first(ctx.db, `SELECT run_id FROM fleet_runs WHERE task_id = ? AND status IN ('queued','running') ORDER BY run_id LIMIT 1`, t.task_id);
+      out.skipped.push({ trigger: t.id, reason: 'overlap', run_id: live ? live.run_id : null }); continue;
+    }
     const runId = ins.meta.last_row_id;
     try { await post(ctx, { task_id: t.task_id, run_id: runId, session: env.provenance.session }); out.started.push({ trigger: t.id, run_id: runId }); }
     catch (e) { out.errors.push({ trigger: t.id, run_id: runId, error: msg(e).slice(0, 300) }); }
   }
   return out;
+}
+
+// ---- items close when the reading that filed them clears (US-11-R20) --------------------------
+
+/**
+ * Close the items this module filed whose own reading is now green, each with the reading as its disposition. An item the
+ * module did not file is never touched: ids are matched to the registry, task, batch and alert rows that produced them.
+ */
+export async function settleItems(ctx) {
+  const now = nowMs(ctx), c = cfg(ctx), closed = [];
+  const open = new Map((await all(ctx.db, `SELECT id FROM items WHERE status NOT IN ('done','superseded','cancelled') AND (id LIKE 'FLEET-%' OR id LIKE 'DEADMAN-%')`)).map(r => [r.id, true]));
+  const settle = async (id, reading) => { if (open.has(id) && await closeItem(ctx, id, reading)) closed.push(id); };
+  for (const r of await all(ctx.db, `SELECT name, state FROM fleet_registry WHERE state IN ('live','paused','retired')`)) {
+    await settle(`FLEET-DEGRADED-${slug(r.name)}`, `fleet_registry.state = ${r.state} for ${r.name}`);
+    await settle(`FLEET-DRIFTED-${slug(r.name)}`, `fleet_registry.state = ${r.state} for ${r.name}`);
+  }
+  const rec = await first(ctx.db, `SELECT id, detail FROM fleet_reconciliations ORDER BY id DESC LIMIT 1`);
+  if (rec) {
+    const still = new Set((parseJson(rec.detail, {}).unregistered || []).map(slug));
+    for (const id of open.keys()) if (id.startsWith('FLEET-UNREGISTERED-') && !still.has(id.slice('FLEET-UNREGISTERED-'.length))) await settle(id, `reconciliation ${rec.id} no longer lists the worker as unregistered`);
+  }
+  for (const t of await all(ctx.db, `SELECT DISTINCT task_id FROM fleet_runs WHERE task_id IS NOT NULL`)) {
+    if (!open.has(`FLEET-STALE-${slug(t.task_id)}`)) continue;
+    const last = await first(ctx.db, `SELECT run_id, status FROM fleet_runs WHERE task_id = ? ORDER BY run_id DESC LIMIT 1`, t.task_id);
+    if (last && last.status === 'ok') await settle(`FLEET-STALE-${slug(t.task_id)}`, `fleet_runs: newest row for task ${t.task_id} (run ${last.run_id}) has status ok`);
+  }
+  for (const b of await all(ctx.db, `SELECT DISTINCT executor FROM fleet_batches`)) {
+    if (!open.has(`FLEET-UNACCOUNTED-${slug(b.executor)}`)) continue;
+    const last = await first(ctx.db, `SELECT id, gap FROM fleet_batches WHERE executor = ? ORDER BY id DESC LIMIT 1`, b.executor);
+    if (last && last.gap === 0) await settle(`FLEET-UNACCOUNTED-${slug(b.executor)}`, `fleet_batches: newest row for executor ${b.executor} (batch ${last.id}) has gap 0`);
+  }
+  for (const a of await all(ctx.db, `SELECT a.*, p.expr FROM fleet_alerts a LEFT JOIN fleet_procedures p ON p.name = a.procedure WHERE a.item_id IS NOT NULL`)) {
+    if (!open.has(a.item_id)) continue;
+    if (a.kind === 'stop') {
+      // a later slot of the procedure has a record: a run row (or a tick row for the configured tick procedure) that started after this slot ended
+      const end = a.expr ? nextFire(a.expr, parseIso(a.slot)) : null;
+      const after = end === null ? a.slot : iso(end);
+      let n = (await first(ctx.db, `SELECT COUNT(*) AS n FROM fleet_runs WHERE cron_name = ? AND ts_start >= ?`, a.procedure, after)).n;
+      if (!n && c.tick_procedure === a.procedure) n = (await first(ctx.db, `SELECT COUNT(*) AS n FROM tick_runs WHERE started_at >= ?`, after)).n;
+      if (n) await settle(a.item_id, `a later slot of ${a.procedure} has a record (after ${after})`);
+    } else if (a.kind === 'single_path' && a.expr) {
+      const slots = expectedSlots(a.expr, now - c.deadman_window_minutes * MINUTE, now).map(t => ({ start: t, end: nextFire(a.expr, t) })).filter(x => x.end !== null && x.end <= now);
+      const latest = slots[slots.length - 1];
+      if (!latest) continue;
+      const missing = parseJson(a.missing, []);
+      let allOk = missing.length > 0;
+      for (const sch of missing) {
+        let n = (await first(ctx.db, `SELECT COUNT(*) AS n FROM fleet_runs WHERE cron_name = ? AND scheduler = ? AND ts_start >= ? AND ts_start < ?`, a.procedure, sch, iso(latest.start), iso(latest.end))).n;
+        if (!n && c.tick_procedure === a.procedure && sch === c.tick_scheduler) n = (await first(ctx.db, `SELECT COUNT(*) AS n FROM tick_runs WHERE started_at >= ? AND started_at < ?`, iso(latest.start), iso(latest.end))).n;
+        if (!n) allOk = false;
+      }
+      if (allOk) await settle(a.item_id, `${missing.join(', ')} recorded the latest slot of ${a.procedure} (${iso(latest.start)})`);
+    }
+  }
+  return { closed };
+}
+
+// ---- automatic staggering by minute of the hour (US-11-R12): pin list, procedure sync and a log; `stagger` above plans over a day window ----------------------------------------------------------
+
+const PERIODS = [2, 3, 4, 5, 6, 10, 12, 15, 20, 30];
+/** Minute-of-hour set of an expression whose other four fields are `*`; or the reason it cannot be staggered. */
+function minuteShape(expr) {
+  const f = parseCron(expr);
+  if (!f) return { reason: 'bad_expression' };
+  if (!f.slice(1).every(x => x === '*')) return { reason: 'not_every_hour' };
+  const set = []; for (let m = 0; m < 60; m++) if (matchField(f[0], m)) set.push(m);
+  if (!set.length) return { reason: 'never_fires' };
+  if (set.length === 1) return { period: 60, offset: set[0], single: true, count: 1 };
+  const n = set[1] - set[0];
+  if (60 % n === 0 && set.length === 60 / n && set[0] < n && set.every((m, i) => m === set[0] + i * n) && PERIODS.includes(n)) return { period: n, offset: set[0], count: set.length };
+  return { reason: 'minute_field_unsupported' };
+}
+const minutesOf = (shape, offset) => { const out = []; for (let m = offset; m < 60; m += shape.period) out.push(m); return out; };
+const exprFor = (shape, offset, original) => {
+  if (!shape.single && offset === 0 && /^\*\/\d+ \* \* \* \*$/.test(original)) return original;
+  return `${minutesOf(shape, offset).join(',')} * * * *`;
+};
+const collisionCount = occupied => [...occupied.values()].filter(n => n > 1).length;
+
+/**
+ * Spread the minutes at which enabled schedules fire. Only an expression whose minute field is a periodic or single minute set
+ * (a star-slash-n form for n dividing 60, a literal, or the comma-list form of either) and whose other fields are `*` is moved; the firings per hour
+ * never change. Greedy: the busiest schedule first, each taking the offset that adds the fewest collisions. A name in
+ * `config.stagger_pin` keeps its minutes. `apply` rewrites the rows (`setCron`; next_fire moves to the first new slot at or after the old one, so a move never fires a schedule twice in its period), the matching procedure
+ * expression and the stagger log; without it the plan is only returned.
+ */
+export async function staggerHourly(ctx, { apply = false } = {}) {
+  const c = cfg(ctx), pin = new Set(c.stagger_pin || []);
+  const rows = await all(ctx.db, `SELECT name, expr, task_id, next_fire FROM fleet_crons WHERE enabled = 1 ORDER BY name`);
+  const skipped = [], movable = [], occupied = new Map();
+  const take = (shape, off) => { for (const m of minutesOf(shape, off)) occupied.set(m, (occupied.get(m) || 0) + 1); };
+  for (const r of rows) {
+    const shape = minuteShape(r.expr);
+    if (shape.reason) { skipped.push({ name: r.name, expr: r.expr, reason: shape.reason }); continue; }
+    if (pin.has(r.name)) { take(shape, shape.offset); skipped.push({ name: r.name, expr: r.expr, reason: 'pinned' }); continue; }
+    movable.push({ ...r, shape });
+  }
+  const before = new Map(occupied); for (const m of movable) for (const x of minutesOf(m.shape, m.shape.offset)) before.set(x, (before.get(x) || 0) + 1);
+  const collisions_before = collisionCount(before);
+  movable.sort((a, b) => b.shape.count - a.shape.count || a.name.localeCompare(b.name));
+  const plan = [];
+  for (const m of movable) {
+    const limit = m.shape.single ? 60 : m.shape.period;
+    let best = null;
+    for (let off = 0; off < limit; off++) {
+      const added = minutesOf(m.shape, off).filter(x => occupied.has(x)).length;
+      if (best === null || added < best.added) best = { off, added };
+      if (added === 0) break;
+    }
+    take(m.shape, best.off);
+    const next = exprFor(m.shape, best.off, m.expr);
+    plan.push({ name: m.name, from: m.expr, to: next, offset: best.off, changed: next !== m.expr });
+  }
+  const collisions_after = collisionCount(occupied);
+  const result = { applied: false, collisions_before, collisions_after, changes: plan.filter(p => p.changed), unchanged: plan.filter(p => !p.changed).map(p => p.name), skipped };
+  if (!apply) return result;
+  const at = iso(nowMs(ctx));
+  for (const ch of result.changes) {
+    const cr = rows.find(r => r.name === ch.name);
+    await setCron(ctx, { name: ch.name, expr: ch.to, task_id: cr.task_id, enabled: true });
+    // setCron clears next_fire, which reads as due: a schedule that had already fired this period would fire again at once. A schedule
+    // whose next old slot is still ahead keeps that period: it next fires at the first new slot at or after the old one.
+    const due = cr.next_fire ? parseIso(cr.next_fire) : null;
+    if (due !== null && due > nowMs(ctx)) {
+      const nf = nextFire(ch.to, due - MINUTE);
+      if (nf !== null) await run(ctx.db, `UPDATE fleet_crons SET next_fire = ? WHERE name = ?`, iso(nf), ch.name);
+    }
+    await run(ctx.db, `UPDATE fleet_procedures SET expr = ? WHERE name = ? AND expr = ?`, ch.to, ch.name, ch.from); // the dead-man check must expect the new slots
+    await run(ctx.db, `INSERT INTO fleet_stagger_log (at, name, old_expr, new_expr, collisions_before, collisions_after) VALUES (?,?,?,?,?,?)`, at, ch.name, ch.from, ch.to, collisions_before, collisions_after);
+  }
+  return { ...result, applied: true };
 }
 
 // ---- surface for the composition root ----------------------------------------------------------
@@ -593,27 +896,36 @@ export async function status(ctx) {
   };
 }
 
-/** One tick of the fleet runtime: dispatch due rows, reap stale runs, run the dead-man check, reconcile when due. */
+/** One tick of the fleet runtime: stagger (opt-in), dispatch due rows, reap stale runs, run the dead-man check, reconcile when due, close items whose reading cleared. */
 export async function step(ctx) {
   const c = cfg(ctx);
   if (c.enabled === false) return { enabled: false };
   const out = {};
   // US-11-R12: with `auto_stagger` on, schedules are moved apart before anything is dispatched; a staggered set is left as it is.
   if (c.auto_stagger === true) { const g = await stagger(ctx, { apply: true, literals: c.stagger_literals === true }); out.staggered = g.changes.length; }
+  // The hour-minute planner (pin list, procedure sync, log) runs when `stagger_auto` is on.
+  if (c.stagger_auto === true) await staggerHourly(ctx, { apply: true });
   Object.assign(out, { dispatch: await dispatch(ctx), reaped: (await reapStale(ctx)).reaped, deadman: (await deadman(ctx)).alerts.length });
   if (ctx.deployed) {
     const last = await first(ctx.db, `SELECT at FROM fleet_reconciliations ORDER BY id DESC LIMIT 1`);
     if (!last || nowMs(ctx) - parseIso(last.at) >= c.reconcile_every_minutes * MINUTE) { const r = await reconcile(ctx); out.reconcile = r.counts; }
   }
+  out.settled = (await settleItems(ctx)).closed.length;
+  out.coarsened = (await cadenceReport(ctx)).coarsened.length;
   return out;
 }
 
 const json = (body, code = 200) => new Response(JSON.stringify(body), { status: code, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
-/** Routes: GET /health, GET /fleet/status, POST /fleet/execute (authorized) for posted tasks and dispatcher posts. */
+/** Routes: GET /health, GET /fleet/status, POST /fleet/dispatch and POST /fleet/execute (both authorized): dispatcher pass, posted tasks and dispatcher posts. */
 export async function handle(request, ctx) {
   const url = new URL(request.url);
   if (request.method === 'GET' && url.pathname === '/health') return json(await health(ctx));
   if (request.method === 'GET' && url.pathname === '/fleet/status') return json(await status(ctx));
+  if (request.method === 'POST' && url.pathname === '/fleet/dispatch') {
+    // the credential-free second route: an external scheduler (a finer cron, a GitHub Actions run) drives the dispatcher
+    if (typeof ctx.authorize !== 'function' || !(await ctx.authorize(request))) return json({ error: 'unauthorized' }, 401);
+    return json({ ...(await dispatch(ctx)), cadence: await cadenceReport(ctx) });
+  }
   if (request.method === 'POST' && url.pathname === '/fleet/execute') {
     if (typeof ctx.authorize !== 'function' || !(await ctx.authorize(request))) return json({ error: 'unauthorized' }, 401);
     let body; try { body = await request.json(); } catch { return json({ error: 'bad_json' }, 400); }

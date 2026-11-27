@@ -7,3 +7,4 @@ export { publishLoop, guardPort, reconcile, cardText, CHANNEL } from './publish.
 export { verifyLoop } from './verify.js';
 export { metricsLoop } from './metrics.js';
 export { provenanceHash, canonicalProvenance, sha256 } from './lib.js';
+export { createYoutubeChannel } from './channels/youtube.js';

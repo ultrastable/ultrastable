@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "about": "US-18-R06: the person's words for the system's own terms. The console shows these, never the identifiers; agents still get the raw values under `raw`.",
+  "roles": {
+    "portfolio-manager": "the planning manager",
+    "product-manager": "the product manager",
+    "project-manager": "the project manager",
+    "operations": "the operations team",
+    "reviewer": "the reviewer",
+    "staff": "the team",
+    "staff-manager": "the team manager"
+  },
+  "actions": {
+    "repo": { "open_pr": "preparing a change for review", "branch_commit_push": "saving work to a draft", "merge": "merging a reviewed change", "deploy": "putting a change live" },
+    "loops": { "close": "closing finished work" },
+    "console": { "ask": "answering requests" }
+  },
+  "rungs": {
+    "observed": "only watches",
+    "assisted": "suggests and prepares",
+    "delegated": "acts after a second check",
+    "autonomous": "acts on its own",
+    "self-directed": "acts on its own and picks its own work",
+    "self-modifying": "acts on its own and improves its own rules",
+    "self-extending": "acts on its own and adds its own abilities"
+  }
+}

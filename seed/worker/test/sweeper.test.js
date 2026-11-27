@@ -17,12 +17,16 @@ function fake(state) {
     if (m === 'POST' && path.endsWith('/issues')) return R({ number: 9 });
     if (m === 'GET' && path.includes('labels=claimed')) return R(state.claimed || []);
     if (m === 'GET' && path.includes('/check-runs')) return R({ total_count: state.runs ?? 1 });
+    if (m === 'PUT' && path.endsWith('/update-branch')) return R({ message: 'merge conflict between base and head' }, false, 422);  // a real conflict: GitHub refuses
+    if (m === 'GET' && path.includes('/compare/')) return R({ ahead_by: 3 });
+    if (m === 'POST' && path.endsWith('/git/refs')) { const b = JSON.parse(o.body); (state.pins ||= {})[b.ref.replace('refs/', '')] = b.sha; return R({}, true, 201); }
+    if (m === 'GET' && path.includes('/git/ref/archive/')) return R({ object: { sha: (state.pins || {})['archive/' + path.split('/git/ref/archive/')[1]] } });
     if (m === 'DELETE') return R({});
     return R({});
   };
   return { f, calls };
 }
-const pr = { number: 5, head: { ref: 'claude/x' }, updated_at: '2026-11-10T00:00:00Z' };
+const pr = { number: 5, state: 'open', head: { ref: 'claude/x', sha: 'abc1234' }, updated_at: '2026-11-10T00:00:00Z' };
 test('a green client PR is merged by the server', async () => {
   const { f, calls } = fake({ prs: [pr], detail: { ...pr, mergeable_state: 'clean' } });
   const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
@@ -41,7 +45,7 @@ test('an already-filed item is not filed twice; stale claims are released; no to
   assert.equal((await sweepOpenLoops({ repos: ['o/r'] })).status, 'no-token');
 });
 test('with issues off the sweep does not abort: the stuck PR is left to the lane item and the next PR is still handled', async () => {
-  const two = [pr, { number: 7, head: { ref: 'agent/z' }, updated_at: '2026-11-10T00:00:00Z' }];
+  const two = [pr, { number: 7, state: 'open', head: { ref: 'agent/z', sha: 'abc1234' }, updated_at: '2026-11-10T00:00:00Z' }];
   const { f, calls } = fake({ prs: two, detail: { ...pr, mergeable_state: 'dirty' }, issuesOff: true });
   const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
   assert.equal(r.status, 'ok'); assert.deepEqual(r.errors, []); assert.deepEqual(r.filed, []);
@@ -61,7 +65,7 @@ test('BRANCH-ROOT-CAUSE-1: a blocked PR with no check run is closed and reopened
 test('STALL-ACT-1: a failing dirty PR no longer starves the next one; an unreconcilable stale agent/ PR is closed as superseded', async () => {
   const a = { number: 11, head: { ref: 'agent/x', sha: 'a1' }, created_at: '2026-11-13T00:00:00Z', updated_at: '2026-11-13T11:00:00Z' };
   const b = { number: 12, head: { ref: 'claude/y', sha: 'b1' }, created_at: '2026-11-13T00:00:00Z', updated_at: '2026-11-13T11:00:00Z' };
-  const { f, calls } = fake({ prs: [a, b], detail: { ...a, mergeable_state: 'dirty' }, files: [{ filename: 'src/a.js' }], mergesStatus: 409 });
+  const { f, calls } = fake({ prs: [a, b], detail: { ...a, state: 'open', mergeable_state: 'dirty' }, files: [{ filename: 'src/a.js' }], mergesStatus: 409 });
   const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
   assert.ok(calls.some(c => c.startsWith('GET /repos/o/r/pulls/12/files')) || calls.filter(c => c.includes('/files')).length >= 2);
   assert.ok(calls.includes('PATCH /repos/o/r/pulls/11') || calls.some(c => c.startsWith('PATCH /repos/o/r/pulls/')));
@@ -76,7 +80,7 @@ test('SLA-1: a conflicting claude/ PR past the hard limit and idle is superseded
   assert.equal(prTier({ ageMin: 400, idleMin: 300, state: 'dirty', branch: 'feature/x' }), 'ok');
   assert.equal(portItemId('claude/project-thread-x'), 'PORT-BRANCH-claude-project-thread-x');
   const c = { number: 21, head: { ref: 'claude/old', sha: 'c1' }, created_at: '2026-11-13T00:00:00Z', updated_at: '2026-11-13T06:00:00Z' };
-  const { f, calls } = fake({ prs: [c], detail: { ...c, mergeable_state: 'dirty' }, files: [{ filename: 'src/a.js' }], mergesStatus: 409 });
+  const { f, calls } = fake({ prs: [c], detail: { ...c, state: 'open', mergeable_state: 'dirty' }, files: [{ filename: 'src/a.js' }], mergesStatus: 409 });
   const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
   assert.deepEqual(r.superseded, ['o/r#21']); assert.deepEqual(r.sla_ported, [{ repo: 'o/r', number: 21, branch: 'claude/old' }]);
   assert.ok(calls.includes('PATCH /repos/o/r/pulls/21'));
@@ -96,4 +100,30 @@ test('PARKED-PR-1: parked/ branches are on the SLA ladder (they were not, so 17 
   const { prTier } = await import('../src/sla.js');
   assert.equal(prTier({ ageMin: 400, idleMin: 300, state: 'blocked', branch: 'parked/agent/redmain-1' }), 'supersede');
   assert.equal(prTier({ ageMin: 400, idleMin: 300, state: 'clean', branch: 'parked/x' }), 'ok');
+});
+
+// PR-NEVER-LOSE-1: PR #2615 was closed as "conflicting" when its branch merged cleanly with main.
+test('PR-NEVER-LOSE-1: an old PR whose conflict was stale (live read says mergeable) is never closed, and its stale conflict label is cleared', async () => {
+  const { f, calls } = fake({ prs: [{ ...pr, number: 15 }], detail: { ...pr, number: 15, mergeable: true, mergeable_state: 'behind', labels: [{ name: 'conflict' }], created_at: '2026-11-10T00:00:00Z' } });
+  const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
+  assert.equal(r.superseded, undefined);
+  assert.ok(!calls.includes('PATCH /repos/o/r/pulls/15'), 'no close');
+});
+test('PR-NEVER-LOSE-1: an unknown merge state (GitHub still computing it) is not a conflict and is never superseded', async () => {
+  const { f, calls } = fake({ prs: [pr], detail: { ...pr, mergeable: null, mergeable_state: 'unknown' } });
+  const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
+  assert.equal(r.superseded, undefined); assert.ok(!calls.includes('PATCH /repos/o/r/pulls/5'));
+});
+test('PR-NEVER-LOSE-1: a real conflict is closed only after the head is pinned under refs/archive and read back', async () => {
+  const { f, calls } = fake({ prs: [pr], detail: { ...pr, mergeable: false, mergeable_state: 'dirty' } });
+  const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
+  assert.deepEqual(r.superseded, ['o/r#5']);
+  const pin = calls.indexOf('POST /repos/o/r/git/refs'), close = calls.indexOf('PATCH /repos/o/r/pulls/5');
+  assert.ok(pin >= 0 && close > pin, 'pinned before closed');
+});
+test('PR-NEVER-LOSE-1: when the head cannot be pinned the PR stays open', async () => {
+  const a = fake({ prs: [pr], detail: { ...pr, mergeable: false, mergeable_state: 'dirty' } });
+  const f = async (url, o = {}) => (o.method === 'POST' && url.endsWith('/git/refs')) ? { ok: false, status: 500, text: async () => '{}' } : a.f(url, o);
+  const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
+  assert.equal(r.superseded, undefined); assert.ok(!a.calls.includes('PATCH /repos/o/r/pulls/5'));
 });

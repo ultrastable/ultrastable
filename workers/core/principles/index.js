@@ -85,3 +85,11 @@ export function renderGlossary(reg) {
   lines.push('');
   return lines.join('\n');
 }
+
+// US-23-R08: the first line at which a glossary document differs from what the register renders, or null when the document is exactly the render.
+// A hand edit of the generated document, with no change to the register, is a difference.
+export function glossaryDrift(docText, reg) {
+  const have = String(docText).replace(/\r\n/g, '\n').split('\n'), want = renderGlossary(reg).split('\n');
+  for (let i = 0; i < Math.max(have.length, want.length); i++) if (have[i] !== want[i]) return { line: i + 1, document: have[i] ?? null, register: want[i] ?? null };
+  return null;
+}

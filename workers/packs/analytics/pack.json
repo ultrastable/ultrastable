@@ -1,7 +1,7 @@
 {
   "id": "analytics",
   "name": "Privacy-first analytics",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "class": "A",
   "scope": {
     "does": [
@@ -35,16 +35,17 @@
     ]
   },
   "requires": {
-    "ports": ["analytics"],
+    "ports": ["analytics", "search_analytics"],
     "secrets": ["ANALYTICS_SALT"],
     "specs": ["US-SPEC-21", "US-SPEC-06"]
   },
   "loops": [
     { "id": "rollup", "every_ticks": 1, "entry": "./loops.js#rollup", "outbound": false },
     { "id": "retention", "every_ticks": 12, "entry": "./loops.js#retention", "outbound": false },
-    { "id": "metrics", "every_ticks": 6, "entry": "./loops.js#metrics", "outbound": false }
+    { "id": "metrics", "every_ticks": 6, "entry": "./loops.js#metrics", "outbound": false },
+    { "id": "search", "every_ticks": 24, "entry": "./loops.js#search", "outbound": false }
   ],
-  "migrations": ["./migrations/0001_analytics.sql"],
+  "migrations": ["./migrations/0001_analytics.sql", "./migrations/0002_analytics_search.sql"],
   "defaults": {
     "own_hosts": ["example.org"],
     "raw_retention_days": 7,

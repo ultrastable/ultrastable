@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-"""US-SPEC-00: requirement identifiers are stable (US-00-R11) and a BUILT label is machine-checked against the tree (US-00-R13).
+"""US-SPEC-00: requirement identifiers are stable (US-00-R11) and a BUILT label is machine-checked against the tree (US-00-R12 and US-00-R14).
 
 The fixtures use a specification number no real specification has (77), so this file cites no real requirement by accident.
 Run from the repository root: python3 -m unittest discover -s tests/foundation -p test_spec_00_ids.py"""
@@ -59,7 +59,7 @@ class Identifiers(unittest.TestCase):
         other = [b for b in spec_ids.check(ROOT) if "defined but not recorded" not in b]
         self.assertEqual(other, [])
 
-    def test_us_00_r13_a_built_line_that_names_a_file_that_is_not_there_is_found(self):
+    def test_us_00_r12_a_built_line_that_names_a_file_that_is_not_there_is_found(self):
         code = {"a.js": "// real\n", "sub/b.py": "# real\n"}
         spec = ("# US-SPEC-77\n\n## 8. Reference implementation status\n\n"
                 "- Thing: BUILT in `a.js` with tests in `sub/b.py`.\n"
@@ -73,7 +73,7 @@ class Identifiers(unittest.TestCase):
         self.assertEqual(by_line, {"Other": "labelled BUILT but none of the named paths exist", "Half": "some named paths do not exist", "Bare": "labelled BUILT but names no file"})
         self.assertNotIn("Thing", by_line); self.assertNotIn("Plan", by_line)
 
-    def test_us_00_r13_an_identifier_that_code_cites_and_no_specification_defines_is_found(self):
+    def test_us_00_r14_an_identifier_that_code_cites_and_no_specification_defines_is_found(self):
         root = tree(SPEC, code={"a.js": f"// {R1} and {P}77-R09\n"})
         self.assertEqual(req_ids.undefined(root / "specs", root / "code"), [{"id": f"{P}77-R09", "files": ["a.js"]}])
 

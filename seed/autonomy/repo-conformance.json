@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "about": "Files every Ultrastable repository carries so agents and tools can read it without a person. Checked by scripts/repoconform.py.",
+  "files": [
+    {"path": "AGENTS.md", "standard": "AGENTS.md", "source": "https://agents.md", "contains": "#"},
+    {"path": "llms.txt", "standard": "llms.txt", "source": "https://llmstxt.org", "contains": "# "},
+    {"path": "LICENSE", "standard": "SPDX License-Identifier", "source": "https://spdx.dev/learn/handling-license-info/", "contains": "SPDX-License-Identifier:"},
+    {"path": "REUSE.toml", "standard": "REUSE 3.3", "source": "https://reuse.software/spec-3.3/", "contains": "SPDX-License-Identifier"},
+    {"path": "README.md", "standard": "GitHub community health", "source": "https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions", "contains": "#"},
+    {"path": "SECURITY.md", "standard": "GitHub security policy", "source": "https://docs.github.com/en/code-security/getting-started/adding-a-security-policy-to-your-repository", "contains": "#"},
+    {"path": "CONTRIBUTING.md", "standard": "GitHub community health", "source": "https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors", "contains": "Conventional Commits"},
+    {"path": "CHANGELOG.md", "standard": "Keep a Changelog 1.1.0 + SemVer 2.0.0", "source": "https://keepachangelog.com/en/1.1.0/", "contains": "## [Unreleased]"},
+    {"path": "CITATION.cff", "standard": "Citation File Format 1.2.0", "source": "https://citation-file-format.github.io/", "contains": "cff-version:"},
+    {"path": "publiccode.yml", "standard": "publiccode.yml", "source": "https://yml.publiccode.tools/", "contains": "publiccodeYmlVersion"},
+    {"path": "catalog-info.yaml", "standard": "Backstage descriptor", "source": "https://backstage.io/docs/features/software-catalog/descriptor-format", "contains": "apiVersion: backstage.io/"},
+    {"path": "ultrastable.json", "standard": "JSON Schema 2020-12", "source": "https://json-schema.org/draft/2020-12", "contains": "\"identity\""},
+    {"path": ".editorconfig", "standard": "EditorConfig", "source": "https://editorconfig.org", "contains": "root"},
+    {"path": ".github/dependabot.yml", "standard": "Dependabot v2", "source": "https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference", "contains": "version: 2"},
+    {"path": ".devcontainer/devcontainer.json", "standard": "Dev Container spec", "source": "https://containers.dev/implementors/json_reference/", "contains": "{"}
+  ]
+}

@@ -95,10 +95,16 @@ test('US-00-T04 and US-00-R09: a request for a business plan with no pack enable
   assert.equal(OUT_OF_SCOPE.length >= 4, true);
 });
 
-test('US-00-T04 (todo): the decline names the pack that would cover the request', { todo: 'needs a `pack` field on OUT_OF_SCOPE in core/src/console.js (integration request): drafts covers plans and documents, social covers posts' }, async () => {
+test('US-00-T04: the decline names the pack that would cover the request, and says so when no pack covers it', async () => {
   const db = makeDb();
-  const r = await recordAsk(db, 'Please write me a business plan for the bakery');
-  assert.match(r.body.message, /drafts/);
+  const plan = await recordAsk(db, 'Please write me a business plan for the bakery');
+  assert.match(plan.body.message, /the drafts add-on/); assert.equal(plan.body.pack, 'drafts');
+  assert.match(db.raw.prepare(`SELECT blocker FROM items WHERE id = ?`).get(plan.body.id).blocker, /Held until the drafts add-on is enabled/);
+  const post = await recordAsk(db, 'Run a marketing campaign for the launch');
+  assert.match(post.body.message, /the social add-on/);
+  const advice = await recordAsk(db, 'I need legal advice about my lease');
+  assert.equal(advice.body.pack, null); assert.match(advice.body.message, /No add-on covers it/);
+  assert.match(db.raw.prepare(`SELECT blocker FROM items WHERE id = ?`).get(advice.body.id).blocker, /No add-on covers this/);
 });
 
 test('US-01-R10: a decision is stored with its prediction, authority and revert path before it runs, and one without any of the three is refused', async () => {
@@ -118,7 +124,7 @@ test('US-01-R10: a decision is stored with its prediction, authority and revert 
   assert.equal(stored.due_at, '2026-11-27 10:00:00', 'the window is part of the stored prediction');
 });
 
-test('US-00-R14: a test that pins a calendar date and loads code that reads a window relative to the real clock is found; an injected clock, a bare default and a plain test are not', () => {
+test('US-00-R15: a test that pins a calendar date and loads code that reads a window relative to the real clock is found; an injected clock, a bare default and a plain test are not', () => {
   const root = mkdtempSync(path.join(tmpdir(), 'us-timebomb-'));
   try {
     mkdirSync(path.join(root, 'a'));
@@ -133,7 +139,7 @@ test('US-00-R14: a test that pins a calendar date and loads code that reads a wi
   assert.deepEqual(scan(path.join(path.dirname(fileURLToPath(import.meta.url)), '../..')).filter(f => !base.has(f.test)), [], 'this repository has none outside the shrink-only baseline');
 });
 
-test('US-00-R15: the suites run from one list, all of them even when one fails, and a suite that cannot start fails with its reason, never skipped', () => {
+test('US-00-R16: the suites run from one list, all of them even when one fails, and a suite that cannot start fails with its reason, never skipped', () => {
   const fake = (results) => (cmd, args) => { const r = results[args[1]]; return typeof r === 'function' ? r() : r; };
   const spawn = fake({ ok: { status: 0 }, bad: { status: 2, stderr: 'line1\nline2\nthree failed' }, gone: { status: null, error: new Error('spawn sh ENOENT') } });
   const res = runAll([{ name: 'a', cmd: 'ok' }, { name: 'b', cmd: 'bad' }, { name: 'c', cmd: 'gone' }, { name: 'd', cmd: 'ok' }], null, spawn);

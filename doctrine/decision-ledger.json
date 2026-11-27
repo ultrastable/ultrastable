@@ -6294,6 +6294,210 @@
    "body": "feat: the storage adapters, core test helpers and the claims, console-l3 and deploy modules. One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
    "probe": "file:workers/adapters/postgres/index.js",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-26-product-manager-pass-2026112617-0-item-s-filed",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "Product manager pass 2026112617: 0 item(s) filed",
+   "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
+   "probe": "file:foundation/pm.py"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w02-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W02 of the specification run's code and tests shipped on its own",
+   "body": "The describe, doors, elicit and fleet modules. Where main and the run had each built the same requirement (US-11-R12 staggering, US-16 section 5.3 default scoring) both are kept: stagger and staggerHourly in fleet, the prediction-table scorer and the outcome learner in elicit; unifying each pair is open work. Three tests that need later slices (walkthrough, src/console) ship with them.",
+   "probe": "file:workers/core/describe/index.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-26-executor-closed-q-improve-webmention-implement-inbound-webme",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "Executor closed Q-IMPROVE-webmention: Implement inbound webmention receiver in lite.js to record external referrals as reach",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: site/lite.js.",
+   "probe": "file:site/lite.js"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w03-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W03 of the specification run's code and tests shipped on its own",
+   "body": "The ghcost, governance, graph, ignorance, install and kernel modules. Tests that need files from later slices (the tools scripts, the remediation migrations, the org and bootstrap changes) ship with the last slice; the shared ratchets and ledger tests run on the final tree.",
+   "probe": "file:workers/core/ghcost/github.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-pk-of-the-specification-run-s-code-and-tests-shipped-o",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice PK of the specification run's code and tests shipped on its own",
+   "body": "feat: the capability packs, with their channels, manifests and probes (PK). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/core/packs/bounce.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w04-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W04 of the specification run's code and tests shipped on its own",
+   "body": "feat: the ladder and modelport modules (W04). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/core/ladder/cache.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-26-repo-conform-1-seed-checks-machine-readable-repo-files",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "REPO-CONFORM-1: seed checks machine-readable repo files",
+   "body": "Seed carries autonomy/repo-conformance.json and scripts/repoconform.py, run by the seed unittest suite. Next: same check on every org repo (issue 2577). Lesson: checks.yml is on the worker-gate deny list, so wire new checks through the seed test suite.",
+   "probe": "file:seed/scripts/repoconform.py",
+   "session": "session_0156nqDrC72mK9k9fb63twpf"
+  },
+  {
+   "id": "lesson-2026-11-26-unbound-statement-budget-broken-on-main",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Unbound-statement budget broken on main",
+   "body": "Absolute words (never) in role files and the unlearn README counted as unbound statements and pushed the budget to 11 of 10. Reworded three lines instead of raising the budget.",
+   "probe": "file:tests/foundation/test_claims.py",
+   "session": "session_0156nqDrC72mK9k9fb63twpf"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w05-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W05 of the specification run's code and tests shipped on its own",
+   "body": "feat: the predict, remediation, router and signals modules (W05). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/core/predict/audit.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w06-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W06 of the specification run's code and tests shipped on its own",
+   "body": "feat: the sla, specloop, staff, tenantstore and trust modules (W06). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/core/sla/calibrate.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w07-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W07 of the specification run's code and tests shipped on its own",
+   "body": "feat: the console and elicit modules (W07). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/core/src/console-ui.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-bs-of-the-specification-run-s-code-and-tests-shipped-o",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice BS of the specification run's code and tests shipped on its own",
+   "body": "feat: the bootstrapper, its ladder and the owner document (BS). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/core/install/bootstrap-spec10.test.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-26-executor-closed-q-lite-webmention-wire-fix-async-handler-mou",
+   "kind": "decision",
+   "date": "2026-11-26",
+   "title": "Executor closed Q-LITE-webmention-wire: Fix async handler, mount route, test wire, update handoff.",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: tests/site-lite-webmention.test.js, site/lite.js.",
+   "probe": "file:tests/site-lite-webmention.test.js"
+  },
+  {
+   "id": "lesson-2026-11-26-a-queue-item-must-not-close-on-a-check-that-passes-because-t",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "A queue item must not close on a check that passes because the item is held",
+   "body": "Q-LESSON-no-date-bombs had the done check lessons --check, which passes exactly while the item is held; the queue closed it as fixed on that pass and the same check turned main red. Each lesson item now closes only on lessons --probe <id>, which fails until a binding lands, and lessons --check refuses any other done check.",
+   "probe": "file:foundation/lessons.py",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w08-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W08 of the specification run's code and tests shipped on its own",
+   "body": "feat: the adapters and launcher (W08). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/adapters/cloudflare/src/heartbeat.test.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-w09-of-the-specification-run-s-code-and-tests-shipped-",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice W09 of the specification run's code and tests shipped on its own",
+   "body": "feat: the workers tools, gaplint and loop closer (W09). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/tools/fleet_graph.mjs",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-wi-of-the-specification-run-s-code-and-tests-shipped-o",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice WI of the specification run's code and tests shipped on its own",
+   "body": "feat: the steward, principles enforcement and GitHub pull helpers (WI). One cohesive set of files inside the 60 file and 3,000 line bound, applied to the latest main from a private working copy, with generated migrations regenerated append-only.",
+   "probe": "file:workers/adapters/github/pulls.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-26-slice-sw-fx-of-the-specification-run-shipped-together",
+   "kind": "lesson",
+   "date": "2026-11-26",
+   "title": "Slice SW+FX of the specification run shipped together",
+   "body": "The seed's spec tests (SW) need the fixer code (FX) to pass, so the two ship as one change. A credential store with no database binding now rejects at once with a plain reason. The US-09 reply-gate test accepts the router naming the reply keys.",
+   "probe": "file:seed/worker/test/spec-09-throttle-halt-gate.test.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-27-slice-ft-of-the-specification-run-shipped-on-its-own",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Slice FT of the specification run shipped on its own",
+   "body": "The foundation's specification-citing tests, one cohesive set inside the 60 file and 3,000 line bound, applied to the latest main after SW+FX merged; the conformance manifest is regenerated so it names the tests as they are titled now.",
+   "probe": "file:tests/foundation/test_spec_08_intake.py",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-27-slice-wk-of-the-specification-run-shipped-on-its-own",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Slice WK of the specification run shipped on its own",
+   "body": "The workers' ratchets and specification-citing tests, applied to the latest main after FT merged, with the conformance manifest and generated bundles regenerated from the tree as it is now.",
+   "probe": "file:workers/core/conformance/manifest.json",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-27-round-one-fixes-the-early-slices-merged-without-are-carried-",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Round-one fixes the early slices merged without are carried to main (RC, WD1)",
+   "body": "Slices W01 to W09, PK and WI merged (#2530, #2544, #2575, #2576, #2581, #2583, #2585, #2586, #2588, #2593, #2594) before the round-one fixers changed 34 of their files, so main kept the pre-fix versions: claims trigger paging and gate, console-l3 health and drop items, deploy review, graph blast radius, fleet stagger, describe claims. RC carries them three ways onto main and WD1 adds the REST pull-request reader and the scan and review fixes; on the carried tree the core and packs suite ran 2043 tests with 0 failures and the workers Python suite passes. The comparison that finds such a file: every run-changed file's fixed version against main after each merge, not only the files of the slice being merged.",
+   "probe": "file:workers/core/claims/triggers.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-27-integration-round-1-of-the-specification-run-shipped-build-o",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Integration round 1 of the specification run shipped: build-out modules wired into the composition root",
+   "body": "The modules earlier slices merged unwired (router caps, elicit outcomes, claims reap and prune, build-out ports, githubPullReader) now run in core/org, and the small module defects the round-two review found are closed. Evidence: workers core and packs 2,061 tests with 0 fail, seed suites and each foundation test file pass, conformance check 0 problems; the slice was carried onto the latest main by cherry-pick and is 58 files, 1,128 lines.",
+   "probe": "file:workers/core/org/wiring.test.js",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-27-ashby-concepts-are-bound-to-code",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Ashby concepts are bound to code",
+   "body": "18 concepts from ashby.info's concept index map to mechanism files in doctrine/ashby-concepts.json. The multistable idea is measured as interference_share from ops/ultrastability.jsonl. Summaries in our own words; source pages linked, not copied.",
+   "probe": "grep:foundation/ashbymap.py::def interference",
+   "session": "session_0156nqDrWQrweUijDBYFDoPg"
   }
  ]
 }

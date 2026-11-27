@@ -56,7 +56,7 @@ def parse_spec(path: Path) -> list[dict]:
     if "section" not in locals():
         return out
     for k, (cap, status) in enumerate(_rows(section), 1):
-        labels = LABEL.findall(status)
+        labels = LABEL.findall(cap + " " + status)  # a bullet "- PLANNED: ..." carries the label in the text before the first colon
         if not labels:
             continue
         label = labels[0]

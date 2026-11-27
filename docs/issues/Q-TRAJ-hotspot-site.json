@@ -1,0 +1,12 @@
+{
+  "id": "Q-TRAJ-hotspot-site",
+  "title": "Q-TRAJ-hotspot-site: site drew 30% of the last week's change, 22.9x its earlier weekly pace",
+  "body": "**Owner:** executor\n**Trigger:** trajectory pass (TRAJECTORY-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation trajectory --probe hotspot:site\n**Status:** closed\n\nsite drew 30% of the last week's change, 22.9x its earlier weekly pace. Evidence: recent7 103392 lines, prior weekly mean 4514.7.\n\nFind why this keeps changing; make the part that churns computed, split it, or add the test that pins it, so it stops being rewritten.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation trajectory --probe hotspot:site` exits 0.\n\n**Evidence:** trajectory at 2026-11-26T22:14:05Z: the shape no longer shows it.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "trajectory"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

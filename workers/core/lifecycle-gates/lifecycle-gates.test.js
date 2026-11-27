@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeDb } from '../_shared/testdb.js';
 import { runTick } from '../src/tick.js';
-import { MIGRATIONS_DIR as KERNEL_DIR, CATALOG, reviewArtifact, recordReadback, registerMetric, readMetric, recordDecision, evaluateDecision, amendArtifact, decideChangeRequest, addRisk, advancePhase, checkGate, lifecycleGaps } from '../kernel/index.js';
+import { MIGRATIONS_DIR as KERNEL_DIR, CATALOG, reviewArtifact, recordReadback, registerMetric, readMetric, recordDecision, evaluateDecision, amendArtifact, decideChangeRequest, addRisk, advancePhase, checkGate, lifecycleGaps, gateExtraNames } from '../kernel/index.js';
 import { OUT_OF_SCOPE } from '../src/console.js';
 import {
   MIGRATIONS_DIR, selectMode, requiredArtifacts, cadence, checkForm, submitTailored, startProject, advance, recordDeliverable, runDeliverableProbe,
@@ -94,6 +94,20 @@ test('US-15-R03, US-15-R13: every catalog artifact is required in every mode; th
   assert.match(checkForm('agile', 'A-PLN-8', {}).problems[0], /no content/);                  // phase theater: an empty artifact
 });
 
+test('US-15-R10, US-15-R05: a communication plan whose period is not a positive number of hours fails its form check and is stored as failing, with no plan set and no thrown error', async () => {
+  for (const period_h of ['weekly', 0, -4, true, '', null, NaN]) assert.equal(checkForm('hybrid', 'A-PLN-9', { what: 'x', period_h, form: 'f' }).ok, false, `period_h ${String(period_h)} fails`);
+  assert.match(checkForm('hybrid', 'A-PLN-9', { what: 'x', period_h: 'weekly', form: 'f' }).problems[0], /positive number of hours/);
+  assert.equal(checkForm('hybrid', 'A-PLN-9', { what: 'x', period_h: 24, form: 'f' }).ok, true);
+  assert.equal(checkForm('hybrid', 'A-PLN-9', { what: 'x', period_h: '48', form: 'f' }).ok, true);
+  const db = setup(); await startProject(db, { id: 'CP', name: 'cp', now: NOW });
+  const f = await submitTailored(db, { project_id: 'CP', kind: 'A-PLN-9', path_or_ref: 'docs/CP/plan.md', content: { what: 'x', period_h: 'weekly', form: 'f' }, produced_by: 'doer-1', now: NOW });
+  assert.equal(f.ok, false);
+  assert.equal(one(db, `SELECT done_check_passed AS p FROM artifacts WHERE project_id = 'CP' AND kind = 'A-PLN-9'`).p, 0, 'the artifact does not pass its done check');
+  assert.equal(one(db, `SELECT COUNT(*) AS n FROM lifecycle_comm_plans WHERE project_id = 'CP'`).n, 0);
+  await submitTailored(db, { project_id: 'CP', kind: 'A-PLN-9', path_or_ref: 'docs/CP/plan.md', content: { what: 'x', period_h: 24, form: 'f' }, produced_by: 'doer-1', now: NOW });
+  assert.equal(one(db, `SELECT period_h AS p FROM lifecycle_comm_plans WHERE project_id = 'CP'`).p, 24);
+});
+
 test('US-15-R13, T15-1: an agile project cannot enter Executing while a planning artifact is missing or empty; the attempt files items, not an error', async () => {
   const db = setup();
   await startProject(db, { id: 'AG', name: 'ag', answers: { requirements_unclear: true, value_by_increments: true }, now: NOW });
@@ -119,10 +133,10 @@ test('G1 (US-15-R04): the charter\'s definition of done must be a runnable probe
   await fill(db, 'P', 'initiating', 'hybrid');
   const none = await advance(db, 'P', 'planning', { now: NOW });                             // no readiness port
   assert.deepEqual([none.ok, none.filed], [false, ['GATE-P-planning-readiness']]); assert.match(none.reasons[0], /could not be read/);
-  assert.match((await advance(db, 'P', 'planning', { readiness: async () => ({ score: 0.4 }), now: NOW })).reasons[0], /0.40 is under the initiation threshold 0.6/);
+  assert.match((await advance(db, 'P', 'planning', { readiness: async () => ({ score: 0.4 }), now: NOW })).reasons[0], /0.40 is under the initiation threshold 0.7/);
   assert.match((await advance(db, 'P', 'planning', { readiness: async () => { throw new Error('down'); }, now: NOW })).reasons[0], /could not be read/);
   assert.equal(one(db, `SELECT current_phase FROM kernel_projects WHERE id = 'P'`).current_phase, 'initiating');
-  assert.equal((await advance(db, 'P', 'planning', { readiness: async () => ({ score: 0.6 }), now: NOW })).ok, true);
+  assert.equal((await advance(db, 'P', 'planning', { readiness: async () => ({ score: 0.7 }), now: NOW })).ok, true);
   // T15-3 still holds through this layer: a charter change after G1 is a change request with a revert path
   const cr = await amendArtifact(db, { project_id: 'P', kind: 'A-INI-2', new_ref: 'docs/P/charter-v2.md', summary: 'raise the cap', revert_path: 'restore docs/P/A-INI-2.md', requested_by: 'project-manager', now: NOW });
   assert.equal(one(db, `SELECT revert_path FROM change_requests WHERE id = ?`, cr.change_request_id).revert_path, 'restore docs/P/A-INI-2.md');
@@ -317,8 +331,30 @@ test('US-15-R20, US-15-T11: the kernel advancePhase enforces the G1 conditions t
   assert.equal(one(db, `SELECT current_phase FROM kernel_projects WHERE id = 'Q'`).current_phase, 'initiating');
   await startProject(db, { id: 'P', name: 'p', now: NOW }); await fill(db, 'P', 'initiating', 'hybrid');
   assert.deepEqual((await advancePhase(db, 'P', 'planning', { now: NOW })).filed, ['GATE-P-planning-readiness']);                   // no readiness port: not a pass
-  assert.match((await advancePhase(db, 'P', 'planning', { readiness: async () => 0.2, now: NOW })).reasons[0], /0.20 is under the initiation threshold 0.6/);
+  assert.match((await advancePhase(db, 'P', 'planning', { readiness: async () => 0.2, now: NOW })).reasons[0], /0.20 is under the initiation threshold 0.7/);
   assert.deepEqual(await advancePhase(db, 'P', 'planning', { readiness: async () => 0.2, config: { require_readiness: false }, now: NOW }), { ok: true, phase: 'planning' });
+});
+
+test('US-16-R15, T16-7: with the readiness port wired the reading decides both gates: G1 takes the elicit module\'s own g1, and G2 refuses while a non-reversible need is unanswered or the reading cannot be taken', async () => {
+  const db = setup();
+  await startProject(db, { id: 'R2', name: 'r2', override: { mode: 'hybrid', reason: 'test fixture', decided_by: 'portfolio-manager' }, now: NOW });
+  await fill(db, 'R2', 'initiating', 'hybrid');
+  // G1: the module's boolean is the verdict (its own threshold travels with it); a bare score is read against the default 0.7
+  assert.match((await advance(db, 'R2', 'planning', { readiness: async () => ({ score: 0.65, threshold: 0.7, g1: false }), now: NOW })).reasons[0], /0.65 is under the initiation threshold 0.7/);
+  assert.equal((await advance(db, 'R2', 'planning', { readiness: async () => ({ score: 0.65, threshold: 0.6, g1: true }), now: NOW })).ok, true);
+  await fill(db, 'R2', 'planning', 'hybrid'); await recordReadback(db, 'R2', NOW); item(db, 'R2-W1', { project: 'R2' });
+  // G2: a non-reversible need still unanswered is named; an unreadable reading is not a pass; g2 true passes
+  const blocked = await advance(db, 'R2', 'executing', { readiness: async () => ({ score: 1, g1: true, g2: false, blocking: ['deploy-region'] }), now: NOW });
+  assert.equal(blocked.ok, false); assert.deepEqual(blocked.filed, ['GATE-R2-executing-readiness-g2']); assert.match(blocked.reasons[0], /non-reversible needs not answered: deploy-region/);
+  assert.match((await advance(db, 'R2', 'executing', { readiness: async () => { throw new Error('down'); }, now: NOW })).reasons[0], /could not be read/);
+  assert.match((await advance(db, 'R2', 'executing', { readiness: async () => 0.9, now: NOW })).reasons[0], /not every MUST need is answered or defaulted/);
+  assert.equal(one(db, `SELECT current_phase FROM kernel_projects WHERE id = 'R2'`).current_phase, 'planning');
+  assert.deepEqual(await advance(db, 'R2', 'executing', { readiness: async () => ({ score: 1, g1: true, g2: true }), now: NOW }), { ok: true, phase: 'executing' });
+});
+
+test('US-15-R20, US-15-T11: loading core/lifecycle-gates registers all six conditions with the kernel, and the composition root loads it', async () => {
+  assert.deepEqual([gateExtraNames('G1'), gateExtraNames('G2'), gateExtraNames('G3')], [['charter-probe', 'readiness'], ['requirement-map', 'readiness-g2'], ['deliverable-probes', 'retrospective']]);
+  assert.match(readFileSync(new URL('../org/buildout.js', import.meta.url), 'utf8'), /import \{[^}]*lifecycleStep[^}]*\} from '\.\.\/lifecycle-gates\/index\.js'/);   // the host that composes the lifecycle imports the module
 });
 
 test('US-15-R20, US-15-T11: the kernel advancePhase enforces the G3 conditions too (an unpassed deliverable probe, a missing retrospective)', async () => {
@@ -447,6 +483,20 @@ test('US-15-R15, US-15-R16: the compliance report files one item per finding for
   await assert.rejects(complianceReport(db, { project_id: 'NOPE' }), /unknown project/);
 });
 
+test('US-15-R15: the compliance report of project A closes only A\'s own findings, never those of a project whose id starts with A- (A-B)', async () => {
+  const db = setup(); await executing(db, 'A', 'agile', NOW); await executing(db, 'A-B', 'agile', NOW);
+  const t = NOW + HOUR;
+  await computeQuality(db, 'A', { now: t }); await computeQuality(db, 'A-B', { now: t });                          // no quality finding: the change request is the only one
+  const cr = await amendArtifact(db, { project_id: 'A-B', kind: 'A-INI-2', new_ref: 'docs/A-B/charter-v2.md', summary: 'raise the cap', revert_path: 'restore the first charter', requested_by: 'project-manager', now: t });
+  const id = `COMPLIANCE-A-B-change-request-${cr.change_request_id}`;
+  assert.deepEqual((await complianceReport(db, { project_id: 'A-B', now: t })).filed, [id]);
+  const ra = await complianceReport(db, { project_id: 'A', now: t });
+  assert.deepEqual([ra.findings, ra.closed], [[], []], 'A has no finding of its own and closes nothing of A-B');
+  assert.equal(one(db, `SELECT status FROM items WHERE id = ?`, id).status, 'ready', "A-B's finding is still open after A's report");
+  await decideChangeRequest(db, cr.change_request_id, { decision: 'rejected', decided_by: 'portfolio-manager', now: t });
+  assert.deepEqual((await complianceReport(db, { project_id: 'A-B', now: t + HOUR })).closed, [id], "A-B's own report closes it when the finding clears");
+});
+
 test('US-15-R10, US-15-R15, US-15-R18: the lifecycle step adopts outcomes, files gate items, closes and archives, and reports each in the tick notes without erroring', async () => {
   const db = setup();
   db.raw.exec(`INSERT INTO roles (id, role, project, tick_every, model) VALUES ('project-manager-1', 'project-manager', 'OUT-1', 1, 'm'), ('product-manager-1', 'product-manager', 'OUT-1', 3, 'm'), ('operations-1', 'operations', NULL, 1, 'm')`);
@@ -494,6 +544,16 @@ test('US-15-T10, US-15-R21: the lifecycle classifier covers every phrase the con
     assert.ok(OUT_OF_SCOPE.some(([re]) => re.test(ph)), `the console table covers ${ph}`);                            // the premise: the phrase is one the console refuses
     assert.equal(classifyScope(ph).in_scope, false, `the lifecycle classifier covers ${ph}`);
   }
+  // Superset, not a list: every plural and inflected form of a phrase the console refuses is refused here too (the console patterns carry no word boundary).
+  const forms = [...phrases.flatMap(ph => [`${ph}s`, `${ph}ed`, `${ph}ing`, `write three ${ph}s`, `un${ph}`]),
+    'write three business plans', 'draft pitch decks', 'prepare funding applications', 'file patents', 'register trademarks', 'build financial models', 'a patented design'];
+  let premise = 0;
+  for (const f of forms) {
+    if (!OUT_OF_SCOPE.some(([re]) => re.test(f))) continue;                                                           // only a form the console refuses is a premise
+    premise++;
+    assert.equal(classifyScope(f).in_scope, false, `the lifecycle classifier covers the form "${f}" the console refuses`);
+  }
+  assert.ok(premise >= forms.length, 'every generated form is one the console refuses');
   assert.deepEqual(classifyScope('Add a booking form to the home page'), { in_scope: true });
   assert.deepEqual(classifyScope('Update the opening hours'), { in_scope: true });
 });

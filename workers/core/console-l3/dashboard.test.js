@@ -62,7 +62,7 @@ test('US-13-R02: the status page, /api/state and the digest are computed from th
   assert.deepEqual(dash.render(s), html.replace(/x^/, ''));
 });
 
-test('the page escapes every stored value and loads nothing from another host (US-18-R10)', async () => {
+test('US-13-R15 and US-18-R10: the page escapes every stored value and loads nothing from another host', async () => {
   const { dash } = mk();
   const res = await get(dash, '/'); const html = await res.text();
   assert.ok(!html.includes('<b>spend</b>')); assert.match(html, /Approve &lt;b&gt;spend&lt;\/b&gt;/); assert.match(html, /stays &quot;zero&quot;/);
@@ -87,7 +87,7 @@ test('US-13-R13: a probe whose target is not routed is reported unrouted, not do
   assert.deepEqual(r.map(x => [x.id, x.state]), [['api', 'up'], ['old', 'unrouted'], ['sub', 'down'], ['bad', 'unrouted'], ['quiet', 'unknown']]);
 });
 
-test('US-13-R21: /health returns 503 with a stalled verdict and its reason when the newest check is older than the bound', async () => {
+test('US-13-R21 and US-13-T08: /health returns 503 with a stalled verdict and its reason when the newest check is older than the bound', async () => {
   const { db, dash } = mk();
   db.raw.exec(`DELETE FROM tick_runs; INSERT INTO tick_runs (started_at,finished_at,steps_completed,steps_total) VALUES ('2026-11-14 11:00:00','2026-11-14 11:00:01',8,8)`);
   const r = await get(dash, '/health');
@@ -186,7 +186,7 @@ test('US-13-R02: the digest words the same panels the page shows', async () => {
   assert.match((await mk({ graph: false }).l3.digest()).text, /Not measured here: audit, drift, runs\./);
 });
 
-test('US-13-R24: the analytics panel shows requests and errors per script from the port and not measured when the port fails; next runs join by name', async () => {
+test('US-13-R24 and US-13-T09: the analytics panel shows requests and errors per script from the port and not measured when the port fails; next runs join by name', async () => {
   const asked = [];
   const analytics = async w => { asked.push(w); return { measured: true, by_script: { 'w-ok': { requests: 900, errors: 12, cpu_ms: 40 }, 'other': { requests: 5000, errors: 0 } } }; };
   const { dash } = mkPanels({ analytics });
@@ -202,4 +202,19 @@ test('US-13-R24: the analytics panel shows requests and errors per script from t
     assert.equal(r.measured, false); assert.ok(r.reason); assert.ok(!('requests' in r), 'no number is invented for a missing reading');
   }
   assert.match(await (await get(mkPanels({ analytics: async () => { throw new Error('GraphQL 403'); } }).dash, '/')).text(), /not measured<\/small> \(GraphQL 403\)/);
+});
+
+test('US-13-R14: the dashboard is served only to the signed-in owner and a state-changing request from another origin is refused', async () => {
+  const { OUT_DIR } = await import('../../tools/build_migrations.mjs');
+  const { createOrg } = await import('../org/index.js');
+  const TOKEN = 'console-token-for-tests'; const ORIGIN = 'https://org.example.test';
+  const db = makeDb([OUT_DIR]);
+  const org = createOrg({ db, env: { CONSOLE_TOKEN: TOKEN }, config: { org_slug: 'r14', runner: { enabled: false } }, fetch: async () => new Response('{}'), now: () => T0 });
+  const req = (path, { method = 'GET', authed = false, origin } = {}) => new Request(ORIGIN + path, { method, headers: { ...(authed ? { cookie: `us_console=${encodeURIComponent(TOKEN)}` } : {}), ...(origin ? { origin } : {}) } });
+  const anon = await org.handle(req('/console/dashboard/api/state'));
+  assert.equal(anon.status, 401, 'an anonymous caller gets 401');
+  assert.equal((await org.handle(req('/console/dashboard/api/state', { authed: true }))).status, 200);
+  assert.equal((await org.handle(req('/console/dashboard/api/refresh', { method: 'POST', authed: true, origin: 'https://evil.example.test' }))).status, 403);
+  assert.equal((await org.handle(req('/console/dashboard/api/refresh', { method: 'POST', authed: true }))).status, 403, 'no origin header is refused too');
+  assert.equal((await org.handle(req('/console/dashboard/api/refresh', { method: 'POST', authed: true, origin: ORIGIN }))).status, 200);
 });

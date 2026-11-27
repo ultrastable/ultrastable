@@ -4,7 +4,7 @@
 import { all, run, iso, parseIso } from '../../core/kernel/util.js';
 import { cfg, fileItem } from './lib.js';
 
-export async function verifyLoop({ db, ctx, now, settings }) {
+export async function verifyLoop({ db, ctx, now, settings, guard }) {
   const s = cfg(settings);
   const channel = s.ports.channel;
   if (!channel) throw new Error('video channel port is not configured');
@@ -19,10 +19,12 @@ export async function verifyLoop({ db, ctx, now, settings }) {
     if (same) {
       await run(db, `UPDATE video_queue SET verify_status = 'verified', verified_at = ?, verify_attempts = ?, url = COALESCE(?, url) WHERE id = ?`, iso(now()), attempts, v.url ?? null, r.id);
       ok++;
+      if (guard && guard.outcome) await guard.outcome({ kind: 'video', event: 'verified', ref: `video-${r.id}` });   // US-21-R17: earned trust
     } else if (attempts >= s.verify_attempts || (v && v.state === 'processing') || (live && !same)) {
       await run(db, `UPDATE video_queue SET verify_status = 'failed', verify_attempts = ? WHERE id = ?`, attempts, r.id);
       await fileItem(db, `VIDEOVERIFY-${r.id}`, `Video ${r.id} could not be verified after publishing${live && !same ? ' (provenance hash differs)' : error ? ` (${error.slice(0, 80)})` : ''}`, `video ${r.id} read back with its provenance hash, or taken down and recorded with the reason`);
       failed++;
+      if (guard && guard.outcome) await guard.outcome({ kind: 'video', event: 'failed', ref: `video-${r.id}` });
     } else { await run(db, `UPDATE video_queue SET verify_attempts = ? WHERE id = ?`, attempts, r.id); waiting++; }
   }
   ctx?.notes?.push(`video verify: ${ok} verified, ${failed} failed, ${waiting} waiting`);

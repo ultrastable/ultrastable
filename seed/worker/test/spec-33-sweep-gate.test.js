@@ -27,14 +27,16 @@ const has = (calls, m, re) => calls.some(c => c.m === m && re.test(c.path));
 const pr = (number, ref, extra = {}) => ({ number, head: { ref, sha: 'sha' + number }, created_at: ago(10), updated_at: ago(5), ...extra });
 const sweepWorld = (prs, detail, extra = {}) => github(
   (m, p) => m === 'GET' && p.startsWith('/repos/o/r/pulls?state=open') ? [200, prs] : null,
-  (m, p) => { const x = /\/pulls\/(\d+)$/.exec(p); return m === 'GET' && x ? [200, { ...prs.find(q => q.number === +x[1]), ...(detail[x[1]] || detail.all || {}) }] : null; },
+  (m, p) => { const x = /\/pulls\/(\d+)$/.exec(p); return m === 'GET' && x ? [200, { state: 'open', ...prs.find(q => q.number === +x[1]), ...(detail[x[1]] || detail.all || {}) }] : null; },
   (m, p) => m === 'GET' && p.includes('/files') ? [200, []] : null, (m, p) => m === 'POST' && p.endsWith('/merges') ? [extra.mergesStatus || 409, null] : null,
   (m, p) => m === 'GET' && /\/commits\/sha6\/check-runs/.test(p) ? [200, { total_count: 1, check_runs: [{ name: 'ci', status: 'in_progress' }] }] : null,
   (m, p) => m === 'GET' && p.includes('/check-runs') ? [200, { total_count: extra.runs ?? 1, check_runs: [{ name: 'ci', status: 'completed', conclusion: 'success' }] }] : null,
   (m, p) => m === 'GET' && p.includes('/check-suites') ? [200, { check_suites: [] }] : null, (m, p) => m === 'GET' && /\/commits\/sha\d+$/.test(p) ? [200, { commit: { committer: { date: ago(600) } } }] : null,
   (m, p) => m === 'GET' && p.includes('labels=open-loop') ? [200, extra.filed || []] : null, (m, p) => m === 'GET' && p.includes('labels=claimed') ? [200, extra.claimed || []] : null,
   (m, p) => m === 'POST' && p.endsWith('/issues') ? [201, { number: 99 }] : null, (m, p) => m === 'PUT' && p.endsWith('/merge') ? [200, { sha: 'm' }] : null,
-  (m, p) => m === 'PUT' && p.endsWith('/update-branch') ? [202, {}] : null, (m, p) => m === 'POST' && p.endsWith('/ready_for_review') ? [200, {}] : null,
+  (m, p) => { const x = /\/pulls\/(\d+)\/update-branch$/.exec(p); return m === 'PUT' && x ? ((detail[x[1]] || detail.all || {}).mergeable_state === 'dirty' ? [422, { message: 'merge conflict' }] : [202, {}]) : null; },  // PR-NEVER-LOSE-1: GitHub refuses a real conflict
+  (m, p) => m === 'GET' && p.includes('/compare/') ? [200, { ahead_by: 2 }] : null, (m, p) => m === 'POST' && p.endsWith('/git/refs') ? [201, {}] : null,
+  (m, p) => { const x = /\/git\/ref\/archive\/pr-(\d+)-/.exec(p); return m === 'GET' && x ? [200, { object: { sha: 'sha' + x[1] } }] : null; }, (m, p) => m === 'POST' && p.endsWith('/ready_for_review') ? [200, {}] : null,
   (m, p) => m === 'PATCH' && /\/pulls\/\d+$/.test(p) ? [200, {}] : null, (m, p) => m === 'POST' && p.endsWith('/comments') ? [201, {}] : null, (m) => m === 'DELETE' ? [204, null] : null);
 
 test('US-33-R50: the sweeper owns every pull request on a client branch: it readies a draft, refreshes a branch that is behind, merges a green one, holds one still running, files a tracked item for a loop left open a day, and leaves other branches alone', async () => {
@@ -85,7 +87,7 @@ test('US-33-R52: past the written limit and idle, a pull request that is not mer
   const w = sweepWorld([pr(5, 'claude/x', { created_at: ago(180), updated_at: ago(180) })], { all: { mergeable_state: 'dirty' } });
   const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: w.f, now: NOW });
   assert.deepEqual(r.superseded, ['o/r#5']); assert.deepEqual(r.sla_ported, [{ repo: 'o/r', number: 5, branch: 'claude/x' }]);
-  assert.match(w.calls.find(c => c.path.endsWith('/issues/5/comments')).body.body, /^SLA-1: open past the written limit .* PORT-BRANCH-claude-x carries it onto current main\.$/);
+  assert.match(w.calls.find(c => c.path.endsWith('/issues/5/comments')).body.body, /^PR-NEVER-LOSE-1: closing after SLA-1: open past the written limit .* PORT-BRANCH-claude-x carries it onto current main\. Head sha5 is pinned/);
   assert.deepEqual(w.calls.find(c => c.m === 'PATCH' && c.path.endsWith('/pulls/5')).body, { state: 'closed' }); assert.ok(!w.calls.some(c => c.m === 'DELETE' && c.path.includes('/git/refs')), 'the branch is kept: nothing is lost');
   const young = sweepWorld([pr(5, 'claude/x', { created_at: ago(30), updated_at: ago(30) })], { all: { mergeable_state: 'dirty' } }); assert.equal((await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: young.f, now: NOW })).superseded, undefined);
 });
@@ -111,7 +113,7 @@ test('US-33-R26: the sweeper tries to reconcile up to four conflicting pull requ
   const tried = w.calls.filter(c => c.m === 'GET' && /\/pulls\/\d+\/files/.test(c.path)).map(c => +/pulls\/(\d+)/.exec(c.path)[1]);
   assert.deepEqual(tried, [1, 2, 3, 4], 'one failing pull request does not starve the next, and no pass tries more than four');
   assert.deepEqual(r.superseded, ['o/r#1', 'o/r#2', 'o/r#3', 'o/r#4']); assert.match(r.errors[0], /^o\/r#1 code-conflict$/);
-  assert.match(w.calls.find(c => c.path.endsWith('/issues/1/comments')).body.body, /^STALL-ACT-1: conflicts with main that the server cannot reconcile after the stall limit\. Superseded: the executor refiles the item from current main\.$/);
+  assert.match(w.calls.find(c => c.path.endsWith('/issues/1/comments')).body.body, /^PR-NEVER-LOSE-1: closing after STALL-ACT-1: conflicts with main that the server cannot reconcile after the stall limit\. Head sha1 is pinned/);
   w = sweepWorld([pr(1, 'agent/q-1', { created_at: ago(20), updated_at: ago(20) })], { all: { mergeable_state: 'dirty' } }, { mergesStatus: 201 }); r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: w.f, now: NOW });
   assert.deepEqual(r.reconciled, ['o/r#1']); assert.equal(r.superseded, undefined); assert.ok(!w.calls.some(c => c.m === 'PATCH'));
   w = sweepWorld([pr(1, 'claude/q-1', { created_at: ago(20), updated_at: ago(20) })], { all: { mergeable_state: 'dirty' } }); r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: w.f, now: NOW });

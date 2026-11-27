@@ -40,13 +40,20 @@ const norm = s => String(s ?? '').trim().toLowerCase();
 
 // deployRoute: the only way a class D pack acts. { send(req) -> { id } } backed by core/deploy (see core/deploy/packs-route.js).
 // A request cannot opt in or out of it: the route is chosen from the pack's class, held by the host, never read from the request.
-export function createGuard({ db, now = Date.now, config = {}, channels = {}, deployRoute = null, redact = x => x }) {
+// policyCeiling(packId) -> the rung the protected policy surface this pack's class maps to allows, or null when no policy is configured
+// (createPacks passes createPackTrust's policyCeiling). The rung a pack acts at is min(earned, class ceiling, policy ceiling) (US-21-R17), read at
+// every send, so tightening the policy after a rung was earned takes effect on the next send.
+export function createGuard({ db, now = Date.now, config = {}, channels = {}, deployRoute = null, redact = x => x, policyCeiling = null }) {
   const rungs = config.rungs || DEFAULT_RUNGS;
   const actRung = config.act_rung || 'delegated';
+  // US-21-R22: the rung needed to act alone may differ per action kind (config.act_rungs: { notice: 'autonomous' }); the default stays act_rung.
+  const actRungFor = kind => (kind && config.act_rungs && config.act_rungs[kind]) || actRung;
   const startRung = config.start_rung || rungs[0];
   const salt = config.hash_salt || '';
   const hashRecipient = r => sha256(`${salt}|${norm(r)}`);
   const ledgerAt = () => iso(now());
+  // A reservation older than this is a crash between reserving and finishing, and no longer blocks its key or counts against a cap (config.inflight_ttl_ms).
+  const inflightTtlMs = config.inflight_ttl_ms ?? 600000;
 
   async function packRow(id) {
     const r = await first(db, `SELECT * FROM packs_registry WHERE id = ?`, id);
@@ -58,7 +65,9 @@ export function createGuard({ db, now = Date.now, config = {}, channels = {}, de
     const row = await first(db, `SELECT rung FROM trust_ledger WHERE surface = ? AND action_class = ?`, `pack:${p.id}`, kind || 'send');
     const earned = rungs.indexOf(row ? row.rung : startRung);
     const ceil = rungs.indexOf(p.rung_ceiling);
-    return rungs[Math.max(0, Math.min(earned < 0 ? 0 : earned, ceil < 0 ? 0 : ceil))]; // US-21-R12
+    const pc = policyCeiling ? await policyCeiling(p.id) : null;
+    const policy = pc == null ? Infinity : Math.max(0, rungs.indexOf(pc));          // an unknown rung name in the policy is read as the lowest rung, never as no limit
+    return rungs[Math.max(0, Math.min(earned < 0 ? 0 : earned, ceil < 0 ? 0 : ceil, policy))]; // US-21-R12, R17
   }
 
   async function record(req, decision, reason, providerId = null, hashes = {}) {
@@ -81,7 +90,9 @@ export function createGuard({ db, now = Date.now, config = {}, channels = {}, de
     if (!o || !o.channels.includes(req.channel)) return 'channel_not_declared';
     if (p.class === 'D' && !(deployRoute && typeof deployRoute.send === 'function')) return 'class_d_requires_deploy';
     if (!req.idempotencyKey) return 'idempotency_key_required';
+    const fresh = iso(now() - inflightTtlMs);
     const dup = await first(db, `SELECT 1 AS x FROM guard_ledger WHERE pack = ? AND idem_key = ? AND decision = 'sent'`, p.id, req.idempotencyKey)
+      || await first(db, `SELECT 1 AS x FROM guard_inflight WHERE pack = ? AND idem_key = ? AND at > ?`, p.id, req.idempotencyKey, fresh)
       || await first(db, `SELECT 1 AS x FROM guard_queue WHERE pack = ? AND idem_key = ? AND status = 'pending' AND id IS NOT ?`, p.id, req.idempotencyKey, ignoreQueueId);
     if (dup) return 'duplicate_idempotency_key';
     const rh = await hashRecipient(req.recipient);
@@ -92,9 +103,11 @@ export function createGuard({ db, now = Date.now, config = {}, channels = {}, de
       if (!cs.some(c => c.status === 'confirmed')) return cs.some(c => c.status === 'pending') ? 'consent_not_confirmed' : 'consent_revoked';
     }
     const cap = o.caps[req.channel];
-    const sent = since => first(db, `SELECT COUNT(*) AS n FROM guard_ledger WHERE pack = ? AND channel = ? AND decision = 'sent' AND at > ?`, p.id, req.channel, iso(since));
-    if ((await sent(now() - 86400e3)).n >= cap.per_day) return 'cap_per_day';
-    if ((await sent(now() - 7 * 86400e3)).n >= cap.per_week) return 'cap_per_week';
+    // Sent rows plus sends that have been reserved and not finished: a call in flight counts against the cap (US-21-R14).
+    const sent = async since => (await first(db, `SELECT COUNT(*) AS n FROM guard_ledger WHERE pack = ? AND channel = ? AND decision = 'sent' AND at > ?`, p.id, req.channel, iso(since))).n
+      + (await first(db, `SELECT COUNT(*) AS n FROM guard_inflight WHERE pack = ? AND channel = ? AND at > ? AND at > ?`, p.id, req.channel, iso(since), fresh)).n;
+    if ((await sent(now() - 86400e3)) >= cap.per_day) return 'cap_per_day';
+    if ((await sent(now() - 7 * 86400e3)) >= cap.per_week) return 'cap_per_week';
     const port = (p.class === 'D' ? deployRoute : channels[req.channel]) || {};
     const content = typeof req.content === 'string' ? req.content : '';
     if (!content.trim()) return 'content_empty';
@@ -105,7 +118,38 @@ export function createGuard({ db, now = Date.now, config = {}, channels = {}, de
     return null;
   }
 
-  async function deliver(req, hashes, p) {
+  // Reserve a send before the provider is called: one conditional INSERT that holds only when the key is not in flight and both caps still have room,
+  // counting sent rows and other reservations. Two overlapping calls with one key, or enough calls to pass a cap together, cannot all pass (US-21-R14).
+  async function reserve(req, p) {
+    const t = now(), cap = p.manifest.outbound.caps[req.channel], fresh = iso(t - inflightTtlMs);
+    await run(db, `DELETE FROM guard_inflight WHERE at <= ?`, fresh);
+    const room = () => `((SELECT COUNT(*) FROM guard_ledger WHERE pack = ? AND channel = ? AND decision = 'sent' AND at > ?)
+      + (SELECT COUNT(*) FROM guard_inflight WHERE pack = ? AND channel = ? AND at > ?))`;
+    const day = iso(t - 86400e3), week = iso(t - 7 * 86400e3);
+    const r = await run(db, `INSERT INTO guard_inflight (pack, idem_key, channel, at)
+      SELECT ?, ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM guard_inflight WHERE pack = ? AND idem_key = ?)
+        AND ${room()} < ? AND ${room()} < ?`,
+      p.id, req.idempotencyKey, req.channel, iso(t), p.id, req.idempotencyKey,
+      p.id, req.channel, day, p.id, req.channel, day, cap.per_day,
+      p.id, req.channel, week, p.id, req.channel, week, cap.per_week);
+    return r.meta.changes > 0;
+  }
+  const release = (p, req) => run(db, `DELETE FROM guard_inflight WHERE pack = ? AND idem_key = ?`, p.id, req.idempotencyKey);
+
+  async function deliver(req, hashes, p, ignoreQueueId = null) {
+    if (p && p.manifest && p.manifest.outbound && p.manifest.outbound.caps && p.manifest.outbound.caps[req.channel] && req.idempotencyKey) {
+      if (!(await reserve(req, p))) {
+        // Deciding a queued entry whose key is already being delivered by another decision: that decision owns the entry, so this one changes nothing.
+        if (ignoreQueueId !== null && await first(db, `SELECT 1 AS x FROM guard_inflight WHERE pack = ? AND idem_key = ?`, p.id, req.idempotencyKey)) return { decision: 'refused', reason: 'decision_in_progress', contended: true };
+        const why = (await checks(req, p, { ignoreQueueId })) || 'duplicate_idempotency_key';
+        return { decision: 'refused', reason: why, id: await record(req, 'refused', why, null, hashes) };
+      }
+      try { return await deliverReserved(req, hashes, p); } finally { await release(p, req); }
+    }
+    return deliverReserved(req, hashes, p);
+  }
+
+  async function deliverReserved(req, hashes, p) {
     const port = p && p.class === 'D' ? deployRoute : channels[req.channel];
     if (!port || typeof port.send !== 'function') return { decision: 'refused', reason: 'channel_port_missing', id: await record(req, 'refused', 'channel_port_missing', null, hashes) };
     try {
@@ -126,6 +170,7 @@ export function createGuard({ db, now = Date.now, config = {}, channels = {}, de
     if (why) return { decision: 'refused', reason: why, id: await record(r, 'refused', why, null, hashes) };
     const o = p.manifest.outbound;
     const rung = await currentRung(p, r.kind);
+    const actRung = actRungFor(r.kind);
     if (o.approval === 'always' || rungs.indexOf(rung) < rungs.indexOf(actRung)) {
       const cardId = `guard-approve-${p.id}-${hashes.content.slice(0, 12)}-${(await sha256(r.idempotencyKey)).slice(0, 8)}`;
       const q = await run(db, `INSERT INTO guard_queue (at, pack, channel, kind, recipient_hash, content_hash, idem_key, recipient, content, card_id)
@@ -152,10 +197,11 @@ export function createGuard({ db, now = Date.now, config = {}, channels = {}, de
       // Everything is checked again at delivery time: a switch, suppression or cap may have changed while it waited.
       const p = await packRow(q.pack);
       const why = await checks(req, p, { ignoreQueueId: q.id });
-      out = why ? { decision: 'refused', reason: why, id: await record(req, 'refused', why, null, hashes) } : await deliver(req, hashes, p);
+      out = why ? { decision: 'refused', reason: why, id: await record(req, 'refused', why, null, hashes) } : await deliver(req, hashes, p, q.id);
     }
+    if (out.contended) return out;
     const status = !approve ? 'rejected' : out.decision === 'sent' ? 'sent' : 'refused';
-    await run(db, `UPDATE guard_queue SET status = ?, decided_by = ?, decided_at = ?, reason = ?, recipient = NULL, content = NULL WHERE id = ?`, status, by ?? null, ledgerAt(), out.reason, queueId);
+    await run(db, `UPDATE guard_queue SET status = ?, decided_by = ?, decided_at = ?, reason = ?, recipient = NULL, content = NULL WHERE id = ? AND status = 'pending'`, status, by ?? null, ledgerAt(), out.reason, queueId);
     await run(db, `UPDATE gate_cards SET status = 'closed', closed_at = ? WHERE id = ?`, ledgerAt(), q.card_id);
     return out;
   }

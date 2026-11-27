@@ -7,9 +7,10 @@
 //   buildManifest  the two together: each requirement is `met` (with its tests) or a `deviation` (with the reason)
 //   declaration  the published level, specification versions and deviation list (US-00-R01, US-00-R02, US-00-T01)
 //   check        a manifest against the tree: a `met` whose test file is gone or no longer cites it is a false claim (US-00-R03)
+// A todo or skipped test is a closing probe for a requirement not yet met: it is recorded (todo: true) and never counts as proof.
 export const LEVELS = ['L1', 'L2', 'L3'];
 export const UNTAGGED_LEVEL = 'L2'; // US-SPEC-16 and 18 tag no level; they are counted with the managed level
-const REQ = /US-(\d\d)-R(\d\d)/g;
+const REQ = /US-(\d\d)-R(\d{2,3})(?!\d)/g; // R01 to R999: a specification may define more than 99 requirements
 const TEST_ID = /US-(\d\d)-T(\d\d)|\bT(\d\d)-(\d+)\b/g;
 const rank = l => LEVELS.indexOf(l);
 
@@ -23,9 +24,9 @@ export function parseSpecs(specs) {
     versions[spec] = /\|\s*Version\s*\|\s*([^|]+?)\s*\|/.exec(text)?.[1] ?? 'unversioned';
     for (const line of text.split('\n')) {
       // a definition is where the id leads a list item, a table row or a bold run; a mention elsewhere is a cross-reference
-      const def = /^\s*(?:[-*]\s+)?(?:\|\s*)?\*{0,2}(US-(\d\d)-R(\d\d))\b\.?\*{0,2}\s*(\[(L\d)\])?/.exec(line);
+      const def = /^\s*(?:[-*]\s+)?(?:\|\s*)?\*{0,2}(US-(\d\d)-R(\d{2,3}))\b\.?\*{0,2}\s*(\[(L\d)\])?/.exec(line);
       if (def && def[2] === nn && !requirements.has(def[1])) {
-        const level = def[5] || /^\s*(?:[-*]\s+)?\*\*US-\d\d-R\d\d\s*\[(L\d)\]/.exec(line)?.[1] || null;
+        const level = def[5] || /^\s*(?:[-*]\s+)?\*\*US-\d\d-R\d{2,3}\s*\[(L\d)\]/.exec(line)?.[1] || null;
         requirements.set(def[1], { id: def[1], spec, level: level || UNTAGGED_LEVEL, tagged: !!level, must: /\bMUST\b/.test(line), text: line.replace(/[*|]/g, '').replace(/\s+/g, ' ').trim().slice(0, 200) });
       }
       const t = /^\s*(?:[-*]\s+)?(?:\|\s*)?\*{0,2}(US-(\d\d)-T\d\d|T(\d\d)-\d+)\b/.exec(line);
@@ -35,7 +36,17 @@ export function parseSpecs(specs) {
   return { versions, requirements: [...requirements.values()].sort((a, b) => a.id.localeCompare(b.id)), tests: [...tests.values()] };
 }
 
-const JS_TITLE = /\b(?:test|it)\(\s*(['"`])((?:\\.|(?!\1)[^\\])*)\1/g;
+const JS_TITLE = /\b(?:test|it)(\.(?:todo|skip))?\(\s*(['"`])((?:\\.|(?!\2)[^\\])*)\2/g;
+/** The JavaScript tests in a file as { name, todo }. A test is todo when it is declared with test.todo / test.skip, or when the
+ *  argument between its title and its body names todo (`{ todo: '...' }`, a helper called todo(...)) or skips it outright (`{ skip: true }`,
+ *  `{ skip: 'why' }`). A conditional skip (`{ skip: !hasSeed }`) is still a proof wherever it runs. */
+export function jsTitles(text) {
+  return [...text.matchAll(JS_TITLE)].map(m => {
+    const rest = text.slice(m.index + m[0].length, m.index + m[0].length + 400);
+    const opts = /^\s*,([\s\S]*?)(?:=>|\bfunction\b|\)\s*;)/.exec(rest)?.[1] ?? '';
+    return { name: m[3].replace(/\\(['"`])/g, '$1'), todo: !!m[1] || /\btodo\b/.test(opts) || /\bskip\s*:\s*(?:true\b|['"`])/.test(opts) };
+  });
+}
 
 /** A unittest method name as a title the citation rules read: test_us_01_r05_and_r06_x -> `test US-01-R05 and R06 x`. */
 export function pythonName(name) {
@@ -56,27 +67,28 @@ export function pythonTitles(text) {
   }
   return out;
 }
-const titlesOf = (path, text) => (/\.py$/.test(path) ? pythonTitles(text) : [...text.matchAll(JS_TITLE)].map(m => m[2].replace(/\\(['"`])/g, '$1')));
+const testsOf = (path, text) => (/\.py$/.test(path) ? pythonTitles(text).map(name => ({ name, todo: false })) : jsTitles(text));
 
 /** files: [{ path, text }] -> { 'US-NN-RMM': [{ file, name }] }. A requirement counts as cited by a test when the test's title
  *  names it, in full (`US-13-R07`) or short (`R07`, resolved by the nearest full id in the title, else by the one
- *  specification the file is about). A citation only in a comment is recorded with name null. */
+ *  specification the file is about). A citation only in a comment is recorded with name null. A citation in the title of a todo
+ *  or skipped test is recorded with todo: true, and the comments of that file no longer count for that id. */
 export function scanTests(files) {
   const out = {};
-  const add = (id, file, name) => { const list = (out[id] ||= []); if (!list.some(x => x.file === file && x.name === name)) list.push({ file, name }); };
+  const add = (id, file, name, todo = false) => { const list = (out[id] ||= []); if (!list.some(x => x.file === file && x.name === name)) list.push(todo ? { file, name, todo } : { file, name }); };
   for (const { path, text } of files) {
     const head = text.split('\n').slice(0, 12).join('\n');
     const about = [...new Set([...head.matchAll(/US-SPEC-(\d\d)/g)].map(m => m[1]))];
     const primary = about.length ? about[0] : null;
-    const titles = titlesOf(path, text);
+    const titles = testsOf(path, text);
     const inTitle = new Set();
-    for (const name of titles) {
+    for (const { name, todo } of titles) {
       let near = [...name.matchAll(/US-(?:SPEC-)?(\d\d)/g)].map(m => ({ at: m.index, nn: m[1] }));
-      for (const m of name.matchAll(REQ)) { add(m[0], path, name); inTitle.add(m[0]); }
-      for (const m of name.matchAll(/(?<![-\w])R(\d\d)\b/g)) {
+      for (const m of name.matchAll(REQ)) { add(m[0], path, name, todo); inTitle.add(m[0]); }
+      for (const m of name.matchAll(/(?<![-\w])R(\d{2,3})\b/g)) {
         const before = near.filter(n => n.at < m.index).pop();
         const nn = before?.nn ?? (/\bT(\d\d)-\d/.exec(name)?.[1]) ?? primary;
-        if (nn) { add(`US-${nn}-R${m[1]}`, path, name); inTitle.add(`US-${nn}-R${m[1]}`); }
+        if (nn) { add(`US-${nn}-R${m[1]}`, path, name, todo); inTitle.add(`US-${nn}-R${m[1]}`); }
       }
     }
     for (const m of text.matchAll(REQ)) if (!inTitle.has(m[0])) add(m[0], path, null);
@@ -88,7 +100,8 @@ export function scanTests(files) {
 export function scanConformanceTests(files) {
   const out = {};
   for (const { path, text } of files) {
-    for (const name of titlesOf(path, text)) {
+    for (const { name, todo } of testsOf(path, text)) {
+      if (todo) continue;
       for (const t of name.matchAll(TEST_ID)) (out[t[0]] ||= []).push({ file: path, name });
     }
   }
@@ -100,11 +113,13 @@ export function scanConformanceTests(files) {
 export function buildManifest({ specs, tests, declared = 'L1', reasons = {}, implementation = 'ultrastable/workers', generated_at = null } = {}) {
   const parsed = parseSpecs(specs); const cited = scanTests(tests); const conf = scanConformanceTests(tests);
   const requirements = parsed.requirements.map(r => {
-    const proofs = (cited[r.id] || []).slice().sort((a, b) => (a.name === null) - (b.name === null) || a.file.localeCompare(b.file));
+    const all = cited[r.id] || []; const planned = all.filter(p => p.todo);
+    const proofs = all.filter(p => !p.todo).sort((a, b) => (a.name === null) - (b.name === null) || a.file.localeCompare(b.file));
     const named = proofs.filter(p => p.name !== null);
     const base = { id: r.id, spec: r.spec, level: r.level, tagged: r.tagged, must: r.must };
     if (named.length) return { ...base, status: 'met', proof: 'named test', tests: named.slice(0, 5) };
     if (proofs.length) return { ...base, status: 'met', proof: 'test file cites it', tests: proofs.slice(0, 3).map(p => ({ file: p.file, name: null })) };
+    if (planned.length) return { ...base, status: 'deviation', reason: reasons[r.id] || `PLANNED: its closing probe is a todo test (${planned[0].file}: ${planned[0].name.slice(0, 80)})`, tests: [] };
     return { ...base, status: 'deviation', reason: reasons[r.id] || 'no test in this repository cites this requirement', tests: [] };
   });
   return { implementation, declared_level: declared, generated_at, untagged_level: UNTAGGED_LEVEL, spec_versions: parsed.versions,
@@ -159,8 +174,8 @@ export function check(manifest, { files = {}, specs = null, tests = null, absent
         else problems.push(`${r.id}: test file ${t.file} does not exist`);
         continue;
       }
-      const again = scanTests([{ path: t.file, text }])[r.id] || [];
-      if (!again.length) problems.push(`${r.id}: ${t.file} no longer cites it`);
+      const found = scanTests([{ path: t.file, text }])[r.id] || []; const again = found.filter(a => !a.todo);
+      if (!again.length) problems.push(found.length ? `${r.id}: ${t.file} cites it only in a todo test, which is not a proof` : `${r.id}: ${t.file} no longer cites it`);
       else if (t.name !== null && !again.some(a => a.name === t.name)) problems.push(`${r.id}: ${t.file} has no test named "${t.name.slice(0, 80)}"`);
     }
   }
@@ -174,7 +189,7 @@ export function check(manifest, { files = {}, specs = null, tests = null, absent
     for (const id of seen) if (!known.has(id)) problems.push(`${id} is in the manifest and not in any specification`);
     for (const [spec, v] of Object.entries(parsed.versions)) if (manifest.spec_versions[spec] !== v) problems.push(`${spec}: version ${manifest.spec_versions[spec] ?? 'missing'} in the manifest, ${v} in the specification`);
   }
-  if (tests) { const cited = scanTests(tests); for (const r of manifest.requirements) if (r.status === 'deviation' && cited[r.id]?.length) stale.push(r.id); }
+  if (tests) { const cited = scanTests(tests); for (const r of manifest.requirements) if (r.status === 'deviation' && cited[r.id]?.some(c => !c.todo)) stale.push(r.id); }
   return { ok: problems.length === 0, problems, stale, unverified };
 }
 

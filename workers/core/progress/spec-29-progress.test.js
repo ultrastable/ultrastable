@@ -29,10 +29,14 @@ test('US-29-R15: a release and a launch always count, a classified change counts
   assert.equal(substantive(ev('1', 1, { title: 'Recorder: new feature' })), true, 'the keywords are whole words');
 });
 
-// A known defect, not a requirement met: the pattern lists `chore\(deps\)` and then requires a word boundary, which cannot fall between `)` and `:` or a space,
-// so a dependency-bump title is not read as bookkeeping when its diff has not been classified. The spec records it (section 7); this test turns green when the pattern is fixed.
-test('a dependency bump title is bookkeeping when its diff has not been classified (defect of the bookkeeping pattern)', { todo: 'core/progress/index.js BOOKKEEPING: `chore\\(deps\\)` is followed by \\b' }, () => {
+// US-29-R73: the pattern once listed `chore\(deps\)` and then required a word boundary, which cannot fall between `)` and `:` or a space, so a dependency-bump
+// title was not read as bookkeeping when its diff had not been classified. The bare alternative now stands outside the boundary group.
+test('US-29-R73: a dependency bump title is bookkeeping when its diff has not been classified, and every older bookkeeping title still is', () => {
   assert.equal(substantive(ev('1', 1, { title: 'chore(deps): bump y' })), false);
+  assert.equal(substantive(ev('2', 1, { title: 'chore(deps) bump' })), false);
+  for (const t of ['lane: x', 'host-sync: y', 'write-back: z', 'merge branch main', 'Sessions: archive', 'a change [skip ci]']) assert.equal(substantive(ev('3', 1, { title: t })), false, t);
+  assert.equal(substantive(ev('4', 1, { title: 'chore: tidy' })), true, 'a plain chore is not bookkeeping');
+  assert.equal(substantive(ev('5', 1, { title: 'laneway: new feature' })), true, 'the word boundary still holds for the keywords');
 });
 
 test('US-29-R16: a digest covers the period ending now, counts by system and kind, and lists substantive events before record-keeping ones', () => {

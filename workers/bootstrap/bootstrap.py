@@ -114,6 +114,35 @@ def temporary_wrangler(text: str) -> str:
     return out
 
 
+# US-10-R15: what a person reads for each owner card (field `say`). The `what` text keeps the binding name for the machine probe.
+PLAIN = {
+    "github": "Connect your code host so the system can read and propose changes",
+    "cloudflare": "Sign in to your hosting account so the system can run it",
+    "cloudflare_account": "Say which hosting account the system may use",
+    "model_api": "Let the system use an AI model provider (free models are used until you do)",
+    "chat": "Connect a chat channel for the system's short reports",
+}
+
+
+# US-10-R15: what a person reads for "if you do nothing" on each connector card. The machine default (`default_in_effect`) names the
+# capability classes (repo, runtime, dns); a person reads none of those words.
+PLAIN_DEFAULT = {
+    "github": "the system cannot read or change your code until you do",
+    "cloudflare": "the system is prepared but not switched on until you do",
+    "cloudflare_account": "the system is prepared but not switched on until you do",
+    "model_api": "the system uses free AI models only",
+    "chat": "the system keeps its reports in the console only",
+}
+
+
+def plain_connector(name: str) -> str:
+    return PLAIN.get(name) or "Connect " + name.replace("_", " ")
+
+
+def plain_connector_default(name: str) -> str:
+    return PLAIN_DEFAULT.get(name) or "that part of the system waits; everything else carries on"
+
+
 def fill(template: str, values: dict) -> str:
     return re.sub(r"\{(\w+)\}", lambda m: str(values.get(m.group(1), m.group(0))), template)
 
@@ -127,6 +156,7 @@ class Boot:
         self.idea_path, self.config_path = idea_path, config_path  # optional overrides, so one repo can boot a different org (self-hosting)
         self.log: list[dict] = []
         self.state: dict = {"blocked_items": [], "gate_cards": []}
+        self.policy_problems: list[str] = []  # set by read(); an invalid policy is never applied to a live system (US-10-R02)
 
     # Each stage runs inside guard(); a failure never stops the boot.
     def guard(self, name, fn):
@@ -153,12 +183,17 @@ class Boot:
         idea_path = self.idea_path or self.root / "IDEA.md"
         self.config = json.loads((self.config_path or self.root / "ultrastable.json").read_text())
         self.policy = json.loads((self.root / "autonomy" / "policy.json").read_text())
+        problems = validate_policy(self.policy)  # US-10-R02: an invalid policy blocks the read stage whether or not an idea exists
+        self.policy_problems = problems
         if not idea_path.exists():
             self.idea = parse_idea("---\norg_name: Unnamed\n---\n# Idea\n\n# First outcomes\n")
             self.org_name, self.slug, self.outcomes, self.budget = "Unnamed org", "unnamed", [], 0.0
             self.state["gate_cards"].append(self.card("GATE-IDEA", "Write the idea in IDEA.md",
                 "Only the owner knows the idea", "the org boots with no outcomes and waits",
-                "IDEA.md template", "item_done:KIT-0"))
+                "IDEA.md template", "item_done:KIT-0", say="Write your idea in your own words",
+                say_default="the team starts with nothing to work on and waits for your idea"))
+            if problems:
+                return "blocked", "policy invalid: " + "; ".join(problems) + "; IDEA.md missing too"
             return "degraded", "IDEA.md missing; booting with an empty charter"
         self.idea = parse_idea(idea_path.read_text())
         f = self.idea["front"]
@@ -166,7 +201,6 @@ class Boot:
         self.slug = slugify(f.get("slug") or self.org_name)
         self.outcomes = self.idea["sections"].get("first outcomes", {}).get("bullets", [])
         self.budget = budget_from(self.idea)
-        problems = validate_policy(self.policy)
         if problems:
             return "blocked", "policy invalid: " + "; ".join(problems)
         return "ok", f"org '{self.org_name}', {len(self.outcomes)} outcome(s), budget {self.budget:g} USD/month"
@@ -184,7 +218,7 @@ class Boot:
                 f"GATE-SECRET-{c['env']}",
                 f"Set the {c['env']} secret (connector '{name}', needed for {', '.join(c['required_for'])})",
                 "a credential only the owner can mint", f"{', '.join(c['required_for'])} stay in dry-run",
-                "the binding name is already in config; only the value is missing", f"env:{c['env']}"))
+                "the binding name is already in config; only the value is missing", f"env:{c['env']}", say=plain_connector(name), say_default=plain_connector_default(name)))
         detail = f"connectors present: {sorted(self.connectors_present) or 'none'}; tools: " + \
                  ", ".join(f"{t}={'yes' if ok else 'no'}" for t, ok in self.tools.items())
         return ("ok" if not missing else "degraded"), detail
@@ -194,12 +228,38 @@ class Boot:
         tier = [t for t in tiers if self.budget >= t["budget_usd_per_month_min"]][-1]
         aliases = self.config["model_ladder"]["aliases"]
         self.models = {k: aliases[tier[k]] for k in ("doer", "reviewer", "manager")}
+        self.designate_families()
         if self.budget > 0:
             self.state["gate_cards"].append(self.card(
                 "GATE-BUDGET", f"Approve spending up to {self.budget:g} USD/month on model and runtime usage",
                 "spending money is identity-bound", "free tiers only; the fleet logs cost estimates",
-                "cost estimate per role in org/charter.md", "manual"))
+                "cost estimate per role in org/charter.md", "manual",
+                say=f"Approve what the system may spend a month: {self.budget:g} USD",
+                say_default="only free services are used and nothing is spent"))
         return "ok", f"tier for {self.budget:g} USD: " + ", ".join(f"{k}={v}" for k, v in self.models.items())
+
+    def designate_families(self):
+        """US-10-R10: the reviewer is designated from a different model family than the author where two exist. Families come from the
+        router config this boot writes (build_loop_config): the paid provider serves the doer, and an edge provider of another family
+        serves the reviewer rung. At a budget of 0 only the edge is usable and the aliases stay as they were; the shared family is a
+        recorded limit (self.family_note), not a silent one."""
+        providers = self.router_config().get("providers", {})
+        fam_of_model = {m["id"]: p.get("family") for p in providers.values() for m in p.get("models", {}).values()}
+        allow = self.router_config().get("rung_roles", {})
+        doer_family = fam_of_model.get(self.models["doer"]) or ("claude" if str(self.models["doer"]).startswith("claude") else None)
+        self.families = {k: (fam_of_model.get(v) or ("claude" if str(v).startswith("claude") else None)) for k, v in self.models.items()}
+        self.family_note = None
+        if self.budget <= 0:
+            self.family_note = "reviewer and doer share a family: known limit at a budget of 0 (US-SPEC-10 section 9)"
+            return
+        for p in providers.values():
+            roles = allow.get(p.get("kind"))
+            if p.get("family") and p["family"] != doer_family and (roles is None or "reviewer" in roles) and p.get("models"):
+                model = p["models"].get("small") or next(iter(p["models"].values()))
+                self.models["reviewer"] = model["id"]
+                self.families["reviewer"] = p["family"]
+                return
+        self.family_note = "reviewer and doer share a family: the router config offers no second family (US-SPEC-10 section 9)"
 
     def cases(self):
         """Match the starting conditions against the case library: routes around each blocker, at most one owner card per blocker."""
@@ -213,14 +273,21 @@ class Boot:
         facts.setdefault("budget_usd_per_month", self.budget)
         if "has_org_admin_token" not in facts:
             facts["has_org_admin_token"] = "ORG_ADMIN_TOKEN" in os.environ
-        plan = case_library.plan_cases(facts, packs=tuple(self.config.get("packs", [])))
+        enabled = tuple(self.config.get("packs", []))
+        plan = case_library.plan_cases(facts, packs=enabled, covers=case_library.pack_covers(enabled, self.root / "packs"))
         for c in plan["cards"]:
             self.state["gate_cards"].append(self.card(
                 f"CASE-{c['id']}", c["what"], c["why"], c["default"],
-                "routes for " + ", ".join(c["cases"]) + " are in org/bootstrap-cases.json", c["probe"]))
+                "routes for " + ", ".join(c["cases"]) + " are in org/bootstrap-cases.json", c["probe"], say=c.get("say"), say_default=c.get("say_default")))
         self.out.mkdir(parents=True, exist_ok=True)
         (self.out / "bootstrap-cases.json").write_text(json.dumps({"facts": facts, **plan}, indent=2) + "\n")
         return "ok", f"{len(plan['applicable'])} case(s) matched, {len(plan['cards'])} owner card(s), {len(plan['assumed'])} fact(s) assumed"
+
+    def family_of(self, model: str):
+        for k, v in self.models.items():
+            if v == model:
+                return self.families.get(k)
+        return None
 
     def plan(self):
         roles = []
@@ -230,12 +297,12 @@ class Boot:
             if r["count"] == "per_outcome":
                 for i, _ in enumerate(self.outcomes, 1):
                     roles.append({"id": f"{r['id']}-{i}", "role": r["id"], "project": f"OUT-{i}",
-                                  "tick_every": r["tick_every"], "model": model})
+                                  "tick_every": r["tick_every"], "model": model, "family": self.family_of(model)})
             else:
                 n = 1 if r["count"] in (1, "pool") and self.budget < 50 else 2 if r["count"] == "pool" else int(r["count"])
                 for i in range(1, n + 1):
                     roles.append({"id": f"{r['id']}-{i}", "role": r["id"], "project": None,
-                                  "tick_every": r["tick_every"], "model": model})
+                                  "tick_every": r["tick_every"], "model": model, "family": self.family_of(model)})
         self.roles = roles
 
         kit = [
@@ -287,16 +354,15 @@ class Boot:
                   ["", "## Constraints", ""] + [f"- {b}" for b in s.get("constraints", {}).get("bullets", [])] + \
                   ["", "## Owner", "", f"{f.get('owner', 'unknown')}. The owner sets direction and answers gate cards; "
                    "the fleet carries every other step.", "",
-                   "## Models", ""] + [f"- {k}: {v}" for k, v in self.models.items()] + [""]
+                   "## Models", ""] + [f"- {k}: {v} ({self.families.get(k) or 'unknown'} family)" for k, v in self.models.items()] + \
+                  ([f"- Note: {self.family_note}."] if self.family_note else []) + [""]
         (self.out / "charter.md").write_text("\n".join(charter))
-        help_src = self.root / "docs" / "help.md"
-        (self.out / "README.md").write_text(owner_readme(
-            self.org_name, s.get("idea", {}).get("prose", ""), self.outcomes, self.state["gate_cards"],
-            help_src.read_text(encoding="utf-8") if help_src.exists() else ""))
+        self.write_readme()
         (self.out / "roles.json").write_text(json.dumps(self.roles, indent=2) + "\n")
         (self.out / "backlog.json").write_text(json.dumps(self.items, indent=2) + "\n")
         (self.out / "gate-cards.json").write_text(json.dumps(self.state["gate_cards"], indent=2) + "\n")
         (self.out / "seed.sql").write_text(self.seed_sql())
+        self._seeded_cards = json.dumps(self.state["gate_cards"], sort_keys=True)
         values = {**self.config["runtime"], "slug": self.slug}
         values = {k: fill(v, {"slug": self.slug}) if isinstance(v, str) else v for k, v in values.items()}
         values.setdefault("d1_database_id", "{d1_database_id}")
@@ -324,20 +390,13 @@ class Boot:
             f"export default {json.dumps(cfg, indent=2)};\n")
         return "ok", f"wrote {self.out.relative_to(self.root) if self.out.is_relative_to(self.root) else self.out}/ and worker config"
 
-    def build_loop_config(self) -> dict:
-        """What makes a deployment build itself (CRIT-1): the repository it writes to, the models it may call and the loops
-        that turn items into merged changes. Without these keys the Worker ticks and builds nothing. Values come from the
-        org config and the idea file; a missing credential is a gate card at runtime (default in effect), never a stop."""
-        front = self.idea["front"] if hasattr(self, "idea") else {}
-        org = self.config.get("org", {})
-        repos = [r.strip() for r in front.get("repos", "").split(",") if r.strip()] or org.get("repos", [])
-        owner = front.get("github_org") or org.get("name") or self.slug
-        code = front.get("code_repo") or next((r for r in repos if r not in ("spec", ".github", "license")), None) or (repos[0] if repos else "app")
+    def router_config(self) -> dict:
+        """The model router this boot writes into the org config: the org config's own router, else a keyless edge provider plus the paid one."""
         conn = self.config.get("connectors", {})
         key_env = conn.get("model_api", {}).get("env", "MODEL_API_KEY")
         aliases = self.config.get("model_ladder", {}).get("aliases", {})
         budget = float(getattr(self, "budget", 0) or 0)
-        router = self.config.get("router") or {
+        return self.config.get("router") or {
             "rungs": ["small", "medium", "large"], "fallbacks": ["edge", "paid"],
             "providers": {
                 # keyless: the Worker's own AI binding, so reviewing and managing work with no key at all
@@ -354,6 +413,18 @@ class Boot:
                      {"scope": "total", "period": "day", "soft_usd": round(budget / 15, 2), "hard_usd": round(budget / 10, 2)}],
             "default_max_tokens": 1024,
         }
+
+    def build_loop_config(self) -> dict:
+        """What makes a deployment build itself (CRIT-1): the repository it writes to, the models it may call and the loops
+        that turn items into merged changes. Without these keys the Worker ticks and builds nothing. Values come from the
+        org config and the idea file; a missing credential is a gate card at runtime (default in effect), never a stop."""
+        front = self.idea["front"] if hasattr(self, "idea") else {}
+        org = self.config.get("org", {})
+        repos = [r.strip() for r in front.get("repos", "").split(",") if r.strip()] or org.get("repos", [])
+        owner = front.get("github_org") or org.get("name") or self.slug
+        code = front.get("code_repo") or next((r for r in repos if r not in ("spec", ".github", "license")), None) or (repos[0] if repos else "app")
+        conn = self.config.get("connectors", {})
+        router = self.router_config()
         protected = ["AGENTS.md", "CLAUDE.md", "GEMINI.md", "agents/", "autonomy/", ".github/", "SCOPE.md", "LICENSE"]
         return {
             "vcs": {"repo": f"{owner}/{code}", "base": "main", "token_env": conn.get("github", {}).get("env", "VCS_TOKEN")},
@@ -379,13 +450,20 @@ class Boot:
             lines.append("INSERT OR IGNORE INTO items (id, title, kind, project, owner_role, trigger_on, done_check, closing_probe, priority) VALUES "
                          f"({', '.join(sql_str(i.get(k)) for k in ('id', 'title', 'kind', 'project', 'owner_role', 'trigger_on', 'done_check', 'closing_probe'))}, {i['priority']});")
         for c in self.state["gate_cards"]:
+            # US-10-R15: the console shows `what` and `default_in_effect` from this table, so a person reads the plain-words lines
+            # (`say`, `say_default`); the machine text stays in org/gate-cards.json and the closing probe column.
+            row = dict(c, what=c.get("say") or c["what"], default_in_effect=c.get("say_default") or c["default_in_effect"])
             lines.append("INSERT OR IGNORE INTO gate_cards (id, what, why_gated, default_in_effect, prepared_by_fleet, closing_probe) VALUES "
-                         f"({', '.join(sql_str(c[k]) for k in ('id', 'what', 'why_gated', 'default_in_effect', 'prepared_by_fleet', 'closing_probe'))});")
+                         f"({', '.join(sql_str(row[k]) for k in ('id', 'what', 'why_gated', 'default_in_effect', 'prepared_by_fleet', 'closing_probe'))});")
         base = self.policy["trust"]["baseline"]
+        lowest = self.policy["ladder"]["rungs"][0]
+        if self.policy_problems:
+            lines.append("-- policy invalid (" + "; ".join(self.policy_problems).replace("\n", " ") + "): every trust row starts at the lowest rung, never above the policy.")
         for sname, surface in self.policy["surfaces"].items():
+            rung = lowest if self.policy_problems else surface["start_rung"]  # US-10-R02: an invalid policy never seeds a higher rung
             for aname in surface["actions"]:
                 lines.append("INSERT OR IGNORE INTO trust_ledger (surface, action_class, rung, reliability, outcomes) VALUES "
-                             f"({sql_str(sname)}, {sql_str(aname)}, {sql_str(surface['start_rung'])}, {base}, 0);")
+                             f"({sql_str(sname)}, {sql_str(aname)}, {sql_str(rung)}, {base}, 0);")
         for p in self.predictions:
             lines.append("INSERT OR IGNORE INTO predictions (id, item_id, metric, op, target, due_at) VALUES "
                          f"({sql_str(p['id'])}, {sql_str(p['item_id'])}, {sql_str(p['metric'])}, {sql_str(p['op'])}, {p['target']}, "
@@ -442,10 +520,14 @@ class Boot:
         if not self.apply:
             return "degraded", f"dry run: {len(plan)} org steps planned (see boot-log.json org_plan)"
         if not self.state.get("surfaces", {}).get("org_admin_token"):
-            self.state["gate_cards"].append({
-                "id": "GATE-ORG-TOKEN", "line": "IDENTITY-BOUND: mint ORG_ADMIN_TOKEN (docs/ops/ORG-TOKEN.md)",
-                "default_in_effect": "profile content staged in the repo; all non-org stages continue",
-                "closing_probe": "org-init workflow succeeds; curl https://github.com/" + name + " shows the profile"})
+            self.state["gate_cards"].append(self.card(
+                "GATE-ORG-TOKEN", "Allow the system to set up its GitHub organization",
+                "only the owner can approve access to their organization",
+                "profile content staged in the repo; all non-org stages continue",
+                "the org plan is in org/boot-log.json org_plan; the org-init workflow applies it once access is allowed",
+                "org-init workflow succeeds; curl https://github.com/" + name + " shows the profile",
+                say="Allow the system to set up your code-host organization",
+                say_default="the organization's public profile is prepared but not published; everything else carries on"))
             return "blocked", "no org-admin token: gate card opened, run the org-init workflow once it exists"
         return "ok", "org token present: run the org-init workflow (.github/workflows/org-init.yml)"
 
@@ -546,6 +628,8 @@ class Boot:
             (["npx", "wrangler", "secret", "put", "CONSOLE_TOKEN", "--temporary"], "token"),
         ]
         self.state["provision_plan"] = [" ".join(c) for c, _ in plan]
+        if self.apply and self.policy_problems:  # US-10-R02: an invalid policy is never applied to a live system
+            return "blocked", "policy invalid, not applied: " + "; ".join(self.policy_problems)
         if not self.apply:
             return "degraded", "dry run (temporary): planned " + str(len(plan)) + " commands (see boot-log.json provision_plan)"
         if not self.tools.get("npx"):
@@ -567,6 +651,8 @@ class Boot:
             ["npx", "wrangler", "deploy"],
         ]
         self.state["provision_plan"] = [" ".join(c) for c in plan]
+        if self.apply and self.policy_problems:  # US-10-R02: an invalid policy is never applied to a live system
+            return "blocked", "policy invalid, not applied: " + "; ".join(self.policy_problems)
         if not self.apply:
             return "degraded", "dry run: planned " + str(len(plan)) + " commands (see boot-log.json provision_plan)"
         route = self.state.get("ladder", {})
@@ -623,6 +709,8 @@ class Boot:
                 (self.out / "ladder.json").write_text(json.dumps(self.state["ladder"], indent=2) + "\n")
 
     def start(self):
+        if self.apply and self.policy_problems:  # US-10-R02: an invalid policy is never applied to a live system
+            return "blocked", "policy invalid, not applied: " + "; ".join(self.policy_problems)
         if not self.apply:
             return "degraded", "dry run: the first tick runs on the Worker's cron after --apply"
         if self.runtime.get("tick_mode") == "alarm":
@@ -644,9 +732,26 @@ class Boot:
         return p.stdout
 
     @staticmethod
-    def card(id_, what, why, default, prepared, probe):
-        return {"id": id_, "what": what, "why_gated": why, "default_in_effect": default,
-                "prepared_by_fleet": prepared, "closing_probe": probe}
+    def card(id_, what, why, default, prepared, probe, say=None, say_default=None):
+        """A gate card. `say` and `say_default` are the plain-words lines a person reads (US-10-R15); `what` and `default_in_effect`
+        may name a binding or a capability class for the machine."""
+        c = {"id": id_, "what": what, "why_gated": why, "default_in_effect": default,
+             "prepared_by_fleet": prepared, "closing_probe": probe}
+        if say:
+            c["say"] = say
+        if say_default:
+            c["say_default"] = say_default
+        return c
+
+    def write_readme(self):
+        """The owner README (US-19-R17). Written in `write` and again by `finalize` when a card was added after it, so the README
+        lists every card the console will show (US-10-R15)."""
+        s = self.idea["sections"]
+        help_src = self.root / "docs" / "help.md"
+        (self.out / "README.md").write_text(owner_readme(
+            self.org_name, s.get("idea", {}).get("prose", ""), self.outcomes, self.state["gate_cards"],
+            help_src.read_text(encoding="utf-8") if help_src.exists() else "",
+            budget_usd=self.budget, roles=len(self.roles), models=self.models))
 
     def finalize(self):
         """Stages after 'plan' may have blocked; record those as backlog items too (nothing drops silently)."""
@@ -654,10 +759,16 @@ class Boot:
             return
         have = {i["id"] for i in self.items}
         extra = [i for i in self.state["blocked_items"] if i["id"] not in have]
+        cards_changed = json.dumps(self.state["gate_cards"], sort_keys=True) != getattr(self, "_seeded_cards", None)
         if extra:
             self.items += [dict(i, kind="work", project=None, trigger_on=None) for i in extra]
             (self.out / "backlog.json").write_text(json.dumps(self.items, indent=2) + "\n")
+        if extra or cards_changed:  # a card added after write() (GATE-LADDER, GATE-ORG-TOKEN) must reach seed.sql and gate-cards.json too
+            (self.out / "gate-cards.json").write_text(json.dumps(self.state["gate_cards"], indent=2) + "\n")
             (self.out / "seed.sql").write_text(self.seed_sql())
+            if cards_changed and hasattr(self, "roles"):
+                self.write_readme()
+            self._seeded_cards = json.dumps(self.state["gate_cards"], sort_keys=True)
 
     def report(self) -> str:
         ok = sum(1 for s in self.log if s["status"] == "ok")
@@ -669,7 +780,7 @@ class Boot:
             "Next: " + ("the Worker cron runs the tick every 10 minutes." if self.apply and not blocked
                         else "run with --apply once the gate cards below are closed."),
             f"Open: {len(getattr(self, 'items', []))} backlog item(s), {len(self.state['gate_cards'])} gate card(s): "
-            + "; ".join(c["what"] for c in self.state["gate_cards"]) + ".",
+            + "; ".join(c.get("say") or c["what"] for c in self.state["gate_cards"]) + "."  # US-10-R15: the report is read by a person too,
         ]
         return "\n".join(lines)
 
@@ -684,6 +795,8 @@ def validate_policy(policy: dict) -> list[str]:
             problems.append(f"{sname}: unknown start_rung {s['start_rung']}")
         if s["max_permission"] not in order:
             problems.append(f"{sname}: unknown max_permission {s['max_permission']}")
+        if sname in ("money", "legal", "outreach", "secrets") and s["max_permission"] == "execute":  # US-06-R12
+            problems.append(f"{sname}: ceiling must be below execute")
         ceiling = policy["ladder"]["ceiling_by_max_permission"][s["max_permission"]]
         if rungs.index(s["start_rung"]) > rungs.index(ceiling):
             problems.append(f"{sname}: start_rung above its ceiling {ceiling}")

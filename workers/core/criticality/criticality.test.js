@@ -97,7 +97,9 @@ test('CRIT-1: the bootstrapper writes a configuration that carries the whole bui
 
 test('the drill: a new deployment with its credentials builds its outcomes into merged code with nobody prompting it', async () => {
   const d = await deploy({ env: CREDS });
-  const last = await d.ticks(160);
+  // 200 ticks of ten simulated minutes: the organization also files its own monthly improvement items now (core/sla, through the report-card writer the composition root wires),
+  // the runner works those too, and with the specification backlog the whole loop needs about 175 ticks.
+  const last = await d.ticks(200);
   assert.equal(last.completed, last.total, 'every step of the last tick completed: ' + JSON.stringify(last.errors));
   const outs = d.q(`SELECT id, status FROM items WHERE id LIKE 'OUT-%' ORDER BY id`);
   assert.ok(outs.length >= 3 && outs.every(o => o.status === 'done'), 'every first outcome was specified: ' + JSON.stringify(outs));

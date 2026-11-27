@@ -53,6 +53,10 @@ export const MODULES = [
   { id: 'ignorance', dir: 'core/ignorance/migrations' },
   { id: 'ownerlink', dir: 'core/ownerlink/migrations' },
   { id: 'audit', dir: 'core/audit/migrations' },
+  // The caps switches and drills (US-SPEC-09), and the value-of-information outcomes, derivations, need feeds and audit runs of the
+  // elicitation register (US-SPEC-16 5.3, R21, R23, R24): code that is wired in core/org reads their tables. Appended last, so earlier migration numbers never shift.
+  { id: 'router_caps', dir: 'core/router/caps/migrations' },
+  { id: 'elicit_outcomes', dir: 'core/elicit/outcomes/migrations' },
 ];
 
 // config.pack_migrations: ['<pack id>', ...] adds packs/<id>/migrations after the core modules, in the order given.

@@ -3,7 +3,7 @@
 
 # core/kernel: the L2 managerial layer
 
-A small, generic implementation of the L2 requirements of `US-SPEC-03` s4, `04`, `05`, `15` and `17`. It extends the seed tick (`core/src/tick.js`) and never changes its behavior: the seven L1 steps and their tests are untouched.
+A small, generic implementation of the L2 requirements of `US-SPEC-03` s4, `04`, `05`, `15` and `17`. It extends the seed tick (`core/src/tick.js`) and never changes its behavior: the eight L1 steps and their tests are untouched (the seed's own 19-step tick is specified in US-SPEC-03 of `ultrastable/spec`).
 
 ```js
 import { runTick } from '../src/tick.js';
@@ -11,7 +11,7 @@ import { L2_EXTRA_STEPS, MIGRATIONS_DIR } from './index.js';
 await runTick(db, { config, extraSteps: L2_EXTRA_STEPS });   // L1 steps, then one 'l2' step
 ```
 
-`extraSteps` is the one backward-compatible hook added to `core/src/tick.js` (`[{ name, run(db, ctx) }]`, guarded like any step; omitted means the seven L1 steps). `runL2(db, ctx)` runs nine guarded sub-steps in order: `read_metrics`, `risk_snapshot`, `detectors`, `allocate`, `focus`, `decisions`, `remedies`, `remediate`, `lifecycle`. Each writes a `kernel_step_evidence` row.
+`extraSteps` is the one backward-compatible hook added to `core/src/tick.js` (`[{ name, run(db, ctx) }]`, guarded like any step; omitted means the eight L1 steps). `runL2(db, ctx)` runs nine guarded sub-steps in order: `read_metrics`, `risk_snapshot`, `detectors`, `allocate`, `focus`, `decisions`, `remedies`, `remediate`, `lifecycle`. Each writes a `kernel_step_evidence` row.
 
 Configuration (`config.kernel`): `enabled` (false: L2 does nothing), `manager_ops` (false: measurement and detectors keep running, allocation, focus, decisions, remedies, remediation and gate filing stop), `slots` (T, default 25), `plus_slots` (slots reserved for the plus loop, taken off T before allocation; default 0), `high_priority_max` (default 10), `guard_tolerance`. Conventions: a program's items carry `items.project = <program id>` or the id of a kernel project in that program. Migrations: `core/kernel/migrations/0001_kernel.sql`, `core/kernel/migrations/0002_lifecycle.sql` (apply after the seed migrations; idempotent).
 
@@ -30,7 +30,7 @@ BUILT means implemented and covered by a passing test in this directory. Nothing
 | US-03 s4 classification (constrain, escalate, accelerate, maintain, steady, idle) | BUILT | "maintain: one slot" is not enforced as a cap; the worked example gives GREEN programs more |
 | US-03 s4 ranking and focus; no-doer items first | BUILT | tiers 0 to 4, then no doer, priority, age. The queue score formula is in `core/staff/score.js` |
 | US-03 s4 operations (promote, restore, close with evidence, supersede, demote, assign doer with anchor validation), daily origination | not this layer | BUILT in `core/staff` (`core/staff/staff.test.js`); the research agent is a port there. Rerouting parked tasks is NOT COVERED |
-| US-03-R16 duplicate scheduler firing | NOT COVERED | L3 |
+| US-03-R16 duplicate scheduler firing | BUILT | the slot guard in `adapters/shared/slot.js` (a second firing inside the minimum gap is refused) and the dispatch claim (`INSERT OR IGNORE`, a lost race takes nothing), wired by `core/org/surfaces.js`; the staff step runs from `core/org/buildout.js` |
 | US-05-R01..R03, R05 prediction scoring in the seed | not this layer | seed (`score_predictions`) |
 | US-05-R06 decision stored with prediction, authority, revert path | BUILT | `kernel_decisions`, `recordDecision` |
 | US-05-R07 parsable prediction forms | BUILT | `parsePrediction` (metric, `between`, `issue closed`). Own table: the seed's scorer would score a custom metric as a miss, so decisions are not copied into `predictions` |

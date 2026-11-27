@@ -49,7 +49,7 @@ test('US-12-R11: the analyzer labels islands, sinks, sources, unresolved targets
   assert.deepEqual(a.ghosts, ['ghosted', 'mailer']);                     // registered, not deployed; the errored worker is unknown, not a ghost
   assert.deepEqual(a.unregistered, ['lonely']);
   assert.deepEqual(a.unversioned, ['lonely']);
-  assert.equal(a.density, 3 / 20);
+  assert.deepEqual([a.density, a.density_nodes], [3 / 30, 6]);        // density is taken over the swept workers and the registered worker an edge reaches
   const row = await ctx.db.prepare(`SELECT * FROM graph_wiring_analyses`).first();
   assert.deepEqual([row.islands, row.sinks, row.sources, row.unresolved, row.ghosts, row.unregistered, row.unversioned], [2, 1, 2, 1, 2, 1, 1]);
 });
@@ -64,7 +64,7 @@ test('US-12-T05: a graph of 80 nodes and 49 edges has density 0.00775', () => {
   assert.deepEqual([g.sinks, g.sources.length, g.islands.length], [['w0'], 49, 30]);
 });
 
-test('US-12-R12: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers', async () => {
+test('US-12-T06, US-12-R12 and US-12-R17: orphan-table join finds a producer without a consumer; data-flow edges connect a writer to its readers and blast radius follows them', async () => {
   const { ctx } = mk();
   await wiring.sweep(ctx);
   const a = await wiring.analyze(ctx);
@@ -124,4 +124,40 @@ test('step: one tick sweeps, analyzes and takes the census; the reading is dated
   assert.deepEqual([s.generated, s.worker_count, s.errors, s.islands, s.ghosts, s.orphan_tables], ['2026-03-02 12:00:00', 5, 1, 2, 2, 3]);
   assert.equal(s.census.unmeasured, 8);                                  // five swept plus three registered and not swept (two ghosts, one errored)
   assert.deepEqual(await wiring.step({ ...ctx, metadata: undefined }), { enabled: false });
+});
+
+test('US-12-R11: directed density stays within 0 and 1 when edges reach registered workers that were not swept', () => {
+  const g = wiring.analyzeGraph(['a', 'b'], [['a', 'c'], ['a', 'd'], ['a', 'e'], ['a', 'b']], ['c', 'd', 'e']);
+  assert.deepEqual([g.nodes, g.density_nodes, g.edges], [2, 5, 4]);
+  assert.equal(g.density, 4 / 20);
+  assert.ok(g.density <= 1);
+  const full = wiring.analyzeGraph(['a', 'b'], [['a', 'b'], ['b', 'a']]);
+  assert.equal(full.density, 1);                                          // two nodes joined both ways: the maximum
+});
+
+test('US-12-R12: comments and prose are not read as table access; SQL inside strings still is', () => {
+  const src = [
+    '// the data comes from the cache and is sent from users',
+    '/* UPDATE legacy SET x = 1; reads from archive */',
+    ' * join tags',
+    '# insert into notes',
+    '-- DELETE FROM old',
+    "db.prepare('SELECT * FROM orders'); // reads from the cache, written by users",
+    "const q = `INSERT INTO runs (id) VALUES (1)`;",
+    "fetch('https://svc.example/from/users');",
+  ].join('\n');
+  assert.deepEqual(wiring.extractTableAccess(src), { writes: ['runs'], reads: ['orders'] });
+});
+
+// ---- round 2 additions: findings of the verification of US-SPEC-12 --------------------------------
+
+test('US-12-R12: a block-comment opener inside a string is text, so SQL after it is still read; a template line that begins with a star is read', () => {
+  const route = "const route = '/api/*';\ndb.prepare('INSERT INTO secret_t (a) VALUES (1)').run();\n/** doc */\n";
+  assert.deepEqual(wiring.extractTableAccess(route), { writes: ['secret_t'], reads: [] });
+  const tpl = 'const q = `SELECT\n * FROM users\n -- from ghost\n`;';
+  assert.deepEqual(wiring.extractTableAccess(tpl), { writes: [], reads: ['users'] });      // `-- from ghost` is an SQL comment line
+  const globs = "const g = ['src/**/*.js', \"lib/*\"];\nawait db.prepare(`DELETE FROM jobs WHERE id = ?`).run(1);\n/* UPDATE legacy SET x = 1 */\n";
+  assert.deepEqual(wiring.extractTableAccess(globs), { writes: ['jobs'], reads: [] });
+  const unclosed = "// don't read this: FROM prose\ndb.prepare(\"SELECT 1 FROM kept\");";           // an apostrophe in a comment opens no string
+  assert.deepEqual(wiring.extractTableAccess(unclosed), { writes: [], reads: ['kept'] });
 });

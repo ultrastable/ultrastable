@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Vcs port over the GitHub REST API (US-SPEC-11). Ports: fetch (injected), env (read at request time; the token is
+// Vcs port over the GitHub REST API (US-SPEC-10). Ports: fetch (injected), env (read at request time; the token is
 // never stored on the object, logged, or included in an error). Only the six port methods exist: there is no merge.
 
 const b64decode = s => new TextDecoder().decode(Uint8Array.from(atob(String(s).replace(/\s/g, '')), c => c.charCodeAt(0)));

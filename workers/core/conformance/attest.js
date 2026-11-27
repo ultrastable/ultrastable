@@ -48,6 +48,16 @@ export async function attest({ manifest, specs, tests, attested_by, now = Date.n
 export async function verifyAttestation(att, { specs, tests, verifySignature = null }) {
   const problems = [];
   const heldSpecs = Object.fromEntries(specs.map(s => [s.file, s.text])); const heldTests = Object.fromEntries(tests.map(t => [t.path, t.text]));
+  // An attestation that leaves a digest out pins nothing there: a signed attestation with the specification and test digests deleted would otherwise
+  // be certified over a specification whose MUST was weakened to MAY and over a test file that was gutted. A missing digest is a problem, never a skip.
+  const d = att.digests;
+  const isObj = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+  if (!isObj(d)) problems.push('the attestation carries no digests, so it pins neither the specification texts nor the test files');
+  else {
+    for (const k of ['manifest', 'claims']) if (typeof d[k] !== 'string' || !d[k]) problems.push(`the attestation does not carry the ${k} digest`);
+    if (!isObj(d.specs)) problems.push('the attestation does not pin the specification texts (no specs digests)');
+    if (!isObj(d.tests)) problems.push('the attestation does not pin the test files (no tests digests)');
+  }
   for (const [file, want] of Object.entries(att.digests?.specs || {})) {
     if (heldSpecs[file] === undefined) problems.push(`specification ${file} is not in the verifier checkout`);
     else if (await sha256Hex(heldSpecs[file]) !== want) problems.push(`specification ${file} differs from the attested text`);
@@ -60,6 +70,7 @@ export async function verifyAttestation(att, { specs, tests, verifySignature = n
   // The verifier builds its own manifest: nothing below reads the one the attester published.
   const level = att.declaration?.level;
   const rebuilt = buildManifest({ specs, tests, declared: level, implementation: att.implementation });
+  if (isObj(d?.tests)) for (const f of testFiles(rebuilt, 'L3')) if (heldTests[f] !== undefined && d.tests[f] === undefined) problems.push(`test file ${f} proves a requirement and is not covered by the attestation`);
   const redo = declaration(rebuilt);
   const claims = await sha256Hex(claimsOf(rebuilt).join('\n'));
   if (claims !== att.digests?.claims) problems.push('the requirements and the tests that prove them, re-derived here, are not the ones attested');

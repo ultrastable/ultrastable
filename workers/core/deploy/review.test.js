@@ -103,6 +103,35 @@ test('a new push releases the hold; the new head is reviewed afresh', async () =
   assert.deepEqual({ ...db.raw.prepare(`SELECT status, release_reason FROM deploy_review_holds WHERE head='abc123'`).get() }, { status: 'released', release_reason: 'new push' });
 });
 
+test('US-07-R25: a hold released by a newer push still refuses its own head until that head is reviewed again; an unreviewed head is refused when review is required', async () => {
+  let findings = [high(LINE)];
+  const r1 = { name: 'r1', family: 'family-b', review: async () => ({ findings }) };
+  const { gate, db } = mk([r1, reviewer('r2', 'family-c', [])], { requireReview: true });
+  await gate.review(change());
+  assert.equal((await gate.mergeAllowed('PR-7', 'abc123')).reason, 'hold_marker');
+  findings = [];
+  await gate.review(change({ head: 'def456' }));
+  assert.equal(db.raw.prepare(`SELECT status FROM deploy_review_holds WHERE head='abc123'`).get().status, 'released');
+  const back = await gate.mergeAllowed('PR-7', 'abc123');
+  assert.deepEqual([back.ok, back.reason], [false, 'superseded_hold'], 'the held head coming back does not merge on the strength of a later head');
+  assert.match(back.marker, /review-gate: hold/);
+  // reviewing the head again, now clean, is what lifts it
+  const again = await gate.review(change());
+  assert.equal(again.status, 'clear');
+  assert.deepEqual(await gate.mergeAllowed('PR-7', 'abc123'), { ok: true });
+  // a head with no review run is refused when review is required, allowed when it is not
+  const nr = await gate.mergeAllowed('PR-9', 'never');
+  assert.deepEqual([nr.ok, nr.reason], [false, 'not_reviewed']);
+  assert.deepEqual(await mk([]).gate.mergeAllowed('PR-9', 'never'), { ok: true });
+  // a re-review that holds again reopens the marker
+  findings = [high(LINE)];
+  await gate.review(change({ head: 'ghi789' }));
+  await gate.review(change({ head: 'jkl012' }));
+  const reheld = await gate.review(change({ head: 'ghi789' }));
+  assert.equal(reheld.hold, true);
+  assert.equal((await gate.mergeAllowed('PR-7', 'ghi789')).reason, 'hold_marker');
+});
+
 test('the gate fails open on its own outage and logs it; observe mode records would_hold and never holds; off skips; cost is recorded', async () => {
   const down = mk([reviewer('r1', 'family-b', [], { fail: true }), reviewer('r2', 'family-c', [], { fail: true })]);
   const d = await down.gate.review(change());

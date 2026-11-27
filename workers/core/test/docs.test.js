@@ -10,9 +10,25 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const docs = ['README.md', ...readdirSync(join(root, 'docs')).filter((f) => f.endsWith('.md')).map((f) => 'docs/' + f)];
 
-test('relative markdown links in README and docs resolve to files', () => {
+// US-19-R19: every markdown file of this repository, except the copies other repositories own or that are generated (their links resolve in their own
+// layout) and the two trees that hold material extracted from elsewhere. A file added anywhere else is scanned without being listed here.
+const SKIP_DIRS = new Set(['node_modules', '.git', 'org', 'runtimes', 'extraction']);
+const SKIP_FILES = new Set(['SCOPE.md', 'AGENTS.md', 'CLAUDE.md', 'GEMINI.md']);
+function allMarkdown(dir = '') {
+  const out = [];
+  for (const e of readdirSync(join(root, dir), { withFileTypes: true })) {
+    const rel = dir ? dir + '/' + e.name : e.name;
+    if (e.isDirectory()) { if (!SKIP_DIRS.has(e.name)) out.push(...allMarkdown(rel)); }
+    else if (e.name.endsWith('.md') && !(dir === '' && SKIP_FILES.has(e.name))) out.push(rel);
+  }
+  return out;
+}
+
+test('US-19-R19 relative markdown links in every markdown file of this repository resolve to files', () => {
   const broken = [];
-  for (const d of docs) {
+  const every = allMarkdown();
+  assert.ok(every.length > docs.length, 'the scan reaches beyond README and docs');
+  for (const d of every) {
     const text = readFileSync(join(root, d), 'utf8');
     for (const m of text.matchAll(/\]\(([^)\s#]+)(?:#[^)]*)?\)/g)) {
       const href = m[1];
@@ -32,4 +48,19 @@ test('requirement ids use the US-NN-RNN or US-SPEC-NN shape', () => {
     }
   }
   assert.deepEqual([...new Set(bad)], []);
+});
+
+test('US-19-R21 the platform statement is made in the scope page and the skill, links docs/why-cloudflare.md, and that document has its limits and its not-the-right-choice sections', () => {
+  const read = p => readFileSync(join(root, p), 'utf8');
+  for (const f of ['SCOPE.md', 'agent-setup/SKILL.md']) {
+    assert.match(read(f), /Cloudflare Workers/, f);
+    assert.match(read(f), /docs\/why-cloudflare\.md/, `${f} links the document`);
+  }
+  assert.match(read('SCOPE.md'), /only supported platform/);
+  assert.ok(existsSync(join(root, 'docs/why-cloudflare.md')), 'the linked document exists');
+  const why = read('docs/why-cloudflare.md');
+  for (const h of ['## Limits of Workers that shape the design', '## When this will not be the right choice', '## What we proved, and what we did not'])
+    assert.ok(why.includes(h), `docs/why-cloudflare.md needs: ${h}`);
+  assert.match(why, /only supported platform/);
+  assert.doesNotMatch(why, /alarm-driven tick is planned/, 'a built mechanism is not described as planned');
 });

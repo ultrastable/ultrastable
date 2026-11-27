@@ -6,7 +6,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { makeDb } from '../_shared/testdb.js';
 import * as S from './index.js';
@@ -120,9 +121,26 @@ test('the step is on by default and off only when disabled or when nothing can b
   assert.equal(S.step({ db, readFile: async () => '', config: { spec_paths: ['specs/US-SPEC-01-a.md'] } }).name, 'specloop');
 });
 
-test('parity with tools/spec_backlog.py on the real specifications, when a specification checkout sits beside this one', { skip: !existsSync(path.join(ROOT, '../spec/specs')) }, () => {
-  const dir = path.join(ROOT, '../spec/specs');
-  const py = JSON.parse(execFileSync('python3', [path.join(ROOT, 'tools/spec_backlog.py'), '--spec-dir', dir, '--json'], { encoding: 'utf8' })).map(i => i.id).sort();
-  const js = readdirSync(dir).filter(n => /^US-SPEC-.*\.md$/.test(n)).flatMap(n => S.parseSpec(n, readFileSync(path.join(dir, n), 'utf8'))).filter(r => r.label !== 'BUILT').map(r => r.id).sort();
+// The specifications sit beside the code in this repository layout (../specs) and in the older split layout (../spec/specs).
+const SPEC_DIR = ['../specs', '../spec/specs'].map(d => path.join(ROOT, d)).find(d => existsSync(d) && readdirSync(d).some(n => /^US-SPEC-.*\.md$/.test(n))) || null;
+
+test('US-20-R06: parity with tools/spec_backlog.py on the real specifications, when a specification checkout sits beside this one', { skip: !SPEC_DIR }, () => {
+  const py = JSON.parse(execFileSync('python3', [path.join(ROOT, 'tools/spec_backlog.py'), '--spec-dir', SPEC_DIR, '--json'], { encoding: 'utf8' })).map(i => i.id).sort();
+  const js = readdirSync(SPEC_DIR).filter(n => /^US-SPEC-.*\.md$/.test(n)).flatMap(n => S.parseSpec(n, readFileSync(path.join(SPEC_DIR, n), 'utf8'))).filter(r => r.label !== 'BUILT').map(r => r.id).sort();
   assert.deepEqual(js, py);
+});
+
+test('US-20-R06: the tick counts as many false BUILT lines as tools/spec_truth.py reports (whole, absent and nameless lines)', async () => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'specloop-truth-'));
+  const specs = path.join(dir, 'specs'), code = path.join(dir, 'code');
+  mkdirSync(specs); mkdirSync(path.join(code, 'core'), { recursive: true });
+  writeFileSync(path.join(code, 'core', 'real.js'), 'export const x = 1;\n');
+  const text = SPEC(['| Real | BUILT (`core/real.js`) |', '| Ghost | BUILT (`core/gone.js`) |', '| Vague | BUILT, trust us |', '| Later | PLANNED (`core/later.js`) |']);
+  writeFileSync(path.join(specs, 'US-SPEC-07-x.md'), text);
+  const py = JSON.parse(execFileSync('python3', [path.join(ROOT, 'tools/spec_truth.py'), '--spec-dir', specs, '--code-dir', code, '--json'], { encoding: 'utf8' }));
+  const { db, now } = setup();
+  const r = await S.sync({ db, now, loadSpecs: async () => [{ name: 'US-SPEC-07-x.md', text }], exists: async p => existsSync(path.join(code, p)) });
+  assert.equal(py.length, 2);
+  assert.equal(r.false_built, py.length);
+  assert.deepEqual(items(db).filter(i => i.kind === 'fix').map(i => i.id), ['US-SPEC-07-2', 'US-SPEC-07-3'], 'one item per false line, none for the true one');
 });

@@ -155,8 +155,9 @@ test('US-29-T03: a system whose content has gone stale is read as stale, files i
   assert.equal((await readStickiness(db, { now: NOW })).systems.find(x => x.system === 'a').series.length, 1, 'both readings were of one day');
 });
 
-// A known defect, not a requirement met: the declared minimum depth and rhythm are read with `||`, so a declared 0 is read as the default.
-test('a declared min_depth of 0 is honoured (defect of the declaration reader)', { todo: 'seed/worker/src/stickiness.js reads st.min_depth || 3, so 0 becomes 3' }, async () => {
+// The closing probe of a known defect, PLANNED in section 7 (a todo test is recorded as planned, never as proof): the declared minimum depth and rhythm are
+// read with `||`, so a declared 0 is read as the default.
+test('US-29-R75: a declared min_depth of 0 is honoured', { todo: 'seed/worker/src/stickiness.js reads st.min_depth || 3, so 0 becomes 3' }, async () => {
   _reset(); const db = makeDb();
   const cfg = { progress: { systems: [sysA({ min_depth: 0, domains: [] })] } };
   const r = await stickinessStep({ db, config: cfg, ensureItem, fetchImpl: fetchOf([ent('a1', 1, { depth: 1 }), ent('a2', 2, { depth: 1 })]), now: NOW });

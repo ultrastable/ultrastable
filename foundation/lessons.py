@@ -3,13 +3,16 @@
 """LESSONS-1: every lesson the owner or a red team taught is bound to code that enforces it, or to an open item that will.
 Ultrastable is the foundation for any autonomous system.
 
-  python3 -m foundation lessons [--check | --report]
+  python3 -m foundation lessons [--check | --report | --probe ID]
 
 doctrine/lessons.json lists each lesson with its enforcement: a `check` (a command that runs in .github/workflows/checks.yml),
 a `variable` (an essential variable in doctrine/ultrastability.json, so the second loop acts on it), a `detector` (doctrine/detectors.json)
 or a `test` (path::name). A lesson with no enforcement must name an open item in docs/issues that carries a done check, a prediction,
 an out-of-scope line and a live probe (SPEC-GATE-1). `--check` fails a lesson bound to nothing, a binding that does not resolve, or an
 item that is missing or closed while its lesson is still unenforced. The share enforced is reported; the item closes when a binding lands.
+`--probe ID` exits 0 only when lesson ID has a binding that resolves: it is the done check of the lesson's item. `lessons --check` cannot be
+that done check, because it passes exactly while the item is held, so a queue that closes the item on it breaks the check it just ran
+(Q-LESSON-no-date-bombs was closed as fixed that way on 2026-11-26 and turned main red); --check fails an item that closes on anything else.
 """
 from __future__ import annotations
 import json, re, sys
@@ -71,6 +74,19 @@ def report(root=REPO) -> dict:
             "unenforced": [r["id"] for r in rows if not r["enforced"]], "errors": errs}
 
 
+def probe(root, lid) -> bool | None:
+    """True when lesson `lid` has a binding that resolves, False when it has none, None when no lesson has that id."""
+    for l in json.loads((Path(root) / PATH).read_text(encoding="utf-8"))["lessons"]:
+        if l["id"] == lid:
+            return any(_resolves(root, b) for b in l.get("enforced_by", []))
+    return None
+
+
+def _done_check(body: str) -> str:
+    m = re.search(r"\*\*Done check:\*\*\s*([^\n]*)", body or "")
+    return m.group(1).strip() if m else ""
+
+
 def check(root=REPO) -> list[str]:
     from . import specgate
     r = report(root)
@@ -79,14 +95,27 @@ def check(root=REPO) -> list[str]:
         it = l.get("item")
         p = Path(root) / "docs/issues" / f"{it}.json"
         if it and p.is_file() and l["id"] in r["unenforced"]:
-            miss = specgate.missing(json.loads(p.read_text(encoding="utf-8")).get("body", ""))
+            body = json.loads(p.read_text(encoding="utf-8")).get("body", "")
+            miss = specgate.missing(body)
             if miss:
                 errs.append(f"{l['id']}: item {it} missing {', '.join(miss)} (SPEC-GATE-1)")
+            want = f"lessons --probe {l['id']}"
+            if want not in _done_check(body):
+                errs.append(f"{l['id']}: item {it} closes on '{_done_check(body) or 'nothing'}', which can pass while the lesson is unenforced; "
+                            f"its done check must be cmd:python3 -m foundation {want}")
     return errs
 
 
 def main(argv=None) -> int:
     a = argv if argv is not None else sys.argv[1:]
+    if "--probe" in a:
+        i = a.index("--probe")
+        lid = a[i + 1] if i + 1 < len(a) else ""
+        got = probe(REPO, lid)
+        if got is None:
+            print(f"lessons probe: no lesson {lid!r} in {PATH}"); return 2
+        print(f"lessons probe {lid}: {'enforced by a binding that resolves' if got else 'not enforced: no binding resolves'}")
+        return 0 if got else 1
     if "--check" in a:
         e = check(); r = report()
         print("\n".join(e) or f"lessons ok: {r['enforced']} of {r['lessons']} enforced in code; the rest each have an open item"); return 1 if e else 0

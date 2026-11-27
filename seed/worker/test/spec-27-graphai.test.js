@@ -99,3 +99,15 @@ test('US-27-R27: the spend throttle shrinks every batch and never turns the laye
   assert.deepEqual(v.cost_today, { neurons: 20, calls: 1 }); assert.equal(v.share, 2500); assert.equal(v.embedded, 21); assert.ok(Array.isArray(v.summaries));
   assert.equal(DDL.length, 4);
 });
+
+test('US-27-R25: an answer naming a live node the label did not offer is dropped, and at most extract_max labels are sent to the model in a pass', async () => {
+  assert.equal(DEFAULTS.extract_max, 8);
+  let db = db0(); addNode(db, 'items:Q-ONE-1', 'first', 0); addNode(db, 'items:Q-TWO-2', 'Q-TWO-2 waits on Q-ONE-1', 1); addNode(db, 'items:Q-LIVE-7', 'a live node nobody offered', 2);
+  const reply = JSON.stringify([{ dst: 'Q-LIVE-7', rel: 'blocks' }]);
+  let r = await graphAiStep({ db, ai: model({ reply }), now: NOW });
+  assert.equal(r.proposed, 0, 'Q-LIVE-7 exists as a live node but the label did not name it');
+  assert.equal(rows(db, `SELECT COUNT(*) AS n FROM kg_edges WHERE source='ai'`)[0].n, 0);
+  db = db0(); for (let i = 0; i < 12; i++) addNode(db, `items:t${String(i).padStart(2, '0')}`, `T-${String(i).padStart(2, '0')}-A waits on T-${String(i).padStart(2, '0')}-B`, i);
+  const ai = model(); await graphAiStep({ db, ai, now: NOW });
+  assert.equal(ai.calls.filter(c => c.inp.messages && c.inp.messages[0].content.startsWith('Reply with JSON')).length, 8, 'twelve labels name ids, eight are sent');
+});

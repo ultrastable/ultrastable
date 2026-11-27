@@ -36,6 +36,13 @@ class PolicyTests(unittest.TestCase):
         for s, a, act in bs.gated_actions(POLICY):
             self.assertFalse(act.get("reversible_path"))
 
+    def test_us_06_r12_the_validator_refuses_an_execute_ceiling_on_money_legal_outreach_and_secrets(self):
+        for surface in ("money", "legal", "outreach", "secrets"):
+            p = json.loads(json.dumps(POLICY))
+            p["surfaces"][surface]["max_permission"] = "execute"
+            problems = bs.validate_policy(p)
+            self.assertIn(f"{surface}: ceiling must be below execute", problems)
+
     def test_bad_policy_is_caught(self):
         p = json.loads(json.dumps(POLICY))
         p["surfaces"]["money"]["start_rung"] = "autonomous"
@@ -93,6 +100,7 @@ class BootTests(Hermetic):
             self.assertTrue(any(i["id"] == "KIT-7" for i in items))  # analytics are standard issue
 
     def test_idempotent(self):
+        """US-01-R05: running the seed twice changes nothing."""
         with tempfile.TemporaryDirectory() as d:
             self.boot(Path(d)); a = (Path(d) / "org/backlog.json").read_text()
             bs.main(["--root", d, "--dry-run"]); b = (Path(d) / "org/backlog.json").read_text()

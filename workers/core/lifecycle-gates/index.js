@@ -12,7 +12,7 @@ import { openClosing, archiveClosed } from './closing.js';
 import { adoptOutcomes, draftArtifacts } from './adopt.js';
 
 export const MIGRATIONS_DIR = (() => { try { return fileURLToPath(new URL('./migrations/', import.meta.url)); } catch { return null; } })();
-export const DEFAULTS = { portfolio_cap: null, initiation_threshold: 0.6, require_readiness: true, status_period_h: 168, auto_start: false, max_gap_items_open: 25, default_capacity: 0, risk_review_period_h: 168, quality_period_h: 168 };
+export const DEFAULTS = { portfolio_cap: null, initiation_threshold: 0.7, require_readiness: true, status_period_h: 168, auto_start: false, max_gap_items_open: 25, default_capacity: 0, risk_review_period_h: 168, quality_period_h: 168 };
 const cfg = (c) => ({ ...DEFAULTS, ...(c || {}) });
 const HOUR = 3600e3;
 const filled = (v) => (Array.isArray(v) ? v.length > 0 : v !== null && v !== undefined && String(v).trim() !== '');
@@ -64,6 +64,12 @@ export function checkForm(mode, kind, content) {
   if (kind === 'A-PLN-4' && Array.isArray(c.roadmap)) {
     if (c.roadmap.length > 5) problems.push('more than five roadmap features');
     c.roadmap.forEach((r, i) => { const m = ['size', 'goal', 'user', 'success_metric', 'closing_probe'].filter(f => !filled(r?.[f])); if (m.length) problems.push(`roadmap feature ${i + 1} lacks ${m.join(', ')}`); });
+  }
+  // The communication plan's period is read as hours by setCommunicationPlan: a period that is not a positive number fails the form here, so the
+  // artifact is never stored as passing its done check while the call that sets the plan throws.
+  if (kind === 'A-PLN-9' && filled(c.period_h)) {
+    const n = typeof c.period_h === 'number' || (typeof c.period_h === 'string' && c.period_h.trim() !== '') ? Number(c.period_h) : NaN;
+    if (!(Number.isFinite(n) && n > 0)) problems.push('period_h is not a positive number of hours');
   }
   return { ok: !missing.length && !problems.length, missing, problems, weight: spec.weight };
 }
@@ -120,14 +126,19 @@ registerGateExtra('G1', 'charter-probe', async (db, projectId) => {
   try { assertReadOnly(probe); } catch { return [['charter-probe', 'project-manager', "the charter's definition of done is not a probe a different agent can run"]]; }
   return [];
 });
+// The readiness port may answer a bare number, or the elicit module's own reading { score, threshold, g1, g2, blocking }. When it answers g1 / g2 as booleans those
+// are the verdict (one number, one place: core/elicit computes it from the needs register, US-16-R15); a bare score is compared with the initiation threshold
+// (default 0.7, the default US-16-R15 gives).
+const readReadiness = async (opts, projectId) => { try { const r = opts.readiness ? await opts.readiness(projectId) : null; return r === null || r === undefined ? null : (typeof r === 'number' ? { score: r } : r); } catch { return null; } };
 registerGateExtra('G1', 'readiness', async (db, projectId, opts = {}) => {
   const c = cfg(opts.config);
   if (!c.require_readiness) return [];
   if (!opts.readiness && opts.filing) return [];          // the tick's own gap filing: an unwired port is not a gap anything can close (advancing still needs it)
-  let score = null; try { const r = opts.readiness ? await opts.readiness(projectId) : null; score = typeof r === 'number' ? r : (r?.score ?? null); } catch { score = null; }
-  if (score === null) return [['readiness', 'project-manager', 'the readiness score could not be read']];
-  if (score < c.initiation_threshold) return [['readiness', 'project-manager', `readiness ${score.toFixed(2)} is under the initiation threshold ${c.initiation_threshold}`]];
-  return [];
+  const r = await readReadiness(opts, projectId), score = typeof r?.score === 'number' ? r.score : null;
+  if (score === null && typeof r?.g1 !== 'boolean') return [['readiness', 'project-manager', 'the readiness score could not be read']];
+  const threshold = typeof r.threshold === 'number' ? r.threshold : c.initiation_threshold;
+  if (typeof r.g1 === 'boolean' ? r.g1 : score >= c.initiation_threshold) return [];
+  return [['readiness', 'project-manager', `readiness ${(score ?? 0).toFixed(2)} is under the initiation threshold ${threshold}`]];
 });
 registerGateExtra('G2', 'requirement-map', async (db, projectId) => {
   const row = await first(db, `SELECT content FROM lifecycle_artifact_content WHERE project_id = ? AND kind = 'A-PLN-1'`, projectId);
@@ -148,6 +159,17 @@ registerGateExtra('G2', 'requirement-map', async (db, projectId) => {
     if (filled(it.trigger_on) && !(await first(db, `SELECT 1 AS x FROM items WHERE id = ?`, it.trigger_on))) out.push([`trigger-${slug(it.id)}`, 'project-manager', `item ${it.id} is triggered by ${it.trigger_on}, which does not exist`]);
   }
   return out;
+});
+// G2 (US-16-R15, T16-7): every MUST Need Answered or Defaulted and every non-reversible Need Answered. Enforced only when the host wired the readiness port (an
+// unwired port keeps the old behaviour); once it is wired, a reading that cannot be taken is not a pass.
+registerGateExtra('G2', 'readiness-g2', async (db, projectId, opts = {}) => {
+  const c = cfg(opts.config);
+  if (!c.require_readiness || !opts.readiness) return [];
+  const r = await readReadiness(opts, projectId);
+  if (r === null) return [['readiness-g2', 'project-manager', 'the readiness of the needs register could not be read']];
+  const ok = typeof r.g2 === 'boolean' ? r.g2 : (typeof r.score === 'number' ? r.score >= 1 : false);
+  if (ok) return [];
+  return [['readiness-g2', 'project-manager', `readiness: ${r.blocking?.length ? 'non-reversible needs not answered: ' + r.blocking.join(', ') : 'not every MUST need is answered or defaulted'}`]];
 });
 registerGateExtra('G3', 'deliverable-probes', async (db, projectId) => {
   const d = await all(db, `SELECT id FROM lifecycle_deliverables WHERE project_id = ? AND (probe_passed IS NULL OR probe_passed = 0)`, projectId);
@@ -384,12 +406,14 @@ export async function refreshMonitoring(db, { now = Date.now(), config } = {}) {
 }
 
 // ---- US-15-R12, T15-4: the scope gate ----
-// The default rules restate the out-of-scope table of SCOPE.md. config.scope_rules replaces them.
+// The default rules restate the out-of-scope table of SCOPE.md. config.scope_rules replaces them. A rule that has a twin in the console's
+// OUT_OF_SCOPE table (core/src/console.js) carries no word boundary at either end, as its twin has none, so the classifier matches every inflected form
+// the console refuses (US-15-R21): "business plans", "patented", "file patents".
 export const SCOPE_RULES = [
-  { rule: 'business-plan', pack: 'business-plan', why: 'a business plan, financial model, pitch or funding application is a different product', re: /\b(business plan|financial model|pitch deck|investor pitch|funding application|funding round|grant application|fundrais\w*|investors?)\b/i },
-  { rule: 'legal-filing', pack: 'legal', why: 'filing a legal instrument needs an identity-bound signature', re: /\b(file|register)\b.{0,40}\b(trademark|patent|incorporation|legal (document|instrument))\b|\bpatent( application)?\b|\btrademark\b|\bcopyright (filing|registration)\b/i },
-  { rule: 'advice', pack: 'advice', why: 'legal, tax, investment and medical advice are not what the system is designed or tested for', re: /\b(legal|tax|investment|medical) advice\b/i },
-  { rule: 'marketing', pack: 'outreach', why: 'outbound contact with other people needs consent and a policy of its own', re: /\b(marketing campaign|ad campaign|run (the |our |my )?(marketing|sales|outreach)|cold (email|outreach)|social media (account|campaign|posts?))\b/i },
+  { rule: 'business-plan', pack: 'business-plan', why: 'a business plan, financial model, pitch or funding application is a different product', re: /business plan|financial model|pitch deck|investor|funding (application|round)|grant application|fundrais/i },
+  { rule: 'legal-filing', pack: 'legal', why: 'filing a legal instrument needs an identity-bound signature', re: /\b(file|register)\b.{0,40}\b(incorporation|legal (document|instrument))|patent|trademark|copyright (filing|registration)/i },
+  { rule: 'advice', pack: 'advice', why: 'legal, tax, investment and medical advice are not what the system is designed or tested for', re: /(legal|tax|investment|medical) advice/i },
+  { rule: 'marketing', pack: 'outreach', why: 'outbound contact with other people needs consent and a policy of its own', re: /marketing campaign|ad campaign|\brun (the |our |my )?(marketing|sales|outreach)|cold (email|outreach)|social media (account|campaign|post)/i },
   { rule: 'money', pack: 'payments', why: 'hiring, paying, contracting and moving money are irreversible and identity-bound', re: /\b(hire (a|an|the)\b|pay (the|an?|our)\b.{0,30}\b(invoice|contractor|vendor)|wire (the )?money|sign (the|a) contract)\b/i },
   { rule: 'research', pack: 'research', why: 'research and paper writing for the person is a separate product', re: /\b(write (a|the|my) (research )?paper|literature review|do (the |my )?research)\b/i },
 ];

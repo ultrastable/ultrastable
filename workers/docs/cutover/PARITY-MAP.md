@@ -3,7 +3,7 @@
 
 # Parity map: QNFO worker to ultrastable/workers module
 
-Source: [extraction/INVENTORY.md](../../extraction/INVENTORY.md) and `extraction/boundary.json`. Order is the cutover order for stage 4. "Parity gate" is the unit's proof; "Gap" points to [SHIMS.md](SHIMS.md) or [GAPS.md](GAPS.md).
+Source: [extraction/INVENTORY.md](../../extraction/INVENTORY.md) and `extraction/boundary.json`. Order is the cutover order for stage 4. "Parity gate" is the unit's proof; "Gap" points to [shims.json](shims.json) or [GAPS.md](GAPS.md).
 
 | Order | QNFO worker | Module here | Status | Parity gate | Gap |
 |---:|---|---|---|---|---|

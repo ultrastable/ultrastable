@@ -1,0 +1,11 @@
+{
+  "id": "Q-ULTRA-air-quality-spend-REDESIGN",
+  "title": "Q-ULTRA-air-quality-spend-REDESIGN: every second-order step failed to bring Spend against the declared monthly budget back in bounds; redesign",
+  "body": "**Owner:** executor\n**Trigger:** ladder exhausted for `air-quality:spend`\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nThe same failure three times is a design defect (GUIDING-DIRECTIVE section 2): change the structure, not the parameter.\n\nsize: L\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `air-quality:spend` inside its bounds.\n\n\n**Vacuous:** 2026-11-27T01:37:52Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "p0",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

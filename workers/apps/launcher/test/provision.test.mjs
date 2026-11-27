@@ -39,7 +39,7 @@ const RELEASE = { bundle: 'export default { fetch() { return new Response("ok");
 const PROOF = { challengeToken: 'ct', solution: { checkpoints: 'AAAA' } };
 const ANSWERS = { idea: 'A neighbourhood tool library where people borrow tools instead of buying them', outcomes: ['A page where neighbours can book a drill', 'A list of the tools we have'], limit: 0, orgName: "Neighbours' Tool Library" };
 
-test('refuses to create anything unless the person accepted the terms, and needs the safety check', async () => {
+test('US-19-R06 refuses to create anything unless the person accepted the terms, and needs the safety check', async () => {
   const { f, calls } = fakeCloudflare();
   await assert.rejects(() => provision({ fetch: f, proof: PROOF, answers: ANSWERS, acceptedCloudflareTerms: false, release: RELEASE }), /terms/i);
   await assert.rejects(() => provision({ fetch: f, proof: null, answers: ANSWERS, acceptedCloudflareTerms: true, release: RELEASE }), /safety check/);
@@ -52,6 +52,7 @@ test('the happy path calls Cloudflare in order, binds the console key as a secre
   assert.deepEqual(calls.map(c => `${c.method} ${c.url.replace('https://api.cloudflare.com/client/v4', '').replace(/acc1|db-uuid-1|neighbours-tool-library/g, '_')}`), [
     'POST /provisioning/previews', 'POST /accounts/_/d1/database', 'POST /accounts/_/d1/database/_/query',
     'PUT /accounts/_/workers/scripts/_', 'POST /accounts/_/workers/scripts/_/subdomain', 'GET /accounts/_/workers/subdomain',
+    'POST /accounts/_/d1/database/_/query', // US-19-R11: the CLAIM and HEARTBEAT cards get their machine probe once the address is known
   ]);
   const acct = JSON.parse(calls[0].body);
   assert.equal(acct.acceptTermsOfService, 'yes'); assert.equal(acct.challengeToken, 'ct');
@@ -90,7 +91,7 @@ test('nothing is written to the console or logs during provisioning (US-19-R07)'
   assert.deepEqual(seen, []);
 });
 
-test('the seed SQL gives the console real records: the persons own words, one item per outcome, and the preview cards', async () => {
+test('US-19-R29 the seed SQL gives the console real records: the persons own words, one item per outcome, and the preview cards', async () => {
   const a = cleanIdea(ANSWERS);
   const sql = buildSeedSql(a, { orgName: 'Neighbours Tool Library', slug: 'neighbours-tool-library', now: '2026-11-11T00:00:00Z' });
   const db = makeDb();
@@ -106,7 +107,7 @@ test('the seed SQL gives the console real records: the persons own words, one it
   assert.match(withLimit, /Approve spending up to 25 USD/);
 });
 
-test('apostrophes and hostile text are stored as text, not run as SQL', () => {
+test('US-19-R29 apostrophes and hostile text are stored as text, not run as SQL', () => {
   const db = makeDb();
   const evil = "x'); DROP TABLE items; -- it's";
   db.raw.exec(buildSeedSql(cleanIdea({ idea: 'I want ' + evil + ' to exist please', outcomes: [evil] }), { orgName: evil, slug: 'x' }));
@@ -114,7 +115,7 @@ test('apostrophes and hostile text are stored as text, not run as SQL', () => {
   assert.equal(db.raw.prepare("SELECT title FROM items").get().title, evil);
 });
 
-test('input is validated in plain words', () => {
+test('US-19-R27 input is validated in plain words', () => {
   assert.throws(() => cleanIdea({ idea: 'short' }), /a little more/);
   assert.throws(() => cleanIdea({ idea: 'x'.repeat(2001) }), /2000/);
   assert.throws(() => cleanIdea({ idea: 'a long enough idea here', limit: -1 }), /limit/);
@@ -122,7 +123,7 @@ test('input is validated in plain words', () => {
   assert.equal(slugify('!!!'), 'my-org');
 });
 
-test('the console key is random, long, url-safe', () => {
+test('US-19-R29 the console key is random, long, url-safe', () => {
   const a = newConsoleKey(), b = newConsoleKey();
   assert.notEqual(a, b); assert.match(a, /^[A-Za-z0-9_-]{32}$/);
 });

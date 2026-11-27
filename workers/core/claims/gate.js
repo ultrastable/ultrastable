@@ -21,11 +21,30 @@ const hasTable = async (db, name) => !!(await first(db, `SELECT name FROM sqlite
  * whose triggers are all done becomes `ready`: the core tick's own promotion only matches one item id. (b) A `ready` item
  * whose trigger is not done (a trigger reopened by silent-drop reconcile, a relapse) goes back to `open` with an outcome
  * naming what it waits on, so no dispatch picks it. A claimed item is never touched: work in progress finishes or is reaped.
+ * The scan reads triggered items in pages of `trigger_scan_max` (default 500), at most `trigger_scan_pages` pages (default 20) per
+ * status, so a backlog of old items that wait on a trigger cannot starve the newer ones behind them. When the page budget ends
+ * before the items do, the cut is reported and never silent: `truncated` names the statuses, `scanned` the items read, and one
+ * `scan-truncated` row is written to claims_events.
  */
 export async function enforceTriggers(ctx) {
-  const at = iso(nowMs(ctx)), out = { promoted: [], demoted: [] };
+  const at = iso(nowMs(ctx)), out = { promoted: [], demoted: [], scanned: 0, truncated: [] };
   const limit = Number(cfg(ctx).trigger_scan_max) > 0 ? Number(cfg(ctx).trigger_scan_max) : 500;
-  const open = await triggered(ctx, 'open', limit), ready = await triggered(ctx, 'ready', limit);
+  const pages = Number(cfg(ctx).trigger_scan_pages) > 0 ? Math.floor(Number(cfg(ctx).trigger_scan_pages)) : 20;
+  const scan = async status => {
+    const rows = [];
+    let after = null, page = await triggered(ctx, status, limit);
+    for (let n = 1; ; n++) {
+      rows.push(...page);
+      if (page.length < limit) return rows;
+      after = { created_at: page[page.length - 1].created_at, id: page[page.length - 1].id };
+      if (n >= pages) { if ((await triggered(ctx, status, 1, after)).length) out.truncated.push(status); return rows; }
+      page = await triggered(ctx, status, limit, after);
+    }
+  };
+  const open = await scan('open'), ready = await scan('ready');
+  out.scanned = open.length + ready.length;
+  if (out.truncated.length) await run(ctx.db, `INSERT INTO claims_events (at, kind, key, holder, event, detail) VALUES (?, 'work', 'triggers:scan', NULL, 'scan-truncated', ?)`,
+    at, `trigger scan stopped after ${pages} page(s) of ${limit} for status ${out.truncated.join(', ')}; ${out.scanned} item(s) read`);
   const states = await triggerStates(ctx, [...open, ...ready].map(i => i.trigger_on));   // a handful of statements, not two per item
   for (const it of open) {
     if (!states.get(it.trigger_on).done) continue;
@@ -263,5 +282,6 @@ export async function step(ctx) {
   if (held.released.length) acted.held_released = held.released;
   if (triggers.promoted.length) acted.triggers_promoted = triggers.promoted;
   if (triggers.demoted.length) acted.triggers_demoted = triggers.demoted;
+  if (triggers.truncated.length) acted.triggers_truncated = triggers.truncated;
   return { ...acted, gate, rerouted: queue.rerouted.length, cards_without_identity_line: queue.cards_without_identity_line, visibility: vis && { ratio: vis.ratio, fired: vis.fired } };
 }

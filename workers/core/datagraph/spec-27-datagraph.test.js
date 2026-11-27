@@ -113,6 +113,16 @@ test('US-27-R07: analysis reads the undirected graph of confirmed edges and repo
   const empty = analyze({ nodes: [], edges: [] }); assert.equal(empty.nodes, 0); assert.equal(empty.density, 0);
 });
 
+test('US-27-R07: at most the 20 largest communities are reported, largest first', () => {
+  // 25 separate pairs and one triangle: 26 communities of more than one node, so the triangle and 19 pairs are reported
+  const pairs = Array.from({ length: 25 }, (_, i) => ['p' + String(i).padStart(2, '0') + 'a', 'p' + String(i).padStart(2, '0') + 'b']);
+  const g = { nodes: N([...pairs.flat(), 't1', 't2', 't3']), edges: [...pairs.map(([a, b]) => E(a, b)), E('t1', 't2'), E('t2', 't3'), E('t1', 't3')] };
+  const a = analyze(g);
+  assert.equal(a.components, 26); assert.equal(a.communities.length, 20);
+  assert.deepEqual(a.communities.map(c => c.size), [3, ...Array(19).fill(2)]);
+  assert.equal(a.communities[0].id, 't2', 'the largest first'); assert.equal(a.communities[19].id, 'p18b', 'equal sizes in label order');
+});
+
 test('US-27-R08: the same graph in the same order always gives the same analysis, and the communities do not depend on the order rows arrive in', () => {
   const nodes = N(Array.from({ length: 30 }, (_, i) => 'n' + i)), edges = [];
   for (let i = 0; i < 30; i++) edges.push(E('n' + i, 'n' + ((i * 7 + 3) % 30)), E('n' + i, 'n' + ((i + 1) % 30)));
@@ -185,4 +195,26 @@ test('US-27-R13: the neighbourhood of a node is a bounded breadth-first subgraph
   assert.deepEqual(neighborhood(g, 'a').nodes.map(n => n.id), ['a', 'b', 'c'], 'depth two by default');
   assert.equal(neighborhood(g, 'b', { depth: 3, limit: 2 }).nodes.length, 2, 'the limit bounds the nodes');
   assert.equal(neighborhood(g, 'a', { depth: 3 }).nodes.some(n => n.id === 'e'), false);
+});
+
+test('US-27-R08: a tie between neighbouring labels goes to the smallest label, so the community is named by its smallest member', () => {
+  // d-b-e-c: b hears d and e once each, and the tie must go to d, never to e.
+  const g = { nodes: N(['a', 'b', 'c', 'd', 'e']), edges: [E('b', 'd'), E('b', 'e'), E('c', 'e')] };
+  const a = analyze(g), big = a.communities[0];
+  assert.equal(big.size, 4); assert.equal(big.id, 'd', 'the smallest label of the tie');
+  assert.deepEqual(['b', 'c', 'd', 'e'].map(i => a._community.get(i)), ['d', 'd', 'd', 'd']);
+  assert.equal(a._community.get('a'), 'a', 'an isolated node keeps its own label');
+});
+
+test('US-27-R09: a node linked to more than 200 others says nothing about any pair, one linked to exactly 200 still does', () => {
+  const lead = n => {
+    const leaves = Array.from({ length: n }, (_, i) => `l${String(i).padStart(3, '0')}`), edges = [];
+    // every leaf is linked to both hubs, so every pair of leaves shares two neighbours and passes the evidence rule unless the hubs are ignored
+    for (const l of leaves) { edges.push(E(l, 'h1')); edges.push(E(l, 'h2')); }
+    return predict({ nodes: N([...leaves, 'h1', 'h2']), edges });
+  };
+  const leafPair = p => p.src.startsWith('l') && p.dst.startsWith('l');
+  const at200 = lead(200).filter(leafPair), at201 = lead(201).filter(leafPair);
+  assert.ok(at200.length > 0 && at200.every(p => p.via.length === 2), 'two hubs of exactly 200 neighbours each count: leaves that share both are led');
+  assert.deepEqual(at201, [], 'two hubs of 201 neighbours each count for nothing: no pair of leaves is led');
 });

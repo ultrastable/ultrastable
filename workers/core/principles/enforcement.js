@@ -4,6 +4,7 @@
 // and returns the ways the directive is not being met. A named enforcer file that merely exists proves nothing; these
 // checks execute the enforcer against the real packs and the real ask-card rules. Node only (reads the checkout).
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { validateManifest } from '../packs/manifest.js';
 import { assertCoreImportsNoPacks } from '../packs/static-check.js';
@@ -85,7 +86,69 @@ export function checkIgnoranceAssumed() {
   return out;
 }
 
+const py = (root, args, env = {}) => spawnSync('python3', args, { cwd: root, encoding: 'utf8', timeout: 120000, env: { ...process.env, ...env } });
+
+/**
+ * D-NO-OPEN-LOOPS: the loop closer's own offline tests pass, and the open-loop linter (products/gaplint) run on this checkout with the
+ * configuration that names what this repository's contract carries reports nothing. An interpreter that cannot run is a problem, never a pass.
+ */
+export function checkNoOpenLoops(root) {
+  const out = [];
+  const lint = path.join(root, 'products', 'gaplint'), cfg = path.join(lint, 'configs', 'workers.json');
+  if (!existsSync(path.join(lint, 'gaplint'))) out.push('products/gaplint is missing: nothing detects open loops in this repository');
+  else if (!existsSync(cfg)) out.push('products/gaplint/configs/workers.json is missing: the linter has no statement of what this repository must carry');
+  else {
+    const r = py(root, ['-m', 'gaplint', root, '--config', cfg, '--json'], { PYTHONPATH: lint });
+    if (r.error) out.push(`gaplint could not run: ${r.error.message}`);
+    else {
+      let found = null;
+      try { found = JSON.parse(r.stdout); } catch { out.push(`gaplint printed no findings list (exit ${r.status}): ${String(r.stderr || r.stdout).slice(0, 160)}`); }
+      for (const f of found || []) out.push(`gaplint ${f.rule} ${f.path}:${f.line}: ${f.message}`);
+    }
+  }
+  if (!existsSync(path.join(root, 'tools', 'loop_closer.py'))) out.push('tools/loop_closer.py is missing: nothing closes loops by probe');
+  else if (!existsSync(path.join(root, 'tests', 'test_loop_closer.py'))) out.push('tests/test_loop_closer.py is missing: the loop closer is unproven');
+  else {
+    const r = py(root, ['-m', 'unittest', 'tests.test_loop_closer']);
+    if (r.error) out.push(`the loop closer tests could not run: ${r.error.message}`);
+    else if (r.status !== 0) out.push(`the loop closer's own tests fail: ${String(r.stderr).trim().split('\n').slice(-3).join(' | ').slice(0, 200)}`);
+  }
+  return out;
+}
+
+/** D-NOTHING-IN-CHAT: the contract says it, a workflow runs the closer that turns a thread's loose end into an item, and the closer exists. */
+export function checkNothingInChat(root) {
+  const out = [], read = rel => (existsSync(path.join(root, rel)) ? readFileSync(path.join(root, rel), 'utf8') : null);
+  const contract = read('agents/CONTRACT.md');
+  if (contract === null) out.push('agents/CONTRACT.md is missing');
+  else if (!/Nothing exists only in chat/i.test(contract)) out.push('agents/CONTRACT.md no longer carries the rule "Nothing exists only in chat"');
+  const wf = read('.github/workflows/loops.yml');
+  if (wf === null) out.push('.github/workflows/loops.yml is missing: nothing closes loops on a clock');
+  else if (!/loop_closer\.py/.test(wf)) out.push('.github/workflows/loops.yml no longer runs tools/loop_closer.py');
+  if (!existsSync(path.join(root, 'tools', 'loop_closer.py'))) out.push('tools/loop_closer.py is missing');
+  return out;
+}
+
+/**
+ * The register's tracking issues, read from the tracker through a port (US-23-R07): a directive that is partial or planned must be tracked by an
+ * issue that is still open. A closed or missing issue means the directive is an open loop with nobody to close it. An unreadable tracker is
+ * reported as unknown, never as a pass. tracker.getIssue(n) -> { number, state } | null (not found); it may throw.
+ */
+export async function openDirectivesProbe({ reg, tracker }) {
+  const out = { open_loops: [], unknown: [], checked: 0 };
+  for (const d of (reg.directives || []).filter(x => x.status !== 'enforced')) {
+    out.checked++;
+    let issue;
+    try { issue = await tracker.getIssue(d.tracking_issue); } catch (e) { out.unknown.push({ id: d.id, tracking_issue: d.tracking_issue, reason: String(e?.message || e).slice(0, 120) }); continue; }
+    if (!issue) out.open_loops.push({ id: d.id, tracking_issue: d.tracking_issue, reason: 'the tracking issue does not exist' });
+    else if (String(issue.state).toLowerCase() !== 'open') out.open_loops.push({ id: d.id, tracking_issue: d.tracking_issue, reason: `the tracking issue is ${issue.state} while the directive is ${d.status}` });
+  }
+  return out;
+}
+
 export const CHECKS = {
+  'D-NO-OPEN-LOOPS': checkNoOpenLoops,
+  'D-NOTHING-IN-CHAT': checkNothingInChat,
   'D-SCOPE-AND-PACKS': checkScopeAndPacks,
   'D-OUTREACH-AS-LOOPS': checkOutreachAsLoops,
   'D-IGNORANCE-ASSUMED': checkIgnoranceAssumed,

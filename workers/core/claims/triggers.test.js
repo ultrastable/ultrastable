@@ -150,3 +150,38 @@ test('US-08-R16: the trigger step reads in a number of statements that does not 
   const states = await (await import('./triggers.js')).triggerStates(ctx, ['ROOT', 'ROOT,NOPE', 'gate:NOGATE']);
   assert.deepEqual([...states.values()].map(s => s.done), [true, false, false]);
 });
+
+test('US-08-R16: the trigger scan pages past trigger_scan_max, so old items waiting on a trigger do not starve a newer item that is ready to promote', async () => {
+  const { ctx } = mk();
+  ctx.config = { ...(ctx.config || {}), trigger_scan_max: 2 };
+  await item(ctx, 'NEVER', 'open');
+  await item(ctx, 'ROOT', 'done', { disposition: 'ok' });
+  await item(ctx, 'A', 'open', { trigger: 'NEVER' });
+  await item(ctx, 'B', 'open', { trigger: 'NEVER' });
+  await item(ctx, 'C', 'open', { trigger: 'ROOT' });
+  const r = await gate.enforceTriggers(ctx);
+  assert.deepEqual(r.promoted, ['C']);
+  assert.deepEqual(r.truncated, []);
+  assert.equal(r.scanned, 3);
+});
+
+test('US-08-R16: a trigger scan cut by the page budget is reported (truncated, scanned) and written to claims_events, never silent', async () => {
+  const { ctx } = mk();
+  ctx.config = { ...(ctx.config || {}), trigger_scan_max: 2, trigger_scan_pages: 1 };
+  await item(ctx, 'NEVER', 'open');
+  await item(ctx, 'ROOT', 'done', { disposition: 'ok' });
+  await item(ctx, 'A', 'open', { trigger: 'NEVER' });
+  await item(ctx, 'B', 'open', { trigger: 'NEVER' });
+  await item(ctx, 'C', 'open', { trigger: 'ROOT' });
+  const r = await gate.enforceTriggers(ctx);
+  assert.deepEqual([r.promoted, r.truncated, r.scanned], [[], ['open'], 2]);
+  const ev = (await ctx.db.prepare(`SELECT event, detail FROM claims_events WHERE event = 'scan-truncated'`).all()).results;
+  assert.equal(ev.length, 1);
+  assert.match(ev[0].detail, /stopped after 1 page\(s\) of 2 for status open; 2 item\(s\) read/);
+  assert.deepEqual((await gate.step(ctx)).triggers_truncated, ['open']);
+  // exactly as many items as the budget reads is not a cut
+  const { ctx: c2 } = mk();
+  c2.config = { ...(c2.config || {}), trigger_scan_max: 2, trigger_scan_pages: 1 };
+  await item(c2, 'X', 'open', { trigger: 'GONE' }); await item(c2, 'Y', 'open', { trigger: 'GONE' });
+  assert.deepEqual((await gate.enforceTriggers(c2)).truncated, []);
+});

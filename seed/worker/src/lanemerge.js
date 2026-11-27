@@ -22,6 +22,7 @@ export async function mergeForLane({ token, repo, pr, sha, fetch: f = fetch }) {
   if (p.state !== 'open' || p.draft) return { ok: false, status: 409, error: 'not an open ready PR' };
   if (!p.head || p.head.sha !== sha) return { ok: false, status: 409, error: 'head moved' };
   if (!p.head.repo || p.head.repo.full_name !== repo) return { ok: false, status: 409, error: 'fork PR' };
+  if ((p.labels || []).some(l => l && l.name === 'hold')) return { ok: false, status: 409, error: 'hold' };  // HOLD-LABEL-1 (US-33-R13)
   if (p.mergeable_state !== 'clean') return { ok: false, status: 409, error: `mergeable_state ${p.mergeable_state}` };
   const hold = await notGreen(f, token, repo, sha, (ff, t, m, path) => gh(ff, t, m, path));  // GREEN-GUARD-1
   if (hold) return { ok: false, status: 409, error: hold };

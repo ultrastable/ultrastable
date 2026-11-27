@@ -134,3 +134,40 @@ test('US-27-R44: a ledger of insights over time says which are new, standing and
   const three = I.track(two.state, ins(['b']), 3000); assert.deepEqual(three.moved.gone, ['c']); assert.equal(three.state.a.gone_at, '1970-01-01T00:00:02.000Z', 'an insight already gone is not marked gone again');
   const back = I.track(three.state, ins(['a']), 4000); assert.deepEqual(back.moved.new, ['a']); assert.deepEqual([back.state.a.first_seen, back.state.a.gone_at], ['1970-01-01T00:00:04.000Z', null]);
 });
+
+test('US-27-R43: a link across two communities scores half as much again, and a pair already linked by any relation is never a lead', () => {
+  const c = cliques(), snap = { nodes: [...c.nodes, n('b9', 'right')], edges: [...c.edges, e('b9', 'rel', 'b2'), e('b9', 'rel', 'b3')] };
+  const raw = I.linkPredict(snap, I.adjacency(snap), { kinds: ['left', 'right'], top: 5 });
+  const links = I.analyze(snap, { links: [{ id: 'lr', kinds: ['left', 'right'], top: 5 }] }).insights.filter(i => i.type === 'link');
+  assert.ok(links.length >= 1 && raw.length === links.length);
+  const ratios = links.map(i => { const r = raw.find(x => [x.a, x.b].sort().join() === i.nodes.slice().sort().join()); return { ratio: +(i.score / r.score).toFixed(2), cross: i.why.includes('different communities') }; });
+  assert.ok(ratios.every(x => x.ratio === (x.cross ? 1.5 : 1)), JSON.stringify(ratios));
+  assert.ok(ratios.some(x => x.cross), 'the planted pair sits in two communities');
+  // p1 and p2 share a1 and are already linked by another relation; p3 is not linked to either
+  const papers = { nodes: [n('p1', 'paper'), n('p2', 'paper'), n('p3', 'paper'), n('a1', 'author')], edges: [e('p1', 'by', 'a1'), e('p2', 'by', 'a1'), e('p3', 'by', 'a1'), e('p1', 'cites', 'p2')] };
+  const pairs = I.linkPredict(papers, I.adjacency(papers), { kinds: ['paper', 'paper'] }).map(x => [x.a, x.b].join('~')).sort();
+  assert.deepEqual(pairs, ['p1~p3', 'p2~p3'], 'p1~p2 is already linked');
+  assert.deepEqual(I.analyze(papers, { links: [{ id: 'pp', kinds: ['paper', 'paper'] }] }).insights.filter(i => i.type === 'link').map(i => i.nodes.join('~')).sort(), ['p1~p3', 'p2~p3']);
+});
+
+test('US-27-R43: a gap is worth one plus its PageRank share of the graph, a disagreement two plus the shared node\'s', () => {
+  const papers = { nodes: [n('p1', 'paper'), n('p2', 'paper'), n('a1', 'author'), n('a2', 'author')], edges: [e('p1', 'by', 'a1'), e('p2', 'by', 'a1')] };
+  const a = I.analyze(papers, { gaps: [{ id: 'g', kind: 'author', lacks: { rel: 'cites', dir: 'in' } }] }), pr = Object.fromEntries(a.central.map(c => [c.id, c.pagerank]));
+  const gap = a.insights.filter(i => i.type === 'gap'); assert.equal(gap.length, 2);
+  for (const g of gap) assert.ok(Math.abs(g.score - (1 + pr[g.nodes[0]] * 4)) < 1e-3, `${g.nodes[0]}: ${g.score}`);
+  const s = [n('s1', 'study', 's1', { v: 'supports' }), n('s2', 'study', 's2', { v: 'refutes' }), n('topic', 'topic')];
+  const d = I.analyze({ nodes: s, edges: ['s1', 's2'].map(x => e(x, 'tests', 'topic')) }, { disagreements: [{ kind: 'study', via: 'tests', prop: 'v', opposite: [['supports', 'refutes']] }] });
+  const dis = d.insights.find(i => i.type === 'disagree'), p = d.central.find(c => c.id === 'topic').pagerank;
+  assert.ok(Math.abs(dis.score - (2 + p * 3)) < 1e-3, String(dis.score));
+});
+
+test('US-27-R43: two rules that find the same node, or the same pair, give two insights with two ids, so the ledger tracks them apart', () => {
+  const snap = { nodes: [n('a3', 'author'), n('p1', 'paper'), n('p2', 'paper'), n('p3', 'paper'), n('t', 'topic')], edges: [e('p1', 'on', 't'), e('p2', 'on', 't'), e('p3', 'on', 't')] };
+  const gaps = I.analyze(snap, { gaps: [{ id: 'g1', kind: 'author', lacks: { rel: 'by', dir: 'in' } }, { id: 'g2', kind: 'author', lacks: { rel: 'by', dir: 'in' } }] }).insights.filter(i => i.type === 'gap');
+  assert.equal(gaps.length, 2); assert.notEqual(gaps[0].id, gaps[1].id);
+  const links = I.analyze(snap, { links: [{ id: 'one', kinds: ['paper', 'paper'] }, { id: 'two', kinds: ['paper', 'paper'] }] }).insights.filter(i => i.type === 'link');
+  assert.equal(new Set(links.map(i => i.id)).size, links.length, 'every link insight has its own id');
+  assert.equal(links.length, 6, 'three pairs for each of the two rules');
+  const ledger = I.track({}, gaps, Date.UTC(2026, 10, 20));
+  assert.deepEqual([ledger.moved.new.length, Object.keys(ledger.state).length], [2, 2], 'the ledger holds one entry for each rule, not one for both');
+});

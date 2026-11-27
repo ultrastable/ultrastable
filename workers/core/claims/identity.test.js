@@ -45,14 +45,21 @@ test('US-08-R14: a card with neither a line, an env probe nor a pattern is rerou
   assert.deepEqual(r.rerouted, [{ card: 'loose', item: 'REROUTE-loose' }]);
 });
 
-test('US-08-R23: claims and trust report the same cards_without_identity_line count over a mixed set', async () => {
+test('US-08-R23: claims and trust report the same cards_without_identity_line count over a mixed set of stored-line and env: cards', async () => {
   const { ctx } = mk();
   await ctx.db.prepare(`INSERT INTO gate_cards (id, what, why_gated, default_in_effect, closing_probe) VALUES ('a','x','vague','none','manual'), ('b','y','vague','none','env:KEY_B'), ('e','w','vague','none','manual')`).run();
   await open(ctx, 'c', { identity_bound_line: 'Owner account.' });
   assert.deepEqual((await gate.cardsWithoutIdentityLine(ctx)).map(c => c.id), ['a', 'e']);
   assert.equal(await trust.cardsWithoutIdentityLine(ctx.db), 2);
-  // claims also accepts a line written into why_gated text (a card another module filed with no stored line); trust does not
+});
+
+// A recorded deviation, asserted so that it cannot change unseen: the why_gated text rule is held by claims only. When core/trust adopts it,
+// this test is rewritten to expect agreement and US-08-R23 is BUILT in both modules (integration request to cluster C).
+test('US-08-R23 deviation: a line written only into why_gated text counts for claims but not for core/trust, and trust.rerouteUnbound moves that card', async () => {
+  const { ctx } = mk();
   await ctx.db.prepare(`INSERT INTO gate_cards (id, what, why_gated, default_in_effect, closing_probe) VALUES ('d','z','This is irreversible and identity-bound.','none','manual')`).run();
-  assert.deepEqual((await gate.cardsWithoutIdentityLine(ctx)).map(c => c.id), ['a', 'e']);
-  assert.equal(await trust.cardsWithoutIdentityLine(ctx.db), 3);
+  assert.deepEqual((await gate.cardsWithoutIdentityLine(ctx)).map(c => c.id), []);
+  assert.equal(await trust.cardsWithoutIdentityLine(ctx.db), 1);
+  assert.deepEqual(await trust.rerouteUnbound(ctx.db, { now: ctx.now() }), [{ card: 'd', item: 'REROUTE-d' }]);
+  assert.equal((await all(ctx, `SELECT status FROM gate_cards WHERE id = 'd'`))[0].status, 'closed');
 });

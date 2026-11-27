@@ -1,8 +1,9 @@
 {
   "id": "social",
   "name": "Social posting",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "class": "B",
+  "covers": ["outreach"],
   "scope": {
     "does": [
       "Writes short public posts from the organization's own published claims that are fresh, each sentence tied to a claim id",

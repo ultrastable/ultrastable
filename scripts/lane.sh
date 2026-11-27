@@ -17,10 +17,12 @@ echo "lane: workflow credential: $wf_source"
 # LANE-FAST-1: LANE_ONLY_PR restricts the pass to the PR whose checks run is merging it (the checks workflow's lane job); the lane workflow sweeps all.
 for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[].number'); do
   if [ -n "${LANE_ONLY_PR:-}" ] && [ "$n" != "$LANE_ONLY_PR" ]; then continue; fi
-  v=$(gh pr view "$n" -R "$repo" --json isDraft,headRefName,headRefOid,labels,mergeable,updatedAt,files)
+  v=$(gh pr view "$n" -R "$repo" --json isDraft,headRefName,headRefOid,labels,mergeable,updatedAt,files,comments)
   draft=$(jq -r .isDraft <<<"$v"); sha=$(jq -r .headRefOid <<<"$v"); br=$(jq -r .headRefName <<<"$v")
   labels=",$(jq -r '[.labels[].name]|join(",")' <<<"$v"),"; mg=$(jq -r .mergeable <<<"$v")
   case "$labels" in *,hold,*) echo "#$n hold"; continue;; esac
+  # HOLD-LABEL-1 (US-33-R13): a comment whose text starts with HOLD: holds here too, as it does in the tick Worker's lane
+  if jq -e '[.comments[]? | (.body // "") | select(startswith("HOLD:"))] | length > 0' <<<"$v" >/dev/null; then echo "#$n HOLD"; continue; fi
   # A PR needs the workflow credential when it carries the label or its file list touches a workflow.
   wf=false
   case "$labels" in *,needs-pat,*) wf=true;; esac
@@ -133,6 +135,8 @@ lane: held on a High finding. SERVER-OWNS-LOOPS: the server lands a superseding 
 done
 # PR-BOUND-1: a PR the pass above could not merge or repair is closed past its bound (branch kept), so none waits for hours.
 python3 -m foundation prbound --apply || echo "prbound failed (rc $?)"
+# PR-NEVER-LOSE-1: a pull request automation closed that main still lacks is reopened once, when it no longer conflicts (foundation/prsafe.py)
+python3 -m foundation prsafe --recover --apply || echo "prsafe recover failed (rc $?)"
 echo "lane: needs-pat merged=$wf_merged waiting=$wf_waiting credential=$wf_source"
 # SERVER-OWNS-LOOPS: adopt what is still open and not mergeable and commit the queue items to main, so the executor sees them on its next run
 # (it starts from every finished lane). Runs only inside the lane workflow, or where LANE_ADOPT=1 is set by another server-side host.

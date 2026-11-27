@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-mergeaudit-2545",
+  "title": "Q-CIFAIL-mergeaudit-2545: PR #2545 merged without a green checks run",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 2545\n**Status:** closed\n\nMERGE-AUDIT-1: PR #2545 (Product manager pass: 0 growth and repair item(s) filed) merged at 2026-11-26T17:45:35Z with its `checks` run at `failure` on head 3e34538. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.\n\n**Vacuous:** 2026-11-26T21:41:48Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n**Disposition:** shelved (ttl, 2026-11-27T03:38:15Z, DISPOSE-1)\n\n**Evidence:** open 6.1 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

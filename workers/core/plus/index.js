@@ -211,7 +211,7 @@ export async function proposePlus(db, x, { config } = {}) {
   const seed = await first(db, `SELECT id FROM plus_ledger WHERE product = ? AND status = 'proposed' ORDER BY id DESC LIMIT 1`, x.product);
   const cols = [kind, x.title, x.evidence ?? null, predicted, pr.metric, pr.direction, pr.size, min_gain, guard, x.angle, x.doer, x.revert_path, window_h];
   let id;
-  if (seed) { id = seed.id; await run(db, `UPDATE plus_ledger SET kind=?, title=?, evidence=COALESCE(?, evidence), predicted_outcome=?, metric=?, direction=?, size=?, min_gain=?, guard=?, angle=?, doer=?, revert_path=?, window_h=?, status='filed' WHERE id=?`, ...cols, id); }
+  if (seed) { id = seed.id; await run(db, `UPDATE plus_ledger SET kind=?, title=?, evidence=COALESCE(?, evidence), predicted_outcome=?, metric=?, direction=?, size=?, min_gain=?, guard=?, angle=?, doer=?, revert_path=?, window_h=?, status='filed', created_at=? WHERE id=?`, ...cols, iso(now), id); }   // created_at is the day the plus is filed: the daily cap (US-04-R16) counts it today, not on the day its seed was proposed
   else id = (await run(db, `INSERT INTO plus_ledger (product, kind, title, evidence, predicted_outcome, metric, direction, size, min_gain, guard, angle, doer, revert_path, window_h, status, created_at)
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'filed',?)`, x.product, ...cols, iso(now))).meta.last_row_id;
   const issue = `PLUS-${x.product}-${id}`;
@@ -234,6 +234,13 @@ export async function shipPlus(db, id, { evidence, now = Date.now(), config } = 
   return { id, baseline: base, guard_baseline: gbase, due_at: iso(now + l.window_h * HOUR) };
 }
 
+// US-04-R09: a value that moved by at least the fraction m of the baseline's size in the given direction, and moved at all. A baseline of 0 has no
+// relative gain to measure, so only a strict move away from it counts (0 to 0 is no gain, never a pass), and a negative baseline is measured by its
+// magnitude, so a worse value is never read as a gain.
+const movedBy = (direction, baseline, after, m) => direction === 'down'
+  ? after < baseline && after <= baseline - Math.abs(baseline) * m
+  : after > baseline && after >= baseline + Math.abs(baseline) * m;
+
 // Step 410: after the window, keep or revert. An unmeasured reading is never a pass (US-04-R09).
 export async function decidePlus(db, id, { now = Date.now(), config } = {}) {
   const c = cfg(config), l = await first(db, `SELECT * FROM plus_ledger WHERE id = ?`, id);
@@ -250,9 +257,9 @@ export async function decidePlus(db, id, { now = Date.now(), config } = {}) {
       done_check: `fresh readings of ${l.metric} and ${l.guard} exist for ${l.product}`, closing_probe: `plus ${id} decided` });
     return { id, status: 'shipped', verdict: 'unmeasured', outcome: null };
   }
-  const gained = !unmeasured && (l.direction === 'down' ? after <= l.baseline * (1 - l.min_gain) : after >= l.baseline * (1 + l.min_gain));
+  const gained = !unmeasured && movedBy(l.direction, l.baseline, after, l.min_gain);
   const guardOk = !unmeasured && (p.quality_direction === 'higher' ? gafter >= l.guard_baseline - c.guard_tolerance : gafter <= l.guard_baseline + c.guard_tolerance);
-  const hit = unmeasured ? null : (l.direction === 'down' ? after <= l.baseline * (1 - l.size) : after >= l.baseline * (1 + l.size)) ? 1 : 0;
+  const hit = unmeasured ? null : movedBy(l.direction, l.baseline, after, l.size) ? 1 : 0;
   const cycles = l.kind === 'simplify' ? 0 : p.pluses_since_simplify + 1;
   if (gained && guardOk) { // step 412: kept, misses reset, the next plus is seeded from this one
     await run(db, `UPDATE plus_ledger SET status='kept', verdict='kept', outcome=?, guard_outcome=?, prediction_hit=?, decided_at=? WHERE id=?`, after, gafter, hit, nowIso, id);

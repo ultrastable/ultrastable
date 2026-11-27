@@ -154,26 +154,43 @@ export async function datagraphStep({ db, config = {}, ensureItem, now = Date.no
 
 // Read side. Every query is bounded and by key or index, except the label search, which is capped.
 // Privacy (§7 outranks reach): the graph holds rows of every table, so what it shows depends on who asks. `open` (the owner's bearer) sees everything.
-// Anyone else sees counts, the series and the orphan and fragmentation findings (which carry only kinds and numbers), and records only of the kinds a
-// system declares public in config.knowledge_graph.public_kinds; every other record is shown as "a <kind> record", never its label, id or fields.
+// Anyone else sees counts (per kind, under the kind's name), the series and the orphan and fragmentation findings (which carry only kinds and numbers),
+// and records only of the kinds a system declares public in config.knowledge_graph.public_kinds; every other record is shown as "a <kind> record",
+// never its label, id or fields. The names of the tables left out as secret or personal and the read errors (a table name and the database's own
+// message) are the owner's too: a stranger gets their number.
 const pub = (kinds, k) => Array.isArray(kinds) && kinds.includes(k);
+const kindOfId = id => String(id || '').slice(0, String(id || '').indexOf(':'));
 const veil = (kinds, x) => (pub(kinds, x.kind) ? x : { kind: x.kind, label: `a ${x.kind} record`, redacted: true, ...Object.fromEntries(Object.entries(x).filter(([k]) => !['id', 'label', 'props', 'kind', 'via', 'why'].includes(k))) });
+const count = x => (Array.isArray(x) ? x.length : 0);
 export async function readGraph(db, { open = false, publicKinds = [] } = {}) {
   await ensure(db);
   const r = await db.prepare(`SELECT summary FROM kg_runs ORDER BY at DESC LIMIT 1`).first();
   const series = (await all(db, `SELECT at, summary FROM kg_runs ORDER BY at DESC LIMIT 60`)).map(x => { const s = JSON.parse(x.summary); return { at: x.at, nodes: s.nodes, edges: s.edges, components: s.components, orphans: s.orphans }; }).reverse();
   let last = r ? JSON.parse(r.summary) : null;
-  if (last && !open) last = { ...last, hubs: (last.hubs || []).map(h => veil(publicKinds, h)), bridges: (last.bridges || []).map(b => veil(publicKinds, b)), communities: (last.communities || []).map(c => ({ size: c.size, kinds: c.kinds })) };
+  if (last && !open) last = { ...last, hubs: (last.hubs || []).map(h => veil(publicKinds, h)), bridges: (last.bridges || []).map(b => veil(publicKinds, b)), communities: (last.communities || []).map(c => ({ size: c.size, kinds: c.kinds })),
+    read_errors: count(last.read_errors), ...(last.dropped ? { dropped: { ...last.dropped, tables: count(last.dropped.tables) } } : {}) };
   return { built: Boolean(r), view: open ? 'owner' : 'public', last, series };
 }
+// A link insight (id `link:<src>|<dst>`, subject <src>) names both ends of its pair in its id, text, prediction and probe, and its text and the `why`
+// of a lead name the labels of the neighbours the pair shares, which may be of any kind. A stranger sees a link insight or a lead only when both ends
+// are public kinds, and its words carry the number of shared neighbours, never their labels.
+const linkOther = i => { const p = `link:${i.subject}|`; return String(i.id || '').startsWith(p) ? String(i.id).slice(p.length) : null; };
+const sharedCount = text => { const m = /share (\d+) shared neighbours/.exec(String(text || '')); return m ? Number(m[1]) : null; };
+const publicLinkText = (src, dst, n) => `${src} and ${dst} share ${n == null ? 'neighbours' : `${n} shared neighbours`} but are not linked. A lead, not a fact: it is kept only if the data later links them.`;
+const publicWhy = why => (why == null ? why : String(why).split(' (')[0]);
 export async function readInsights(db, { limit = 50, open = false, publicKinds = [] } = {}) {
   await ensure(db);
   let insights = await all(db, `SELECT id, kind, subject, text, score, prediction, probe, state, first_seen, last_seen, item_id FROM kg_insights WHERE state='open' ORDER BY score DESC, id LIMIT ?`, Math.min(200, limit));
   let proposals = await all(db, `SELECT src, dst, why, confidence, first_seen FROM kg_edges WHERE status='proposed' AND valid_to IS NULL ORDER BY confidence DESC LIMIT 50`);
   if (!open) {
-    const kindOfId = id => String(id || '').slice(0, String(id || '').indexOf(':'));
-    insights = insights.filter(i => i.kind === 'orphans' || i.kind === 'fragmenting' || pub(publicKinds, kindOfId(i.subject)));
-    proposals = proposals.filter(p => pub(publicKinds, kindOfId(p.src)) && pub(publicKinds, kindOfId(p.dst)));
+    insights = insights.filter(i => {
+      if (i.kind === 'orphans' || i.kind === 'fragmenting') return true;
+      if (!pub(publicKinds, kindOfId(i.subject))) return false;
+      if (i.kind !== 'link') return true;
+      const other = linkOther(i);
+      return other != null && pub(publicKinds, kindOfId(other));
+    }).map(i => (i.kind === 'link' ? { ...i, text: publicLinkText(i.subject, linkOther(i), sharedCount(i.text)) } : i));
+    proposals = proposals.filter(p => pub(publicKinds, kindOfId(p.src)) && pub(publicKinds, kindOfId(p.dst))).map(p => ({ ...p, why: publicWhy(p.why) }));
   }
   return { view: open ? 'owner' : 'public', insights, proposals };
 }

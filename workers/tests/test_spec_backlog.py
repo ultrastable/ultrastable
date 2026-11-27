@@ -33,6 +33,18 @@ SPEC = """# US-SPEC-07: Example
 """
 
 
+BULLETS = """# US-SPEC-05: Bullets
+
+## 9. Implementation status
+
+- BUILT: the tick (`core/src/tick.js`)
+- PLANNED: the review gate for protected paths
+- **PLANNED** the second route, no colon in this one
+- RUNNING: the nightly sweep in the reference fleet; not generalized
+- A plain note that carries no label
+"""
+
+
 class SpecBacklog(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -75,3 +87,16 @@ class SpecBacklog(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BulletLabels(unittest.TestCase):
+    """A bullet whose status word stands in the head (before the first colon) is a status row too; reading only the text after the colon skipped every
+    '- PLANNED: ...' bullet, so the backlog's `remaining` number left them out (US-SPEC-05, 06, 07)."""
+
+    def test_a_label_in_the_head_of_a_bullet_counts(self):
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "US-SPEC-05-bullets.md").write_text(BULLETS, encoding="utf8")
+            rows = sb.collect(Path(d))
+        self.assertEqual([r["label"] for r in rows], ["BUILT", "PLANNED", "PLANNED", "RUNNING_ONLY"])
+        s = sb.summary(rows)
+        self.assertEqual((s["PLANNED"], s["RUNNING_ONLY"], s["remaining"]), (2, 1, 3))

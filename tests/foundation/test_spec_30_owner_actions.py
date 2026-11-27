@@ -79,13 +79,13 @@ class OwnerActRegister(unittest.TestCase):
                  {"id": "gh", "title": "Connect GitHub", "resolved_when": ["env:LANE_PAT", "http:https://x.test/connect/github ~ GitHub is connected"]},
                  {"id": "bsky", "title": "Bluesky", "resolved_when": ["http:https://x.test/b ~ Bluesky is connected"]}, {"id": "plain", "title": "Plain", "resolved_when": ["http:http://x.test/a ~ ok"]}, {"id": "keep", "title": "No evidence"}]
         data.write_text(json.dumps({"items": items, "done_for_you": []}))
-        pages = {"https://x.test/connect/github": "<h1>GitHub is connected</h1>", "https://x.test/b": "<h1>Connect Bluesky</h1>"}
+        pages = {"https://x.test/connect/github": "<h1>GitHub is connected</h1>", "https://x.test/b": "<h1>Connect Bluesky</h1>", "http://x.test/a": "ok"}  # the plain-http page DOES say ok: only the https rule keeps its item
         fetch = lambda url, text: text in pages.get(url, "")
         self.assertEqual(needsyou.settle(d, {}, data, fetch), ["gh"])
         self.assertEqual(needsyou.settle(d, {"GITHUB_ACTIONS": "false", "C": "x"}, data, fetch), [], "only the string true counts for a running job")
         self.assertEqual(needsyou.settle(d, {"GITHUB_ACTIONS": "true", "B": "v"}, data, fetch), ["run", "env"])
         left = json.loads(data.read_text())
-        self.assertEqual([i["id"] for i in left["items"]], ["bsky", "plain", "keep"], "an unread page, a plain-http page and an item with no evidence stay")
+        self.assertEqual([i["id"] for i in left["items"]], ["bsky", "plain", "keep"], "an unread page, a plain-http page (even one that answers with the text) and an item with no evidence stay")
         self.assertTrue(left["done_for_you"][0].startswith("Connect GitHub: settled 20") and "on its own evidence" in left["done_for_you"][0])
         self.assertEqual(json.loads((d / "doctrine/point-and-click.json").read_text())["connect_link"]["deep_link_baseline"], ["keep"], "the deep-link baseline shrinks with the item")
 
@@ -363,6 +363,18 @@ class PointAndClick(unittest.TestCase):
         self.assertEqual([e.split(": ")[0] for e in pointclick.check(self.tree(text, baseline=["docs/BOOTSTRAP-X.md:1"]))], ["docs/BOOTSTRAP-X.md:3"])
         self.assertEqual(pointclick.check(REPO), []); self.assertEqual(json.loads((REPO / "doctrine/point-and-click.json").read_text())["baseline"], [], "the baseline has shrunk to nothing")
         self.assertIn("seed/worker/src/**/*.js", json.loads((REPO / "doctrine/point-and-click.json").read_text())["scan_globs"])
+
+
+    @unittest.expectedFailure
+    def test_planned_the_ladder_card_texts_pass_the_no_token_prompt_patterns(self):
+        """Closing probe of the PLANNED part of US-SPEC-30 (no requirement id): no card of foundation/data/credential-routes.json tells a person to create, mint or set a token. Today
+        ORG-TOKEN and CF-TOKEN match the patterns of doctrine/point-and-click.json, and MODEL-KEY and SOC-ACCOUNTS read as the same kind of instruction; the file is not in scan_globs."""
+        import re
+        pol = json.loads((REPO / "doctrine/point-and-click.json").read_text()); pats = [re.compile(p, re.I) for p in pol["patterns"]]
+        for name, c in json.loads((REPO / "foundation/data/credential-routes.json").read_text())["credentials"].items():
+            card = c["card"]
+            self.assertFalse(any(p.search(card["what"]) for p in pats), card["id"] + ": " + card["what"])
+        self.assertIn("foundation/data/credential-routes.json", pol["scan_globs"])
 
 
 class UserBackend(unittest.TestCase):

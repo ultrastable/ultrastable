@@ -1,10 +1,10 @@
 {
- "at": "2026-11-25T18:04:29Z",
+ "at": "2026-11-26T17:49:38Z",
  "error": null,
- "intents": 75,
+ "intents": 101,
  "last_probe": {
   "python3 -m foundation blindspots --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation blindspots --check",
    "rc": 0,
    "result": "pass",
@@ -12,39 +12,71 @@
    "tail": "blindspots ok"
   },
   "python3 -m foundation claimcode --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation claimcode --check",
    "rc": 0,
    "result": "pass",
-   "seconds": 0.2,
+   "seconds": 0.5,
    "tail": "claimcode ok"
   },
   "python3 -m foundation claims --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation claims --check",
    "rc": 0,
    "result": "pass",
-   "seconds": 0.2,
-   "tail": "claims: 388 verified of 388; 0 drift"
+   "seconds": 0.3,
+   "tail": "claims: 432 verified of 432; 0 drift"
   },
   "python3 -m foundation closedloop --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation closedloop --check",
    "rc": 0,
    "result": "pass",
    "seconds": 0.3,
    "tail": "closedloop ok"
   },
+  "python3 -m foundation coherence --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation coherence --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.1,
+   "tail": "coherence: ok"
+  },
+  "python3 -m foundation coldstart --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation coldstart --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.7,
+   "tail": "coldstart ok: 13 capabilities carried by the seed, every named command resolves, agent files agree"
+  },
+  "python3 -m foundation collisions --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation collisions --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.1,
+   "tail": "collisions: ok (migration numbers unique, every migrations/index.json matches its directory)"
+  },
+  "python3 -m foundation configschema --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation configschema --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.4,
+   "tail": "configschema ok: 207 configs validate against their JSON Schema contracts"
+  },
   "python3 -m foundation criticality --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation criticality --check",
    "rc": 0,
    "result": "pass",
-   "seconds": 0.8,
+   "seconds": 1.0,
    "tail": "criticality ok: Ship. Verify. Spend less than it earns. Feed the next loop."
   },
   "python3 -m foundation datagraph --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation datagraph --check",
    "rc": 0,
    "result": "pass",
@@ -52,7 +84,7 @@
    "tail": "datagraph: ok (5 systems, core module vendored, seed step wired)"
   },
   "python3 -m foundation decisions --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation decisions --check",
    "rc": 0,
    "result": "pass",
@@ -60,7 +92,7 @@
    "tail": "decisions ok"
   },
   "python3 -m foundation design --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation design --check",
    "rc": 0,
    "result": "pass",
@@ -68,7 +100,7 @@
    "tail": "design ok: 1 portfolios, 3 products, every pair proven in both modes"
   },
   "python3 -m foundation directive --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation directive --check",
    "rc": 0,
    "result": "pass",
@@ -76,7 +108,7 @@
    "tail": "directive ok"
   },
   "python3 -m foundation dispose --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation dispose --check",
    "rc": 0,
    "result": "pass",
@@ -84,31 +116,46 @@
    "tail": "dispose ok"
   },
   "python3 -m foundation docs_audit --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation docs_audit --check",
-   "rc": 0,
-   "result": "pass",
-   "seconds": 77.5,
-   "tail": "docs-audit ok: {\"docs\": 506, \"consumed\": 506, \"orphans\": 0, \"tiers\": {\"import\": 5, \"registry\": 149, \"path\": 190, \"declared\": 4, \"knowledge\": 158}, \"removed\": 63, \"converted\": 0, \"human_action_docs\": 0}"
+   "result": "timeout",
+   "seconds": 90,
+   "tail": "no answer in 90 s"
   },
   "python3 -m foundation failure_audit --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation failure_audit --check",
    "rc": 0,
    "result": "pass",
    "seconds": 0.1,
    "tail": "failure-audit ok"
   },
+  "python3 -m foundation fleetcontract --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation fleetcontract --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.1,
+   "tail": "fleetcontract ok: every live system carries the contract module or has an open item, and the surface list is one list"
+  },
+  "python3 -m foundation fleetmap --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation fleetmap --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.1,
+   "tail": "fleetmap --check: 16 repositories, 0 problem(s)"
+  },
   "python3 -m foundation flows --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation flows --check",
    "rc": 0,
    "result": "pass",
    "seconds": 0.1,
-   "tail": "flows ok: 112 declared, 112 on a feedback cycle, 0 pending of 112 loops"
+   "tail": "flows ok: 120 declared, 120 on a feedback cycle, 0 pending of 120 loops"
   },
   "python3 -m foundation fullstack --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation fullstack --check",
    "rc": 0,
    "result": "pass",
@@ -116,7 +163,7 @@
    "tail": "fullstack ok: every system has a repository, a back end and a public front end, or an open item for the part it lacks"
   },
   "python3 -m foundation improve --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation improve --check",
    "rc": 0,
    "result": "pass",
@@ -124,7 +171,7 @@
    "tail": "improve: ok"
   },
   "python3 -m foundation insight --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation insight --check",
    "rc": 0,
    "result": "pass",
@@ -132,7 +179,7 @@
    "tail": "insight ok"
   },
   "python3 -m foundation intentyield --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation intentyield --check",
    "rc": 0,
    "result": "pass",
@@ -140,23 +187,39 @@
    "tail": "intentyield ok"
   },
   "python3 -m foundation lanewatch --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation lanewatch --check",
    "rc": 0,
    "result": "pass",
    "seconds": 0.7,
    "tail": "lanewatch ok"
   },
+  "python3 -m foundation livelinks --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation livelinks --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.1,
+   "tail": "livelinks ok: the README names where the platform and every system run"
+  },
   "python3 -m foundation loopowner --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation loopowner --check",
    "rc": 0,
    "result": "pass",
-   "seconds": 0.9,
+   "seconds": 1.1,
    "tail": "loopowner ok"
   },
+  "python3 -m foundation managers --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation managers --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.1,
+   "tail": "managers ok: every role is a loop with code, a clock, a probe and a settler, and names its human counterpart, decisions, inputs and hand-offs; every loop has a manager; every software function is covered or has a Q-ROLE item; the seed carries every manager"
+  },
   "python3 -m foundation metasignal --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation metasignal --check",
    "rc": 0,
    "result": "pass",
@@ -164,31 +227,47 @@
    "tail": "metasignal: OK"
   },
   "python3 -m foundation openloops --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation openloops --check",
    "rc": 0,
    "result": "pass",
-   "seconds": 2.3,
+   "seconds": 2.8,
    "tail": "openloops ok"
   },
+  "python3 -m foundation openstd --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation openstd --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.2,
+   "tail": "open standards ok"
+  },
   "python3 -m foundation pathfinder --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation pathfinder --check",
    "rc": 0,
    "result": "pass",
-   "seconds": 0.2,
+   "seconds": 0.1,
    "tail": "pathfinder ok"
   },
+  "python3 -m foundation phasework --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation phasework --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.1,
+   "tail": "phasework: ok"
+  },
   "python3 -m foundation pointclick --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation pointclick --check",
    "rc": 0,
    "result": "pass",
-   "seconds": 0.2,
+   "seconds": 0.3,
    "tail": "pointclick ok"
   },
   "python3 -m foundation progress --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation progress --check",
    "rc": 0,
    "result": "pass",
@@ -196,7 +275,7 @@
    "tail": "progress: check ok"
   },
   "python3 -m foundation promote --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation promote --check",
    "rc": 0,
    "result": "pass",
@@ -204,31 +283,47 @@
    "tail": "promote ok"
   },
   "python3 -m foundation provenance --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation provenance --check",
    "rc": 0,
    "result": "pass",
    "seconds": 0.1,
    "tail": "provenance ok"
   },
-  "python3 -m foundation research --check": {
-   "at": "2026-11-25T18:04:29Z",
-   "cmd": "python3 -m foundation research --check",
+  "python3 -m foundation repostd --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation repostd --check",
    "rc": 0,
    "result": "pass",
    "seconds": 0.1,
-   "tail": "research: 5 studies valid, page module current"
+   "tail": "repostd: 15 registered repositories, one standard (github/repo-standard.json); 0 problem(s). Live state: --live (unmeasured without a readable API)"
+  },
+  "python3 -m foundation research --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation research --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.2,
+   "tail": "research: 6 studies valid, page module current"
   },
   "python3 -m foundation rnd --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation rnd --check",
    "rc": 0,
    "result": "pass",
    "seconds": 0.1,
    "tail": "rnd ok"
   },
+  "python3 -m foundation rulerefs --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation rulerefs --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 3.1,
+   "tail": "rulerefs: 1508 references, 1456 resolve, 52 external with a reason, 0 with wrong rule text on record, 0 dangling; ok"
+  },
   "python3 -m foundation saydo --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation saydo --check",
    "rc": 0,
    "result": "pass",
@@ -236,7 +331,7 @@
    "tail": "saydo ok"
   },
   "python3 -m foundation scout --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation scout --check",
    "rc": 0,
    "result": "pass",
@@ -244,15 +339,39 @@
    "tail": "scout ok"
   },
   "python3 -m foundation serverside --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation serverside --check",
    "rc": 0,
    "result": "pass",
-   "seconds": 3.9,
+   "seconds": 5.3,
    "tail": "serverside ok"
   },
+  "python3 -m foundation specgate --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation specgate --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.1,
+   "tail": "specgate ok: every new open item has a done check, a prediction, an out-of-scope line and a live proof"
+  },
+  "python3 -m foundation standards --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation standards --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.6,
+   "tail": "standards ok"
+  },
+  "python3 -m foundation stdgen --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation stdgen --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.1,
+   "tail": "stdgen ok: catalog-info.yaml (Backstage) and sbom.cdx.json (CycloneDX 1.6) match the registers"
+  },
   "python3 -m foundation substance --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation substance --check",
    "rc": 0,
    "result": "pass",
@@ -260,7 +379,7 @@
    "tail": "substance: config and shared vectors ok"
   },
   "python3 -m foundation template --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation template --check",
    "rc": 0,
    "result": "pass",
@@ -268,7 +387,7 @@
    "tail": "template ok: code and agent instructions only (TEMPLATE-CODE-ONLY-1)"
   },
   "python3 -m foundation temporal --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation temporal --check",
    "rc": 0,
    "result": "pass",
@@ -276,7 +395,7 @@
    "tail": "temporal: ok"
   },
   "python3 -m foundation tenantpromo --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation tenantpromo --check",
    "rc": 0,
    "result": "pass",
@@ -284,15 +403,23 @@
    "tail": "tenantpromo: ok (0 problem(s))"
   },
   "python3 -m foundation tenantrepos --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation tenantrepos --check",
    "rc": 0,
    "result": "pass",
    "seconds": 0.1,
    "tail": "tenantrepos ok"
   },
+  "python3 -m foundation tenantstd --check": {
+   "at": "2026-11-26T17:49:38Z",
+   "cmd": "python3 -m foundation tenantstd --check",
+   "rc": 0,
+   "result": "pass",
+   "seconds": 0.1,
+   "tail": "tenantstd ok"
+  },
   "python3 -m foundation thought --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation thought --check",
    "rc": 0,
    "result": "pass",
@@ -300,7 +427,7 @@
    "tail": "thought: ok (0 problem(s))"
   },
   "python3 -m foundation trajectory --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation trajectory --check",
    "rc": 0,
    "result": "pass",
@@ -308,7 +435,7 @@
    "tail": "trajectory ok"
   },
   "python3 -m foundation uiux --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation uiux --check",
    "rc": 0,
    "result": "pass",
@@ -316,7 +443,7 @@
    "tail": "uiux ok: audits, paths, experiments and essential variables are declared and consumed"
   },
   "python3 -m foundation unattended --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation unattended --check",
    "rc": 0,
    "result": "pass",
@@ -324,7 +451,7 @@
    "tail": "unattended ok"
   },
   "python3 -m foundation unknowns --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation unknowns --check",
    "rc": 0,
    "result": "pass",
@@ -332,15 +459,15 @@
    "tail": "unknowns ok"
   },
   "python3 -m foundation userbackend --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation userbackend --check",
    "rc": 0,
    "result": "pass",
-   "seconds": 0.7,
+   "seconds": 0.9,
    "tail": "userbackend ok"
   },
   "python3 -m foundation yearsim --check": {
-   "at": "2026-11-25T18:04:29Z",
+   "at": "2026-11-26T17:49:38Z",
    "cmd": "python3 -m foundation yearsim --check",
    "rc": 0,
    "result": "pass",
@@ -348,6 +475,6 @@
    "tail": "yearsim ok"
   }
  },
- "probes_run": 43,
- "runs": 7
+ "probes_run": 59,
+ "runs": 8
 }

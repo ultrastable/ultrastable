@@ -107,7 +107,7 @@ test('US-03-R09: an item addressed to one role instance is dispatched to that in
   assert.ok(claim, 'the item was claimed'); assert.equal(claim.agent, 'product-manager-2');
 });
 
-test('US-03-R20 and issue #173: a claim released with no work is recorded, and the item is parked after max_unworked_releases', async () => {
+test('US-03-R25 and issue #173: a claim released with no work is recorded, and the item is parked after max_unworked_releases', async () => {
   const db = makeDb(); seed(db);
   const cfg = { ...config, max_unworked_releases: 2 };
   await runTick(db, { config: cfg, now: T0 });
@@ -122,7 +122,7 @@ test('US-03-R20 and issue #173: a claim released with no work is recorded, and t
   assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='A'").get().status, 'blocked', 'a parked item is not claimed again');
 });
 
-test('US-03-R20 and issue #173: a claim that was heartbeated is released without an unworked outcome', async () => {
+test('US-03-R25 and issue #173: a claim that was heartbeated is released without an unworked outcome', async () => {
   const db = makeDb(); seed(db);
   await runTick(db, { config, now: T0 });
   db.raw.exec("UPDATE claims SET heartbeat_at = datetime(claimed_at, '+1 minute')");
@@ -130,7 +130,7 @@ test('US-03-R20 and issue #173: a claim that was heartbeated is released without
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM outcomes WHERE result='unworked'").get().n, 0);
 });
 
-test('US-03-R19 and US-03-T07 (issue #173 execute): a dispatched item whose probe passes ends done with evidence in the same tick', async () => {
+test('US-03-R24 and US-03-T11 (issue #173 execute): a dispatched item whose probe passes ends done with evidence in the same tick', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('op-1','operations',1,'m');
     INSERT INTO items (id,title,owner_role,done_check,closing_probe,status) VALUES ('DEP','dep','nobody','x',NULL,'done');
@@ -147,7 +147,7 @@ test('US-03-R19 and US-03-T07 (issue #173 execute): a dispatched item whose prob
   assert.match(r.report, /executed: 1 done \(0 from parked\), 0 parked on a probe, 0 left for an executor/);
 });
 
-test('US-03-R19 and US-03-T07 (issue #173 execute): a failing probe parks the item with a reason, and it closes by itself when the probe passes', async () => {
+test('US-03-R24 and US-03-T11 (issue #173 execute): a failing probe parks the item with a reason, and it closes by itself when the probe passes', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('op-1','operations',1,'m');
     INSERT INTO items (id,title,owner_role,done_check,closing_probe,priority,status) VALUES ('E1','needs a setting','operations','setting present','env:SOME_SETTING',1,'ready'),
@@ -168,7 +168,7 @@ test('US-03-R19 and US-03-T07 (issue #173 execute): a failing probe parks the it
   assert.match(r.report, /\(1 from parked\)/);
 });
 
-test('US-03-R19 and US-03-T07 (issue #173 execute): an item with no machine-readable probe keeps its claim for an outside executor; a worked claim is not touched', async () => {
+test('US-03-R24 and US-03-T11 (issue #173 execute): an item with no machine-readable probe keeps its claim for an outside executor; a worked claim is not touched', async () => {
   const db = makeDb(); seed(db);
   db.raw.exec(`INSERT INTO items (id,title,owner_role,done_check,closing_probe,priority,status) VALUES ('W1','worked','operations','x','env:NOPE',1,'ready')`);
   const r = await runTick(db, { config: { ...config, execute_max_items: 0 }, now: T0 }); // nothing executed this tick: both stay claimed
@@ -180,7 +180,7 @@ test('US-03-R19 and US-03-T07 (issue #173 execute): an item with no machine-read
   assert.match(r2.report, /0 parked on a probe, 2 left for an executor/); // A and B wait for an executor; W1 is being worked
 });
 
-test('US-03-R04 and US-03-R19 (issue #173 execute): a TICKFAIL item closes when a later tick completes the step, and an unreadable SELECT probe parks instead of throwing', async () => {
+test('US-03-R04 and US-03-R24 (issue #173 execute): a TICKFAIL item closes when a later tick completes the step, and an unreadable SELECT probe parks instead of throwing', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('op-1','operations',1,'m');
     INSERT INTO items (id,title,kind,owner_role,done_check,priority,status,created_at) VALUES ('TICKFAIL-score_predictions-2026-11-09T23','failed','fix','operations','next tick completes step score_predictions',0,'ready','2026-11-09 23:00:00');
@@ -341,8 +341,8 @@ test('US-03-T03: with A ready, B open and C triggered by A, dispatch claims A on
   assert.equal(q1(db, "SELECT status FROM items WHERE id='B'").status, 'ready', 'B became ready by reconcile and waits for the next dispatch');
 });
 
-// ---- US-03-R18 and US-00-R07: documented defaults for the limits ----
-test('US-03-T10, US-03-R09 and US-03-R18: with a configuration that omits every limit a role is never given more than three claims and no step fails', async () => {
+// ---- US-03-R23 and US-00-R07: documented defaults for the limits ----
+test('US-03-T13, US-03-R09 and US-03-R23: with a configuration that omits every limit a role is never given more than three claims and no step fails', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('w-1','w',1,'m');
     INSERT INTO items (id,title,owner_role,done_check,priority,status) VALUES ${Array.from({ length: 6 }, (_, i) => `('W${i}','t','w','x',${i},'ready')`).join(',')}`);
@@ -352,7 +352,7 @@ test('US-03-T10, US-03-R09 and US-03-R18: with a configuration that omits every 
   assert.equal(DEFAULTS.max_wip_per_role, 3);
 });
 
-test('US-03-T10, US-03-R03 and US-03-R18, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted', async () => {
+test('US-03-T13, US-03-R03 and US-03-R23, US-00-R07: a claim older than the default 120 minutes is released with no TICKFAIL when claim_ttl_minutes is omitted', async () => {
   const db = makeDb(); seed(db);
   const bare = { policy };
   await runTick(db, { config: bare, now: T0 });
@@ -366,7 +366,7 @@ test('US-03-T10, US-03-R03 and US-03-R18, US-00-R07: a claim older than the defa
   assert.equal(DEFAULTS.claim_ttl_minutes, 120);
 });
 
-test('US-00-R07 and US-03-R18: a configured value overrides the default, an undefined value does not, and the caller configuration object is not changed', () => {
+test('US-00-R07 and US-03-R23: a configured value overrides the default, an undefined value does not, and the caller configuration object is not changed', () => {
   const given = Object.freeze({ claim_ttl_minutes: 5, max_wip_per_role: undefined, plus_share: 0, execute_max_items: 0, policy: { x: 1 } });
   const merged = withDefaults(given);
   assert.deepEqual([merged.claim_ttl_minutes, merged.max_wip_per_role, merged.plus_share, merged.execute_max_items], [5, 3, 0, 0]);
@@ -376,7 +376,7 @@ test('US-00-R07 and US-03-R18: a configured value overrides the default, an unde
   assert.ok(Object.isFrozen(DEFAULTS), 'the defaults cannot be edited at run time');
 });
 
-test('US-03-R18: an omitted plus_share still opens the rebalance item (the default 20 percent applies)', async () => {
+test('US-03-R23: an omitted plus_share still opens the rebalance item (the default 20 percent applies)', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('o-1','operations',1,'m')`);
   for (let i = 0; i < 12; i++) db.raw.exec(`INSERT INTO items (id,title,kind,owner_role,done_check,status,disposition) VALUES ('D${i}','d','fix','operations','x','done','shipped')`);
@@ -395,4 +395,38 @@ test('US-03-R11: the tick returns, for every step it ran, whether it completed a
   assert.equal(byName.dispatch.ok, 1); assert.match(byName.dispatch.evidence, /^dispatched \d+ item\(s\)$/);
   assert.equal(byName.score_predictions.ok, 0); assert.match(byName.score_predictions.evidence, /no such table: predictions/);
   assert.match(byName.probe_gates.evidence, /completed/);
+});
+
+test('US-08-R03: a ready item whose trigger item is not done is not dispatched; one whose trigger is done with its disposition is; list and gate triggers are left to core/claims', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('staff-1','staff',1,'m');
+    INSERT INTO items (id,title,owner_role,done_check,priority,status) VALUES ('A','a','staff','x',50,'open');
+    INSERT INTO items (id,title,owner_role,done_check,priority,status,trigger_on) VALUES ('C','c','staff','x',10,'ready','A'), ('L','l','staff','x',20,'ready','A,B'), ('G','g','staff','x',30,'ready','gate:card-1');`);
+  // C was made ready by hand while its trigger A is still open: it must not go first although it has the best priority
+  await runTick(db, { config, now: T0 });
+  const claimed = () => db.raw.prepare('SELECT item_id FROM claims ORDER BY item_id').all().map(x => x.item_id);
+  assert.deepEqual(claimed(), ['L'], 'C waits for A; the list trigger is judged by core/claims, so L is dispatched');
+  // the trigger is reopened after it was done: still not dispatched
+  db.raw.exec(`DELETE FROM claims; UPDATE items SET status='done', disposition='merged' WHERE id='A'; UPDATE items SET status='ready' WHERE id='L'`);
+  db.raw.exec(`UPDATE items SET status='open' WHERE id='A'`);
+  await runTick(db, { config, now: T0 + 60e3 });
+  assert.ok(!claimed().includes('C'), 'a reopened trigger holds its dependent back');
+  // the trigger done with a disposition releases it
+  db.raw.exec(`DELETE FROM claims; UPDATE items SET status='ready' WHERE id='L'; UPDATE items SET status='done', disposition='merged' WHERE id='A'`);
+  await runTick(db, { config, now: T0 + 120e3 });
+  assert.deepEqual(claimed(), ['C']);
+});
+
+test('US-14-R11: a dispatcher that loses the race for a claim skips the item: one claim, one dispatch row, the item untouched', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('staff-1','staff',1,'m');
+    INSERT INTO items (id,title,owner_role,done_check,priority,status) VALUES ('A','a','staff','x',10,'ready');`);
+  const prepare = db.prepare.bind(db);
+  // the other writer's row lands between this dispatcher's read and its insert
+  db.prepare = sql => { if (/^INSERT OR IGNORE INTO claims/.test(sql)) db.raw.exec(`INSERT OR IGNORE INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES ('A', 'other-writer', '2026-11-10 00:00:00', '2026-11-10 00:00:00')`); return prepare(sql); };
+  const r = await runTick(db, { config, now: T0 });
+  assert.deepEqual(r.errors, [], 'no unique violation fails the step');
+  assert.deepEqual(db.raw.prepare('SELECT item_id, agent FROM claims').all().map(x => [x.item_id, x.agent]), [['A', 'other-writer']]);
+  assert.equal(db.raw.prepare('SELECT COUNT(*) AS n FROM dispatches').get().n, 0, 'no dispatch row for a claim this dispatcher does not hold');
+  assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='A'").get().status, 'ready', 'the item is not changed by the dispatcher that lost');
 });

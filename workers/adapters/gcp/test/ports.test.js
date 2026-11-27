@@ -84,7 +84,7 @@ test('lock port: exclusive per unit, independent across units, expires, releases
   db.close();
 });
 
-test('deployer port: a passing probe keeps the Cloud Run revision and releases the lock', async () => {
+test('US-14-R08: a passing probe keeps the Cloud Run revision and releases the lock', async () => {
   const { d, run, db } = setup();
   const r = await d.deploy({ unit: 'api', artifact: art('rev-x'), expectedVersion: 'rev-1', actor: 'agent-a' });
   assert.equal(r.status, 'kept');
@@ -96,7 +96,7 @@ test('deployer port: a passing probe keeps the Cloud Run revision and releases t
   db.close();
 });
 
-test('deployer port: a failing probe rolls Cloud Run traffic back to the previous revision', async () => {
+test('US-14-T05 and US-14-R08: a failing probe rolls Cloud Run traffic back to the previous revision', async () => {
   const { d, run, db } = setup();
   run.healthy = false;
   const r = await d.deploy({ unit: 'api', artifact: art('rev-x'), expectedVersion: 'rev-1', actor: 'a' });

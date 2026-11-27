@@ -25,7 +25,7 @@ BUILT means implemented here and covered by a passing test in `governance.test.j
 |---|---|---|
 | US-07-R01 amendment increments a version recorded in lineage | BUILT for register amendments | `adopt` (reviewer must differ from author). Amendments to the policy file or role files travel the repository's review path, not this function |
 | US-07-R02 red-team by a second model and replay before adoption | BUILT | `redTeam` (different family required), `replay` (stored scans of 7 days, ticks counted) |
-| US-07-R03, R04 amendment touching a protected limit or commitment rejected without replay | BUILT | `protectedProblems` (structured targets and rule text), run by code before any model |
+| US-07-R03, R04 amendment touching a protected limit or commitment rejected without replay | BUILT | `protectedProblems` (structured targets and rule text; removing a phrase from, deactivating or weakening the weight of a commitment's signature are modifications), run by code before any model |
 | US-07-R05 exclusions: refusal with reason, interrupt-eligible, other agent's live claim | BUILT | `recognize` (the refusal and the gate state come in `ctx`; the claim is read from `claims`) |
 | US-07-R06 rewritten output true when emitted | BUILT | `recognize`: a statement is emitted only from a verified result with something to read back; otherwise dispatch or open item |
 | US-07-R07 every hit recorded | BUILT | `governance_false_stop_hits`, `governance_scans` |
@@ -39,6 +39,7 @@ BUILT means implemented here and covered by a passing test in `governance.test.j
 | Classifier-port matching | BUILT as a port | `recognize({ classifier })`; no classifier model ships |
 | Threshold proposals (3 in 7 days from one source, friction once), weekly audit item | BUILT | `scanThresholds`, `auditItem` |
 | Event-weighted trust deductions per recognition | BUILT | `governance_deductions` and the `deduct` port (wired to `core/trust` in the test) |
-| Section 3.1 rates (false-stop, conditional-offer, question, actor-assignment, narration) | BUILT as a read | `rates`; triggers on them are not registered; self-adoption rate is NOT COVERED |
-| Daily goal cycle: signal gathering and candidate synthesis | NOT COVERED | needs a model; `adoptGoals` takes candidates as input |
-| Gathering principal messages and agent outputs to scan | NOT COVERED | the caller passes each draft to `preEmit` or `recognize` |
+| US-07-R22 rates and the self-adoption rate, each with a trigger | BUILT | `rates`, `selfAdoptionRate`, `checkRates` (`triggers.js`): a breach files one item per number and day, an unmeasured number files nothing |
+| US-07-R23 recognition scan over declared sources, each draft once | BUILT | `scanSources` (`scan.js`), table `governance_scan_cursor` (`migrations/0002_scan.sql`) |
+| US-07-R24 daily goal cycle: signals become falsifiable candidates before adoption | BUILT | `goalCycle`; an optional `synthesize` port adds model candidates |
+| Model ports (`generate`, `redteam`, `classifier`, `revise`) over the model ladder | BUILT with a fake fetch | `model-ports.js` (`createModelPorts`), `model-ports.test.js`; running it live needs a provider key and a deployed organization and stays PLANNED (probe: `SELECT COUNT(*) FROM router_calls WHERE kind='reviewer' AND outcome='ok'` > 0 on that account) |

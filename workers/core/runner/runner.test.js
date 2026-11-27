@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// Tests for core/runner (US-SPEC-11, with US-SPEC-02, 05, 08, 09, 15 s5.3). Fake vcs and fake router; no network.
+// Tests for core/runner (US-SPEC-10, with US-SPEC-02, 05, 08, 09, 15 s5.3). Fake vcs and fake router; no network.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -47,7 +47,7 @@ test('happy path: planned to a DRAFT pull request, with real check results, neve
   assert.equal(router.requests[0].rung, 'medium');
 });
 
-test('doer output on a protected path is refused: decision card, nothing pushed', async () => {
+test('US-07-R09: doer output on a protected path is refused: decision card, nothing pushed', async () => {
   for (const p of ['LICENSE', 'autonomy/policy.json', '.github/workflows/ci.yml', 'core/test/no-qnfo.test.js', 'SCOPE.md', 'self/IDEA.md', 'COMMERCIAL-TERMS.md']) {
     const { db, runner, vcs } = setup({ script: { doer: [goodPatch(p)] } });
     await until(runner, db, () => done(db));
@@ -59,7 +59,7 @@ test('doer output on a protected path is refused: decision card, nothing pushed'
   }
 });
 
-test('an item whose target is protected never reaches the doer; config can add protected paths but not remove them', async () => {
+test('US-07-R09: an item whose target is protected never reaches the doer; config can add protected paths but not remove them', async () => {
   const { db, runner, router } = setup({ files: { LICENSE: 'x' } });
   db.raw.prepare(`UPDATE items SET done_check = 'target: LICENSE'`).run();
   await runner.step();
@@ -170,7 +170,7 @@ test('invalid doer JSON is retried, then refused after the limit', async () => {
   assert.match(parseDoerOutput('{"summary":"s","files":[],"x":1}', { max_files: 5, max_file_bytes: 10 }).error, /unexpected keys/);
 });
 
-test('the reviewer is a different family than the doer (real router, fake fetch)', async () => {
+test('US-10-R10 the reviewer is a different family than the doer (real router, fake fetch)', async () => {
   const config = JSON.parse(readFileSync(new URL('../router/example-config.json', import.meta.url), 'utf8'));
   const env = { PROVIDER_A_API_KEY: 'sk-test-aaaa1111', PROVIDER_B_API_KEY: 'sk-test-bbbb2222' };
   const text = { doer: goodPatch(), reviewer: approve };
@@ -238,7 +238,7 @@ test('max work in progress, enabled flag and staff-only selection', async () => 
   assert.equal((await off.runner.startRun('US-SPEC-11-1')).ok, true); // an explicit start still works
 });
 
-test('an item already claimed by someone else is not taken; priority order is respected', async () => {
+test('US-07-R09 (no claim, no change): an item already claimed by someone else is not taken; priority order is respected', async () => {
   const { db, runner } = setup({ extraItems: ['US-SPEC-11-2'] });
   db.raw.prepare(`UPDATE items SET priority = 50 WHERE id = 'US-SPEC-11-1'`).run();
   await runner.step();

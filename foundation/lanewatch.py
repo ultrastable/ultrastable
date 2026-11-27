@@ -17,10 +17,17 @@ def green(pr: dict) -> bool:
 LATENCY_MINUTES = 3  # LANE-LATENCY-1: a green PR waits at most this long; was 30
 
 
+def held(pr: dict) -> bool:
+    """HOLD-LABEL-1 (US-33-R13): a pull request labelled `hold`, or carrying a comment whose text starts with `HOLD:`, is held on purpose. The lane
+    (scripts/lane.sh) holds it, and so must the remediation that runs after it in the same workflow run, or the hold is undone three minutes later."""
+    labels = {l["name"] if isinstance(l, dict) else l for l in pr.get("labels") or []}
+    return "hold" in labels or any(str((c or {}).get("body") or "").startswith("HOLD:") for c in pr.get("comments") or [] if isinstance(c, dict))
+
+
 def classify(prs: list[dict], now: datetime, minutes: int = LATENCY_MINUTES) -> list[dict]:
     out = []
     for pr in prs:
-        if pr.get("isDraft") or pr.get("mergeable") != "MERGEABLE" or not green(pr):
+        if pr.get("isDraft") or pr.get("mergeable") != "MERGEABLE" or not green(pr) or held(pr):
             continue
         age = (now - datetime.fromisoformat(pr["updatedAt"].replace("Z", "+00:00"))).total_seconds() / 60
         if age < minutes:
@@ -33,7 +40,7 @@ def classify(prs: list[dict], now: datetime, minutes: int = LATENCY_MINUTES) -> 
 
 def main(argv) -> int:
     minutes = int(argv[argv.index("--minutes") + 1]) if "--minutes" in argv else LATENCY_MINUTES
-    raw = subprocess.run(["gh", "pr", "list", "--state", "open", "--limit", "100", "--json", "number,isDraft,mergeable,labels,updatedAt,statusCheckRollup,headRefOid"], capture_output=True, text=True)
+    raw = subprocess.run(["gh", "pr", "list", "--state", "open", "--limit", "100", "--json", "number,isDraft,mergeable,labels,comments,updatedAt,statusCheckRollup,headRefOid"], capture_output=True, text=True)
     if raw.returncode:
         print("lanewatch: gh failed: " + raw.stderr[-300:]); return 2
     stuck = classify(json.loads(raw.stdout), datetime.now(timezone.utc), minutes)

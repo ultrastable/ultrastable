@@ -23,9 +23,46 @@ const strs = v => (Array.isArray(v) ? v.map(String) : []);
 const WRITE_RE = /\b(?:insert\s+(?:or\s+\w+\s+)?into|replace\s+into|update|delete\s+from)\s+["'`]?([A-Za-z_][A-Za-z0-9_]*)/gi;
 const READ_RE = /\b(?:from|join)\s+["'`]?([A-Za-z_][A-Za-z0-9_]*)/gi;
 const NOT_TABLES = new Set(['select', 'set', 'values', 'where', 'the', 'a', 'an', 'this', 'that', 'it', 'sqlite_master', 'json_each']);
-/** Tables a script writes and reads, from the SQL in its text. `DELETE FROM t` is a write, not a read. */
-export function extractTableAccess(text) {
+/**
+ * Source text without its comments, read by a small scanner that knows where strings are: a block comment or `//` comment that
+ * begins outside a string is removed, and one that begins inside a string (a route such as '/api/*', a URL) is text. A line that
+ * begins with a comment marker (`*`, `#`, `--`) outside a string is dropped, as is a line of a template literal that begins with
+ * `--` (an SQL comment). Prose such as "sent from users" in a comment is therefore not read as a table, and SQL inside strings and
+ * template literals still is. A quote opened and never closed ends at the end of its line; a template literal runs to its closing backtick.
+ */
+export function stripComments(text) {
   const src = String(text || '');
+  let out = '', i = 0, q = null, atStart = true;
+  const skipLine = () => { while (i < src.length && src[i] !== '\n') i++; };
+  while (i < src.length) {
+    const c = src[i], d = src[i + 1];
+    if (c === '\n') { if (q && q !== '`') q = null; out += c; i++; atStart = true; continue; }
+    if (atStart && /[ \t]/.test(c)) { out += c; i++; continue; }
+    if (atStart) {
+      const rest = src.slice(i, i + 2);
+      if (q === '`' ? rest === '--' : (c === '*' || c === '#' || rest === '--') && !q) { skipLine(); continue; }
+      atStart = false;
+    }
+    if (q) {
+      if (c === '\\' && d !== undefined && d !== '\n') { out += c + d; i += 2; continue; }
+      if (c === q) q = null;
+      out += c; i++; continue;
+    }
+    if (c === '"' || c === "'" || c === '`') { q = c; out += c; i++; continue; }
+    if (c === '/' && d === '*') {
+      const end = src.indexOf('*/', i + 2);
+      const stop = end < 0 ? src.length : end + 2;
+      out += src.slice(i, stop).replace(/[^\n]/g, ' ');   // keep line breaks so line-start rules still see real lines
+      i = stop; continue;
+    }
+    if (c === '/' && d === '/') { skipLine(); continue; }
+    out += c; i++;
+  }
+  return out;
+}
+/** Tables a script writes and reads, from the SQL in its text (comments excluded). `DELETE FROM t` is a write, not a read. */
+export function extractTableAccess(text) {
+  const src = stripComments(text);
   const writes = new Set(), reads = new Set();
   for (const m of src.matchAll(WRITE_RE)) if (!NOT_TABLES.has(m[1].toLowerCase())) writes.add(m[1]);
   // module syntax (`import x from './y.js'`, `export * from`) and `DELETE FROM t` are not reads
@@ -73,16 +110,16 @@ export async function sweep(ctx) {
 
 // ---- analyzer (US-12-R11, R12) -----------------------------------------------------------------
 
-/** Pure graph analysis: nodes are worker names, edges are distinct (caller, callee) pairs. */
+/** Pure graph analysis: nodes are worker names, edges are distinct (caller, callee) pairs; `density_nodes` is the node set the density is taken over. */
 export function analyzeGraph(nodes, edges, registryNames = []) {
   const n = new Set(nodes), reg = new Set(registryNames);
-  const seen = new Set(), inDeg = new Map(), outDeg = new Map(), unresolved = new Set();
+  const seen = new Set(), inDeg = new Map(), outDeg = new Map(), unresolved = new Set(), dense = new Set(n);
   let count = 0;
   for (const [a, b] of edges) {
     const k = `${a}\u0000${b}`;
     if (a === b || seen.has(k) || !n.has(a)) continue;
     seen.add(k);
-    if (!n.has(b)) { if (!reg.has(b)) { unresolved.add(b); continue; } } else inDeg.set(b, (inDeg.get(b) || 0) + 1);
+    if (!n.has(b)) { if (!reg.has(b)) { unresolved.add(b); continue; } dense.add(b); } else inDeg.set(b, (inDeg.get(b) || 0) + 1);
     outDeg.set(a, (outDeg.get(a) || 0) + 1); count++;
   }
   const islands = [], sinks = [], sources = [];
@@ -90,8 +127,10 @@ export function analyzeGraph(nodes, edges, registryNames = []) {
     const i = inDeg.get(w) || 0, o = outDeg.get(w) || 0;
     if (!i && !o) islands.push(w); else if (i && !o) sinks.push(w); else if (o && !i) sources.push(w);
   }
-  const density = n.size > 1 ? count / (n.size * (n.size - 1)) : 0;
-  return { nodes: n.size, edges: count, density, islands, sinks, sources, unresolved: [...unresolved].sort() };
+  // Directed density = edges / (d (d - 1)) over the nodes an edge can join: the swept workers and the registered workers a swept worker calls.
+  // Counting an edge to a registered, unswept worker while leaving that worker out of d would let density pass 1.
+  const d = dense.size, density = d > 1 ? count / (d * (d - 1)) : 0;
+  return { nodes: n.size, density_nodes: d, edges: count, density, islands, sinks, sources, unresolved: [...unresolved].sort() };
 }
 
 /** Writers joined with readers per resource: orphans, and one data-flow edge from each writer to each other reader. */
@@ -137,7 +176,7 @@ export async function analyze(ctx, { sweep_id = null } = {}) {
   for (const w of names) await run(ctx.db, `INSERT INTO graph_nodes (id, kind, updated_at) VALUES (?, 'worker', ?) ON CONFLICT(id) DO UPDATE SET updated_at = excluded.updated_at`, `worker:${w}`, at);
   for (const [a, b] of edges) if (a !== b) await run(ctx.db, `INSERT OR IGNORE INTO graph_edges (src, dst, rel, source) VALUES (?,?, 'service', 'wiring')`, `worker:${a}`, `worker:${b}`);
   for (const [from, to] of flowPairs) await run(ctx.db, `INSERT OR IGNORE INTO graph_edges (src, dst, rel, source) VALUES (?,?, 'data_flow', 'wiring')`, `worker:${to}`, `worker:${from}`); // the reader depends on the writer
-  const detail = { islands: g.islands, sinks: g.sinks, sources: g.sources, unresolved: g.unresolved, ghosts, unregistered, unversioned, errors: errored,
+  const detail = { density_nodes: g.density_nodes, islands: g.islands, sinks: g.sinks, sources: g.sources, unresolved: g.unresolved, ghosts, unregistered, unversioned, errors: errored,
     orphan_tables: pc.orphans, data_flow: pc.flows, islands_with_data_flow: islandsWithFlow };
   const ins = await run(ctx.db, `INSERT INTO graph_wiring_analyses (sweep_id, at, nodes, edges, density, islands, sinks, sources, unresolved, ghosts, unregistered, unversioned,
       data_flow_edges, islands_with_data_flow, orphan_tables, integration_score, detail) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,

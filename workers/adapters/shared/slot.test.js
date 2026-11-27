@@ -45,7 +45,7 @@ test('a tick that throws keeps its slot (never two ticks in one slot) and record
   assert.deepEqual(await claimSlot(db, T0 + 5 * SLOT_MS, { slotMs: SLOT_MS }), { won: true, slot: Math.floor(T0 / SLOT_MS) + 5 });
 });
 
-test('US-14-R03: a tick still running when the next slot starts is not overlapped; a claim abandoned past the bound is taken over', async () => {
+test('US-14-R03 and US-14-R17: a tick still running when the next slot starts is not overlapped; a claim abandoned past the bound is taken over', async () => {
   const db = makeDb([MIG]);
   let finish; const long = new Promise(r => { finish = r; });
   const first = runOncePerSlot(db, async () => { await long; return { tickId: 1, completed: 8, total: 8 }; }, { now: T0 });

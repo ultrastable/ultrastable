@@ -382,6 +382,80 @@ class PlatformCriticality(unittest.TestCase):
         self.assertEqual(C.compute(crit_repo([]), NOW, feed_ok=True)["regime"], "subcritical")
         self.assertEqual(C.compute(crit_repo([{**GOOD_DEPLOY}]), NOW, feed_ok=True)["origins"], {"unknown": 1}, "a commit that cannot be read is unknown, never self")
 
+    def test_r81_a_deploy_carries_the_most_self_made_origin_of_the_substantive_commits_it_put_live(self):
+        """US-26-R81: a row's recorded origin wins; otherwise the deploy's origin is the most self-made (executor over self-agent over outside) of the substantive commits since the previous deployed commit, bookkeeping commits ([skip ci]) are ignored, and a commit that cannot be read is unknown, never self."""
+        d = crit_repo([]); c = C.cfg(d)
+        def git(*a):
+            r = subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", *a], cwd=d, capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stderr); return r.stdout.strip()
+        git("init", "-q"); (d / "f.txt").write_text("0")
+        def commit(msg, n):
+            (d / "f.txt").write_text(str(n)); git("add", "-A"); git("commit", "-q", "-m", msg); return git("rev-parse", "HEAD")
+        base = commit("AUTH-1: a person's change", 1)
+        executor = commit("Fix the thing\n\nExecutor run 2026-11-26T00:00Z. Checks passed", 2)
+        bookkeeping = commit("regen-generated [skip ci]", 3)
+        # the deploy ran on the newest commit, a bookkeeping one: its own message says nothing, the change it carried was the executor's
+        self.assertEqual(C.origin_of(C.commit_message(d, bookkeeping), c), "outside")
+        got = C.carried_origin(d, bookkeeping, [{"sha": base}], c)
+        self.assertEqual(got["origin"], "executor"); self.assertEqual([x["origin"] for x in got["carried"]], ["executor"], "the [skip ci] commit carries no change of its own")
+        self.assertEqual(C.deploy_origin(d, {"sha": bookkeeping}, c, [{"sha": base}]), "executor")
+        self.assertEqual(C.deploy_origin(d, {"sha": bookkeeping, "origin": "outside"}, c, [{"sha": base}]), "outside", "a recorded origin wins")
+        # an outside commit on top of a self-agent one: the more self-made origin is carried
+        agent = commit("X\n\n## Handoff\nitem: A\nagent: workers-ai-glm\n", 4)
+        person = commit("a person's change", 5)
+        self.assertEqual(C.carried_origin(d, person, [{"sha": bookkeeping}], c)["origin"], "self-agent")
+        only = C.carried_origin(d, person, [{"sha": agent}], c)
+        self.assertEqual(only["origin"], "outside"); self.assertEqual(only["since"], agent)
+        # nothing readable is unknown, never self
+        empty = Path(scratch()); git_empty = subprocess.run(["git", "init", "-q"], cwd=empty, capture_output=True, text=True); self.assertEqual(git_empty.returncode, 0)
+        self.assertEqual(C.carried_origin(empty, "", [], c)["origin"], "unknown")
+        self.assertEqual(C.deploy_origin(d, {"sha": "0" * 40}, c, [{"sha": base}]), "unknown", "a commit this clone does not hold is unknown")
+
+    def test_r81_with_no_earlier_row_only_the_deployed_commit_is_read_and_the_command_falls_back_to_head(self):
+        """US-26-R81: with no earlier ledger row that is an ancestor, only the deployed commit itself is read; a ledger row whose commit the clone
+        does not hold is unknown (never HEAD), while `criticality --deploy-origin <sha>` falls back to HEAD for such a sha, prints the origin word,
+        and with --json the whole reading (origin, sha, since, carried, omitted); with no readable commit it reads unknown."""
+        import contextlib, io
+        from unittest import mock
+        d = crit_repo([]); c = C.cfg(d)
+        def git(*a):
+            r = subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", *a], cwd=d, capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stderr); return r.stdout.strip()
+        git("init", "-q")
+        def commit(msg, n):
+            (d / "f.txt").write_text(str(n)); git("add", "-A"); git("commit", "-q", "-m", msg); return git("rev-parse", "HEAD")
+        base = commit("AUTH-1: a person's change", 1)
+        executor = commit("Fix the thing\n\nExecutor run 2026-11-26T00:00Z. Checks passed", 2)
+        bookkeeping = commit("regen-generated [skip ci]", 3)
+        person = commit("a person's change", 4)
+        # no earlier row: only the deployed commit is read, not the history beneath it
+        self.assertEqual([x["sha"] for x in C.carried_origin(d, person, [], c)["carried"]], [person[:12]])
+        self.assertEqual(C.carried_origin(d, person, [], c)["origin"], "outside", "the executor commit beneath is not read without an earlier row")
+        self.assertEqual(C.carried_origin(d, executor, [], c)["origin"], "executor")
+        self.assertEqual(C.deploy_origin(d, {"sha": bookkeeping}, c, []), "unknown", "a [skip ci] commit read alone carries nothing")
+        self.assertEqual(C.deploy_origin(d, {"sha": "f" * 40}, c, [{"sha": base}]), "unknown", "a ledger row never guesses from HEAD")
+
+        def cli(root, *args):
+            out = io.StringIO()
+            with mock.patch.object(C, "REPO", root), contextlib.redirect_stdout(out):
+                rc = C.main(["--deploy-origin", *args])
+            self.assertEqual(rc, 0); return out.getvalue().strip()
+        (d / "ops/deploys.jsonl").write_text("".join(json.dumps(x) + "\n" for x in ({"sha": base}, {"sha": bookkeeping})), encoding="utf-8")
+        self.assertEqual(cli(d, bookkeeping), "executor", "without --json the command prints the origin word only")
+        r = json.loads(cli(d, bookkeeping, "--json"))
+        self.assertEqual(set(r), {"origin", "sha", "since", "carried", "omitted"})
+        self.assertEqual((r["origin"], r["sha"], r["since"], r["omitted"]), ("executor", bookkeeping, base, 0))
+        self.assertEqual(r["carried"], [{"sha": executor[:12], "origin": "executor"}])
+        # a sha the clone does not hold, or none at all, falls back to HEAD (person), carried since the nearest earlier row (bookkeeping)
+        for args in (("f" * 40,), ()):
+            self.assertEqual(cli(d, *args), "outside")
+            h = json.loads(cli(d, *args, "--json"))
+            self.assertEqual((h["sha"], h["since"], [x["sha"] for x in h["carried"]]), (person, bookkeeping, [person[:12]]))
+        # nothing readable: unknown, never self
+        e = crit_repo([]); self.assertEqual(subprocess.run(["git", "init", "-q"], cwd=e, capture_output=True, text=True).returncode, 0)
+        self.assertEqual(cli(e, "abc1234"), "unknown")
+        self.assertEqual(json.loads(cli(e, "abc1234", "--json")), {"origin": "unknown", "sha": "", "carried": []})
+
     def test_r70_a_tick_that_changed_no_state_is_a_failure_and_files_its_own_item(self):
         """US-26-R70: a criticality tick whose state equals the previous tick's is logged as stalled and files the stall item once; a changed state is not a stall."""
         d = crit_repo([GOOD_DEPLOY])

@@ -4,13 +4,22 @@
 // A needs register, Ask cards answerable by recognition, stated defaults with an assumption log, a read-back with provenance,
 // a computed readiness score, and a four-sweep ignorance audit. Ports only: db, now. No agent interprets an answer: an
 // answer maps to a register write deterministically (US-16-R07).
+import { draftArtifact, draftAssumptionLog, lintDraft } from './draft.js';
 export const EXTRA_OPTIONS = ['Not sure', 'Tell me more'];
 export const DEFAULT_JARGON = ['schema', 'architecture', 'stack', 'api', 'endpoint', 'database', 'repository', 'deploy', 'oauth', 'webhook', 'backend', 'frontend', 'latency'];
 const PROFESSIONAL = /legal|law|tax|medical|health|financ|safety|privacy notice|licen[cs]e/i;
 const SWEEPS = ['catalog', 'analogy', 'redteam', 'surprise'];
+/** US-16 5.3: a need whose value of information is below this is defaulted without asking, when it is reversible. A chosen default, not a measured one. */
+export const DEFAULT_DEFER_BELOW = 0.15;
+/** US-16-R16: the default quiet period, in the person's local time, applied once a time zone is known. */
+export const DEFAULT_QUIET = { from: 22, to: 7 };
+/** A valid IANA time zone name, or false. */
+export const validTimezone = tz => { try { new Intl.DateTimeFormat('en', { timeZone: String(tz) }); return typeof tz === 'string' && tz.length > 0; } catch { return false; } };
 const SATISFIED = ['answered', 'defaulted', 'derived'];
 const words = s => String(s || '').trim().split(/\s+/).filter(Boolean);
 const iso = ms => new Date(ms).toISOString();
+/** A model family as a comparable name: trimmed and lower-cased; '' when none is given. */
+const familyOf = f => String(f ?? '').trim().toLowerCase();
 const priorityOf = n => Number(n.p_wrong) * Number(n.rework) * Number(n.dependents);
 
 /** Problems with an Ask card, or [] (US-16-R02, R03, section 5.1, T16-2). `defines` lists jargon terms the card explains itself. */
@@ -48,26 +57,58 @@ export function applyGlossary(card, entries = []) {
   return out;
 }
 
-export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
+export function createElicit({ db, now = () => Date.now(), config = {}, predict = null } = {}) {
   const clock = typeof now === 'function' ? now : () => now;
-  const cfg = { max_open: 3, daily_cap: 5, quiet: null, expiry_hours: 72, spend_cap_usd: 0, defer_below: 0, g1_threshold: 0.7, jargon: DEFAULT_JARGON, fatigue_after: 3, priority_list: 3, default_review_hours: 720, ...config };
+  const cfg = { max_open: 3, daily_cap: 5, quiet: null, expiry_hours: 72, spend_cap_usd: 0, defer_below: DEFAULT_DEFER_BELOW, timezone: null, g1_threshold: 0.7, jargon: DEFAULT_JARGON, fatigue_after: 3, priority_list: 3, outcomes: false, default_review_hours: 720, require_exhaustion: false, learn_after: 5, agree_after: 3, derive_surfaces: ['idea', 'record', 'probe', 'research'], ...config };
+  // Outcome learning (5.3) is on when the host passes a predict port ({ recordDecision, registerMetric }, core/predict) or sets config.outcomes; it needs the
+  // tables of outcomes/migrations. Without either, nothing is written to them and behaviour is the plain register.
+  const learn = cfg.outcomes === true || Boolean(predict);
   const all = async (sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
   const one = (sql, ...a) => db.prepare(sql).bind(...a).first();
   const run = (sql, ...a) => db.prepare(sql).bind(...a).run();
   const needRow = (project, id) => one(`SELECT * FROM elicit_needs WHERE project=? AND id=?`, project, id);
   const gateId = (project, id) => `elicit-${project}-${id}`;
   const gated = n => !n.reversible || !!n.identity_bound || !!n.exposes_private || n.cost_usd > cfg.spend_cap_usd;
+  // US-16-R16: the quiet period is read in the person's local time. With no time zone and no configured period nothing is silenced.
+  const localHour = () => {
+    if (!cfg.timezone || !validTimezone(cfg.timezone)) return new Date(clock()).getUTCHours();
+    return Number(new Intl.DateTimeFormat('en-GB', { hour: '2-digit', hourCycle: 'h23', timeZone: cfg.timezone }).format(new Date(clock())));
+  };
   const quiet = () => {
-    if (!cfg.quiet) return false;
-    const h = new Date(clock()).getUTCHours(); const { from, to } = cfg.quiet;
+    const q = cfg.quiet || (cfg.timezone && validTimezone(cfg.timezone) ? DEFAULT_QUIET : null);
+    if (!q) return false;
+    const h = localHour(); const { from, to } = q;
     return from > to ? (h >= from || h < to) : (h >= from && h < to);
+  };
+  const hasTable = async name => Boolean(await one(`SELECT 1 AS x FROM sqlite_master WHERE name=?`, name));
+  /** Failed predictions scored since the last audit of the project that no audit has turned into a lesson yet (section 6, surprise sweep). */
+  async function surprisesSince(project) {
+    const lastRun = (await one(`SELECT MAX(created_at) AS t FROM elicit_audit WHERE project=?`, project))?.t || null;
+    const since = lastRun ? lastRun.replace('T', ' ').slice(0, 19) : null;
+    const lessoned = new Set((await all(`SELECT finding FROM elicit_audit WHERE project=? AND sweep='surprise' AND finding LIKE 'failed prediction %'`, project)).map(r => /^failed prediction (\S+):/.exec(r.finding)?.[1]));
+    return [
+      // The legacy table has no scored_at, and a prediction is graded after its due_at (so after an audit that ran in between): it is read whole and the lessoned set below
+      // keeps a miss from becoming a lesson twice.
+      ...await all(`SELECT id, metric FROM predictions WHERE verdict IS NOT NULL AND verdict <> 'hit'`).catch(() => []),
+      ...((await hasTable('predict_predictions')) ? await all(`SELECT id, subject AS metric FROM predict_predictions WHERE matched = 0 AND (? IS NULL OR scored_at > ?)`, since, since) : []),
+    ].filter(m => !lessoned.has(m.id));
+  }
+  let auditSeq = 0;
+  let derivationsTable = null;
+  const hasDerivations = async () => (derivationsTable ??= Boolean(await one(`SELECT 1 AS x FROM sqlite_master WHERE name='elicit_derivations'`)));
+  const logAttempt = async (project, need, surface, result, detail) => { if (await hasDerivations()) await run(`INSERT INTO elicit_derivations (project, need_id, surface, result, detail, at) VALUES (?,?,?,?,?,?)`, project, need, surface, result, detail ?? null, iso(clock())); };
+  const queueRerun = async (n, why) => {
+    const itemId = `ELICIT-RERUN-${n.project}-${n.artifact}`.toUpperCase().replace(/[^A-Z0-9-]+/g, '-');
+    await run(`INSERT INTO items (id, title, kind, project, owner_role, done_check, closing_probe, priority, status) VALUES (?,?,'work',?,'portfolio-manager',?,'manual',15,'open')
+      ON CONFLICT(id) DO UPDATE SET status='open', updated_at=datetime('now')`, itemId, `Re-run ${n.artifact}: ${why} "${n.label}"`, n.project, `${n.artifact} regenerated from the changed need ${n.id}, and elicit.lintDraft passes on the new draft (every statement tagged)`);
+    return itemId;
   };
 
   const toCard = n => ({
     need_id: n.id, question: n.question, why: n.why, cue: n.cue,
     options: [...JSON.parse(n.options), ...EXTRA_OPTIONS], default: n.default_value, default_marked: true,
     default_consequence: n.default_consequence, reversibility: n.reversible ? 'reversible' : 'not reversible',
-    priority: n.priority, free_text: !!n.free_text, defines: [],
+    priority: n.priority, free_text: !!n.free_text, defines: [], changed: n.revisit && n.revisit.startsWith('This changed:') ? n.revisit : null,
   });
 
   async function setDefault(n, reason) {
@@ -76,6 +117,55 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
     await run(`INSERT INTO elicit_assumptions (project, need_id, value, reason, revisit_trigger, created_at) VALUES (?,?,?,?,?,?)`,
       n.project, n.id, n.default_value, reason, 'revisit at the next demonstration or review, or when the person answers', t);
     await predictDefault(n);
+    await settle(n.project, n.id, n.default_value);
+  }
+
+  /** US-16-R23: the value of information of an Ask is a prediction. When a need is first asked, its outcome row is opened and the estimate is logged as a
+   *  decision with a parsable prediction (`elicit_default_held.<row> >= 1 within <expiry + 24> h`, confidence 1 - p_wrong); when the need leaves the asked
+   *  state the row is settled, and the scorer in core/predict grades the prediction from it. */
+  const learnedOf = async id => {
+    const r = await one(`SELECT COUNT(*) AS n, COALESCE(SUM(CASE WHEN default_held = 0 THEN 1 ELSE 0 END), 0) AS changed FROM elicit_outcomes WHERE need_id=? AND settled_at IS NOT NULL`, id);
+    return { n: r.n, changed: r.changed, p_wrong: (r.changed + 1) / (r.n + 2) };
+  };
+  async function openOutcome(n) {
+    if (!learn) return;
+    const l = await learnedOf(n.id);
+    const p = l.n >= cfg.learn_after ? l.p_wrong : n.p_wrong;
+    const ins = await run(`INSERT OR IGNORE INTO elicit_outcomes (project, need_id, estimate_p_wrong, rework, dependents, priority, default_value, asked_at) VALUES (?,?,?,?,?,?,?,?)`,
+      n.project, n.id, p, n.rework, n.dependents, p * n.rework * n.dependents, n.default_value, iso(clock()));
+    if (!predict || !ins.meta?.changes) return;
+    const row = await one(`SELECT id FROM elicit_outcomes WHERE project=? AND need_id=?`, n.project, n.id);
+    const metric = `elicit_default_held.${row.id}`;
+    await predict.registerMetric(db, { name: metric, read_sql: `SELECT CASE WHEN settled_at IS NULL THEN NULL WHEN default_held = 1 THEN 1 ELSE 0 END FROM elicit_outcomes WHERE id = ${row.id}`, description: `1 when the default for ${n.id} in ${n.project} held` });
+    await predict.recordDecision(db, {
+      id: `ELICIT-VOI-${n.project}-${n.id}`, decision: `ask "${n.label}" with the default "${n.default_value}"`, reason: `estimated chance the default is wrong: ${p.toFixed(2)}`,
+      predicted_outcome: `${metric} >= 1 within ${cfg.expiry_hours + 24} h`, revert_path: 'the person corrects it in the read-back', confidence: Math.min(1, Math.max(0, 1 - p)),
+      decision_type: 'elicit_voi', surface: 'elicit', action_class: 'ask',
+    }, { now: clock() });
+  }
+  async function settle(project, id, finalValue) {
+    if (!learn) return;
+    const o = await one(`SELECT default_value FROM elicit_outcomes WHERE project=? AND need_id=?`, project, id);
+    if (!o) return;
+    await run(`UPDATE elicit_outcomes SET settled_at=?, final_value=?, default_held=? WHERE project=? AND need_id=?`, iso(clock()), finalValue == null ? null : String(finalValue), o.default_value != null && String(finalValue) === String(o.default_value) ? 1 : 0, project, id);
+  }
+  /** Learning across projects: a catalog need whose last `agree_after` stated answers agree is derived from the record; one asked `learn_after` times whose
+   *  default always held is defaulted without asking (askbar's prune rule, generalised); a learned estimate replaces the catalog's p_wrong once `learn_after` outcomes exist. */
+  async function learnFromRecord(project) {
+    if (!learn) return;
+    for (const n of await all(`SELECT * FROM elicit_needs WHERE project=? AND state='open'`, project)) {
+      if (await one(`SELECT 1 AS x FROM elicit_assumptions WHERE project=? AND need_id=? AND reason='contradicted'`, project, n.id)) continue; // evidence said the record is wrong here
+      const l = await learnedOf(n.id);
+      if (l.n >= cfg.learn_after) {
+        const p = l.p_wrong; await run(`UPDATE elicit_needs SET p_wrong=?, priority=? WHERE project=? AND id=?`, p, p * n.rework * n.dependents, project, n.id);
+        if (l.changed === 0 && !gated(n) && n.default_value != null) { await setDefault(n, 'learned_default'); continue; }
+      }
+      if (gated(n) || n.free_text) continue;
+      const last = await all(`SELECT value FROM elicit_needs WHERE id=? AND project<>? AND state='answered' AND provenance='stated' ORDER BY answered_at DESC LIMIT ?`, n.id, project, cfg.agree_after);
+      if (last.length === cfg.agree_after && last.every(r => r.value === last[0].value) && JSON.parse(n.options).includes(last[0].value)) {
+        await run(`UPDATE elicit_needs SET state='derived', value=?, provenance='derived', source=? WHERE project=? AND id=?`, last[0].value, `record: last ${cfg.agree_after} answers agree`, project, n.id);
+      }
+    }
   }
 
   // Section 5.3: a default in effect is a prediction that the default holds. It is written to the prediction table when the default
@@ -109,6 +199,7 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
     config: cfg,
     toCard,
     fatigue,
+    surprisesSince,
 
     /** Record the person's own word for a system term, or a plain explanation of it (US-16-R03, section 8). */
     async learnTerm(term, { plain = null, person_term = null } = {}) {
@@ -147,6 +238,12 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
         project, c.id, c.label, c.artifact, c.must === false ? 0 : 1, c.reversible === false ? 0 : 1, c.identity_bound ? 1 : 0, c.exposes_private ? 1 : 0, c.cost_usd || 0,
         c.question, c.why, c.cue, JSON.stringify(c.options || []), c.default ?? null, c.default_consequence || null, c.free_text ? 1 : 0, c.p_wrong ?? 0.5, c.rework ?? 1, c.dependents ?? 1, priority,
         m ? 'derived' : 'open', m ? m[0] : null, m ? 'derived' : null, m ? 'idea file' : null);
+        for (const f of c.feeds || []) {
+          const [artifact, ...field] = String(f).split('.');
+          if (await one(`SELECT 1 AS x FROM sqlite_master WHERE name='elicit_need_feeds'`)) await run(`INSERT OR IGNORE INTO elicit_need_feeds (project, need_id, artifact, field) VALUES (?,?,?,?)`, project, c.id, artifact, field.join('.'));
+        }
+        if (c.derive_from) await logAttempt(project, c.id, 'idea', m ? 'hit' : 'miss', m ? m[0] : 'no match in the idea text');
+        else await logAttempt(project, c.id, 'idea', 'miss', 'no pattern for this need');
       }
       return { registered: (await all(`SELECT id FROM elicit_needs WHERE project=?`, project)).length, rejected };
     },
@@ -155,13 +252,30 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
      *  then open Asks up to the open cap, the daily cap and the quiet period (US-16-R04, R06, R10, R16). Returns the open Ask cards. */
     async nextAsks(project) {
       await this.expire(project);
+      await learnFromRecord(project);
+      // US-16-R01 (PATHFINDER-1 discipline): with require_exhaustion no need is asked, or turned into a gate card for the person, before every configured
+      // derivation surface has an attempt on record. Needs still waiting are listed on the result (`awaiting_derivation`).
+      const waiting = new Set();
+      if (cfg.require_exhaustion && await hasDerivations()) {
+        for (const n of await all(`SELECT id FROM elicit_needs WHERE project=? AND state='open'`, project)) {
+          const done = new Set((await all(`SELECT DISTINCT surface FROM elicit_derivations WHERE project=? AND need_id=?`, project, n.id)).map(r => r.surface));
+          if (!cfg.derive_surfaces.every(sf => done.has(sf))) waiting.add(n.id);
+        }
+      }
       for (const n of await all(`SELECT * FROM elicit_needs WHERE project=? AND state='open' ORDER BY priority DESC, id`, project)) {
+        if (waiting.has(n.id)) continue;
         if (gated(n)) {
           await run(`UPDATE elicit_needs SET state='gated', asked_at=? WHERE project=? AND id=?`, iso(clock()), project, n.id);
           await run(`INSERT OR IGNORE INTO gate_cards (id, what, why_gated, default_in_effect, prepared_by_fleet, closing_probe) VALUES (?,?,?,?,?,?)`,
             gateId(project, n.id), `answer needed: ${n.label}`, 'A wrong default here could not be undone, would use the person identity, spend above the cap or expose private data.',
             'work that depends on this waits; other work continues', 'elicit', `elicit_answered:${project}:${n.id}`);
         } else if (n.priority < cfg.defer_below && n.default_value != null) await setDefault(n, 'low_priority');
+      }
+      // US-16-R06: a need that is still gated always has an open card. A card closed any other way than by the answer is reopened.
+      let reopened = 0;
+      for (const n of await all(`SELECT id FROM elicit_needs WHERE project=? AND state='gated'`, project)) {
+        const r = await run(`UPDATE gate_cards SET status='open', closed_at=NULL WHERE id=? AND status='closed'`, gateId(project, n.id));
+        reopened += r.meta?.changes || 0;
       }
       const tired = await fatigue(project);
       if (tired.stopped) {
@@ -175,16 +289,20 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
         const today = (await one(`SELECT COUNT(*) AS n FROM elicit_needs WHERE project=? AND state<>'gated' AND substr(asked_at,1,10)=?`, project, day)).n;
         const maxOpen = tired.stopped ? Math.min(1, cfg.max_open) : cfg.max_open;
         const room = Math.max(0, Math.min(maxOpen - open, cfg.daily_cap - today));
-        for (const n of (await batched(project, `state='open'`)).slice(0, room)) {
+        for (const n of (await batched(project, `state='open'`)).filter(r => !waiting.has(r.id)).slice(0, room)) {
           await run(`UPDATE elicit_needs SET state='asked', asked_at=?, expires_at=? WHERE project=? AND id=?`, iso(clock()), iso(clock() + cfg.expiry_hours * 3600e3), project, n.id);
+          await openOutcome(n);
         }
       }
       const glossary = await all(`SELECT term, plain, person_term FROM elicit_glossary`);
       const rows = await batched(project, `state IN ('asked','gated')`);
-      return rows.map((n, i) => {
+      const cards = rows.map((n, i) => {
         const same = rows.filter(r => r.artifact === n.artifact);
         return { ...applyGlossary(toCard(n), glossary), sequence: { artifact: n.artifact, position: same.indexOf(n) + 1, of: same.length } };
       });
+      Object.defineProperty(cards, 'reopened', { value: reopened, enumerable: false });
+      Object.defineProperty(cards, 'awaiting_derivation', { value: [...waiting], enumerable: false });
+      return cards;
     },
 
     /** An unanswered Ask becomes its default after its time (US-16-R10). Gated needs never expire to a default. */
@@ -195,6 +313,76 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
         await setDefault(r, 'timeout'); n++;
       }
       return n;
+    },
+
+    /** US-16-R01 and R21: try to settle each open need before asking, on every surface in order (idea, existing records, tool probes, cited research),
+     *  and record every attempt. Ports are data: records[need_id] and probes[need_id] are async () => value | null; research is async (need) => { value, sources: [{ url, title }] } | null.
+     *  A research value with no source is never applied (a system-unknown is researched with a source or escalated, never guessed silently). A port that throws is
+     *  logged as an error and the next surface is still tried. A value a later contradiction ruled out is not applied again. */
+    async derive(project, { records = {}, probes = {}, research = null } = {}) {
+      if (!(await hasDerivations())) throw new Error('derive needs the tables of outcomes/migrations');
+      const out = { derived: [], attempts: 0 };
+      for (const n of await all(`SELECT * FROM elicit_needs WHERE project=? AND state='open' ORDER BY priority DESC, id`, project)) {
+        const banned = new Set((await all(`SELECT value FROM elicit_assumptions WHERE project=? AND need_id=? AND reason='contradicted'`, project, n.id)).map(r => r.value));
+        const options = JSON.parse(n.options);
+        const valid = v => v != null && String(v).trim() !== '' && (n.free_text || options.includes(String(v)));
+        const tries = [
+          ['record', records[n.id] ? async () => ({ value: await records[n.id]() }) : null, 'derived'],
+          ['probe', probes[n.id] ? async () => ({ value: await probes[n.id]() }) : null, 'derived'],
+          ['research', research ? async () => research(n) : null, 'researched'],
+        ];
+        for (const [surface, fn, provenance] of tries) {
+          if (!cfg.derive_surfaces.includes(surface)) continue;
+          out.attempts++;
+          if (!fn) { await logAttempt(project, n.id, surface, 'miss', 'no port for this surface'); continue; }
+          let r;
+          try { r = await fn(); } catch (e) { await logAttempt(project, n.id, surface, 'error', String(e?.message || e).slice(0, 200)); continue; }
+          if (!r || r.value == null) { await logAttempt(project, n.id, surface, 'miss', 'nothing found'); continue; }
+          if (surface === 'research' && !(Array.isArray(r.sources) && r.sources.some(x => x?.url))) { await logAttempt(project, n.id, surface, 'no_source', `a value was found but it cites no source: ${String(r.value).slice(0, 80)}`); continue; }
+          if (!valid(r.value)) { await logAttempt(project, n.id, surface, 'miss', 'the value is not one of the options'); continue; }
+          if (banned.has(String(r.value))) { await logAttempt(project, n.id, surface, 'miss', 'the same value later contradicted by evidence'); continue; }
+          const source = surface === 'research' ? r.sources.find(x => x?.url).url : surface;
+          await run(`UPDATE elicit_needs SET state='derived', value=?, provenance=?, source=? WHERE project=? AND id=? AND state='open'`, String(r.value), provenance, source, project, n.id);
+          await logAttempt(project, n.id, surface, 'hit', `${r.value} from ${source}`);
+          out.derived.push({ need_id: n.id, value: String(r.value), provenance, source });
+          break;
+        }
+      }
+      return out;
+    },
+
+    /** US-16-R11: the draft of one artifact from the register, every statement tagged with its provenance; A-INI-4 is the assumption log with revert paths. */
+    draft: (project, artifact) => draftArtifact(db, project, artifact),
+    assumptionLog: project => draftAssumptionLog(db, project),
+    lintDraft: (project, text) => lintDraft(db, project, text),
+
+    /** US-16-R22 (section 4: Answered -> Open and Derived -> Open): later evidence contradicts a settled need. It returns to open (asked again, or gated again), the previous
+     *  value stays in the assumption log with the evidence, readiness drops and the artifact it feeds is queued to be redone. The same evidence twice changes nothing more. */
+    async contradict(project, id, { evidence, source = 'evidence' } = {}) {
+      const n = await needRow(project, id);
+      if (!n) return { ok: false, error: 'no such need' };
+      const ev = String(evidence ?? '').trim();
+      if (!ev) return { ok: false, error: 'a contradiction names its evidence' };
+      const trigger = `contradicted by ${source}: ${ev}`;
+      if (await one(`SELECT 1 AS x FROM elicit_assumptions WHERE project=? AND need_id=? AND reason='contradicted' AND revisit_trigger=?`, project, id, trigger)) return { ok: true, already: true, state: n.state };
+      if (!['answered', 'derived'].includes(n.state)) return { ok: false, error: 'only an answered or derived need can be contradicted' };
+      const t = iso(clock());
+      await run(`INSERT INTO elicit_assumptions (project, need_id, value, reason, revisit_trigger, created_at, superseded_at) VALUES (?,?,?,?,?,?,?)`, project, id, n.value, 'contradicted', trigger, t, t);
+      await run(`UPDATE elicit_needs SET state='open', value=NULL, provenance=NULL, source=NULL, answered_at=NULL, asked_at=NULL, expires_at=NULL, revisit=? WHERE project=? AND id=?`, `This changed: ${ev}`, project, id);
+      const rerun = await queueRerun(n, 'new evidence changed');
+      return { ok: true, state: 'open', rerun: [rerun] };
+    },
+
+    /** The tick's duties across every project (US-16-R10, R03): default every overdue Ask, and check every card that would be shown against the glossary. */
+    async expireAll() {
+      let n = 0;
+      for (const r of await all(`SELECT DISTINCT project FROM elicit_needs WHERE state='asked' AND expires_at<=?`, iso(clock()))) n += await this.expire(r.project);
+      return n;
+    },
+    async reviewAll() {
+      const out = [];
+      for (const r of await all(`SELECT DISTINCT project FROM elicit_needs`)) for (const f of await this.reviewCards(r.project)) out.push({ project: r.project, ...f });
+      return out;
     },
 
     /** Record an answer. `choice` is an option, `Not sure` (default plus assumption log) or `Tell me more` (explain, same card). */
@@ -208,6 +396,8 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
         return { ok: true, explain: `${n.why} For example: ${n.cue}`, card: toCard(n), taught: count >= 3 };
       }
       if (choice === 'Not sure') {
+        // US-16-R07: a stated answer (or a derived value) is never replaced by the default; changing it is a correction in the read-back.
+        if (['answered', 'derived'].includes(n.state)) return { ok: false, refusal: 'already_answered', error: 'you already answered this; use the read-back to change it', card: toCard(n) };
         if (gated(n) || n.default_value == null) return { ok: false, refusal: 'cannot_default', error: 'this one has no safe default; it stays with the person', card: toCard(n) };
         await setDefault(n, 'not_sure');
         return { ok: true, state: 'defaulted', value: n.default_value };
@@ -219,6 +409,7 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
       await run(`UPDATE elicit_assumptions SET superseded_at=? WHERE project=? AND need_id=? AND superseded_at IS NULL`, iso(clock()), project, id);
       await run(`UPDATE gate_cards SET status='closed', closed_at=datetime('now') WHERE id=? AND status='open'`, gateId(project, id));
       if (n.state === 'defaulted') await scoreDefault(n, value);
+      await settle(project, id, value);
       return { ok: true, state: 'answered', value };
     },
 
@@ -250,7 +441,7 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
       const ok = musts.filter(n => SATISFIED.includes(n.state));
       const score = musts.length ? ok.length / musts.length : 1;
       const blocking = musts.filter(n => !n.reversible && !['answered', 'derived'].includes(n.state)).map(n => n.id);
-      return { score, musts: musts.length, satisfied: ok.length, g1: score >= cfg.g1_threshold, g2: score === 1 && !blocking.length, blocking, missing: musts.filter(n => !SATISFIED.includes(n.state)).map(n => n.id) };
+      return { score, musts: musts.length, threshold: cfg.g1_threshold, satisfied: ok.length, g1: score >= cfg.g1_threshold, g2: score === 1 && !blocking.length, blocking, missing: musts.filter(n => !SATISFIED.includes(n.state)).map(n => n.id) };
     },
 
     /** The spec restated in plain words, defaults first, every statement tagged with its provenance (US-16-R11, R12). */
@@ -269,23 +460,28 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
     async correct(project, id, value, { channel = 'console', text } = {}) {
       const n = await needRow(project, id);
       if (!n) return { ok: false, error: 'no such need' };
-      await run(`UPDATE elicit_needs SET state='answered', value=?, provenance='stated', answer_text=?, channel=?, answered_at=?, revisit=NULL WHERE project=? AND id=?`, String(value), text ?? String(value), channel, iso(clock()), project, id);
+      const given = String(value ?? '').trim();
+      if (!given) return { ok: false, error: 'say what it should be' };
+      if (!n.free_text && !JSON.parse(n.options).includes(given)) return { ok: false, error: 'answer must be one of the options' };
+      await run(`UPDATE elicit_needs SET state='answered', value=?, provenance='stated', answer_text=?, channel=?, answered_at=?, revisit=NULL WHERE project=? AND id=?`, given, text ?? given, channel, iso(clock()), project, id);
       await run(`UPDATE elicit_assumptions SET superseded_at=? WHERE project=? AND need_id=? AND superseded_at IS NULL`, iso(clock()), project, id);
       if (n.state === 'defaulted') await scoreDefault(n, value);
-      const itemId = `ELICIT-RERUN-${project}-${n.artifact}`.toUpperCase().replace(/[^A-Z0-9-]+/g, '-');
-      await run(`INSERT INTO items (id, title, kind, project, owner_role, done_check, closing_probe, priority, status) VALUES (?,?,'work',?,'portfolio-manager',?,'manual',15,'open')
-        ON CONFLICT(id) DO UPDATE SET status='open', updated_at=datetime('now')`, itemId, `Re-run ${n.artifact}: the person corrected "${n.label}"`, project, `${n.artifact} regenerated from the corrected need ${id}`);
+      await settle(project, id, given);
+      const itemId = await queueRerun(n, 'the person corrected');
       return { ok: true, rerun: [itemId] };
     },
 
     /** The four-sweep ignorance audit (section 6, T16-9). Inputs are data; the red-team sweep is an injected function and must come from a
      *  different model family than the author. Evidence rows are written for every sweep that ran; `complete` is true only if all four did. */
-    async audit(project, { required_fields = [], analogies = [], redteam, author_family = null, surprises = [] } = {}) {
-      const run_id = `AUD-${clock().toString(36)}`;
+    async audit(project, { required_fields = [], analogies = [], redteam, author_family = null, surprises = [], trigger = 'manual' } = {}) {
+      const run_id = `AUD-${clock().toString(36)}-${(auditSeq++).toString(36)}`;
       const t = iso(clock());
       const add = (sweep, finding, disposition, evidence) => run(`INSERT INTO elicit_audit (project, run_id, sweep, finding, disposition, evidence, created_at) VALUES (?,?,?,?,?,?,?)`, project, run_id, sweep, finding, disposition, evidence ?? null, t);
+      const has = hasTable;
+      const misses = await surprisesSince(project); // read before this run writes its own rows
       const ran = new Set();
       const known = new Set((await all(`SELECT artifact, label FROM elicit_needs WHERE project=?`, project)).map(n => `${n.artifact}:${n.label}`));
+      if (await has('elicit_need_feeds')) for (const f of await all(`SELECT artifact, field FROM elicit_need_feeds WHERE project=?`, project)) known.add(`${f.artifact}:${f.field}`);
       const missing = required_fields.filter(f => !known.has(`${f.artifact}:${f.field}`));
       for (const f of missing) await add('catalog', `${f.artifact}.${f.field} has no need in the register`, 'need', 'catalog diff');
       await add('catalog', `checked ${required_fields.length} required fields; ${missing.length} without a need`, 'dismissed', 'catalog diff');
@@ -294,27 +490,34 @@ export function createElicit({ db, now = () => Date.now(), config = {} } = {}) {
         const pro = PROFESSIONAL.test(a.item) || PROFESSIONAL.test(a.topic || '');
         const disp = pro ? 'needs_professional' : (a.disposition || 'risk');
         await add('analogy', `${a.topic ? a.topic + ': ' : ''}${a.item}`, disp, a.source ? `source: ${a.source}` : 'no source');
-        if (pro) {
+        if (pro && a.blocking !== false) {
           await run(`INSERT OR IGNORE INTO gate_cards (id, what, why_gated, default_in_effect, prepared_by_fleet, closing_probe) VALUES (?,?,?,?,?,?)`,
-            `elicit-pro-${project}-${run_id}-${(a.topic || a.item).slice(0, 20).replace(/[^A-Za-z0-9]+/g, '-')}`, `needs a qualified professional: ${a.item}`,
+            `elicit-pro-${project}-${(a.topic || a.item).slice(0, 30).replace(/[^A-Za-z0-9]+/g, '-')}`, `needs a qualified professional: ${a.item}`,
             'The system does not give legal, medical, financial or safety advice (SCOPE.md).', 'recorded as a risk; work that does not depend on it continues', 'elicit', 'manual');
         }
       }
       if (analogies.length) ran.add('analogy');
+      let independent = false; // no red-team sweep ran, so none was independent
       if (typeof redteam === 'function') {
         const r = await redteam({ project, needs: await all(`SELECT id, label, value, provenance FROM elicit_needs WHERE project=?`, project) });
-        if (author_family && r?.family && r.family === author_family) throw new Error('red-team sweep must come from a different model family than the author');
-        const ev = `model family: ${r?.family || 'unknown'}`;
+        // Families compare as names, not as spellings: "Claude" and " claude " are one family.
+        const authorFam = familyOf(author_family); const gotFam = familyOf(r?.family);
+        if (authorFam && gotFam && authorFam === gotFam) throw new Error('red-team sweep must come from a different model family than the author');
+        // US-16 section 6: an independent sweep is one whose family is known and is not the author's. An unknown family (the reviewer's or the author's), or the rule floor, is
+        // recorded as such and never as independence.
+        independent = Boolean(authorFam && gotFam) && !r?.floor;
+        const why = authorFam ? '; unverified independence' : '; author family unknown; unverified independence';
+        const ev = r?.floor ? 'model family: none (rule floor); no independent model available' : `model family: ${gotFam ? String(r.family).trim() : 'unknown'}${independent ? '' : why}`;
         await add('redteam', `question: ${r?.question || 'what would make this fail or harm someone that the person has not mentioned?'}`, 'dismissed', ev);
         for (const pt of r?.points || []) await add('redteam', pt.point, pt.disposition || 'risk', ev);
         ran.add('redteam');
       }
-      const misses = await all(`SELECT id, metric FROM predictions WHERE verdict IS NOT NULL AND verdict <> 'hit'`).catch(() => []);
-      for (const m of misses) await add('surprise', `failed prediction ${m.id}: ${m.metric}`, 'lesson', 'predictions table');
+      for (const m of misses) await add('surprise', `failed prediction ${m.id}: ${m.metric}`, 'lesson', (await has('predict_predictions')) ? 'prediction records' : 'predictions table');
       for (const s of surprises) await add('surprise', s.what, s.kind || 'lesson', s.evidence || 'runtime record');
       await add('surprise', `reviewed ${misses.length + surprises.length} surprises`, 'dismissed', 'surprise review');
       ran.add('surprise');
-      return { run_id, ran: [...ran], missing_sweeps: SWEEPS.filter(s => !ran.has(s)), complete: SWEEPS.every(s => ran.has(s)), new_needs: missing.length };
+      if (await has('elicit_audit_runs')) await run(`INSERT OR IGNORE INTO elicit_audit_runs (project, run_id, trigger, independent, at) VALUES (?,?,?,?,?)`, project, run_id, trigger, independent ? 1 : 0, t);
+      return { run_id, ran: [...ran], missing_sweeps: SWEEPS.filter(s => !ran.has(s)), complete: SWEEPS.every(s => ran.has(s)) && independent, independent, new_needs: missing.length };
     },
   };
 }

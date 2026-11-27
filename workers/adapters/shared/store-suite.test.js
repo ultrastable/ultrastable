@@ -26,14 +26,14 @@ const runSuite = (store, record) => new Promise(resolve => {
 });
 const summary = out => Object.fromEntries([...out.matchAll(/^# (tests|pass|fail) (\d+)/gm)].map(m => [m[1], Number(m[2])]));
 
-test("US-14-T01 and US-14-R07: the L1 tick suite passes over the SQLite adapter's own handle", async () => {
+test("US-14-T01 and US-14-R07 and US-14-R13: the L1 tick suite passes over the SQLite adapter's own handle", async () => {
   const r = await runSuite('sqlite');
   const s = summary(r.out);
   assert.equal(r.code, 0, r.out.slice(-1500));
   assert.equal(s.fail, 0); assert.ok(s.tests >= 40, `the suite ran ${s.tests} tests`);
 });
 
-test('US-14-T01 and US-14-R07: the same suite passes with every statement also translated by the Postgres shim, and the translations are Postgres', async () => {
+test('US-14-T01 and US-14-R07 and US-14-R13: the same suite passes with every statement also translated by the Postgres shim, and the translations are Postgres', async () => {
   const dir = mkdtempSync(path.join(tmpdir(), 'us-store-'));
   try {
     const rec = path.join(dir, 'statements.jsonl');

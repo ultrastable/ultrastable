@@ -142,7 +142,7 @@ test('US-33-R12: every merge is a squash, and the event-driven and workflow-PR m
   assert.deepEqual(g.calls.find(c => c.m === 'PUT' && c.path.endsWith('/merge')).body, { merge_method: 'squash' }, 'the tick lane squashes too');
 });
 
-test('US-33-R13: a pull request labelled hold, or carrying a comment that starts with HOLD:, is never merged by the server', async () => {
+test('US-33-R13: the event-driven pass holds a pull request labelled hold, and the tick lane holds one whose comment starts with HOLD:', async () => {
   const mk = (labels, comment) => github(
     (m, p) => m === 'GET' && p.startsWith('/repos/o/r/pulls?') ? [200, [{ number: 4, labels }]] : null,
     (m, p) => m === 'GET' && /\/pulls\/4$/.test(p) ? [200, { number: 4, state: 'open', draft: false, base: { ref: 'main' }, labels, mergeable: true, mergeable_state: 'clean', head: { ref: 'claude/x', sha: 'b'.repeat(40) } }] : null,

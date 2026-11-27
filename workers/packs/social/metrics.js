@@ -14,6 +14,7 @@ export async function metricsLoop({ db, ctx, now, settings, guard }) {
       try { post = await channel.fetchPost(r.provider_id); } catch { continue; }          // a read error is not a removal
       if (!post) {
         await run(db, `UPDATE social_queue SET status = 'removed', removed_at = ? WHERE id = ?`, iso(t), r.id);
+        if (guard && guard.outcome) await guard.outcome({ kind: 'post', event: 'removed', ref: `social-${r.id}` });   // a verified post that vanished is a hidden failure
         await fileItem(db, `SOCIALREMOVED-${r.id}`, `Social post ${r.id} is no longer on the channel`, `the reason post ${r.id} disappeared is recorded and any claim behind it re-checked`);
       } else if (post.metrics) {
         const m = post.metrics, total = (m.likes || 0) + (m.reposts || 0) + (m.replies || 0) + (m.quotes || 0);

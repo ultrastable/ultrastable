@@ -59,7 +59,7 @@ test('manifest is valid, class B, with the required charter, outbound block and 
   assert.deepEqual(validateManifest(m), []);
   assert.equal(m.class, 'B');
   assert.equal(m.charter.primary_metric.id, 'email_confirmed_subscribers');
-  assert.deepEqual(m.charter.guard_metrics.map(g => g.id).sort(), ['email_complaint_rate', 'email_unsubscribe_rate']);
+  assert.deepEqual(m.charter.guard_metrics.map(g => g.id).sort(), ['email_complaint_rate', 'email_unbacked_sentences', 'email_unsubscribe_rate']);
   assert.equal(m.outbound.consent, 'double_opt_in');
   assert.equal(m.outbound.suppression, true);
   assert.ok(m.outbound.channels.includes('email'));
@@ -71,7 +71,7 @@ test('migration is idempotent and every table is email_ prefixed', async () => {
   const sql = readFileSync(path.join(DIR, 'migrations/0001_email.sql'), 'utf8');
   db.raw.exec(sql); db.raw.exec(sql);
   const names = db.raw.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'email_%'`).all().map(r => r.name).sort();
-  assert.deepEqual(names, ['email_deliveries', 'email_events', 'email_messages', 'email_metrics', 'email_subscribers', 'email_tokens']);
+  assert.deepEqual(names, ['email_compose_log', 'email_compose_rejections', 'email_deliveries', 'email_events', 'email_messages', 'email_metrics', 'email_subscribers', 'email_tokens']);
 });
 
 test('double opt-in end to end: subscribe sends a confirmation, confirm records consent, a newsletter then reaches the subscriber', async () => {
@@ -343,4 +343,62 @@ test('core imports no pack, and the pack source names no tenant', () => {
   })();
   walk(DIR);
   assert.deepEqual(hits, []);
+});
+
+// ---- US-21-R20 and US-21-R21: presence-only secret and the bounce hook ----
+test('US-21-R20: the email send loop runs with EMAIL_LINK_SECRET only in the tick env and no linkSecret setting', async () => {
+  const s = await setup({ settings: { linkSecret: '' } });
+  const email = createEmail({ db: s.db, guard: s.packs.boundGuard('email'), now: () => s.clock.t, config: SETTINGS });   // the same key, held by the test's own service
+  await email.subscribe({ email: 'a@example.com' });
+  assert.equal((await email.confirm(tokenFrom(s.channel.sent.at(-1)))).ok, true);
+  await email.queueMessage({ subject: 'n', text: 'hi' });
+  const step = (await s.packs.packSteps()).find(x => x.name === 'pack:email:send');
+  const ctx = { tickId: 1, notes: [], errors: [], env: { EMAIL_LINK_SECRET: SETTINGS.linkSecret }, now: s.clock.t, nowIso: '2026-11-26 00:00:00' };
+  await step.run(s.db, ctx);
+  assert.deepEqual(ctx.errors, []);
+  assert.ok(ctx.notes.some(n => /email send: sent 1/.test(n)), ctx.notes.join('|'));
+  assert.match(s.channel.sent.at(-1).text, /unsubscribe\?u=/);
+  const noSecret = { ...ctx, notes: [], errors: [], env: {} };
+  await email.queueMessage({ subject: 'n2', text: 'hi' });
+  await step.run(s.db, noSecret);                                                                                     // with no secret anywhere the loop fails and says why
+  assert.match(noSecret.errors.join('|'), /EMAIL_LINK_SECRET is not set/);
+  assert.ok(!JSON.stringify(s.db.raw.prepare(`SELECT * FROM packs_runs`).all()).includes(SETTINGS.linkSecret));
+});
+
+test('US-21-R21: a hard bounce ingested through the core intake sets the email subscriber to bounced and clears the stored address', async () => {
+  const s = await setup();
+  await subscribeConfirmed(s, 'a@example.com');
+  const r = await s.packs.bounces.ingest({ channel: 'email', recipient: 'a@example.com', kind: 'hard', eventId: 'ev1' });
+  assert.deepEqual(r.results.map(x => x.action), ['suppressed:email']);
+  const row = s.db.raw.prepare(`SELECT status, address FROM email_subscribers`).get();
+  assert.deepEqual({ ...row }, { status: 'bounced', address: null });
+  assert.equal(s.db.raw.prepare(`SELECT outcome FROM packs_runs WHERE loop_id = 'hook:bounce'`).get().outcome, 'ok');
+});
+
+test('US-21-R21: a complaint marks the subscriber unsubscribed and suppresses every channel; a duplicate event does not call the hook twice', async () => {
+  const s = await setup();
+  await subscribeConfirmed(s, 'a@example.com');
+  await s.packs.bounces.ingest({ channel: 'email', recipient: 'a@example.com', kind: 'complaint', eventId: 'ev2' });
+  await s.packs.bounces.ingest({ channel: 'email', recipient: 'a@example.com', kind: 'complaint', eventId: 'ev2' });
+  assert.equal(s.db.raw.prepare(`SELECT status FROM email_subscribers`).get().status, 'unsubscribed');
+  assert.equal(count(s.db, `SELECT COUNT(*) AS n FROM email_events WHERE type = 'complaint'`), 1);
+  assert.equal(count(s.db, `SELECT COUNT(*) AS n FROM packs_runs WHERE loop_id = 'hook:bounce'`), 1);
+  assert.equal(count(s.db, `SELECT COUNT(*) AS n FROM guard_suppression WHERE channel = '*'`), 1);
+});
+
+test('US-21-R21: core decides soft bounces: two are only counted and leave the subscriber confirmed, the third suppresses and is mirrored', async () => {
+  const s = await setup();
+  await subscribeConfirmed(s, 'a@example.com');
+  for (const id of ['s1', 's2']) await s.packs.bounces.ingest({ channel: 'email', recipient: 'a@example.com', kind: 'soft', eventId: id });
+  assert.equal(s.db.raw.prepare(`SELECT status FROM email_subscribers`).get().status, 'confirmed');
+  await s.packs.bounces.ingest({ channel: 'email', recipient: 'a@example.com', kind: 'soft', eventId: 's3' });
+  assert.equal(s.db.raw.prepare(`SELECT status FROM email_subscribers`).get().status, 'bounced');
+  assert.equal(count(s.db, `SELECT COUNT(*) AS n FROM email_events WHERE type = 'soft_bounce'`), 1);               // mirrored once, not counted again by the pack's own window
+});
+
+test('US-21-R21: the manifest declares the bounce hook and it validates', () => {
+  const m = loadManifest(DIR);
+  assert.equal(m.hooks.bounce, './loops.js#onBounce');
+  assert.deepEqual(validateManifest(m), []);
+  assert.deepEqual(m.covers, ['outreach']);
 });

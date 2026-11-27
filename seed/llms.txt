@@ -1,0 +1,16 @@
+# Ultrastable seed
+
+> The code-only kernel a new autonomous system starts from: bootstrapper, tick Worker, roles, agent instructions and the loops that run it. Licence: LicenseRef-Ultrastable-USL-1.0 (source-available, non-commercial use free).
+
+## Start here
+
+- [AGENTS.md](AGENTS.md): instructions for any coding agent
+- [SYSTEM.md](SYSTEM.md): what the system is, generated from its code
+- [IDEA.md](IDEA.md): the one file a person writes
+- [ultrastable.json](ultrastable.json): the machine-readable manifest
+
+## Code
+
+- [bootstrap/bootstrap.py](bootstrap/bootstrap.py): boot stages from idea to running system
+- [worker/src/tick.js](worker/src/tick.js): the heartbeat
+- [autonomy/repo-conformance.json](autonomy/repo-conformance.json): the files every repository carries

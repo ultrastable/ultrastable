@@ -8,8 +8,36 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-26
+Last updated: 2026-11-27
 
+- 2026-11-27: ASHBY-KERNEL-1 (Rowan: implement Ashby's journal and concept index, ashby.info, into working parts of Ultrastable). Extends ASHBY-CONCEPTS-1 (#2617), which bound 18 concepts to code that already existed on the platform. The kernel every system runs now carries the mechanisms: `seed/worker/src/ashby.js` (pure functions, journal pages cited as J.<page>), wired into `seed/worker/src/goals.js` (veto by every essential variable with a confirm-or-exonerate trial, step-function search past the declared direction, accessibility, the `structure` reading on `/api/goals`) and `seed/worker/src/regulation.js` (requisite variety from the work queue). The variety and joint-size readings are builtin metrics, not goals (no knob can move them, and GOALS-1 allows no goal without one): the goal loop files `VARIETY-DEFICIT` and `JOINT-TOO-LARGE` and closes them by the same readings. `doctrine/ashby-concepts.json` has 41 concepts (37 implemented, 4 gaps on `Q-ASHBY-anticipation`, `-gating`, `-markov`, `-habituation`), each with journal pages; `ashbymap --live` read 72 of the index's 678 keywords bound on 2026-11-27. The archive reserves all rights: nothing of its text is in the repository, only our own wording, page numbers and links. Behaviour change to know: a knob at a bound or with a failed declared direction is now moved the other way as a reviewed trial (US-26-R39 and R40 tests updated). Work record #2618.
+- 2026-11-27: feat(seed): Pérez López doctrine guard rules with drills (#2625)
+- 2026-11-27: feat(seed): reference homeostat harness with Ashby drills (#2621)
+- 2026-11-27: feat(ashby): bind Ashby's concept index to the code that carries it (#2617)
+- 2026-11-27: feat: wire the build-out modules and close the small module defects (integration 1) (#2607)
+- 2026-11-27: fix: carry the round-one fixes the early slices merged without (RC, WD1) (#2606)
+- 2026-11-27: test: the workers' ratchets and specification-citing tests (WK) (#2605)
+- 2026-11-27: test: the foundation's specification-citing tests (FT) (#2600)
+- 2026-11-27: feat(seed): the specification run's seed tests and the fixes they prove (SW+FX) (#2595)
+- 2026-11-27: ZERO-MINUTES-1: worker merged #2596
+- 2026-11-27: queue: closing-probe verdicts for 25 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci] (#2596)
+- 2026-11-26: queue: closing-probe verdicts for 25 item(s) (QUEUE-PERSIST-1) (part 1/2) [skip ci]
+- 2026-11-26: feat: the steward, principles enforcement and GitHub pull helpers (WI) (#2594)
+- 2026-11-26: feat: the workers tools, gaplint and loop closer (W09) (#2593)
+- 2026-11-26: feat: the adapters and launcher (W08) (#2588)
+- 2026-11-26: Fix async handler, mount route, test wire, update handoff. (#Q-LITE-webmention-wire) (#2589)
+- 2026-11-26: feat: the bootstrapper, its ladder and the owner document (BS) (#2587)
+- 2026-11-26: feat: the console and elicit modules (W07) (#2586)
+- 2026-11-26: feat: the sla, specloop, staff, tenantstore and trust modules (W06) (#2585)
+- 2026-11-26: feat: the predict, remediation, router and signals modules (W05) (#2583)
+- 2026-11-26: feat(seed): repo conformance check for machine-readable files (#2580)
+- 2026-11-26: feat: the ladder and modelport modules (W04) (#2581)
+- 2026-11-26: feat: the capability packs, with their channels, manifests and probes (PK) (#2576)
+- 2026-11-26: feat: the ghcost, governance, graph, ignorance, install and kernel modules (W03) (#2575)
+- 2026-11-26: Implement inbound webmention receiver in lite.js to record external referrals as reach (#Q-IMPROVE-webmention) (#2566)
+- 2026-11-26: findable: reading and queue items (FINDABLE-1) [skip ci]
+- 2026-11-26: feat: the describe, doors, elicit, fleet and walkthrough modules (W02) (#2544)
+- 2026-11-26: queue: closing-probe verdicts for 15 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-26: feat: the storage adapters, core test helpers and the claims, console-l3 and deploy modules (W01) (#2530)
 - 2026-11-26: ZERO-MINUTES-1: worker merged #2529
 - 2026-11-26: tenant-sync: ledger [skip ci] (#2529)

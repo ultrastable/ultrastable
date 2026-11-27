@@ -1,0 +1,12 @@
+{
+  "id": "Q-TRAJ-neglected-loop-told",
+  "title": "Q-TRAJ-neglected-loop-told: the told ledger had 6 rows, then none for 7 days: the loop that writes it has gone quiet",
+  "body": "**Owner:** executor\n**Trigger:** trajectory pass (TRAJECTORY-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation trajectory --probe neglected:loop:told\n**Status:** open\n\nthe told ledger had 6 rows, then none for 7 days: the loop that writes it has gone quiet. Evidence: quiet_days 7.\n\nFind why it went quiet while the system moved: a loop that no longer fires, an area nothing consumes. Fix the loop or retire the area with a recorded disposition.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation trajectory --probe neglected:loop:told` exits 0.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "trajectory"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

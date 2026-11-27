@@ -6,10 +6,12 @@
 // Both schedulers run the same guarded entry, org.scheduledTick(): the cron firing and the Heartbeat alarm claim one slot between them
 // (adapters/shared/slot.js), so a cron and an alarm that fire in the same ten minutes run one tick, and a scheduler that fires twice runs once.
 import { createOrg } from '../../../core/org/index.js';
+import { githubPullReader } from '../../github/pulls.js';
 import { createHeartbeat, ensureArmed } from './heartbeat.js';
 
 export function createWorker(config, { now } = {}) {
-  const orgFor = env => createOrg({ db: env.DB, env, config, ...(now ? { now } : {}) });
+  // The ports a Cloudflare host builds for the organization: the GitHub REST reading of a pull request (core/claims releases a claim when its pull request merges).
+  const orgFor = env => createOrg({ db: env.DB, env, config, ports: { pullReader: githubPullReader }, ...(now ? { now } : {}) });
 
   const Heartbeat = createHeartbeat(env => orgFor(env).scheduledTick());
 

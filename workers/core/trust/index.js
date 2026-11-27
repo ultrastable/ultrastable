@@ -343,6 +343,7 @@ export function validatePolicy(policy) {
     for (const [an, a] of Object.entries(sf.actions || {})) {
       if (a.reversible === false && a.identity_bound === true && a.reversible_path) problems.push(`${name}.${an}: irreversible and identity-bound but carries a reversible path (it would not be gated)`);
       if (a.reversible === false && a.identity_bound === false && !a.reversible_path && !a.denied) problems.push(`${name}.${an}: irreversible and not identity-bound needs a reversible path or denied`);
+      if (a.denied && (a.reversible === true || a.reversible_path)) problems.push(`${name}.${an}: denied but carries a reversible form (a denial is not a gate; state one or the other)`);
     }
   }
   const text = limitsText(policy);
@@ -455,6 +456,8 @@ export async function authorize(db, a, { policy, now = Date.now(), config = {} }
   }
   const def = policy.surfaces?.[a.surface]?.actions?.[a.action_class];
   if (!def) return { allowed: false, refused: 'not_in_policy', reason: `${a.surface}/${a.action_class} is not an action the policy states` };
+  // Policy denial (US-06-R23): a denied action is refused whatever its reversibility, so a reversible path never turns a standing denial into an allow.
+  if (def.denied) return { allowed: false, refused: 'denied', reason: def.reason || 'denied by policy' };
   // 2. The interrupt gate. Reversibility is engineered before an action is classed irreversible.
   let via = def.reversible ? 'reversible' : null;
   if (!via && def.reversible_path && !def.identity_bound) via = `reversible path: ${def.reversible_path}`;
@@ -467,7 +470,6 @@ export async function authorize(db, a, { policy, now = Date.now(), config = {} }
     }
   }
   if (!via) {
-    if (def.denied) return { allowed: false, refused: 'denied', reason: def.reason || 'denied by policy' };
     if (!def.identity_bound) return { allowed: false, refused: 'irreversible_not_identity_bound', reason: 'no reversible form exists and the step is not bound to the principal: rerouted to the staff, not a gate card' };
     const card = await openCard(db, {
       id: a.card?.id || `GATE-${a.surface}-${a.action_class}${a.target ? `-${a.target}` : ''}`,
@@ -492,11 +494,12 @@ export async function authorize(db, a, { policy, now = Date.now(), config = {} }
 
 /**
  * US-06-R21: the port core/deploy asks before it publishes. `authorizer({ surface, action_class, target, executor })` runs
- * authorize() with the rung the action needs (default `assisted`) and returns { allowed, reason, gate_card, next }. `limits`
+ * authorize() with the rung the action needs (default `autonomous`: a production deploy is the action the ladder defines as an agent
+ * executing and merging on green checks; `assisted` means a reviewer merges, so it must be named by the caller) and returns { allowed, reason, gate_card, next }. `limits`
  * and `condition` may be values or functions of the request (the checks that refused this change, and the text they saw);
  * `reversible_forms` is passed through. core/deploy never imports this module: the composition root hands it the function.
  */
-export function deployAuthorizer({ db, policy, required_rung = 'assisted', now = () => Date.now(), config = {}, limits, condition, reversible_forms } = {}) {
+export function deployAuthorizer({ db, policy, required_rung = 'autonomous', now = () => Date.now(), config = {}, limits, condition, reversible_forms } = {}) {
   const val = (v, req) => (typeof v === 'function' ? v(req) : v);
   return async (req) => {
     const r = await authorize(db, { surface: req.surface, action_class: req.action_class, target: req.target, executor: req.executor || undefined, required_rung,

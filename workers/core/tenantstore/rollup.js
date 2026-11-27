@@ -8,7 +8,7 @@ export class Rollups {
   constructor(sql, guard, now = () => new Date()) { this.sql = sql; this.guard = guard; this.now = now; this.sql.exec(SCHEMA); }
   // One write, O(1): call it in the same unit of work as the row it summarizes.
   add(name, key, { n = 1, sum = 0, val = null } = {}) {
-    this.guard.check();
+    this.guard.checkWrite();
     const r = this.sql.exec(`INSERT INTO _rollup(name,key,n,sum,last_at,last_val) VALUES(?,?,?,?,?,?)
       ON CONFLICT(name,key) DO UPDATE SET n=n+excluded.n, sum=sum+excluded.sum, last_at=excluded.last_at, last_val=COALESCE(excluded.last_val,last_val)`,
       [name, key, n, sum, this.now().toISOString(), val === null ? null : String(val)]);

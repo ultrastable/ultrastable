@@ -27,8 +27,19 @@ export function registerGateExtra(gate, name, fn) {
   if (at >= 0) GATE_EXTRAS[at] = { gate, name, fn }; else GATE_EXTRAS.push({ gate, name, fn });
 }
 export const gateExtraNames = (gate) => GATE_EXTRAS.filter(e => e.gate === gate).map(e => e.name);
+// The conditions core/lifecycle-gates registers when it is loaded. The kernel does not carry them (they read that module's tables), but it does
+// not let a gate pass without them either: a database that holds the module's content store while this process has not loaded the module is
+// refused with one reason per missing condition, so a caller that imports only core/kernel/lifecycle.js cannot enter a phase on the artifact
+// conditions alone (US-15-R20). A database with no such store has no module state to enforce, and the artifact conditions are all there are.
+const MODULE_CONDITIONS = { G1: ['charter-probe', 'readiness'], G2: ['requirement-map', 'readiness-g2'], G3: ['deliverable-probes', 'retrospective'] };
+async function unloadedConditions(db, gate) {
+  const have = gateExtraNames(gate), want = (MODULE_CONDITIONS[gate] || []).filter(n => !have.includes(n));
+  if (!want.length) return [];
+  if (!(await first(db, `SELECT 1 AS x FROM sqlite_master WHERE type = 'table' AND name = 'lifecycle_artifact_content'`))) return [];
+  return want.map(n => [`condition-${n}-not-loaded`, 'operations', `the gate condition ${n} is not loaded in this process (core/lifecycle-gates is not imported), so ${gate} cannot be passed here`]);
+}
 export async function gateExtraReasons(db, projectId, gate, opts = {}) {
-  const out = [];
+  const out = await unloadedConditions(db, gate);
   for (const e of GATE_EXTRAS.filter(x => x.gate === gate)) for (const r of (await e.fn(db, projectId, opts)) || []) out.push(r);
   return out;
 }

@@ -18,7 +18,8 @@ test('checkSql allows own-table writes and shared reads, refuses everything else
   const ok = [
     `SELECT * FROM guard_ledger WHERE pack = 'x'`, `INSERT INTO x_things (a) VALUES (?)`, `UPDATE x_things SET a = 1`,
     `DELETE FROM x_things WHERE a = ?`, `INSERT OR IGNORE INTO predictions (id) VALUES (?)`, `INSERT INTO items (id) VALUES (?)`,
-    `SELECT 1 FROM sqlite_master WHERE name = 'guard_suppression; DROP TABLE x'`,
+    `SELECT 1 FROM x_things WHERE a = 'guard_suppression; DROP TABLE x'`,                    // keywords inside text are text
+    `SELECT status, reason FROM guard_queue WHERE id = ?`,                                      // the one read of the approval queue a pack may make
     `INSERT INTO x_things (a) VALUES (?) ON CONFLICT(a) DO UPDATE SET a = excluded.a`,       // upsert: the target is the INSERT table
   ];
   for (const s of ok) assert.equal(checkSql(s, 'x'), null, s);
@@ -142,4 +143,48 @@ test('a relative import that stays inside the pack directory is fine', () => {
 
 test('sandboxDb rejects a bad pack id', () => {
   assert.throws(() => sandboxDb({}, "x'; --"), /bad pack id/);
+});
+
+// ---------------- US-21-R08: what a pack may read and change in the shared tables ----------------
+test('US-21-R08: a pack cannot read the approval queue content, the trust ledger, roles, gate cards, suppression list or the schema', () => {
+  const bad = {
+    'SELECT recipient, content FROM guard_queue': 'forbidden_table_columns:guard_queue',
+    'SELECT * FROM guard_queue WHERE id = ?': 'forbidden_table_columns:guard_queue',
+    'INSERT INTO x_things SELECT recipient, content FROM guard_queue': 'forbidden_table_columns:guard_queue',
+    'SELECT status FROM guard_queue g JOIN x_things t ON t.id = g.id WHERE g.id = ?': 'forbidden_table_columns:guard_queue',
+    'SELECT * FROM trust_ledger': 'forbidden_table', 'SELECT * FROM roles': 'forbidden_table', 'SELECT * FROM gate_cards': 'forbidden_table',
+    'SELECT recipient_hash FROM guard_suppression': 'forbidden_table', 'SELECT sql FROM sqlite_master': 'forbidden_table', 'SELECT name FROM sqlite_schema': 'forbidden_table',
+  };
+  for (const [s, why] of Object.entries(bad)) assert.equal(checkSql(s, 'x'), why, s);
+  assert.equal(checkSql('SELECT status, reason FROM guard_queue WHERE id = ?', 'x'), null);
+});
+
+test('US-21-R08: a pack cannot update or delete items or delete predictions, and writes to the shared tables need a row id it owns', () => {
+  const bad = {
+    "UPDATE items SET status = 'done' WHERE id = ?": 'shared_table_update:items',
+    'DELETE FROM items': 'shared_table_delete:items', 'DELETE FROM predictions WHERE id = ?': 'shared_table_delete:predictions',
+    "UPDATE predictions SET verdict = 'hit'": 'shared_table_unscoped_update:predictions',
+    "UPDATE predictions SET verdict = 'hit' WHERE metric = ?": 'shared_table_unscoped_update:predictions',
+    'INSERT INTO items SELECT * FROM x_things': 'shared_table_unscoped_insert:items',
+    "INSERT INTO predictions (id, metric) VALUES ('p1', ?)": 'shared_table_unscoped_insert:predictions',
+    'INSERT INTO predictions (metric, op) VALUES (?, ?)': 'shared_table_unscoped_insert:predictions',
+  };
+  for (const [s, why] of Object.entries(bad)) assert.equal(checkSql(s, 'x'), why, s);
+  const ok = ['INSERT INTO items (id, title) VALUES (?, ?)', 'INSERT OR IGNORE INTO predictions (id, metric, op, target, due_at) VALUES (?,?,?,?,?)', 'UPDATE predictions SET observed = ?, verdict = ? WHERE id = ?'];
+  for (const s of ok) assert.equal(checkSql(s, 'x'), null, s);
+});
+
+test('US-21-R08: the id bound to a shared-table write must start with the pack id; another pack\'s, a core item\'s or the host\'s id is refused at bind time', () => {
+  const calls = [];
+  const raw = { prepare(sql) { return { bind(...a) { calls.push([sql, a]); return { run: async () => ({}) }; } }; } };
+  const db = sandboxDb(raw, 'social');
+  const ins = db.prepare('INSERT INTO items (id, title) VALUES (?, ?)');
+  for (const id of ['social-1', 'social', 'social_x', 'SOCIALVERIFY-3']) assert.doesNotThrow(() => ins.bind(id, 't'), id);
+  for (const id of ['email-1', 'DRAFTSTALE-3', 'PACKFAIL-social-1', 'PACKTRIAL-social', '', null]) assert.throws(() => ins.bind(id, 't'), /shared_table_id_not_owned/, String(id));
+  const upd = db.prepare("UPDATE predictions SET observed = ?, verdict = ? WHERE id = ?");
+  assert.doesNotThrow(() => upd.bind(5, 'hit', 'social-engagement-1'));
+  assert.throws(() => upd.bind(5, 'hit', 'email-engagement-1'), /shared_table_id_not_owned/);
+  assert.throws(() => upd.run(), /shared_table_id_not_owned/, 'an unbound statement cannot be run');
+  assert.equal(calls.length, 5);
+  assert.equal(typeof db.prepare('SELECT 1 FROM social_x WHERE a = ?').bind, 'function', 'a statement with no shared write is passed through unchanged');
 });

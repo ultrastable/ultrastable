@@ -7,6 +7,7 @@ export const SECRET_NAMES = ['SCHEDULER_ACCESS_TOKEN'];
 const DEFAULT_PATHS = {
   create: '/updates/create.json',
   get: '/updates/{id}.json',
+  profile: '/profiles/{profile}.json',
   pending: '/profiles/{profile}/updates/pending.json',
   destroy: '/updates/{id}/destroy.json',
 };
@@ -33,6 +34,12 @@ export function createSchedulerChannel({ fetch, env = {}, baseUrl, profileId, to
 
   return {
     name: 'scheduler',
+    // US-21-R25: read-only. Reads the configured profile; never creates an update.
+    async probe() {
+      const p = await call('GET', url('profile', { profile: profileId }));
+      if (!p || (p.id === undefined && p.service === undefined && p.success === false)) throw new Error('scheduler profile not readable');
+      return { ok: true, detail: 'profile readable' };
+    },
     async post({ text, replyTo }) {
       if (replyTo) throw new Error('this scheduler channel does not support replies');
       const form = { text, 'profile_ids[]': profileId };

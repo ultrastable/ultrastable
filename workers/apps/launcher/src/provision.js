@@ -3,7 +3,7 @@
 // Door A (US-SPEC-19): put a live preview of a person's organization online on a Cloudflare temporary account.
 // Every outside call goes through the injected `fetch`. Nothing is logged. The temporary account token and the claim
 // link are held in memory only; the claim link is returned to the caller and never written anywhere (US-19-R07).
-import { buildSeedSql, cleanIdea, slugify } from './seed.js';
+import { buildSeedSql, claimProbeSql, cleanIdea, slugify } from './seed.js';
 
 const API = 'https://api.cloudflare.com/client/v4';
 const TOS = 'https://www.cloudflare.com/terms/';
@@ -36,6 +36,23 @@ export async function fetchChallenge(fetchImpl = fetch) {
 }
 
 /**
+ * US-19-R03: read the new preview's /health once and say honestly whether it was verified. A preview is behind a Cloudflare safety
+ * page until it is claimed, so an automated read usually comes back challenged; that is "not verified", never "verified" and never
+ * a failure. Never throws and logs nothing.
+ * @returns {Promise<{status:'verified'|'not_verified', reason:string}>}
+ */
+export async function verifyPreview(url, fetchImpl = fetch) {
+  const not = (reason) => ({ status: 'not_verified', reason });
+  let res;
+  try { res = await fetchImpl(`${url}/health`, { redirect: 'manual', method: 'GET' }); } catch { return not('the new address could not be reached yet, so it could not be read from outside'); }
+  if (res.headers && res.headers.get && res.headers.get('cf-mitigated') === 'challenge') return not('a preview is behind a Cloudflare safety page until you keep it, so it could not be read from outside');
+  let body = null;
+  try { body = await res.json(); } catch { /* not JSON: not our Worker */ }
+  if (res.status === 200 && body && typeof body === 'object' && body.ok === true && body.preview === true) return { status: 'verified', reason: 'the preview answered its own health check' };
+  return not(`the address did not answer like the preview yet (status ${res.status}), so it could not be read from outside`);
+}
+
+/**
  * @param {object} p
  * @param {Function} p.fetch
  * @param {{challengeToken:string, solution:{checkpoints:string}}} p.proof  solved in the person's browser
@@ -43,7 +60,7 @@ export async function fetchChallenge(fetchImpl = fetch) {
  * @param {boolean} p.acceptedCloudflareTerms  the person ticked the box (US-19-R06)
  * @param {{bundle:string, bundleSha256:string, migrationsSql:string, compatibilityDate:string}} p.release
  */
-export async function provision({ fetch: f = fetch, proof, answers, acceptedCloudflareTerms, release, getRandomValues }) {
+export async function provision({ fetch: f = fetch, proof, answers, acceptedCloudflareTerms, release, getRandomValues, verify = null }) {
   if (acceptedCloudflareTerms !== true) throw new ProvisionError('terms', 'Cloudflare\'s terms must be accepted by you before anything is created.', 400);
   if (!proof || !proof.challengeToken || !proof.solution || !proof.solution.checkpoints) throw new ProvisionError('proof', 'The safety check was not completed.', 400);
   const a = cleanIdea(answers);
@@ -96,8 +113,16 @@ export async function provision({ fetch: f = fetch, proof, answers, acceptedClou
   const subdomain = sub.result && sub.result.subdomain;
   if (!subdomain) throw new ProvisionError('address', 'Cloudflare did not return an address for the preview.', 502);
 
+  const url = `https://${slug}.${subdomain}.workers.dev`;
+  // US-19-R11: the CLAIM and HEARTBEAT cards get a machine probe now that the address exists. The preview is already live, so a refusal here
+  // keeps the cards on 'manual' and is stated in the result; it never throws the preview away.
+  let claimProbes = { status: 'set' };
+  try { await call(f, 'cards', `${A}/d1/database/${dbId}/query`, { method: 'POST', headers: { ...auth, ...json }, body: JSON.stringify({ sql: claimProbeSql(url) }) }, redact); } catch (e) { claimProbes = { status: 'manual', reason: e.message }; }
+  // US-19-R03: a port. Without one the preview is reported as not verified; nothing ever assumes it works.
+  const verification = verify ? await verify(url) : { status: 'not_verified', reason: 'it was not read from outside' };
+
   return {
-    url: `https://${slug}.${subdomain}.workers.dev`, orgName, slug, consoleKey,
+    url, verification, claimProbes, orgName, slug, consoleKey,
     claimUrl: claim && claim.url, claimExpiresAt: claim && claim.expiresAt, accountExpiresAt: account.expiresAt,
     bundleSha256: release.bundleSha256, mode: 'preview',
     notes: ['This is a preview: it runs for about an hour, ticks itself every 5 minutes with its own alarm, and Cloudflare shows a safety page to automated visitors until you claim it.'],

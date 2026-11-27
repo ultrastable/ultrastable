@@ -1,10 +1,31 @@
 {
-  "_comment": "GitHub Actions minutes budget (US-SPEC-24). Minutes are Linux-equivalent: other runners count at price / linux_minute_rate_usd. Free org plan includes USD 12 of compute a month (about 2000 Linux minutes at 0.006); this file keeps total below that.",
+  "_comment": "GitHub Actions minutes budget (US-SPEC-24). Minutes are Linux-equivalent: other runners count at price / linux_minute_rate_usd. Free org plan includes USD 12 of compute a month (about 2000 Linux minutes at 0.006); this file keeps total below that. The workers repository's own workflows are rostered by file name (ci.yml, selfhost.yml, loops.yml, self-start.yml, idea-intake.yml, release.yml); pages.yml, docs-link-check.yml and dependabot-auto.yml stay rostered for the other repositories of the organization, which this checkout cannot read.",
   "linux_minute_rate_usd": 0.006,
   "monthly_minutes_total": 1500,
   "default_per_repo": 100,
-  "per_repo": { "workers": 900, "spec": 200, "license": 50, ".github": 50, "ultrastable": 250 },
-  "thresholds": [0.5, 0.8],
-  "non_essential_workflows": ["ci.yml:bootstrap-apply", "pages.yml", "docs-link-check.yml", "dependabot-auto.yml"],
-  "essential_workflows": ["ci.yml:test"]
+  "per_repo": {
+    "workers": 900,
+    "spec": 200,
+    "license": 50,
+    ".github": 50,
+    "ultrastable": 250
+  },
+  "thresholds": [
+    0.5,
+    0.8
+  ],
+  "non_essential_workflows": [
+    "ci.yml:bootstrap-apply",
+    "loops.yml",
+    "self-start.yml",
+    "idea-intake.yml",
+    "release.yml",
+    "pages.yml",
+    "docs-link-check.yml",
+    "dependabot-auto.yml"
+  ],
+  "essential_workflows": [
+    "ci.yml:test",
+    "selfhost.yml"
+  ]
 }

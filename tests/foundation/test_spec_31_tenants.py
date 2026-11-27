@@ -493,6 +493,26 @@ class Vendoring(unittest.TestCase):
         self.assertEqual(g.read_text().strip(), "node_modules")
 
 
+    def test_US_31_R62_each_tool_reads_only_its_own_form_of_vendored_from_and_a_tenant_kept_on_the_json_form_is_exempt_with_that_reason(self):
+        d = planned()
+        vd = d / "vendor/ultrastable"
+        text = (vd / "VENDORED_FROM").read_text()
+        self.assertRegex(text.splitlines()[0], r"^ultrastable/ultrastable@\S+$", "the scaffold writes the text form")
+        self.assertEqual(T.check_tenant(d, STD, ROOT), [])
+        with self.assertRaises(json.JSONDecodeError, msg="tenant_sync.py fails on the text form; it never reads it as empty"):
+            self.ts.read_manifest(d, {"vendor_dir": "vendor/ultrastable"})
+        with self.assertRaises(json.JSONDecodeError, msg="vendor.py --check fails on the text form"):
+            self.vendor.check(vd)
+        manifest = {"schema": "vendored-from/1", "source": "ultrastable/workers", "commit": "c1", "files": {"contract.js": "0" * 64}}
+        put(vd, "VENDORED_FROM", manifest)
+        self.assertEqual(self.ts.read_manifest(d, {"vendor_dir": "vendor/ultrastable"})["files"], manifest["files"], "the JSON form is the one tenant_sync.py reads")
+        got = "\n".join(T.check_tenant(d, STD, ROOT))
+        self.assertIn("does not start with `<core repo>@<commit>`", got, "the standard check reports the JSON form instead of accepting it")
+        ex = STD["exempt"]["practical-solutions"]
+        self.assertIn("JSON", ex["why"], "a tenant kept on the JSON form is exempt, and the reason says so")
+        self.assertIn("tenant_sync.py", ex["why"])
+
+
 class SyncLoop(unittest.TestCase):
     NOW = dt.datetime(2026, 11, 26, 12, 0, tzinfo=dt.timezone.utc)
 
