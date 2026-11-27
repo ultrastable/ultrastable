@@ -52,6 +52,7 @@ import { importCredentials, reconcileBuffer, intakeInbox, seedLinkRows } from '.
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly, publicPage } from './visibility.js';
 import config from './config.js';
+import { tickRecency, stamp } from './recency.js';  // RECENCY-1
 import { backendRecord } from './errors.js';  // USER-BACKEND-1
 import { governedAI, budgetView, SHARES, halted, planOf } from './budget.js';
 import { recordSpend, readSpend, spendView } from './spend.js';  // SPEND-SOFT-1
@@ -107,7 +108,7 @@ function hostRegistry(env, token, repo) {  // HOSTS-1: every host that can run t
   return createHosts(list, { db: env.DB });
 }
 
-export default {
+const app = {
   async scheduled(_event, env, ctx) {
     if (halted(config, env)) { ctx.waitUntil(beat(env.DB, 'halted', async () => ({ halted: true })).catch(e => console.error('halted beat', e && e.message))); return; }  // HALT-1: no loops, lane, executor, deploys or model calls
     // ACCOUNT-SPLIT-2: decide first whether this account's tick runs the loops (one primary across both Cloudflare accounts).
@@ -422,3 +423,14 @@ async function declaredItems(db, prefix, failing, all) {
     else await db.prepare(`UPDATE items SET status='done', disposition=?, updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`).bind(`probe green: declared:${prefix}:${id}`, new Date().toISOString(), item).run().catch(() => null);
   }
 }
+
+// RECENCY-1: every tenant response says when the system last updated (its newest finished tick) and how often it updates, unless a route stamped its own time.
+export default {
+  ...app,
+  async fetch(request, env, ctx) {
+    const res = await app.fetch(request, env, ctx);
+    if (!env || !env.DB || res.headers.has('x-updated-at')) return res;
+    const row = await lastTick(env.DB).catch(() => null);
+    return stamp(res, tickRecency(row));
+  },
+};

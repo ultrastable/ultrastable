@@ -171,7 +171,7 @@
       "id": "ultrastable-site",
       "state": "live",
       "role": "public site, read-only live record, agent surfaces (/mcp, discovery documents), control-plane API /api/v1 and /ops dashboard (reads ORG live)",
-      "main": "site/worker.js",
+      "main": "site/edge.js",
       "compatibility_date": "2026-11-12",
       "routes": [
         "ultrastable.io",

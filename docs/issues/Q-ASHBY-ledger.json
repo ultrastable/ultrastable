@@ -1,11 +1,11 @@
 {
- "id": "Q-ASHBY-ledger",
- "title": "Q-ASHBY-ledger: Step trials, commits and rollbacks have no table, so interference() and failureRecall() cannot read live data",
- "body": "**Owner:** product-manager\n**Trigger:** SECOND-LOOP-KERNEL-1 merged (PR 2629); work record issue 2620\n**Done check:** cmd:git grep -q step_trials -- seed/worker/src/secondloop.js\n**Closing probe:** `node --test seed/worker/test/secondloop.test.js seed/worker/test/organization.test.js` passes with a test that exercises it, and `git grep -q step_trials -- seed/worker/src/secondloop.js` exits 0\n**Prediction:** ashby_concepts_implemented >= 18 within 336 h\n**Out of scope:** copying any text or image from ashby.info; blind random search\n**Status:** open\n\nProblem: Step trials, commits and rollbacks have no table, so interference() and failureRecall() cannot read live data. Build: a migration adding step_trials(partition, candidate, start_tick, outcome) and a tick read that calls interference and evoke.",
- "labels": [
-  "role:product-manager",
-  "open-loop"
- ],
- "milestone": "Now",
- "workstream": "Open loops"
+  "id": "Q-ASHBY-ledger",
+  "title": "Q-ASHBY-ledger: Step trials, commits and rollbacks have no table, so interference() and failureRecall() cannot read live data",
+  "body": "**Owner:** product-manager\n**Trigger:** SECOND-LOOP-KERNEL-1 merged (PR 2629); work record issue 2620\n**Done check:** cmd:git grep -q step_trials -- seed/worker/src/secondloop.js\n**Closing probe:** `node --test seed/worker/test/secondloop.test.js seed/worker/test/organization.test.js` passes with a test that exercises it, and `git grep -q step_trials -- seed/worker/src/secondloop.js` exits 0\n**Prediction:** ashby_concepts_implemented >= 18 within 336 h\n**Out of scope:** copying any text or image from ashby.info; blind random search\n**Status:** closed\n\nProblem: Step trials, commits and rollbacks have no table, so interference() and failureRecall() cannot read live data. Build: a migration adding step_trials(partition, candidate, start_tick, outcome) and a tick read that calls interference and evoke.\n\n**Disposition:** shelved (ttl, 2026-11-27T10:57:40Z, DISPOSE-1)\n\n**Evidence:** open 6.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
 }
