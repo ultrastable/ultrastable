@@ -119,7 +119,7 @@ Criticality numbers (from `autonomy/criticality.json`): window 14 days, k_min 1,
 
 ## Standing rules
 
-99 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
+100 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
 a rule enforced only by the platform is marked so, and the platform checks it for every system it hosts.
 
 - **USER-BACKEND-1**: The user does the idea; the system does the backend; one fix improves every system. In this kit: `doctrine/user-backend.json`, `worker/src/errors.js`, `worker/test/errors.test.js`.
