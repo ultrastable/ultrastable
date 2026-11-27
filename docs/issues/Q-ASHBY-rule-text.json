@@ -1,0 +1,5 @@
+{
+ "id": "Q-ASHBY-rule-text",
+ "title": "Q-ASHBY-rule-text: SECOND-LOOP-KERNEL-1 and ORG-THEORY-1 are not yet written into agents/AGENTS.md and its seed copy",
+ "body": "**Owner:** product-manager\n**Trigger:** PR 2641 merged\n**Done check:** cmd:git grep -q SECOND-LOOP-KERNEL-1 -- agents/AGENTS.md seed/agents/AGENTS.md\n**Closing probe:** `git grep -q SECOND-LOOP-KERNEL-1 -- agents/AGENTS.md seed/agents/AGENTS.md` exits 0 and `python3 -m foundation coherence --check` passes\n**Prediction:** rules_with_agent_text >= 1 within 24 h\n**Out of scope:** changing the module code; any edit to other rules\n**Status:** open\n\nProblem: the worker-gate refuses model-branch edits to files over 61440 bytes, and both AGENTS.md copies are larger, so the standing rule text could not ship in PR 2641. The rule is registered in seed/doctrine/constitution.json (rule second-goal-in-code) and the register seed/autonomy/secondloop.json. Add one bullet in each AGENTS.md copy through the path that is allowed to edit large files, then run python3 scripts/system.py --write in seed/."
+}

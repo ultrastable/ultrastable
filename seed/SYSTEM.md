@@ -120,7 +120,7 @@ Criticality numbers (from `autonomy/criticality.json`): window 14 days, k_min 1,
 
 ## Standing rules
 
-101 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
+100 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
 a rule enforced only by the platform is marked so, and the platform checks it for every system it hosts.
 
 - **USER-BACKEND-1**: The user does the idea; the system does the backend; one fix improves every system. In this kit: `doctrine/user-backend.json`, `worker/src/errors.js`, `worker/test/errors.test.js`.
@@ -178,7 +178,6 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **CONNECT-1**: A vector space and a knowledge graph in every system; novel connections are generated, not waited for. In this kit: checked by the platform.
 - **DATAGRAPH-1**: Every system keeps a knowledge graph of all its data, built and maintained automatically. In this kit: `worker/src/datagraph.js`, `worker/src/knowledge.js`, `worker/src/vendor/core/datagraph.js`, `worker/test/datagraph.test.js`.
 - **RESEARCH-1**: Ultrastable runs its own R&D and publishes its own white papers; Ashby's mechanism is code. In this kit: checked by the platform.
-- **SECOND-LOOP-KERNEL-1**: Ashby's concepts and the organisation built on them are kernel code. In this kit: `autonomy/secondloop.json`, `worker/src/organization.js`, `worker/src/secondloop.js`, `worker/test/organization.test.js`.
 - **THOUGHT-1**: Thought leadership is a loop: every paper becomes posts that carry the hook. In this kit: `worker/src/social.js`, `worker/test/social-connect.test.js`.
 - **SOCIAL-MODULE-1**: The social module is how a system faces humans. In this kit: `worker/src/auth/social.js`, `worker/src/humans.js`, `worker/src/social.js`, `worker/test/social-connect.test.js`.
 - **YEAR-SIM-1**: A year unattended is simulated, not asserted; the system does what it says. In this kit: `autonomy/goals.json`, `autonomy/yearsim.json`, `scripts/trajectory.py`, `scripts/yearsim.py`.
