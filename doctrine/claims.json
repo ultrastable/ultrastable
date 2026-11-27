@@ -1975,6 +1975,16 @@
       ]
     },
     {
+      "id": "cited-91e6fd7e7e",
+      "surface": "site/saydo-data.js",
+      "text": "\"detail\": \"python3 -m foundation claimcode --check: FAIL agents/AGENTS.md:42: states a number, cadence or guarantee with no registered",
+      "probe": [
+        "file:foundation/claimcode.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-06c8ef7187",
       "surface": "site/worker.js",
       "text": "+ \"<div class=\\\"us-grid c2\\\">\" + card(\"Loops\", \"Each loop has a trigger, owner, definition of done, two independent paths and a closing",
@@ -2111,6 +2121,20 @@
         "file:ops/checks-session.jsonl",
         "file:foundation/drainwatch.py",
         "file:foundation/checksrun.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-16a27cbb2c",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a problem that code is discarded and not",
+      "probe": [
+        "file:foundation/prsafe.py",
+        "file:foundation/prbound.py",
+        "file:seed/worker/src/prsafe.js",
+        "file:seed/worker/src/sweeper.js",
+        "file:seed/worker/src/sla.js",
+        "file:scripts/branch_cleanup.py"
       ],
       "bound_by": "cited"
     },
@@ -3303,6 +3327,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-8dd9873b6c"
+    },
+    {
+      "id": "mirror-d5953d01d5",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a problem that code is discarded and not",
+      "probe": [
+        "file:foundation/prsafe.py",
+        "file:foundation/prbound.py",
+        "file:seed/worker/src/prsafe.js",
+        "file:seed/worker/src/sweeper.js",
+        "file:seed/worker/src/sla.js",
+        "file:scripts/branch_cleanup.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-16a27cbb2c"
     },
     {
       "id": "mirror-627752edd7",

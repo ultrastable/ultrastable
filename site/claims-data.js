@@ -1597,6 +1597,15 @@ export default {
    "surface": "site/worker.js"
   },
   {
+   "claim": "\"detail\": \"python3 -m foundation claimcode --check: FAIL agents/AGENTS.md:42: states a number, cadence or guarantee with no registered",
+   "detail": "",
+   "how": "file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b",
+   "id": "cited-91e6fd7e7e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/saydo-data.js"
+  },
+  {
    "claim": "+ \"<div class=\\\"us-grid c2\\\">\" + card(\"Loops\", \"Each loop has a trigger, owner, definition of done, two independent paths and a closing",
    "detail": "",
    "how": "file:foundation/loops.py + grep:.github/workflows/checks.yml::foundation[ .]loops\\b",
@@ -1709,6 +1718,15 @@ export default {
    "detail": "",
    "how": "file:ops/checks-session.jsonl + file:foundation/drainwatch.py + file:foundation/checksrun.py",
    "id": "cited-8dd9873b6c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a problem that code is discarded and not",
+   "detail": "",
+   "how": "file:foundation/prsafe.py + file:foundation/prbound.py + file:seed/worker/src/prsafe.js + file:seed/worker/src/sweeper.js + file:seed/worker/src/sla.js + file:scripts/branch_cleanup.py",
+   "id": "cited-16a27cbb2c",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2609,6 +2627,15 @@ export default {
    "detail": "",
    "how": "file:ops/checks-session.jsonl + file:foundation/drainwatch.py + file:foundation/checksrun.py",
    "id": "mirror-222143350a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a problem that code is discarded and not",
+   "detail": "",
+   "how": "file:foundation/prsafe.py + file:foundation/prbound.py + file:seed/worker/src/prsafe.js + file:seed/worker/src/sweeper.js + file:seed/worker/src/sla.js + file:scripts/branch_cleanup.py",
+   "id": "mirror-d5953d01d5",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3667,7 +3694,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 129 Python and 1076 Worker tests",
+   "claim": "seed-tests: 129 Python and 1077 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3676,7 +3703,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 1076 Worker tests",
+   "claim": "seed-worker-tests: 1077 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3935,7 +3962,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 434,
-  "total": 434
+  "pass": 437,
+  "total": 437
  }
 };

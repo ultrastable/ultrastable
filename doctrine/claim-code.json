@@ -521,6 +521,24 @@
     "file": "seed/worker/test/ashby.test.js",
     "contains": "assert.deepEqual(order, [3, 5, 2, 6, 1, 7, 8]);"
    }
+  },
+  {
+   "id": "pr-never-lose-unknown-is-not-conflict",
+   "source": "agents/AGENTS.md",
+   "quote": "A label, a cached state or an unknown state is never a reason to close a pull request",
+   "probe": {
+    "file": "tests/foundation/test_prsafe.py",
+    "contains": "def test_unknown_state_is_not_a_conflict"
+   }
+  },
+  {
+   "id": "pr-never-lose-unknown-is-not-conflict-seed",
+   "source": "seed/agents/AGENTS.md",
+   "quote": "A label, a cached state or an unknown state is never a reason to close a pull request",
+   "probe": {
+    "file": "tests/foundation/test_prsafe.py",
+    "contains": "def test_unknown_state_is_not_a_conflict"
+   }
   }
  ],
  "baseline": [

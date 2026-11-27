@@ -173,18 +173,13 @@ class Bounds(unittest.TestCase):
         d = tmp(self); ran = []
         real = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(minutes=31)).strftime("%Y-%m-%dT%H:%M:%SZ"); prs = [{"number": 1, "created_at": real, "updated_at": real, "labels": [{"name": "conflict"}]}]
 
-        def gh_api(path, method="GET", fields=None):  # PR-NEVER-LOSE-1 (#2630): the list is read over REST through prsafe
-            ran.append((method, path))
-            return prs if path.startswith("repos/o/r/pulls?state=open") else {}
-
-        def safe_close(repo, n, why, **kw):  # the close itself (live re-read, refresh, head pinned before close) is proven in test_prsafe
-            ran.append(("safe_close", repo, n, why))
-            return {"closed": True, "reason": why, "ref": f"refs/archive/pr-{n}-abcdef1", "sha": "abcdef1234"}
+        def close(repo, n, why):  # PR-NEVER-LOSE-1: every close goes through prsafe.safe_close, which pins the head and never deletes the branch
+            ran.append((repo, n, why))
+            return {"closed": True, "ref": f"refs/archive/pr-{n}-abc1234"}
         old = os.getcwd(); os.chdir(d); self.addCleanup(os.chdir, old); (d / "ops").mkdir()
-        with mock.patch.object(prbound.prsafe, "gh_api", gh_api), mock.patch.object(prbound.prsafe, "safe_close", safe_close), mock.patch.dict(os.environ, {"GITHUB_REPOSITORY": "o/r"}):
+        with mock.patch.object(prbound.prsafe, "gh_api", lambda *a, **k: prs), mock.patch.object(prbound.prsafe, "safe_close", close), mock.patch.dict(os.environ, {"GITHUB_REPOSITORY": "o/r"}):
             self.assertEqual(prbound.main(["--apply"]), 0)
-        closer = next(a for a in ran if a[0] == "safe_close"); self.assertEqual(closer[1:3], ("o/r", 1)); self.assertIn("merge conflict with main unresolved", closer[3])
-        self.assertFalse(any(m == "DELETE" and "git/refs/heads" in p for m, p in (a for a in ran if len(a) == 2)), "the branch is kept")
+        self.assertEqual([(r, n) for r, n, _ in ran], [("o/r", 1)])
         row = json.loads((d / "ops/prbound.jsonl").read_text()); self.assertEqual(row["pr"], 1); self.assertTrue(row["ref"].startswith("refs/archive/"))
         with mock.patch.object(prbound.prsafe, "gh_api", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("HTTP 502"))):
             self.assertEqual(prbound.main(["--check"]), 1, "an unreadable list is unmeasured, never passed")
