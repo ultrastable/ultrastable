@@ -1,7 +1,7 @@
 {
- "at": "2026-11-27T04:22:07Z",
- "gaps": 9,
- "match_share": 0.984,
+ "at": "2026-11-27T04:28:34Z",
+ "gaps": 7,
+ "match_share": 0.988,
  "sources": {
   "changes": [
    {
@@ -163,7 +163,7 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 434
+    "total": 437
    }
   ],
   "loops": [
@@ -489,12 +489,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation claimcode --check: FAIL agents/AGENTS.md:42: states a number, cadence or guarantee with no registered claim and probe: - **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a proble"
-    ],
+    "failing": [],
     "id": "WORDS-MATCH-CODE-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -938,12 +936,10 @@
    {
     "checks": 1,
     "external": [],
-    "failing": [
-     "python3 -m foundation claimcode --check: FAIL agents/AGENTS.md:42: states a number, cadence or guarantee with no registered claim and probe: - **Automation never discards unmerged work (PR-NEVER-LOSE-1, Rowan 2026-11-27).** \"This is a proble"
-    ],
+    "failing": [],
     "id": "NO-FABRICATION-1",
     "missing": [],
-    "ok": false,
+    "ok": true,
     "unmeasured": []
    },
    {
@@ -1105,7 +1101,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 110.8 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 110.9 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1178,14 +1174,14 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 434
+   "total": 437
   },
   "loops": {
    "gaps": 1,
    "total": 1
   },
   "rules": {
-   "gaps": 6,
+   "gaps": 4,
    "total": 106
   },
   "year": {
@@ -1193,5 +1189,5 @@
    "total": 2
   }
  },
- "total": 560
+ "total": 563
 }
