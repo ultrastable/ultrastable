@@ -119,7 +119,7 @@ Criticality numbers (from `autonomy/criticality.json`): window 14 days, k_min 1,
 
 ## Standing rules
 
-98 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
+99 standing rules from `agents/AGENTS.md`, each with the enforcement it cites. "In this kit" names code this repository runs;
 a rule enforced only by the platform is marked so, and the platform checks it for every system it hosts.
 
 - **USER-BACKEND-1**: The user does the idea; the system does the backend; one fix improves every system. In this kit: `doctrine/user-backend.json`, `worker/src/errors.js`, `worker/test/errors.test.js`.
@@ -132,6 +132,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **COMPLETE-1**: Complete everything; close everything. In this kit: `worker/src/sweeper.js`.
 - **AUTO-SHIP-CLEAN-1**: Merge and deploy everything automatically; clean up everywhere. In this kit: `worker/src/handoff.js`, `worker/src/sweeper.js`.
 - **DRAIN-ALL-1**: Complete all work; drain every issue; merge every PR; zero manual intervention. In this kit: `worker/src/lane.js`, `worker/src/sweeper.js`.
+- **PR-NEVER-LOSE-1**: Automation never discards unmerged work. In this kit: `scripts/branch_cleanup.py`, `worker/src/prsafe.js`, `worker/src/sla.js`, `worker/src/sweeper.js`.
 - **STRANGE-LOOP-1**: Strange loops: every loop closes itself and improves itself; no zombie sessions. In this kit: checked by the platform.
 - **CLOCKWORK-1**: Clockwork: every loop is a clock, and a stopped or inaccurate clock is not a working clock. In this kit: `worker/src/pulse.js`.
 - **FLOW-DIRECTIVE-1**: Every loop declares its flows and closes its feedback. In this kit: checked by the platform.
@@ -201,6 +202,7 @@ a rule enforced only by the platform is marked so, and the platform checks it fo
 - **ORCHESTRATE-1**: Large work is planned and worked in steps on the server. In this kit: `worker/src/executor.js`, `worker/src/orchestrate.js`, `worker/test/orchestrate.test.js`.
 - **WORK-RECORD-1**: Every piece of work has one server-side record. In this kit: checked by the platform.
 - **PHASED-WORK-1**: Large change is phased: audit, coverage, implement, verify, fix, integrate, final gate. In this kit: `autonomy/phases.json`, `scripts/phasework.py`, `tests/test_phasework.py`, `worker/src/orchestrate.js`.
+- **ASHBY-KERNEL-1**: Ashby's journal runs as kernel mechanisms. In this kit: `worker/src/ashby.js`, `worker/src/goals.js`, `worker/src/regulation.js`, `worker/test/ashby-loop.test.js`.
 - **DOC-CONSUMED-1**: Every document is consumed by code. In this kit: checked by the platform.
 - **CLOSED-LOOP-1**: Closed loops only; nobody reads, reviews or decides. In this kit: `autonomy/policy.json`.
 - **NO-FABRICATION-1**: No made-up numbers. In this kit: `doctrine/claims.json`, `scripts/claims.py`.

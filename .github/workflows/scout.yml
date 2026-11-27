@@ -27,6 +27,9 @@ jobs:
           python3 -m foundation research --refresh-prs
           python3 -m foundation research --intake --apply
           python3 -m foundation research --run --apply
+      - name: Ashby's journal index read live (ASHBY-KERNEL-1, the share of its keywords bound to code; a cited anchor the index no longer has turns the run red)
+        if: ${{ !cancelled() }}
+        run: python3 -m foundation ashbymap --live
       - name: Idea bank (WORLDWIDE-1 probes every data source; GROW-1 adds one new idea through every gate)
         env: {GITHUB_TOKEN: "${{ github.token }}"}
         run: python3 scripts/build_idea_bank.py --live --grow
