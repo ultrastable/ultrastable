@@ -7160,6 +7160,15 @@
    "body": "A stack cut from one large tree is merged in order and CI runs on every prefix, so a generated file copied from the final tree is wrong in every slice but the last: the conformance manifest would name test titles a prefix does not carry and the claim counts (seed test totals in the READMEs and claims data) would not match the prefix's tests. Each slice was built by taking its own files from the final tree and then running the generators (conformance --write, claims --fix --apply in the root and the seed); the last slice then equals the final tree byte for byte, which proves the generators are deterministic.",
    "probe": "grep:workers/core/conformance/cli.js::--write",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-27-code-comments-and-private-spec-text-must-not-share-wording-d",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Code comments and private spec text must not share wording (DISCLOSE-1)",
+   "body": "Round-2 code comments had been copied verbatim into private requirement lines, so public files shared 12-word runs with the private specs while disclosure --check (which reads only specs/) passed. The comments were reworded, and the private sentences that quote test titles or code literals were reworded instead, keeping every requirement id; a 12-word-run scan of the changed files against the private specs ran and found no requirement-line run left. Write a comment in the code's own words and cite the requirement id; never reconcile a spec by pasting the comment.",
+   "probe": "grep:workers/core/packs/lex.js::every unclosed bracket is pushed with its kind",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
   }
  ]
 }
