@@ -3,7 +3,7 @@
 
   python3 -m foundation tokenlog --session FILE.jsonl [--append LOG]   summarise one Claude Code transcript
   python3 -m foundation tokenlog --session FILE.jsonl --store DB        also write the per-kind rows to the regulator ledger (token_log)
-  python3 -m foundation tokenlog --hook                                 Claude Code Stop hook: reads {transcript_path, session_id} on stdin
+  python3 -m foundation tokenlog --hook                                 Claude Code Stop hook (add it to .claude/settings.json under hooks.Stop as `python3 -m foundation tokenlog --hook`): reads {transcript_path, session_id} on stdin
                                                                          and appends the summary to .cache/token-log.jsonl (never committed)
   python3 -m foundation tokenlog --compare BASE.json NEW.json           tokens per session, before and after a change
 

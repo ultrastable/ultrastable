@@ -1,7 +1,0 @@
-{
-  "hooks": {
-    "Stop": [
-      {"hooks": [{"type": "command", "command": "python3 -m foundation tokenlog --hook"}]}
-    ]
-  }
-}
