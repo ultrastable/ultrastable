@@ -1608,7 +1608,7 @@ export default {
   {
    "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
    "detail": "",
-   "how": "file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
+   "how": "file:AGENTS.md + file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
    "id": "cited-32424bab79",
    "kind": "claim",
    "pass": true,
@@ -1896,7 +1896,7 @@ export default {
   {
    "claim": "- **One map, one manifest, no hand-copied mirrors (FLEET-MAP-1, SYSTEM-MANIFEST-1, Rowan 2026-11-25).** \"What really needs to be in the",
    "detail": "",
-   "how": "file:doctrine/fleet-map.json + file:ultrastable.json + file:seed/standards/system.schema.json + file:seed/scripts/surfaces.py + file:doctrine/tenant-repos.json + file:tests/foundation/test_fleetmap.py",
+   "how": "file:doctrine/fleet-map.json + file:ultrastable.json + file:seed/standards/system.schema.json + file:publiccode.yml + file:seed/scripts/surfaces.py + file:doctrine/tenant-repos.json",
    "id": "cited-f35cd86e2e",
    "kind": "claim",
    "pass": true,
@@ -2040,7 +2040,7 @@ export default {
   {
    "claim": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
    "detail": "",
-   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
+   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:AGENTS.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
    "id": "cited-badeab1b44",
    "kind": "claim",
    "pass": true,
@@ -2526,7 +2526,7 @@ export default {
   {
    "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
    "detail": "",
-   "how": "file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
+   "how": "file:AGENTS.md + file:seed/SYSTEM.md + file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:docs/BOOTSTRAP-NO-MEMORY.md",
    "id": "mirror-1586e98ac2",
    "kind": "claim",
    "pass": true,
@@ -2796,7 +2796,7 @@ export default {
   {
    "claim": "- **One map, one manifest, no hand-copied mirrors (FLEET-MAP-1, SYSTEM-MANIFEST-1, Rowan 2026-11-25).** \"What really needs to be in the",
    "detail": "",
-   "how": "file:doctrine/fleet-map.json + file:ultrastable.json + file:seed/standards/system.schema.json + file:seed/scripts/surfaces.py + file:doctrine/tenant-repos.json + file:tests/foundation/test_fleetmap.py",
+   "how": "file:doctrine/fleet-map.json + file:ultrastable.json + file:seed/standards/system.schema.json + file:publiccode.yml + file:seed/scripts/surfaces.py + file:doctrine/tenant-repos.json",
    "id": "mirror-fa789cdb47",
    "kind": "claim",
    "pass": true,
@@ -2949,7 +2949,7 @@ export default {
   {
    "claim": "- **Everything bootstraps itself from a cold start and works together from birth (COLDSTART-1, Rowan 2026-11-25).** \"All surfaces, all",
    "detail": "",
-   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:CLAUDE.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
+   "how": "file:doctrine/coldstart.json + file:seed/worker/src/visibility.js + file:docs/doctrine/SYSTEM.md + file:AGENTS.md + file:doctrine/schemas/coldstart.schema.json + file:foundation/coldstart.py",
    "id": "mirror-23cc6eb0f0",
    "kind": "claim",
    "pass": true,
@@ -3685,7 +3685,7 @@ export default {
    "surface": "seed/tests/fixtures/IDEA.example.md"
   },
   {
-   "claim": "seed-tests: 156 Python and 1118 Worker tests",
+   "claim": "seed-tests: 175 Python and 1118 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3730,7 +3730,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 1559",
+   "claim": "live-deploys: 1571",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",

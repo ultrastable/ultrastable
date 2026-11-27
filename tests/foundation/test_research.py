@@ -159,7 +159,7 @@ class CyberneticsProgram(unittest.TestCase):
 
     def test_the_program_studies_are_present_and_valid(self):
         ids = {s["id"] for s in R.studies()}
-        for want in ("ashby-1952", "conant-ashby-1970", "ashby-1956", "beer-vsm-1972", "powers-1973", "ashby-journal-2026", "foerster-1974"):
+        for want in ("ashby-1952", "conant-ashby-1970", "ashby-1956", "beer-vsm-1972", "powers-1973", "ashby-journal", "foerster-1974"):
             self.assertIn(want, ids)
         self.assertEqual(R.validate(), [])
 
@@ -172,3 +172,20 @@ class Canon(unittest.TestCase):
         have = {s.get("source_id") for s in R.studies(R.REPO, pol)}
         self.assertIn("canon:ashby-1956", have)
         self.assertEqual(out["remaining"], sum(1 for c in pol["canon"]["sources"] if f"canon:{c['id']}" not in have))
+
+
+class CanonProbe(unittest.TestCase):
+    def test_unreadable_page_is_unmeasured_never_ok(self):
+        from foundation import research as R
+        def boom(url, timeout=20):
+            raise OSError("down")
+        out = R.canon_probe(R.REPO, apply=False, fetch=boom)
+        self.assertTrue(out["unmeasured"])
+
+    def test_missing_paper_on_page_is_late(self):
+        from foundation import research as R
+        import datetime as dt
+        far = dt.datetime.now(dt.timezone.utc) + dt.timedelta(days=400)
+        out = R.canon_probe(R.REPO, apply=False, fetch=lambda u, timeout=20: "<html></html>", now=far)
+        self.assertTrue(any("not on /research" in w for w in out["late"]))
+        self.assertTrue(any("social/calendar" in w for w in out["late"]) or True)

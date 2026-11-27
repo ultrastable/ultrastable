@@ -1,0 +1,12 @@
+{
+  "id": "Q-AUDIT-2722",
+  "title": "Q-AUDIT-2722: audit merged PR #2722",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation sampleaudit --probe 2722\n**Status:** open\n\nSAMPLE-AUDIT-1: PR #2722 (feat(ashby): the journal's concept index is a register with a disposition per entry; one trial per step-function (ASHBY-ARCHIVE-1, MULTISTABLE-1)) merged at 2026-11-27T11:16:38Z was picked for audit (protected path).\n\nRead the merged diff with a clean context; the reviewer is not the author. Write `\"verdict\": \"clean\"` or `\"verdict\": \"defect\"` and a `\"reason\"` into this file. A defect also gets its own fix item.",
+  "merged_at": "2026-11-27T11:16:38Z",
+  "labels": [
+    "role:staff",
+    "audit"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

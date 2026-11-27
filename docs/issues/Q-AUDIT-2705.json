@@ -1,0 +1,12 @@
+{
+  "id": "Q-AUDIT-2705",
+  "title": "Q-AUDIT-2705: audit merged PR #2705",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation sampleaudit --probe 2705\n**Status:** open\n\nSAMPLE-AUDIT-1: PR #2705 (fix(regen): every pure generator runs at pull-request time (REGEN-PARITY-1)) merged at 2026-11-27T10:22:43Z was picked for audit (sampled).\n\nRead the merged diff with a clean context; the reviewer is not the author. Write `\"verdict\": \"clean\"` or `\"verdict\": \"defect\"` and a `\"reason\"` into this file. A defect also gets its own fix item.",
+  "merged_at": "2026-11-27T10:22:43Z",
+  "labels": [
+    "role:staff",
+    "audit"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

@@ -16,3 +16,4 @@ dist/
 dashboard/cockpit/dist/
 deploy/wrangler/
 seed/worker/src/config.js
+.cache/

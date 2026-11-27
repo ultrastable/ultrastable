@@ -29,6 +29,13 @@ assert.ok(SEED_DB.test("ultrastable-seed-second-tenant"));
   assert.deepEqual([j.ok, j.created, j.uuid, j.applied], [true, true, "u2", ["0001_init.sql", "0002_more.sql"]]);
   const j2 = await (await seedD1({ name: "ultrastable-seed-x", migrations: ms }, f.api, "A")).json();
   assert.deepEqual([j2.created, j2.uuid, j2.applied], [false, "u2", []]); }
+// MIGRATE-IDEMPOTENT-1: a file whose ADD COLUMN meets an existing column still applies, statement by statement; another error still fails it
+{ const f = fake(false); const inner = f.api;
+  const api = async (m, p, body) => { const sql = body ? JSON.parse(body).sql : ""; if (/ADD COLUMN x INTEGER;\nALTER/.test(sql)) return { success: false, errors: [{ message: "duplicate column name: x: SQLITE_ERROR" }] };
+    if (/^ALTER TABLE a ADD COLUMN x/.test(sql)) return { success: false, errors: [{ message: "duplicate column name: x" }] }; return inner(m, p, body); };
+  const dup = [{ file: "0003_cols.sql", sha256: sha, sql: "ALTER TABLE a ADD COLUMN x INTEGER;\nALTER TABLE a ADD COLUMN y INTEGER;" }];
+  const j = await (await seedD1({ name: "ultrastable-seed-x", migrations: dup }, api, "A")).json();
+  assert.deepEqual([j.ok, j.applied], [true, ["0003_cols.sql"]]); }
 // malformed migrations are refused
 for (const m of [[{ file: "../x.sql", sha256: sha, sql: "x" }], [{ file: "a.sql", sha256: "zz", sql: "x" }], [{ file: "a.sql", sha256: sha }]])
   assert.equal((await seedD1({ name: "ultrastable-seed-x", migrations: m }, fake(true).api, "A")).status, 400);

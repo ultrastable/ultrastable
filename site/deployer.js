@@ -109,6 +109,17 @@ export async function cfGraphql(request, env, f) {
 // a database only under the name prefix ultrastable-seed- (never a platform database such as ultrastable-org) and applies the given migration files to it once each,
 // through a ledger table. The caller is the same main-branch OIDC token as a deploy; nothing outside a seed database is reachable.
 export const SEED_DB = /^ultrastable-seed-[a-z0-9]+(-[a-z0-9]+){0,8}$/;
+export function splitSql(sql) {  // statements end at a line ending in ';' (a trigger body ends at its END;)
+  const out = []; let cur = [], trig = false;
+  for (const raw of String(sql).split("\n")) {
+    const l = raw.trim(); if (!l || l.startsWith("--")) continue;
+    cur.push(raw); if (/^CREATE\s+(TEMP\s+|TEMPORARY\s+)?TRIGGER\b/i.test(cur[0].trim())) trig = true;
+    if (l.endsWith(";") && (!trig || /^END\s*;$/i.test(l))) { out.push(cur.join("\n").trim()); cur = []; trig = false; }
+  }
+  if (cur.length) out.push(cur.join("\n").trim());
+  return out;
+}
+
 export async function seedD1(b, api, A) {
   const name = String(b.name || ""), ms = Array.isArray(b.migrations) ? b.migrations : [];
   if (!SEED_DB.test(name)) return J({ ok: false, error: "a seed database name must be ultrastable-seed-<slug>" }, 400);
@@ -123,7 +134,16 @@ export async function seedD1(b, api, A) {
   const done = new Set(((((await q("SELECT file FROM _migrations")).result || [])[0] || {}).results || []).map(r => r.file)), applied = [];
   for (const m of ms) {
     if (done.has(m.file)) continue;
-    const r = await q(m.sql);
+    let r = await q(m.sql);
+    // MIGRATE-IDEMPOTENT-1: SQLite has no ADD COLUMN IF NOT EXISTS; a column the Worker already added is the state the file asks for. Run the file statement by
+    // statement and skip only that duplicate, as seed/worker/src/migrate.js and deploy/apply-d1-migrations.mjs do; any other error still fails the file.
+    if (!r.success && /duplicate column name/i.test(JSON.stringify(r.errors || []))) {
+      r = { success: true };
+      for (const st of splitSql(m.sql)) {
+        const x = await q(st);
+        if (!x.success && !(/^ALTER\s+TABLE\s+\S+\s+ADD\s+COLUMN\b/i.test(st) && /duplicate column name/i.test(JSON.stringify(x.errors || [])))) { r = x; break; }
+      }
+    }
     if (!r.success) return J({ ok: false, error: "migration " + m.file + ": " + JSON.stringify(r.errors || []).slice(0, 300), applied }, 502);
     await q(`INSERT INTO _migrations (file, sha256) VALUES ('${m.file}', '${m.sha256}')`); applied.push(m.file);
   }

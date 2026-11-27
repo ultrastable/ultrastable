@@ -854,6 +854,18 @@
       "probe": "grep:tests/foundation/test_directive.py::def test_lint_flags_owner_handback"
     },
     {
+      "id": "fm-paper-late",
+      "trigger": "a canon paper is not drafted, live on /research or posted inside its limit",
+      "symptom": "research program stalls with no one noticing",
+      "blast_radius": "thought leadership and reach",
+      "detection": "research --probe-canon",
+      "root_cause": "a loop in the chain (research pass, executor, merge lane, deploy, social run) stopped",
+      "remediation": "the probe files Q-AUDIT-canon items for the stalled step",
+      "status": "controlled",
+      "cadence_ticks": 144,
+      "probe": "grep:foundation/research.py::def canon_probe"
+    },
+    {
       "id": "fm-repo-nonconformant",
       "trigger": "a repository's machine-readable file is missing, fails its standard, or differs from what its ultrastable.json renders",
       "symptom": "agents and tools that read the repository (coding agents, software catalogs, citation and licence scanners, Dependabot, dev containers) get a file they cannot parse or that states something else, while a substring check reads it as present",
