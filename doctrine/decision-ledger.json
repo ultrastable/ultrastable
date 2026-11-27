@@ -7002,6 +7002,22 @@
    "body": "CI openstd check failed on a committed .regulator.sqlite: the schema command opened the default database in the working directory and git add -A then picked it up. Fixed at the cause: schema answers before any database is opened, the local ledger and its WAL files are ignored by git, and the open-standards check passes. Ran 20 regulator tests, they pass and leave no file behind. The test_ideas failure on this PR also fails on main, so it is not this change.",
    "probe": "grep:foundation/regulator/cli.py::do not create the default database file",
    "session": "session_0156nqDsD3rf97bBozkQVuW7"
+  },
+  {
+   "id": "lesson-2026-11-27-a-new-ledger-needs-its-envelope-before-the-first-write",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "A new ledger needs its envelope before the first write",
+   "body": "The weekly perception-cost loop appended a bare JSON row to ops, and the open-standards check turned main red once the lane wrote it. The row is now a CloudEvents envelope, built and checked by the code that writes it, and a test reads the real ledger with the same check.",
+   "probe": "grep:foundation/perceptcost.py::cloudevents.conforms"
+  },
+  {
+   "id": "lesson-2026-11-27-a-probe-that-reads-the-clock-breaks-tests-with-fixed-dates",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "A probe that reads the clock breaks tests with fixed dates",
+   "body": "test_spec_31_tenants built its ledger around a fixed date but tenantsync.probe read the wall clock, so the test failed once a day passed and turned every pull request red. The probe now takes the time as an argument and the test passes its own.",
+   "probe": "grep:foundation/tenantsync.py::spec, now=None"
   }
  ]
 }
