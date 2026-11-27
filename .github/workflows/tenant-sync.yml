@@ -32,6 +32,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
           LANE_PAT: ${{ secrets.LANE_PAT }}
+      - name: Open the canary's kernel.lock PR, or record it once merged (KERNEL-LOCK-1, ZHC-R9)
+        run: python3 -m foundation kernellock --open-pr --apply
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+          LANE_PAT: ${{ secrets.LANE_PAT }}
       - name: Measure drift and upstream flow (SYNC-BOTH-WAYS-1)
         run: python3 -m foundation.tenantsync --metrics --apply
       - name: Read every copy against its source (FLEET-MAP-1)
@@ -48,5 +53,5 @@ jobs:
           python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
           if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
           if [ -f ops/fleet-map.json ]; then git add ops/fleet-map.json; fi
-          git add ops/tenant-sync/ledger.jsonl ops/tenant-sync/metrics.json docs/issues
+          git add ops/tenant-sync/ledger.jsonl ops/tenant-sync/metrics.json doctrine/kernel-lock.json docs/issues
           git diff --cached --quiet || (git commit -qm "tenant-sync: ledger" && python3 tools/push_main.py)
