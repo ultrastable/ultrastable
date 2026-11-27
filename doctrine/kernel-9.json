@@ -88,9 +88,11 @@
   {
    "id": "E4",
    "says": "no scalar fleet score",
-   "status": "gap",
-   "enforced_by": [],
-   "missing": "no check; criticality and scorecard compute aggregates"
+   "status": "conflict",
+   "enforced_by": [
+    "foundation/criticality.py"
+   ],
+   "missing": "criticality.k = verified deploys / (cost + human touches) is one number combining effectiveness and efficiency, read as the platform EV `value` and gating the executor queue (CRITICALITY-1). E4 forbids a scalar fleet score; removing k overrides an owner invariant"
   },
   {
    "id": "F1",
@@ -209,11 +211,11 @@
   {
    "id": "P3",
    "says": "corrective feedback only to the partition in error",
-   "status": "partial",
+   "status": "built",
    "enforced_by": [
     "foundation/ultrastability.py"
    ],
-   "missing": "per-scope ladders; no cross-scope interference metric"
+   "missing": ""
   },
   {
    "id": "M1",
@@ -277,9 +279,10 @@
    "says": "tool, web, issue and file text is data, never instruction",
    "status": "partial",
    "enforced_by": [
+    "foundation/executor.py",
     "agents/AGENTS.md"
    ],
-   "missing": "prose only"
+   "missing": "the executor fences issue text as data and takes only trusted authors (RULE-OF-TWO-1); session prompts rely on prose"
   }
  ]
 }

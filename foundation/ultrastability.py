@@ -2,7 +2,7 @@
 # Copyright (c) Ultrastable
 """ULTRASTABILITY-1: Ashby's two loops, as code. Ultrastable is the foundation for any autonomous system.
 
-  python3 -m foundation ultrastability [--tick [--apply] | --check | --data [--apply] | --status | --tenants [--apply]]
+  python3 -m foundation ultrastability [--tick [--apply] | --check | --data [--apply] | --status | --tenants [--apply] | --interference]
 
 ESSENTIAL VARIABLES  doctrine/ultrastability.json declares, per scope (platform, tenant), the variables whose bounds are the system's viability limits.
 FIRST ORDER          the existing loops (probe-and-revert, cost probe, claims check, executor) correct disturbance without changing the system.
@@ -854,8 +854,27 @@ def _followers() -> dict:
     return res
 
 
+def interference(rows, hours: float = 3.0) -> dict:
+    """Kernel 9.0.0 P3 (Ashby, journal pp. 5369-5410: corrective feedback goes only to the part in error): of the second-order steps, the share
+    followed within `hours` by a new breach in a different partition. A breach is a reading out of bounds after one in bounds for that variable."""
+    ts = lambda s: datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ")
+    last, onsets = {}, []
+    for r in rows:
+        if r.get("ev") != "reading" or r.get("unmeasured") or "ok" not in r:
+            continue
+        if r["ok"] is False and last.get(r["var"], True):
+            onsets.append((ts(r["at"]), partition(r["var"])))
+        last[r["var"]] = r["ok"]
+    steps = [r for r in rows if r.get("ev") == "step"]
+    hit = sum(1 for s in steps if any(p != partition(s["var"]) and ts(s["at"]) < t <= ts(s["at"]) + timedelta(hours=hours) for t, p in onsets))
+    return {"steps": len(steps), "breach_onsets": len(onsets), "followed_by_breach_elsewhere": hit,
+            "interference_rate": round(hit / len(steps), 3) if steps else None, "window_h": hours}
+
+
 def main(argv=None) -> int:
     a = argv if argv is not None else sys.argv[1:]
+    if "--interference" in a:  # kernel 9.0.0 P3
+        print(json.dumps(interference(_rows(REPO, load(REPO))), indent=1)); return 0
     if "--check" in a:
         e = check(); print("\n".join(e) or "ultrastability ok: two loops, every variable has a bound and a second-order step"); return 1 if e else 0
     if "--data" in a:

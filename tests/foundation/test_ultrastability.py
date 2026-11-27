@@ -317,3 +317,12 @@ class StepBudget(unittest.TestCase):
         self.assertTrue(u.over_budget(rows, "app:spend", c, "2026-11-26T20:00:00Z"))
         self.assertFalse(u.over_budget(rows, "spend", {}, "2026-11-27T12:00:00Z"))
 
+    def test_interference_counts_breaches_in_other_partitions(self):
+        rows = [{"ev": "reading", "var": "spend", "ok": True, "at": "2026-11-27T09:00:00Z"},
+                {"ev": "reading", "var": "app:uptime", "ok": True, "at": "2026-11-27T09:00:00Z"},
+                {"ev": "step", "var": "spend", "at": "2026-11-27T10:00:00Z"},
+                {"ev": "reading", "var": "app:uptime", "ok": False, "at": "2026-11-27T11:00:00Z"},
+                {"ev": "step", "var": "spend", "at": "2026-11-27T20:00:00Z"}]
+        r = u.interference(rows)
+        self.assertEqual((r["steps"], r["followed_by_breach_elsewhere"], r["interference_rate"]), (2, 1, 0.5))
+
