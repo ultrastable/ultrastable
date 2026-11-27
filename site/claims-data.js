@@ -2074,6 +2074,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Ashby's journal runs as kernel mechanisms (ASHBY-KERNEL-1, Rowan 2026-11-27).** \"Implement Ashby's journal and concept index into",
+   "detail": "",
+   "how": "file:seed/worker/src/ashby.js + file:seed/worker/src/goals.js + file:seed/worker/src/regulation.js + file:doctrine/ashby-concepts.json + file:seed/worker/test/ashby.test.js + file:seed/worker/test/ashby-loop.test.js",
+   "id": "cited-4c3ff11885",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2960,6 +2969,15 @@ export default {
    "detail": "",
    "how": "file:seed/worker/src/orchestrate.js + file:seed/worker/src/executor.js + file:seed/worker/test/orchestrate.test.js",
    "id": "mirror-434e16496c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Ashby's journal runs as kernel mechanisms (ASHBY-KERNEL-1, Rowan 2026-11-27).** \"Implement Ashby's journal and concept index into",
+   "detail": "",
+   "how": "file:seed/worker/src/ashby.js + file:seed/worker/src/goals.js + file:seed/worker/src/regulation.js + file:doctrine/ashby-concepts.json + file:seed/worker/test/ashby.test.js + file:seed/worker/test/ashby-loop.test.js",
+   "id": "mirror-a5eb80dc6b",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3917,7 +3935,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 432,
-  "total": 432
+  "pass": 434,
+  "total": 434
  }
 };
