@@ -2013,7 +2013,7 @@ export default {
      "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 3 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
     ],
     "problem": [
-     "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: to control something well you must model it, and the quality of control is bounded by the quality of the model. [1]",
+     "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of a system requires a model of it, and the quality of control is bounded by the quality of the model. [1]",
      "This matters now because the usual answer, the model is in the weights, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
      "The problems in detail:"
     ],
@@ -2084,9 +2084,9 @@ export default {
     "kind": "article",
     "version": "1970",
     "data": "Theorem with proof, in information-theoretic terms.",
-    "summary": "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: to control something well you must model it, and the quality of control is bounded by the quality of the model."
+    "summary": "Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of a system requires a model of it, and the quality of control is bounded by the quality of the model."
    },
-   "abstract": "Roger C. Conant, W. Ross Ashby (International Journal of Systems Science, vol. 1, no. 2, pp. 89-97): Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: to control something well you must model it, and the quality of control is bounded by the quality of the model. Conant and Ashby argued that the best possible regulator of a system must be, in effect, a model of that system. An AI system that runs a business without an explicit model of its own parts is regulating blind. We check whether this system keeps such a model: a knowledge graph of its own data, declared limits for what it must hold steady, and work items specific enough to be checked. 2 of 3 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "abstract": "Roger C. Conant, W. Ross Ashby (International Journal of Systems Science, vol. 1, no. 2, pp. 89-97): Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of a system requires a model of it, and the quality of control is bounded by the quality of the model. Conant and Ashby argued that the best possible regulator of a system must be, in effect, a model of that system. An AI system that runs a business without an explicit model of its own parts is regulating blind. We check whether this system keeps such a model: a knowledge graph of its own data, declared limits for what it must hold steady, and work items specific enough to be checked. 2 of 3 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
    "window": {
     "start": "2026-11-19T01:23:24Z",
     "end": "2026-11-26T21:42:44Z",

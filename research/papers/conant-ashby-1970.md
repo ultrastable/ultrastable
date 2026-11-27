@@ -13,7 +13,7 @@ It is written for people who build or run AI systems and want them to keep worki
 
 ## 1. The problem
 
-Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: to control something well you must model it, and the quality of control is bounded by the quality of the model. [1]
+Under broad conditions, the simplest regulator that achieves the best outcome is one whose actions are a mapping of the regulated system's states. In plain terms: good control of a system requires a model of it, and the quality of control is bounded by the quality of the model. [1]
 
 This matters now because the usual answer, the model is in the weights, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.
 
