@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2705",
+  "title": "OL-PR-2705: land or supersede pull request #2705 (ci-failed)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2705 is ci-failed\n**Done check:** cmd:python3 -m foundation loopowner --closed 2705\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2705 (`ccr-ee4940b3-tx64sc-regen-parity` at 91f95a7c32, opened by rwnq8): fix(regen): every pure generator runs at pull-request time (REGEN-PARITY-1). The session that opened it is not its closer and is never asked to act. A check failed on the head commit. Read the failing run, then land the same change so that every check passes: push a fix to the branch, or open a new pull request from main that carries the change and close this one as superseded. Failed checks: checks, fast, foundation, lane, rest, tests-a, tests-b. Files (5): docs/PROJECT-MEMORY.md, doctrine/writeback/lesson-2026-11-27-regen-parity-1-every-pure-generator-runs-at-pull-request-tim.json, scripts/regen_generated.py, scripts/regen_generated.sh, tests/foundation/test_regen_generated.py.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2705 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2705` exits 0 (pull request #2705 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

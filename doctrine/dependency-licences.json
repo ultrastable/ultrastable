@@ -154,6 +154,16 @@
    ]
   },
   {
+   "name": "wrangler",
+   "eco": "npm",
+   "use": "tool",
+   "spdx": "MIT OR Apache-2.0",
+   "verdict": "ok",
+   "where": [
+    "seed/package.json"
+   ]
+  },
+  {
    "name": "piper-tts",
    "eco": "pypi",
    "use": "tool",

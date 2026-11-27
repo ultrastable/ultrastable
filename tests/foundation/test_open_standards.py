@@ -33,7 +33,8 @@ class OpenStandards(unittest.TestCase):
                 rel = os.path.relpath(os.path.dirname(pkg), root)
                 if "node_modules" in rel or rel.startswith("seed") and root == ROOT or "/vendor" in rel:
                     continue
-                self.assertIn(("npm", "/" + rel), dirs, f"{root}: {rel} has a package.json and no Dependabot entry")
+                want = "/" if rel == "." else "/" + rel  # a manifest at the repository root (the kit's package.json for the deploy button) is the "/" directory
+                self.assertIn(("npm", want), dirs, f"{root}: {rel} has a package.json and no Dependabot entry")
 
     def test_supply_chain_loop_files_and_closes(self):
         cfg = json.loads((ROOT / supplychain.CFG).read_text())

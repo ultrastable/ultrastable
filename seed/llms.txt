@@ -1,16 +1,31 @@
 # Ultrastable seed
 
-> The code-only kernel a new autonomous system starts from: bootstrapper, tick Worker, roles, agent instructions and the loops that run it. Licence: LicenseRef-Ultrastable-USL-1.0 (source-available, non-commercial use free).
+> The code-only kernel a new autonomous system starts from: bootstrapper, tick Worker, roles, agent instructions and the loops that take it to criticality. A copy of seed/ in the Ultrastable platform.
+
+Every tick the system reconciles its state, takes its highest-priority item, does it, verifies it through an independent path, scores the prediction it logged and files the next improvement.
 
 ## Start here
 
+- [README.md](README.md): what it is, where it runs and how it runs
 - [AGENTS.md](AGENTS.md): instructions for any coding agent
 - [SYSTEM.md](SYSTEM.md): what the system is, generated from its code
 - [IDEA.md](IDEA.md): the one file a person writes
-- [ultrastable.json](ultrastable.json): the machine-readable manifest
+- [ultrastable.json](ultrastable.json): the manifest this file, the README blocks, CITATION.cff, publiccode.yml and codemeta.json are rendered from
+- [codemeta.json](codemeta.json): software metadata (CodeMeta 3.0)
 
 ## Code
 
 - [bootstrap/bootstrap.py](bootstrap/bootstrap.py): boot stages from idea to running system
+- [worker/src/index.js](worker/src/index.js): the Worker's routes
 - [worker/src/tick.js](worker/src/tick.js): the heartbeat
+- [autonomy/policy.json](autonomy/policy.json): what the system may do on its own
 - [autonomy/repo-conformance.json](autonomy/repo-conformance.json): the files every repository carries
+- [scripts/surfaces.py](scripts/surfaces.py): renders this file and the other identity files from ultrastable.json
+
+## Optional
+
+- [Source](https://github.com/ultrastable/seed): the repository
+- [LICENSE](LICENSE): the licence, LicenseRef-Ultrastable-USL-1.0
+- [CONTRIBUTING.md](CONTRIBUTING.md): how work is contributed
+- [SECURITY.md](SECURITY.md): how to report a vulnerability
+- [CHANGELOG.md](CHANGELOG.md): what changed, release by release

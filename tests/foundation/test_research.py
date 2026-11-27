@@ -134,3 +134,13 @@ class NoMadeUpNumbers(unittest.TestCase):
         self.assertEqual(R.gate(p, st), [])
         p["sections"]["summary"].append("This cut costs by 47%.")
         self.assertTrue(any("47%" in b for b in R.gate(p, st)))
+
+
+class Canon(unittest.TestCase):
+    def test_canon_files_only_uningested(self):
+        from foundation import research as R
+        out = R.canon(R.REPO, apply=False)
+        pol = R.load(R.REPO)
+        have = {s.get("source_id") for s in R.studies(R.REPO, pol)}
+        self.assertIn("canon:ashby-1956", have)
+        self.assertEqual(out["remaining"], sum(1 for c in pol["canon"]["sources"] if f"canon:{c['id']}" not in have))

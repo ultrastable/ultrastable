@@ -6,4 +6,4 @@ authors:
 title: "Ultrastable seed"
 abstract: "The code-only kernel a new autonomous system starts from: bootstrapper, tick Worker, roles, agent instructions and the loops that take it to criticality. A copy of seed/ in the Ultrastable platform."
 repository-code: "https://github.com/ultrastable/seed"
-license: "LicenseRef-Ultrastable-USL-1.0"
+license-url: "https://github.com/ultrastable/seed/blob/main/LICENSE"

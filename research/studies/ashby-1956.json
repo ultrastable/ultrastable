@@ -1,0 +1,69 @@
+{
+  "schema": "research-study/1",
+  "id": "ashby-1956",
+  "order": 7,
+  "source_id": "canon:ashby-1956",
+  "paper_title": "Requisite variety: why an AI system needs as many responses as it has kinds of trouble",
+  "paper_frame": "Ashby's law of requisite variety says a regulator can only hold its outcomes steady if it can answer each kind of disturbance with a fitting response. An AI system that meets every failure with the same retry has one response. We state the law as checks on this system's own records: does every loop have a way to close, does every failure get its own repair item, and does the second loop actually add new responses.",
+  "title": "An Introduction to Cybernetics",
+  "authors": ["W. Ross Ashby"],
+  "institution": "Chapman & Hall, London",
+  "kind": "book",
+  "version": "1956",
+  "seeded_by": "canon queue, owner request 2026-11-27",
+  "source_url": "http://pespmc1.vub.ac.be/books/IntroCyb.pdf",
+  "data": "Theory. Part III, Regulation and Control; chapter 11 states the law of requisite variety.",
+  "summary": "Only variety in the regulator can absorb variety in the disturbances. If the environment can throw more kinds of trouble at a system than the system has distinct responses, some outcomes will leave their limits no matter how well each response is tuned.",
+  "perspectives": ["systems", "reliability"],
+  "limits": [
+    "We state the law in our own words from chapter 11. We do not count disturbance classes directly; we read proxies from the loop registry, the second loop's log and the deploy ledger.",
+    "A declared closing probe is a response on paper. The deploy check is the only reading here that shows a response worked live."
+  ],
+  "misperception": {
+    "belief": "A capable enough model can handle any failure by trying again.",
+    "short": "Retrying is enough.",
+    "counter": "A retry is one response. A system facing many kinds of failure needs many kinds of response, and needs a way to grow new ones. That is Ashby's law, and it can be read from the system's own records."
+  },
+  "findings": [
+    {
+      "id": "V1",
+      "concern": "A loop with no response at all",
+      "claim": "A loop that has no closing probe and no server-side owner contributes no variety: nothing in it answers a disturbance. Every registered loop should carry both.",
+      "where": "Chapter 11 (our statement)",
+      "perspective": "systems",
+      "mechanisms": [
+        {"rule": "SERVER-OWNS-LOOPS-1", "path": "instances/ultrastable/loop-registry.json", "how": "every loop declares a closing probe and a server owner"}
+      ],
+      "metric": "loops_closing_probe_share",
+      "target": {"op": ">=", "value": 1.0},
+      "prediction": "loops_closing_probe_share >= 1 within 168 h"
+    },
+    {
+      "id": "V2",
+      "concern": "A regulator that never adds a response",
+      "claim": "When the first loop's responses are not enough, the system has to gain new ones. Here that is the second loop changing a parameter. If it never steps, the system's variety is fixed at whatever it was built with.",
+      "where": "Chapters 11 and 12 (our statement)",
+      "perspective": "systems",
+      "mechanisms": [
+        {"rule": "ASHBY-KERNEL-1", "path": "seed/worker/src/regulation.js", "how": "reads unregulated disturbance classes from the work queue"},
+        {"rule": "ULTRASTABILITY-1", "path": "foundation/ultrastability.py", "how": "steps a parameter when a variable stays out of limits"}
+      ],
+      "metric": "second_loop_steps_30d",
+      "target": {"op": ">=", "value": 1},
+      "prediction": "second_loop_steps_30d >= 1 within 168 h"
+    },
+    {
+      "id": "V3",
+      "concern": "A response that is never checked against the world",
+      "claim": "Variety only counts if the response actually lands. A deploy that is not read back live may be a response that did nothing.",
+      "where": "Chapter 11 (our statement)",
+      "perspective": "reliability",
+      "mechanisms": [
+        {"rule": "SPEC-GATE-1", "path": "seed/scripts/specgate.py", "how": "every item names a live closing probe"}
+      ],
+      "metric": "deploy_verified_share",
+      "target": {"op": ">=", "value": 0.95},
+      "prediction": "deploy_verified_share >= 0.95 within 168 h"
+    }
+  ]
+}
