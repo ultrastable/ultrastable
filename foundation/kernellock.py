@@ -2,6 +2,7 @@
 # KERNEL-LOCK-1 (ZHC-R8, R9): the kernel is written once, in seed/; each tenant pins the kernel it runs.
 #   python3 -m foundation kernellock --check   every non-retired tenant has a row, one canary, pins are tree hashes of seed/ or null
 #   python3 -m foundation kernellock --hash    the tree hash of seed/ at HEAD (what a pin names)
+#   python3 -m foundation kernellock --bump [--apply]  the canary takes the current kernel first; the rest only when the canary is on it (R9)
 #   python3 -m foundation kernellock --status  per tenant: pinned to current, behind, or unpinned; the canary is listed first
 import json, re, subprocess, sys
 from pathlib import Path
@@ -46,8 +47,35 @@ def status(root=ROOT, current=None):
     return out
 
 
+def live_ok(root, tenant):
+    """A tenant takes a pin only once it exists as a repository (state own-repo, moving or moved); planned ones wait."""
+    t = json.loads((Path(root) / "doctrine" / "tenant-repos.json").read_text())["tenants"].get(tenant, {})
+    return t.get("state") in ("own-repo", "moving", "moved")
+
+
+def bump(root=ROOT, current=None):
+    """The next pin changes: the canary first; the rest only once the canary is on the current kernel. Returns {tenant: new pin} (empty when nothing moves)."""
+    lock, cur = load(root), current or kernel_hash(root)
+    rows, canary = lock["tenants"], lock["canary"]
+    if rows[canary].get("pin") != cur: return {canary: cur}
+    return {t: cur for t, v in rows.items() if v.get("pin") != cur and live_ok(root, t)}
+
+
+def apply_bump(root=ROOT, current=None):
+    moves = bump(root, current)
+    if moves:
+        lock = load(root)
+        for t, pin in moves.items(): lock["tenants"][t]["pin"] = pin
+        (Path(root) / LOCK).write_text(json.dumps(lock, indent=2) + "\n")
+    return moves
+
+
 def main(argv=None):
     a = list(argv or [])
+    if "--bump" in a:
+        moves = apply_bump() if "--apply" in a else bump()
+        for t, p in moves.items(): print(f"{t}: pin -> {p[:12]}")
+        print(f"kernellock: {len(moves)} pin(s) {'written' if '--apply' in a else 'would move'}"); return 0
     if "--hash" in a: print(kernel_hash()); return 0
     if "--status" in a:
         for r in status(): print(f"{r['tenant']}: {r['state']}{' (canary)' if r['canary'] else ''}")

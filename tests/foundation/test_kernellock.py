@@ -12,4 +12,19 @@ class KernelLock(unittest.TestCase):
         self.assertTrue(rows[0]["canary"])
         self.assertTrue(all(r["state"] in ("unpinned", "current", "behind") for r in rows))
 
+class Bump(unittest.TestCase):
+    def _root(self, canary_pin):
+        import json, tempfile
+        from pathlib import Path
+        d = Path(tempfile.mkdtemp()); (d / "doctrine").mkdir()
+        (d / "doctrine/kernel-lock.json").write_text(json.dumps({"canary": "c", "tenants": {"c": {"pin": canary_pin}, "t": {"pin": None}, "p": {"pin": None}}}))
+        (d / "doctrine/tenant-repos.json").write_text(json.dumps({"tenants": {"c": {"state": "own-repo"}, "t": {"state": "moved"}, "p": {"state": "planned"}}}))
+        return d
+
+    def test_canary_moves_alone_first(self):
+        self.assertEqual(kernellock.bump(self._root(None), "b" * 40), {"c": "b" * 40})
+
+    def test_rest_follow_once_canary_is_current_and_planned_waits(self):
+        self.assertEqual(kernellock.bump(self._root("b" * 40), "b" * 40), {"t": "b" * 40})
+
 if __name__ == "__main__": unittest.main()
