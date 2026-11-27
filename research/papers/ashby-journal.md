@@ -9,7 +9,7 @@ Many people believe that more feedback loops make an autonomous system more stab
 
 Ashby kept a journal for 44 years: 7,189 pages, indexed by his own hand. Its entries on the multistable system, DAMS and society return again and again to one problem: many parts adapting at once, each judging its change by a common indicator, undo each other. We took the archive's index as data, stated each principle in our own words with Ashby's page numbers, checked every one against this system's code, and built what was missing: a disperser that lets only one trial run on a shared step-function, a reading of the collisions that happened before it, and a search whose noise grows with the deviation.
 
-It is written for people who build or run AI systems and want them to keep working without someone watching. It names 6 concrete problems, the mechanism that answers each one, and how to put that mechanism in place.
+It is written for people who build or run AI systems and want them to keep working without someone watching. It names 7 concrete problems, the mechanism that answers each one, and how to put that mechanism in place.
 
 ## 1. The problem
 
@@ -25,6 +25,7 @@ The problems in detail:
 4. A search that ignores how far out the variable is. Ashby: an essential variable may inject noise proportional to its deviation (p. 3410), and specialised essential variables gain from using noise (p. 3383). A search that draws uniformly treats a near miss like a collapse. [1]
 5. Taking from an archive what is convenient. Ashby's index is the map of his journal; a system that says it has incorporated the journal has to account for every entry of that map, not only the ones it liked. [1]
 6. Principles that stay words. Ashby: 'knowing' means controlling (p. 4292); knowledge must mean control if it is to be objective (p. 4303). A principle taken from the journal counts only when it is code with a probe that finds it. [1]
+7. A concept in the register that the code does not carry. A concept named in the register is a claim that the code implements it. We read every mechanism the register names and count the concepts whose mechanisms all resolve in the repository. [1]
 
 ## 2. The approach
 
@@ -38,6 +39,7 @@ Ultrastable is that design as working code [3]. For each problem above it uses a
 4. A search that ignores how far out the variable is: the search draws first within a window around the current value whose width grows with the deviation, then over the whole range (ASHBY-ARCHIVE-1, `foundation/ultrastability.py`)
 5. Taking from an archive what is convenient: every keyword and category gets a disposition; pending ones become work items a few per pass, most-referenced first (ASHBY-ARCHIVE-1, `foundation/ashbyarchive.py`)
 6. Principles that stay words: each principle names the code that carries it and a probe; the check fails a built principle whose probe does not pass (ASHBY-ARCHIVE-1, `doctrine/ashby-archive.json`)
+7. A concept in the register that the code does not carry: each concept lists the mechanisms that implement it (ASHBY-KERNEL-1, `doctrine/ashby-concepts.json`); the check fails when a mechanism or marker is gone (ASHBY-KERNEL-1, `foundation/ashbymap.py`)
 
 ## 3. Putting it into practice
 
@@ -49,8 +51,9 @@ To apply this to your own system, one step per problem:
 4. A search that ignores how far out the variable is. Put in place: the search draws first within a window around the current value whose width grows with the deviation, then over the whole range. Check it with one number, share of second-order steps that brought the variable back inside its limits and were kept, and set a limit for it (>= 0.25 is the limit we use).
 5. Taking from an archive what is convenient. Put in place: every keyword and category gets a disposition; pending ones become work items a few per pass, most-referenced first. Check it with one number, share of Ashby's index keywords and Other Index categories with a disposition in doctrine/ashby-archive.json (ASHBY-ARCHIVE-1), and set a limit for it (>= 1.0 is the limit we use).
 6. Principles that stay words. Put in place: each principle names the code that carries it and a probe; the check fails a built principle whose probe does not pass. Check it with one number, share of principles taken from Ashby's journal that are code with a passing probe (doctrine/ashby-archive.json), and set a limit for it (>= 1.0 is the limit we use).
+7. A concept in the register that the code does not carry. Put in place: each concept lists the mechanisms that implement it. Check it with one number, share of concepts in doctrine/ashby-concepts.json whose every named mechanism resolves to a file and marker in this repository, and set a limit for it (>= 1.0 is the limit we use).
 
-In our own system, 3 of 6 of these checks pass today. Share of the second loop's parameter steps in the last 7 days that changed a step-function another variable's trial already held (MULTISTABLE-1) reads 0.462 (n = 104; source: ops/ultrastability.jsonl steps against doctrine/ultrastability.json ladders). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.875 (n = 200; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Share of declared step-functions that can still move in a direction their steps declare (ops: doctrine files the ladders name) reads 1.0 (n = 13; source: doctrine/ultrastability.json ladders and the files they name). Where a check fails, a work item carries the fix, and it closes only when the same check passes.
+In our own system, 3 of 7 of these checks pass today. Share of the second loop's parameter steps in the last 7 days that changed a step-function another variable's trial already held (MULTISTABLE-1) reads 0.462 (n = 104; source: ops/ultrastability.jsonl steps against doctrine/ultrastability.json ladders). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.875 (n = 200; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Share of declared step-functions that can still move in a direction their steps declare (ops: doctrine files the ladders name) reads 1.0 (n = 13; source: doctrine/ultrastability.json ladders and the files they name). Where a check fails, a work item carries the fix, and it closes only when the same check passes.
 
 ## 4. Trade-offs and limits
 

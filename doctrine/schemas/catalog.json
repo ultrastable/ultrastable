@@ -227,6 +227,14 @@
       "url": "components.schema.json"
     },
     {
+      "name": "conclusions.json",
+      "description": "Contract for doctrine/conclusions.json",
+      "fileMatch": [
+        "doctrine/conclusions.json"
+      ],
+      "url": "conclusions.schema.json"
+    },
+    {
       "name": "consumers.json",
       "description": "Contract for doctrine/consumers.json",
       "fileMatch": [
@@ -803,6 +811,14 @@
       "url": "registers.schema.json"
     },
     {
+      "name": "replay-set.json",
+      "description": "Contract for doctrine/replay-set.json",
+      "fileMatch": [
+        "doctrine/replay-set.json"
+      ],
+      "url": "replay-set.schema.json"
+    },
+    {
       "name": "repo-design.json",
       "description": "Contract for doctrine/repo-design.json",
       "fileMatch": [
@@ -873,6 +889,14 @@
         "doctrine/runway.json"
       ],
       "url": "runway.schema.json"
+    },
+    {
+      "name": "sample-audit.json",
+      "description": "Contract for doctrine/sample-audit.json",
+      "fileMatch": [
+        "doctrine/sample-audit.json"
+      ],
+      "url": "sample-audit.schema.json"
     },
     {
       "name": "scorecard.json",

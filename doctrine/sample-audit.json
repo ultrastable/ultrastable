@@ -1,0 +1,8 @@
+{
+ "_doc": "SAMPLE-AUDIT-1: sampling rate for the System 3* audit of merged PRs, read by foundation/sampleaudit.py. Protected-path PRs are always audited. The rate starts at base, multiplies by step_up for each defect among the last `window` verdicts, and stays between floor and ceiling. Starting values are a first guess, not a measured optimum; the verdicts this loop records are what to tune them from.",
+ "base": 0.2,
+ "floor": 0.1,
+ "ceiling": 1.0,
+ "step_up": 2.0,
+ "window": 20
+}

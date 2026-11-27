@@ -702,6 +702,57 @@ def canon(root=REPO, apply=False) -> dict:
     return {"remaining": len(todo), "filed": filed}
 
 
+def _first_commit(root, rel):
+    r = subprocess.run(["git", "-C", str(root), "log", "--diff-filter=A", "--format=%cI", "--", rel], capture_output=True, text=True)
+    ts = r.stdout.split()
+    return _t(ts[-1]) if r.returncode == 0 and ts else None
+
+
+def canon_probe(root=REPO, apply=False, fetch=_fetch, now=None) -> dict:
+    """CANON-2: three server-side readings so the program's health never rests on a session watching. Each late or missing step files its own Q-AUDIT-canon item.
+    (1) a filed Q-RES-CANON item with no study after sla.study_h; (2) a study whose paper is not on the live /research page after sla.live_h;
+    (3) a paper not in social/calendar.json after sla.social_h. A page that cannot be read is unmeasured and fails the run; it never passes."""
+    pol = load(root)
+    sla = (pol.get("canon") or {}).get("sla") or {"study_h": 168, "live_h": 48, "social_h": 240}
+    now = now or NOW()
+    root = Path(root)
+    late, unmeasured = [], []
+    have = {s.get("source_id") for s in studies(root, pol)}
+    for c in (pol.get("canon") or {}).get("sources", []):
+        rel = f"docs/issues/Q-RES-CANON-{c['id']}.json"
+        if f"canon:{c['id']}" in have or not (root / rel).is_file():
+            continue
+        t0 = _first_commit(root, rel)
+        if t0 and (now - t0).total_seconds() / 3600 > sla["study_h"]:
+            late.append(("study", c["id"], f"{rel} has no study after {sla['study_h']} h"))
+    cal = root / "social/calendar.json"
+    posted = {p.get("paper") for p in (json.loads(cal.read_text(encoding="utf-8")).get("posts", []) if cal.is_file() else [])}
+    try:
+        page = fetch("https://ultrastable.io/research")
+    except Exception as e:
+        page = None
+        unmeasured.append(f"/research unreadable: {type(e).__name__}: {e}"[:200])
+    for st in studies(root, pol):
+        t0 = _first_commit(root, f"research/studies/{st['id']}.json")
+        if not t0:
+            unmeasured.append(f"{st['id']}: no commit date")
+            continue
+        age = (now - t0).total_seconds() / 3600
+        if page is not None and age > sla["live_h"] and f"/research/{st['id']}" not in page:
+            late.append(("live", st["id"], f"paper {st['id']} not on /research after {sla['live_h']} h"))
+        if age > sla["social_h"] and st["id"] not in posted:
+            late.append(("social", st["id"], f"paper {st['id']} not in social/calendar.json after {sla['social_h']} h"))
+    filed = []
+    for kind, sid, why in late:
+        iid = f"Q-AUDIT-canon-{kind}-{sid}"
+        body = (f"**Owner:** product-manager\n**Trigger:** research --probe-canon, {why}\n**Done check:** cmd:python3 -m foundation research --probe-canon\n"
+                f"**Prediction:** canon_late_steps <= 0 within 24 h\n**Out of scope:** hand-writing the paper or the post outside the loops\n**Status:** open\n\n"
+                f"{why}. Find which loop stalled (research pass, merge lane, deploy, social run), fix that loop's cause, and re-run the probe.")
+        if apply and _issue(root, iid, why, body, ["role:product-manager", "research"]):
+            filed.append(iid)
+    return {"late": [w for _, _, w in late], "unmeasured": unmeasured, "filed": filed}
+
+
 def _gh(url) -> str:
     tok = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
     req = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json", "User-Agent": "ultrastable-research/1", **({"Authorization": f"Bearer {tok}"} if tok else {})})
@@ -784,6 +835,10 @@ def main(argv=None) -> int:
         ok, why = probe(REPO, av[av.index("--probe") + 1])
         print(why)
         return 0 if ok else 1
+    if "--probe-canon" in av:
+        out = canon_probe(REPO, apply)
+        print(json.dumps(out, indent=1))
+        return 1 if out["late"] or out["unmeasured"] else 0
     if "--intake" in av:
         print(json.dumps({**intake(REPO, apply), "canon": canon(REPO, apply)}, indent=1))
         return 0
