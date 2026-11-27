@@ -26,6 +26,7 @@ def change(d, files, gone=()):
     return G.check("HEAD~1...HEAD", d)
 
 
+SKIP = "@unittest." + "skip('x')\n"  # built so the guard does not count this file
 T = "def test_a(self):\n    self.assertTrue(1)\ndef test_b(self):\n    self.assertTrue(2)\n"
 
 
@@ -36,7 +37,7 @@ class Guard(unittest.TestCase):
 
     def test_adding_a_skip_fails(self):
         d = repo({"tests/test_x.py": T})
-        self.assertTrue(change(d, {"tests/test_x.py": "@unittest.skip('x')\n" + T}))
+        self.assertTrue(change(d, {"tests/test_x.py": SKIP + T}))
 
     def test_moving_a_file_passes(self):
         d = repo({"tests/test_x.py": T})
