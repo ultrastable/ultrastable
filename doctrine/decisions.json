@@ -249,6 +249,8 @@
   "seed/worker/src/events.js": "routeEvent looks an event name up in EVENT_TABLE generated from doctrine, a table lookup with no ranking",
   "seed/worker/src/pace.js": "rankRows sorts rows by the rank list already chosen by foundation/prioritize.py, which is the instrumented decision",
   "seed/worker/src/contract.js": "routesIn and contractRoute read a router's paths and match a request path against two fixed routes, a lookup with one answer and nothing to weigh",
-  "seed/worker/src/ashby.js": "pick inside cylindrance lists the k-subsets of the variables, a fixed combinatorial enumeration with no alternatives to weigh; the knob trial chosen by nextTrial is logged with its prediction and scored kept or reverted in goal_adjustments"
+  "seed/worker/src/ashby.js": "pick inside cylindrance lists the k-subsets of the variables, a fixed combinatorial enumeration with no alternatives to weigh; the knob trial chosen by nextTrial is logged with its prediction and scored kept or reverted in goal_adjustments",
+  "foundation/repomap.py": "rank orders modules by import in-degree, a fixed computation over the cards with no alternatives to weigh",
+  "foundation/sampleaudit.py": "pick and rate draw by a seeded hash against a configured rate, a fixed computation whose verdicts are recorded by the audit itself"
  }
 }
