@@ -1,0 +1,18 @@
+{
+ "_doc": "S2: the vetted, reversible step-functions the slow loop may choose from. Owner-owned; changes only by reviewed PR. veto_classes are never selected. Read by foundation/kernel9.py.",
+ "version": "1.0.0",
+ "defaults": {"trial_ticks": 3, "budget_per_24h": 5, "cooldown_ticks": 6, "epsilon": 0.2},
+ "veto_classes": ["delete_data", "read_or_rotate_secrets", "force_push", "edit_essential_variables", "edit_ci_gates", "billing_change", "external_publish"],
+ "steps": [
+  {"id": "reroute_executor", "partitions": ["*"], "acts_on": "route_ladder", "predicts": {"ev": "metrics_in_breach", "dir": "down"}, "undo": "restore_snapshot"},
+  {"id": "shrink_batch", "partitions": ["*"], "acts_on": "max_items_per_tick", "predicts": {"ev": "metrics_in_breach", "dir": "down"}, "undo": "restore_snapshot"},
+  {"id": "raise_audit_sampling", "partitions": ["*"], "acts_on": "audit_sample_rate", "predicts": {"ev": "silent_drops", "dir": "down"}, "undo": "restore_snapshot"},
+  {"id": "pause_action_class", "partitions": ["*"], "acts_on": "action_class_enabled", "predicts": {"ev": "cost", "dir": "down"}, "undo": "re_enable"},
+  {"id": "revert_last_doctrine_delta", "partitions": ["*"], "acts_on": "doctrine_delta", "predicts": {"ev": "*", "dir": "restore"}, "undo": "reapply_delta"},
+  {"id": "rollback_worker_version", "partitions": ["*"], "acts_on": "worker_version", "predicts": {"ev": "metrics_in_breach", "dir": "down"}, "undo": "redeploy"}
+ ],
+ "probes": [
+  {"id": "fail_one_canary", "partitions": ["*"]},
+  {"id": "slow_executor_30s", "partitions": ["*"]}
+ ]
+}
