@@ -101,3 +101,11 @@ class ActionsGuard(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PrRange(unittest.TestCase):
+    def test_pr_gates_measure_against_the_merge_parent(self):
+        """#2767: base.sha goes stale when main moves, and the merge ref then counts main's commits as the PR's."""
+        text = (REPO / ".github/workflows/checks.yml").read_text()
+        self.assertNotIn('"${BASE_SHA}...HEAD"', text)
+        self.assertIn('prsize.py --range "HEAD^1...HEAD"', text)

@@ -38,7 +38,7 @@ jobs:
           REF_NAME: ${{ github.ref_name }}
         run: |
           python3 -m foundation substance --check
-          if [ -n "${BASE_SHA:-}" ]; then python3 -m foundation substance --gate --executor --range "${BASE_SHA}...HEAD"
+          if [ -n "${BASE_SHA:-}" ]; then python3 -m foundation substance --gate --executor --range "HEAD^1...HEAD"
           elif [ "${EVENT:-}" = "workflow_dispatch" ] && [[ "${REF_NAME:-}" == agent/* ]]; then  # the executor dispatches checks on its own agent/ branch
             git fetch -q origin main && PR_BODY="Executor run (dispatched checks)" python3 -m foundation substance --gate --executor --range "origin/main...HEAD"; fi
       - name: An executor PR may not only undo main's last day (CHURN-GUARD-1, ZHC-R13)
@@ -46,7 +46,7 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          if [ -n "${BASE_SHA:-}" ]; then python3 -m foundation churn --gate --executor --range "${BASE_SHA}...HEAD"; fi
+          if [ -n "${BASE_SHA:-}" ]; then python3 -m foundation churn --gate --executor --range "HEAD^1...HEAD"; fi
       - name: No clash with an older open PR or a reused migration number (COLLISION-1)
         # the knowledge-graph directive reached several sessions and five competing PRs clashed on a migration number, /api/graph and a check command
         env:
@@ -63,7 +63,7 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          if [ -n "${BASE_SHA:-}" ]; then cd seed && python3 scripts/prsize.py --range "${BASE_SHA}...HEAD"; fi
+          if [ -n "${BASE_SHA:-}" ]; then cd seed && python3 scripts/prsize.py --range "HEAD^1...HEAD"; fi
       - name: workflow token scopes (IDENTITIES-1, ZHC-R4)
         run: python3 -m foundation identities --check
       - name: tests-protected (TESTS-PROTECTED-1, ZHC-R11)
@@ -71,7 +71,7 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          if [ -n "${BASE_SHA:-}" ]; then python3 -m foundation testguard --range "${BASE_SHA}...HEAD"; fi
+          if [ -n "${BASE_SHA:-}" ]; then python3 -m foundation testguard --range "HEAD^1...HEAD"; fi
       - name: No new specification text on the public branch (DISCLOSE-1)
         run: python3 -m foundation disclosure --check
       - name: Workflow minute-budget lint (cheap, runs first)
