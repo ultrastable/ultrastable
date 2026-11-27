@@ -6905,6 +6905,15 @@
    "body": "foundation/redmerge.py counts commits on main whose checks run failed in 7 days; the daily watchdog runs it.",
    "probe": "grep:foundation/redmerge.py::RED-MERGE-1",
    "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "lesson-2026-11-27-the-daily-spinoff-data-pr-read-as-trivial-code",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "The daily spinoff data PR read as trivial code",
+   "body": "spinoffs/registry.js is written by foundation/spinoff.py (do not edit) but was classed as code, so the daily spinoff PR failed SUBSTANCE-1 and its free-tier snapshot could not land. It is now a generated file in doctrine/substance.json.",
+   "probe": "grep:doctrine/substance.json::spinoffs/registry.js",
+   "session": "session_0156nqDtsm3xWA5HrxzuWq8X"
   }
  ]
 }
