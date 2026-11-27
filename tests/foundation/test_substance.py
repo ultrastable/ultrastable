@@ -41,6 +41,10 @@ diff --git a/scripts/smoke_probe.py b/scripts/smoke_probe.py
 
 
 class Diff(unittest.TestCase):
+    def test_spinoff_registry_mirror_is_generated_not_code(self):
+        # foundation/spinoff.py writes spinoffs/registry.js ("do not edit"); the daily spinoff data PR must not read as trivial code.
+        self.assertEqual(substance.file_class("spinoffs/registry.js", substance.cfg()), "generated")
+
     def test_measured_executor_pr_is_trivial(self):
         r = substance.classify_diff(DIFF)
         self.assertEqual(r["verdict"], "trivial")
