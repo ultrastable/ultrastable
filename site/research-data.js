@@ -1555,7 +1555,7 @@ export default {
      "Limits on everything that matters. Put in place: the check fails a variable with no limits. Check it with one number, share of declared essential variables that have limits (doctrine/ultrastability.json), and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 81 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.006 (n = 165; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.778 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 81 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.006 (n = 165; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.84 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Source. Own R&D question set, regenerated from this system's records, version 2026-11-25."
@@ -1677,7 +1677,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 72 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.778,
+     "measured": 0.84,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
@@ -1708,9 +1708,9 @@ export default {
      },
      "prediction": "research_findings_met_share >= 1.0 within 72 h",
      "metric_label": "share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1)",
-     "measured": 0.595,
+     "measured": 0.583,
      "status": "not-met",
-     "n": 42,
+     "n": 48,
      "source": "research/studies, each finding measured as above",
      "item": "Q-RES-second-loop-2026-S4"
     },
@@ -1822,7 +1822,7 @@ export default {
      "The member knowing better than the organization. Put in place: what the owner does not know is computed (known minus told), never asked. Check it with one number, owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl), and set a limit for it (<= 0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 2 of 7 of these checks pass today. Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.778 (n = None; source: foundation/specgate.py over docs/issues). Share of essential variables (platform and tenant) whose latest reading in the last 7 days has a value (ops/ultrastability.jsonl) reads 0.717 (n = 46; source: ops/ultrastability.jsonl, latest reading per variable in the last 7 days). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.875 (n = 200; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 2 of 7 of these checks pass today. Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.84 (n = None; source: foundation/specgate.py over docs/issues). Share of essential variables (platform and tenant) whose latest reading in the last 7 days has a value (ops/ultrastability.jsonl) reads 0.717 (n = 46; source: ops/ultrastability.jsonl, latest reading per variable in the last 7 days). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.875 (n = 200; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. The whole working paper was read from the IESE PDF the owner supplied; the passages quoted in the findings are verbatim.",
@@ -1913,7 +1913,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 336 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.778,
+     "measured": 0.84,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
@@ -2418,6 +2418,317 @@ export default {
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   },
   {
+   "study_id": "ashby-journal",
+   "slug": "ashby-journal",
+   "order": 7,
+   "title": "The multistable system: what Ashby's journal says about letting many loops adapt at once",
+   "sections": {
+    "summary": [
+     "Many people believe that more feedback loops make an autonomous system more stable. This paper argues otherwise: loops that adapt at the same time on shared settings undo each other's work. Many loops are stable only when something keeps their trials apart and judges each change against the whole system.",
+     "Ashby kept a journal for 44 years: 7,189 pages, indexed by his own hand. Its entries on the multistable system, DAMS and society return again and again to one problem: many parts adapting at once, each judging its change by a common indicator, undo each other. We took the archive's index as data, stated each principle in our own words with Ashby's page numbers, checked every one against this system's code, and built what was missing: a disperser that lets only one trial run on a shared step-function, a reading of the collisions that happened before it, and a search whose noise grows with the deviation.",
+     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 6 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
+    ],
+    "problem": [
+     "Ashby's journal works out, page by page, how a system made of many parts can adapt: a multistable system whose parts adapt separately, kept apart by dispersion, testing the whole against the whole, losing versatility as step-functions are used up, and needing noise in proportion to how far an essential variable has strayed. [1]",
+     "This matters now because the usual answer, more loops, more stability, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
+     "The problems in detail:"
+    ],
+    "problem_list": [
+     "Many parts adapting on one shared setting at once. Ashby: parts of a multistable system can adapt simultaneously provided channel width is adequate and a disperser is provided (p. 4641); separate clusters adapt in the way that gives minimal interaction (p. 4178); trials within a larger trial only if functionally disconnected while they run (p. 4547). Two variables trying changes on the same step-function at once each judge the other's change as their own. [1]",
+     "Judging a change only by the variable it was made for. Ashby: in the multistable system each part is not tested against its own environment alone, but the whole against the whole (p. 2889); making one variable more self-stable can make the whole unstable (p. 2423); parts communicate through the environment (p. 4215). [1]",
+     "Running out of step-functions. Ashby: some step-functions can be used only once, so the system tends gradually to lose versatility (p. 3436). [1]",
+     "A search that ignores how far out the variable is. Ashby: an essential variable may inject noise proportional to its deviation (p. 3410), and specialised essential variables gain from using noise (p. 3383). A search that draws uniformly treats a near miss like a collapse. [1]",
+     "Taking from an archive what is convenient. Ashby's index is the map of his journal; a system that says it has incorporated the journal has to account for every entry of that map, not only the ones it liked. [1]",
+     "Principles that stay words. Ashby: 'knowing' means controlling (p. 4292); knowledge must mean control if it is to be objective (p. 4303). A principle taken from the journal counts only when it is code with a probe that finds it. [1]"
+    ],
+    "approach": [
+     "The approach follows Ashby's ultrastable system [2]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
+     "Ultrastable is that design as working code [3]. For each problem above it uses a specific mechanism:"
+    ],
+    "approach_list": [
+     "Many parts adapting on one shared setting at once: one trial per step-function at a time: a function under an unsettled trial holds every newcomer, and among newcomers the variable that has waited longest goes first (MULTISTABLE-1, `foundation/ultrastability.py`)",
+     "Judging a change only by the variable it was made for: every settled action is read against every other essential variable of its scope (FREELY-ADAPTIVE-1, `foundation/freeadapt.py`)",
+     "Running out of step-functions: versatility counts the step-functions that can still move in a declared direction (ASHBY-ARCHIVE-1, `foundation/ultrastability.py`)",
+     "A search that ignores how far out the variable is: the search draws first within a window around the current value whose width grows with the deviation, then over the whole range (ASHBY-ARCHIVE-1, `foundation/ultrastability.py`)",
+     "Taking from an archive what is convenient: every keyword and category gets a disposition; pending ones become work items a few per pass, most-referenced first (ASHBY-ARCHIVE-1, `foundation/ashbyarchive.py`)",
+     "Principles that stay words: each principle names the code that carries it and a probe; the check fails a built principle whose probe does not pass (ASHBY-ARCHIVE-1, `doctrine/ashby-archive.json`)"
+    ],
+    "practice": [
+     "To apply this to your own system, one step per problem:"
+    ],
+    "practice_list": [
+     "Many parts adapting on one shared setting at once. Put in place: one trial per step-function at a time: a function under an unsettled trial holds every newcomer, and among newcomers the variable that has waited longest goes first. Check it with one number, share of the second loop's parameter steps in the last 7 days that changed a step-function another variable's trial already held (MULTISTABLE-1), and set a limit for it (<= 0 is the limit we use).",
+     "Judging a change only by the variable it was made for. Put in place: every settled action is read against every other essential variable of its scope. Check it with one number, share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py), and set a limit for it (>= 0.8 is the limit we use).",
+     "Running out of step-functions. Put in place: versatility counts the step-functions that can still move in a declared direction. Check it with one number, share of declared step-functions that can still move in a direction their steps declare (ops: doctrine files the ladders name), and set a limit for it (>= 0.8 is the limit we use).",
+     "A search that ignores how far out the variable is. Put in place: the search draws first within a window around the current value whose width grows with the deviation, then over the whole range. Check it with one number, share of second-order steps that brought the variable back inside its limits and were kept, and set a limit for it (>= 0.25 is the limit we use).",
+     "Taking from an archive what is convenient. Put in place: every keyword and category gets a disposition; pending ones become work items a few per pass, most-referenced first. Check it with one number, share of Ashby's index keywords and Other Index categories with a disposition in doctrine/ashby-archive.json (ASHBY-ARCHIVE-1), and set a limit for it (>= 1.0 is the limit we use).",
+     "Principles that stay words. Put in place: each principle names the code that carries it and a probe; the check fails a built principle whose probe does not pass. Check it with one number, share of principles taken from Ashby's journal that are code with a passing probe (doctrine/ashby-archive.json), and set a limit for it (>= 1.0 is the limit we use)."
+    ],
+    "practice_note": [
+     "In our own system, 3 of 6 of these checks pass today. Share of the second loop's parameter steps in the last 7 days that changed a step-function another variable's trial already held (MULTISTABLE-1) reads 0.462 (n = 104; source: ops/ultrastability.jsonl steps against doctrine/ultrastability.json ladders). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.875 (n = 200; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Share of declared step-functions that can still move in a direction their steps declare (ops: doctrine files the ladders name) reads 1.0 (n = 13; source: doctrine/ultrastability.json ladders and the files they name). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+    ],
+    "tradeoffs": [
+     "Reading. The register is built from the archive's index pages, not from the handwritten page images; each principle cites the pages its index entries name. The journal's wording is not copied: principles are stated in our own words.",
+     "Coverage. Every keyword and category carries a disposition (mapped, background, not applicable or pending); pending ones are filed as work a few per pass, most-referenced first, so the share triaged rises over time rather than being claimed at once.",
+     "Collision history. The collision share reads the last 7 days of the second loop's steps, most of which ran before the disperser existed, so it falls only as those steps leave the window.",
+     "Source. Journal archive, version journal 1928 to 1972, digital archive 2008."
+    ],
+    "action": [
+     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
+     "Start a system of your own on the same foundation: https://ultrastable.io/start",
+     "Follow new papers by feed: https://ultrastable.io/research.atom"
+    ]
+   },
+   "references": [
+    {
+     "key": "ashby-journal",
+     "text": "W. Ross Ashby (journal 1928 to 1972, digital archive 2008). Journal of W. Ross Ashby, with its keyword index and Other Index. The W. Ross Ashby Digital Archive (The Estate of W. Ross Ashby); journal archive.",
+     "url": "https://ashby.info/journal/index.html"
+    },
+    {
+     "key": "ashby1952",
+     "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
+     "url": "https://archive.org/details/designforbrain00ashb"
+    },
+    {
+     "key": "ultrastable",
+     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
+     "url": "https://github.com/ultrastable/ultrastable"
+    }
+   ],
+   "derived": [
+    87,
+    0
+   ],
+   "study": {
+    "title": "Journal of W. Ross Ashby, with its keyword index and Other Index",
+    "authors": [
+     "W. Ross Ashby"
+    ],
+    "institution": "The W. Ross Ashby Digital Archive (The Estate of W. Ross Ashby)",
+    "kind": "journal archive",
+    "version": "journal 1928 to 1972, digital archive 2008",
+    "data": "25 volumes, 7,189 pages, 678 primary keywords and an Other Index of subject categories, read from the archive's index pages at its stated crawl delay; the register is doctrine/ashby-archive.json.",
+    "summary": "Ashby's journal works out, page by page, how a system made of many parts can adapt: a multistable system whose parts adapt separately, kept apart by dispersion, testing the whole against the whole, losing versatility as step-functions are used up, and needing noise in proportion to how far an essential variable has strayed."
+   },
+   "abstract": "W. Ross Ashby (The W. Ross Ashby Digital Archive (The Estate of W. Ross Ashby)): Ashby's journal works out, page by page, how a system made of many parts can adapt: a multistable system whose parts adapt separately, kept apart by dispersion, testing the whole against the whole, losing versatility as step-functions are used up, and needing noise in proportion to how far an essential variable has strayed. Ashby kept a journal for 44 years: 7,189 pages, indexed by his own hand. Its entries on the multistable system, DAMS and society return again and again to one problem: many parts adapting at once, each judging its change by a common indicator, undo each other. We took the archive's index as data, stated each principle in our own words with Ashby's page numbers, checked every one against this system's code, and built what was missing: a disperser that lets only one trial run on a shared step-function, a reading of the collisions that happened before it, and a search whose noise grows with the deviation. 3 of 6 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
+   "window": {
+    "start": "2026-11-19T01:23:24Z",
+    "end": "2026-11-26T21:42:44Z",
+    "days": 7.85,
+    "prs": 500,
+    "merged": 360,
+    "regime": "driven",
+    "k_self": 0.0,
+    "as_of": "2026-11-27T11:11:06.803Z"
+   },
+   "findings": [
+    {
+     "id": "J1",
+     "concern": "Many parts adapting on one shared setting at once",
+     "claim": "Ashby: parts of a multistable system can adapt simultaneously provided channel width is adequate and a disperser is provided (p. 4641); separate clusters adapt in the way that gives minimal interaction (p. 4178); trials within a larger trial only if functionally disconnected while they run (p. 4547). Two variables trying changes on the same step-function at once each judge the other's change as their own.",
+     "where": "Other Index 3 (The Multistable System) and 2 (Society)",
+     "perspective": "systems",
+     "mechanisms": [
+      {
+       "rule": "MULTISTABLE-1",
+       "path": "foundation/ultrastability.py",
+       "how": "one trial per step-function at a time: a function under an unsettled trial holds every newcomer, and among newcomers the variable that has waited longest goes first"
+      }
+     ],
+     "metric": "second_loop_collision_share_7d",
+     "target": {
+      "op": "<=",
+      "value": 0
+     },
+     "prediction": "second_loop_collision_share_7d <= 0 within 168 h",
+     "metric_label": "share of the second loop's parameter steps in the last 7 days that changed a step-function another variable's trial already held (MULTISTABLE-1)",
+     "measured": 0.462,
+     "status": "not-met",
+     "n": 104,
+     "source": "ops/ultrastability.jsonl steps against doctrine/ultrastability.json ladders",
+     "item": "Q-RES-ashby-journal-J1"
+    },
+    {
+     "id": "J2",
+     "concern": "Judging a change only by the variable it was made for",
+     "claim": "Ashby: in the multistable system each part is not tested against its own environment alone, but the whole against the whole (p. 2889); making one variable more self-stable can make the whole unstable (p. 2423); parts communicate through the environment (p. 4215).",
+     "where": "Other Index 3 and 6",
+     "perspective": "systems",
+     "mechanisms": [
+      {
+       "rule": "FREELY-ADAPTIVE-1",
+       "path": "foundation/freeadapt.py",
+       "how": "every settled action is read against every other essential variable of its scope"
+      }
+     ],
+     "metric": "efficiency_verdict_share",
+     "target": {
+      "op": ">=",
+      "value": 0.8
+     },
+     "prediction": "efficiency_verdict_share >= 0.8 within 168 h",
+     "metric_label": "share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py)",
+     "measured": 0.875,
+     "status": "met",
+     "n": 200,
+     "source": "ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl",
+     "item": null
+    },
+    {
+     "id": "J3",
+     "concern": "Running out of step-functions",
+     "claim": "Ashby: some step-functions can be used only once, so the system tends gradually to lose versatility (p. 3436).",
+     "where": "Other Index 3",
+     "perspective": "reliability",
+     "mechanisms": [
+      {
+       "rule": "ASHBY-ARCHIVE-1",
+       "path": "foundation/ultrastability.py",
+       "how": "versatility counts the step-functions that can still move in a declared direction"
+      }
+     ],
+     "metric": "step_versatility_share",
+     "target": {
+      "op": ">=",
+      "value": 0.8
+     },
+     "prediction": "step_versatility_share >= 0.8 within 336 h",
+     "metric_label": "share of declared step-functions that can still move in a direction their steps declare (ops: doctrine files the ladders name)",
+     "measured": 1.0,
+     "status": "met",
+     "n": 13,
+     "source": "doctrine/ultrastability.json ladders and the files they name",
+     "item": null
+    },
+    {
+     "id": "J4",
+     "concern": "A search that ignores how far out the variable is",
+     "claim": "Ashby: an essential variable may inject noise proportional to its deviation (p. 3410), and specialised essential variables gain from using noise (p. 3383). A search that draws uniformly treats a near miss like a collapse.",
+     "where": "Other Index 4 (DAMS)",
+     "perspective": "reliability",
+     "mechanisms": [
+      {
+       "rule": "ASHBY-ARCHIVE-1",
+       "path": "foundation/ultrastability.py",
+       "how": "the search draws first within a window around the current value whose width grows with the deviation, then over the whole range"
+      }
+     ],
+     "metric": "second_loop_kept_share",
+     "target": {
+      "op": ">=",
+      "value": 0.25
+     },
+     "prediction": "second_loop_kept_share >= 0.25 within 720 h",
+     "metric_label": "share of second-order steps that brought the variable back inside its limits and were kept",
+     "measured": 0.006,
+     "status": "not-met",
+     "n": 165,
+     "source": "ops/ultrastability.jsonl verdicts",
+     "item": "Q-RES-ashby-journal-J4"
+    },
+    {
+     "id": "J5",
+     "concern": "Taking from an archive what is convenient",
+     "claim": "Ashby's index is the map of his journal; a system that says it has incorporated the journal has to account for every entry of that map, not only the ones it liked.",
+     "where": "Keyword index and Other Index",
+     "perspective": "systems",
+     "mechanisms": [
+      {
+       "rule": "ASHBY-ARCHIVE-1",
+       "path": "foundation/ashbyarchive.py",
+       "how": "every keyword and category gets a disposition; pending ones become work items a few per pass, most-referenced first"
+      }
+     ],
+     "metric": "archive_triaged_share",
+     "target": {
+      "op": ">=",
+      "value": 1.0
+     },
+     "prediction": "archive_triaged_share >= 1 within 2160 h",
+     "metric_label": "share of Ashby's index keywords and Other Index categories with a disposition in doctrine/ashby-archive.json (ASHBY-ARCHIVE-1)",
+     "measured": 0.996,
+     "status": "not-met",
+     "n": 693,
+     "source": "doctrine/ashby-archive.json (foundation/ashbyarchive.py)",
+     "item": "Q-RES-ashby-journal-J5"
+    },
+    {
+     "id": "J6",
+     "concern": "Principles that stay words",
+     "claim": "Ashby: 'knowing' means controlling (p. 4292); knowledge must mean control if it is to be objective (p. 4303). A principle taken from the journal counts only when it is code with a probe that finds it.",
+     "where": "Other Index 4 and 5 (Epistemology)",
+     "perspective": "systems",
+     "mechanisms": [
+      {
+       "rule": "ASHBY-ARCHIVE-1",
+       "path": "doctrine/ashby-archive.json",
+       "how": "each principle names the code that carries it and a probe; the check fails a built principle whose probe does not pass"
+      }
+     ],
+     "metric": "archive_principles_built_share",
+     "target": {
+      "op": ">=",
+      "value": 1.0
+     },
+     "prediction": "archive_principles_built_share >= 1 within 336 h",
+     "metric_label": "share of principles taken from Ashby's journal that are code with a passing probe (doctrine/ashby-archive.json)",
+     "measured": 1.0,
+     "status": "met",
+     "n": 10,
+     "source": "doctrine/ashby-archive.json principles and their probes",
+     "item": null
+    }
+   ],
+   "met": 3,
+   "total": 6,
+   "limits": [
+    "Reading. The register is built from the archive's index pages, not from the handwritten page images; each principle cites the pages its index entries name. The journal's wording is not copied: principles are stated in our own words.",
+    "Coverage. Every keyword and category carries a disposition (mapped, background, not applicable or pending); pending ones are filed as work a few per pass, most-referenced first, so the share triaged rises over time rather than being claimed at once.",
+    "Collision history. The collision share reads the last 7 days of the second loop's steps, most of which ran before the disperser existed, so it falls only as those steps leave the window.",
+    "Source. Journal archive, version journal 1928 to 1972, digital archive 2008."
+   ],
+   "leads": [
+    {
+     "finding": "J1",
+     "rule": "WORK-NOT-PULSE-1",
+     "score": 0.136
+    },
+    {
+     "finding": "J1",
+     "rule": "ADMIT-1",
+     "score": 0.117
+    },
+    {
+     "finding": "J2",
+     "rule": "DATAGRAPH-1",
+     "score": 0.113
+    },
+    {
+     "finding": "J2",
+     "rule": "PHASED-WORK-1",
+     "score": 0.104
+    },
+    {
+     "finding": "J3",
+     "rule": "ASHBY-KERNEL-1",
+     "score": 0.126
+    },
+    {
+     "finding": "J3",
+     "rule": "TENANT-STANDARD-1",
+     "score": 0.112
+    },
+    {
+     "finding": "J5",
+     "rule": "REDTEAM-1",
+     "score": 0.102
+    }
+   ],
+   "leads_route": "lexical-512-1awgv4d",
+   "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
+  },
+  {
    "study_id": "conant-ashby-1970",
    "slug": "conant-ashby-1970",
    "order": 8,
@@ -2456,7 +2767,7 @@ export default {
      "Work items too vague to map to a state. Put in place: fails items with no done check, prediction, out-of-scope line or live probe. Check it with one number, share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py), and set a limit for it (>= 0.9 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 2 of 3 of these checks pass today. Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending reads 1.0 (n = 5; source: doctrine/knowledge-graph.json (declared)). Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 19; source: doctrine/ultrastability.json). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.778 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 2 of 3 of these checks pass today. Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending reads 1.0 (n = 5; source: doctrine/knowledge-graph.json (declared)). Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 19; source: doctrine/ultrastability.json). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.84 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "The theorem is about optimal and simplest regulators. We use it as a design rule, not as proof that this system's model is good enough.",
@@ -2591,7 +2902,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 336 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.778,
+     "measured": 0.84,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
