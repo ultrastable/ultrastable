@@ -29,6 +29,12 @@
   "streak": 0,
   "since": ""
  },
+ "canon-late": {
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
+ },
  "classes-complete": {
   "status": "pass",
   "signature": "",
@@ -38,14 +44,14 @@
  "clock-measured": {
   "status": "fail",
   "signature": "3b0aedd1b0a5",
-  "streak": 1,
+  "streak": 2,
   "since": "2026-11-26T16:03:02Z"
  },
  "code-agent-ladder": {
-  "status": "fail",
-  "signature": "d10b36aa74a5",
-  "streak": 1,
-  "since": "2026-11-26T16:03:01Z"
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
  },
  "constitution": {
   "status": "pass",
@@ -55,13 +61,13 @@
  },
  "content-drift": {
   "status": "fail",
-  "signature": "579098457c40",
+  "signature": "05bdb3470805",
   "streak": 1,
   "since": "2026-11-26T16:03:01Z"
  },
  "cost-runaway": {
   "status": "fail",
-  "signature": "72cf40d9a32e",
+  "signature": "a7ffb3af7487",
   "streak": 1,
   "since": "2026-11-26T16:03:00Z"
  },
@@ -73,7 +79,7 @@
  },
  "d1-growth": {
   "status": "fail",
-  "signature": "72cf40d9a32e",
+  "signature": "a7ffb3af7487",
   "streak": 1,
   "since": "2026-11-26T16:03:00Z"
  },
@@ -98,7 +104,7 @@
  "dg-built-live": {
   "status": "fail",
   "signature": "d25f28dd36b5",
-  "streak": 2,
+  "streak": 3,
   "since": "2026-11-25T21:07:45Z"
  },
  "dg-crons": {
@@ -108,10 +114,10 @@
   "since": ""
  },
  "dg-empty-commits": {
-  "status": "fail",
-  "signature": "db1b11658127",
-  "streak": 1,
-  "since": "2026-11-25T21:07:40Z"
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
  },
  "dg-handoff-lint": {
   "status": "pass",
@@ -137,6 +143,12 @@
   "streak": 0,
   "since": ""
  },
+ "discovered-20bcba4f37": {
+  "status": "fail",
+  "signature": "d04c350b09af",
+  "streak": 1,
+  "since": "2026-11-27T15:54:22Z"
+ },
  "durable-facts": {
   "status": "pass",
   "signature": "",
@@ -144,10 +156,10 @@
   "since": ""
  },
  "fleet-contract": {
-  "status": "fail",
-  "signature": "73e6dee0af43",
-  "streak": 1,
-  "since": "2026-11-26T16:02:57Z"
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
  },
  "foreign-ci-item": {
   "status": "pass",
@@ -157,7 +169,7 @@
  },
  "foundation-tests": {
   "status": "fail",
-  "signature": "db6fe567f1b6",
+  "signature": "f77d1bb58da8",
   "streak": 1,
   "since": "2026-11-21T13:41:13Z"
  },
@@ -188,7 +200,7 @@
  "live-verify": {
   "status": "fail",
   "signature": "3a77af090a37",
-  "streak": 2,
+  "streak": 3,
   "since": "2026-11-25T21:07:16Z"
  },
  "managers-live": {
@@ -228,6 +240,12 @@
   "since": ""
  },
  "pr-age-bound": {
+  "status": "fail",
+  "signature": "e96dcc8a42e0",
+  "streak": 1,
+  "since": "2026-11-27T15:54:05Z"
+ },
+ "pr-lost": {
   "status": "pass",
   "signature": "",
   "streak": 0,
@@ -244,6 +262,12 @@
   "signature": "",
   "streak": 0,
   "since": ""
+ },
+ "repo-conform": {
+  "status": "fail",
+  "signature": "aaa76b42db59",
+  "streak": 1,
+  "since": "2026-11-27T15:54:21Z"
  },
  "retry-spin": {
   "status": "pass",
@@ -271,21 +295,21 @@
  },
  "seed-autonomous": {
   "status": "fail",
-  "signature": "293607c8f26e",
+  "signature": "cee2a53570a7",
   "streak": 1,
   "since": "2026-11-24T16:27:15Z"
  },
  "seed-launch": {
-  "status": "fail",
-  "signature": "ac51dd6cc790",
-  "streak": 1,
-  "since": "2026-11-26T15:57:39Z"
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
  },
  "seed-live": {
-  "status": "fail",
-  "signature": "a9eb50934315",
-  "streak": 1,
-  "since": "2026-11-26T15:57:39Z"
+  "status": "pass",
+  "signature": "",
+  "streak": 0,
+  "since": ""
  },
  "seed-tests": {
   "status": "pass",
@@ -313,7 +337,7 @@
  },
  "selftest-workflows": {
   "status": "fail",
-  "signature": "09213d41f1af",
+  "signature": "c8313e2a862d",
   "streak": 1,
   "since": "2026-11-25T21:07:12Z"
  },
@@ -337,7 +361,7 @@
  },
  "sla-breach": {
   "status": "fail",
-  "signature": "5ce964894726",
+  "signature": "3e7381712aac",
   "streak": 1,
   "since": "2026-11-21T18:56:59Z"
  },
@@ -361,7 +385,7 @@
  },
  "temporal-drift": {
   "status": "fail",
-  "signature": "49bc782ecdc6",
+  "signature": "de026b5fd93d",
   "streak": 1,
   "since": "2026-11-21T13:41:18Z"
  },
