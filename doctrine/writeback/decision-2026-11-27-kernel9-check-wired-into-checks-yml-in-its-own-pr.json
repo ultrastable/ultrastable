@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-kernel9-check-wired-into-checks-yml-in-its-own-pr",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "kernel9 check wired into checks.yml in its own PR",
+  "body": "worker-gate refuses a PR that touches .github/, so the kernel9 CI line and the Copilot pointer ship apart from the kernel PR 2764; the check runs once both are on main.",
+  "probe": "grep:.github/workflows/checks.yml::kernel9",
+  "session": "session_0156nqDv2LkwoVhTQKXeix15"
+ },
+ "kind": "decision",
+ "title": "kernel9 check wired into checks.yml in its own PR",
+ "session": "session_0156nqDv2LkwoVhTQKXeix15"
+}
