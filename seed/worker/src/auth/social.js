@@ -42,7 +42,9 @@ async function connected(env, tenant, key, f, now) {
     return Boolean((await getToken(env.DB, env, tenant, key, { fetch: f, now })).ok);
   } catch (e) { console.error('connect-once', key, e && e.message); return false; }
 }
-const refused = async (env, tenant, key, title, why, say, retry) => { await store.event(env.DB, tenant, key, 'failed', 'callback: ' + why); return failScreen(title, say, retry); };
+// An unauthenticated callback route: store.refusal records each reason kind (the fixed text before any part a caller chose) at most once per
+// tenant, provider and hour.
+const refused = async (env, tenant, key, title, why, say, retry, kind = why) => { await store.refusal(env.DB, tenant, key, kind, why); return failScreen(title, say, retry); };
 
 const consent = (title, who, will, action, extra = '') => html(title, `<h1>${esc(title)}</h1><div class="card"><b>What happens next</b><ul>${will.map(w => `<li>${esc(w)}</li>`).join('')}</ul>
 <p class="mut">One-time approval. The system keeps it renewed and you can disconnect at any time.</p></div>
@@ -96,7 +98,7 @@ async function mastodon(step, url, origin, env, tenant, f, now, insecure, retry)
   }
   const st = await checkConnectorState(env, url.searchParams.get('state'), now);
   if (!st || st.t !== tenant) return refused(env, tenant, key, 'Connect Mastodon', 'state expired or for another tenant', 'That approval link expired.', retry);
-  if (url.searchParams.get('error')) return refused(env, tenant, key, 'Connect Mastodon', 'provider answered ' + String(url.searchParams.get('error')).replace(/[^a-z_]/g, '').slice(0, 40), 'The approval was not completed.', retry);
+  if (url.searchParams.get('error')) return refused(env, tenant, key, 'Connect Mastodon', 'provider answered ' + String(url.searchParams.get('error')).replace(/[^a-z_]/g, '').slice(0, 40), 'The approval was not completed.', retry, 'provider answered');
   const cur = await store.material(env.DB, env, tenant, key);
   if (!cur || !cur.secret || !cur.secret.pending || cur.secret.pending.nonce !== st.n) return refused(env, tenant, key, 'Connect Mastodon', 'approval does not match the sign-in under way', 'That approval link was already used.', retry);
   const r = await f(cur.meta.token_url, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' },
@@ -130,7 +132,7 @@ async function bluesky(step, url, origin, env, tenant, f, now, insecure, retry) 
   }
   const st = await checkConnectorState(env, url.searchParams.get('state'), now);
   if (!st || st.t !== tenant) return refused(env, tenant, key, 'Connect Bluesky', 'state expired or for another tenant', 'That approval link expired.', retry);
-  if (url.searchParams.get('error')) return refused(env, tenant, key, 'Connect Bluesky', 'provider answered ' + String(url.searchParams.get('error')).replace(/[^a-z_]/g, '').slice(0, 40), 'The approval was not completed.', retry);
+  if (url.searchParams.get('error')) return refused(env, tenant, key, 'Connect Bluesky', 'provider answered ' + String(url.searchParams.get('error')).replace(/[^a-z_]/g, '').slice(0, 40), 'The approval was not completed.', retry, 'provider answered');
   const cur = await store.material(env.DB, env, tenant, key);
   if (!cur || !cur.secret || !cur.secret.pending || cur.secret.pending.nonce !== st.n) return refused(env, tenant, key, 'Connect Bluesky', 'approval does not match the sign-in under way', 'That approval link was already used.', retry);
   if (url.searchParams.get('iss') !== cur.meta.issuer) return failScreen('Connect Bluesky', 'The answer came from an unexpected server.', retry);

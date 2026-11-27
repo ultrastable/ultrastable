@@ -71,30 +71,66 @@ export function createAudit({ db, bucket = null, now = () => Date.now(), config 
   async function appendMany(list) { const out = []; for (const o of list) out.push(await append(o)); return out; }
 
   async function batchOf(rows) { const lines = rows.map(r => ({ seq: r.seq, at: r.at, actor: r.actor, kind: r.kind, subject: r.subject, summary: r.summary, ref: r.ref, pay: r.pay, prev: r.prev, hash: r.hash })); return JSON.stringify({ v: 1, tenant: cfg.tenant, events: lines }); }
-  // Roll every finished day older than hotDays: anchor row first, archive second, event rows last, so a crash leaves at worst duplicates a re-run removes.
+  // A sealed batch counts only once it has been read back from where it was written and rebuilds its anchor (US-01-R17): the bytes match the
+  // recorded sha-256, the events chain from the day's first prev to its last hash, and their Merkle root is the anchor's. null when it does.
+  async function readBack(d) {
+    let b;
+    try { b = await loadBatch(d); } catch (e) { return `archive could not be read back: ${String(e && e.message || e).slice(0, 120)}`; }
+    if (b.error) return b.error;
+    if (!Array.isArray(b.events) || b.events.length !== d.n) return 'archive does not hold the day\'s events';
+    let p = d.first_prev;
+    for (const e of b.events) { if (e.prev !== p || e.hash !== await eventHash(p, e)) return 'archived events do not rebuild the anchor'; p = e.hash; }
+    if (p !== d.last_hash) return 'archived events do not end at the anchor';
+    const lv = await merkleLevels(b.events.map(e => e.hash));
+    return lv[lv.length - 1][0] === d.root ? null : 'archived Merkle root differs';
+  }
+  // A day whose batch did not read back keeps its rows; the failure is recorded once per day and reason, and cleared when the day is sealed.
+  async function recordKept(day, reason) {
+    const seen = (await metaGet('seal_kept')) || {};
+    if (seen[day] === reason) return;
+    await append({ actor: 'audit', kind: 'incident', subject: 'seal', summary: `day ${day} kept in the store: ${reason}`, ref: `audit_day:${day}` });
+    seen[day] = reason; await metaSet('seal_kept', seen);
+  }
+  async function clearKept(day) { const seen = (await metaGet('seal_kept')) || {}; if (day in seen) { delete seen[day]; await metaSet('seal_kept', seen); } }
+  // Roll every finished day older than hotDays: archive first, anchor second, then the batch is read back, and only a batch that reads back and
+  // matches lets the day's event rows be deleted. A day that does not read back keeps its rows and its anchor is withdrawn, and the days after it
+  // wait, because each anchor chains to the one before it. A crash leaves at worst duplicates a re-run removes after the same read-back.
   async function roll() {
-    const cutoff = dayOf(now() - cfg.hotDays * DAY), rolled = [];
+    const cutoff = dayOf(now() - cfg.hotDays * DAY), rolled = [], kept = [];
     const days = await all(`SELECT DISTINCT day FROM audit_events WHERE day < ? ORDER BY day`, cutoff);
+    let blocked = null;
     for (const { day } of days) {
+      if (blocked) { kept.push({ day, reason: `waits for ${blocked}, which is not sealed` }); continue; }
       const rows = await all(`SELECT * FROM audit_events WHERE day=? ORDER BY seq`, day);
       if (!rows.length) continue;
       const prevD = await one(`SELECT day, last_seq, day_hash FROM audit_days WHERE day < ? ORDER BY day DESC LIMIT 1`, day);
-      const existing = await one(`SELECT day, last_seq FROM audit_days WHERE day=?`, day);
-      if (existing) { await run(`DELETE FROM audit_events WHERE day=? AND seq<=?`, day, existing.last_seq); continue; }
+      const existing = await one(`SELECT * FROM audit_days WHERE day=?`, day);
+      if (existing) {
+        const why = await readBack(existing);
+        if (why) { kept.push({ day, reason: why }); await recordKept(day, why); continue; }
+        await run(`DELETE FROM audit_events WHERE day=? AND seq<=?`, day, existing.last_seq); await clearKept(day); continue;
+      }
       const levels = await merkleLevels(rows.map(r => r.hash)), root = levels[levels.length - 1][0];
       const kinds = {}; for (const r of rows) kinds[r.kind] = (kinds[r.kind] || 0) + 1;
       const d = { day, n: rows.length, root, last_hash: rows[rows.length - 1].hash }, prevDay = prevD ? prevD.day_hash : ZERO;
       const bytes = await gz(await batchOf(rows)), key = `audit/${cfg.tenant}/${day}.json.gz`;
-      if (bucket) await bucket.put(key, bytes, { httpMetadata: { contentType: 'application/gzip' } });
-      await run(`INSERT INTO audit_days (day,first_seq,last_seq,n,first_prev,last_hash,root,prev_day,day_hash,kinds,bytes,blob_sha,archive_key,blob,rolled_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-        day, rows[0].seq, rows[rows.length - 1].seq, rows.length, rows[0].prev, d.last_hash, root, prevDay, await dayHash(prevDay, d), JSON.stringify(kinds), bytes.length, await sha256(bytes), bucket ? key : '', bucket ? null : b64(bytes), new Date(now()).toISOString());
+      let why = null;
+      if (bucket) { try { await bucket.put(key, bytes, { httpMetadata: { contentType: 'application/gzip' } }); } catch (e) { why = `archive could not be written: ${String(e && e.message || e).slice(0, 120)}`; } }
+      if (!why) {
+        await run(`INSERT INTO audit_days (day,first_seq,last_seq,n,first_prev,last_hash,root,prev_day,day_hash,kinds,bytes,blob_sha,archive_key,blob,rolled_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+          day, rows[0].seq, rows[rows.length - 1].seq, rows.length, rows[0].prev, d.last_hash, root, prevDay, await dayHash(prevDay, d), JSON.stringify(kinds), bytes.length, await sha256(bytes), bucket ? key : '', bucket ? null : b64(bytes), new Date(now()).toISOString());
+        why = await readBack(await one(`SELECT * FROM audit_days WHERE day=?`, day));
+        if (why) await run(`DELETE FROM audit_days WHERE day=? AND last_seq=?`, day, rows[rows.length - 1].seq); // the anchor stands only for a batch that reads back
+      }
+      if (why) { kept.push({ day, reason: why }); await recordKept(day, why); blocked = day; continue; }
       await run(`DELETE FROM audit_events WHERE day=? AND seq<=?`, day, rows[rows.length - 1].seq);
+      await clearKept(day);
       rolled.push({ day, n: rows.length, bytes: bytes.length });
     }
     // Retention: after archiveDays the batch is dropped but the anchor stays, so the chain still verifies; event-level proof ends there.
     const old = dayOf(now() - cfg.archiveDays * DAY), pruned = [];
     for (const d of await all(`SELECT day, archive_key FROM audit_days WHERE day < ? AND pruned=0`, old)) { if (bucket && d.archive_key) await bucket.delete(d.archive_key); await run(`UPDATE audit_days SET pruned=1, blob=NULL WHERE day=?`, d.day); pruned.push(d.day); }
-    return { rolled, pruned };
+    return { rolled, pruned, kept };
   }
   async function loadBatch(d) {
     const u8 = d.blob ? unb64(d.blob) : bucket && d.archive_key ? new Uint8Array(await (await bucket.get(d.archive_key))?.arrayBuffer?.() ?? []) : null;
@@ -173,7 +209,7 @@ export function createAudit({ db, bucket = null, now = () => Date.now(), config 
     return { digested: n };
   }
   // The tick step: digest finished loop hours, roll finished days, verify, and report. Never throws into the tick.
-  const step = () => ({ name: 'audit', run: async (_db, ctx) => { try { const d = await digestLoopBeats(), r = await roll(), v = await verify({ deep: true }); ctx?.notes?.push(`audit: ${d.digested} digests, ${r.rolled.length} days rolled, chain ${v.ok ? 'intact' : 'BROKEN (' + v.problem_count + ')'}`);
+  const step = () => ({ name: 'audit', run: async (_db, ctx) => { try { const d = await digestLoopBeats(), r = await roll(), v = await verify({ deep: true }); ctx?.notes?.push(`audit: ${d.digested} digests, ${r.rolled.length} days rolled${r.kept.length ? `, ${r.kept.length} kept unsealed` : ''}, chain ${v.ok ? 'intact' : 'BROKEN (' + v.problem_count + ')'}`);
     if (!v.ok) await append({ actor: 'audit', kind: 'incident', subject: 'chain', summary: 'verification found ' + v.problem_count + ' problem(s): ' + v.problems[0], payload: v.problems }); } catch (e) { ctx?.notes?.push('audit: ' + String(e && e.message || e).slice(0, 120)); } } });
 
   // Routes. Public: summary, verify, proof. authorize(request) -> boolean guards events, day batches and writes.

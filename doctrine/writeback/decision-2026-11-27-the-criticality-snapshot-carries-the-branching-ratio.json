@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-the-criticality-snapshot-carries-the-branching-ratio",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "The criticality snapshot carries the branching ratio",
+  "body": "Each criticality snapshot records branching_ratio (successor items over done items in the window) beside k_eff, and a page burn of a core goal files GOAL-BURN-<id>. Proven by node --test seed/worker/test/criticality.test.js and seed/worker/test/goals.test.js.",
+  "probe": "grep:seed/worker/src/criticality.js::branching_ratio: br.branching_ratio",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "decision",
+ "title": "The criticality snapshot carries the branching ratio",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}

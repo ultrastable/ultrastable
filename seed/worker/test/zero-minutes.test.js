@@ -59,7 +59,7 @@ test('worker executor: a path-guard violation fails the item, labels it, never o
   assert.ok(calls.some(c => /executor-failed/.test(c.body || '')));
 });
 
-test('gate: secrets, guard paths and unmarked workflow edits fail; a clean diff passes', () => {
+test('US-07-R22: gate: secrets, guard paths and unmarked workflow edits fail; a clean diff passes', () => {
   const key = 'ghp_' + 'a'.repeat(36);
   assert.equal(evaluate([{ filename: 'a.md', patch: '+' + key }]).ok, false);
   assert.equal(evaluate([{ filename: '.github/workflows/a.yml', patch: '+x' }], { agentBranch: true }).ok, false);
@@ -82,6 +82,7 @@ test('gate posts a status once per commit; lane merges on green worker-gate only
     'GET /repos/o/r/pulls/1': [200, { draft: false, mergeable_state: 'unstable', head: { sha: 's1' } }],
     'GET /repos/o/r/issues/1/comments': [200, []],
     'GET /repos/o/r/commits/s1/status': [200, { statuses: [{ context: 'worker-gate', state: 'success' }] }],
+    'GET /repos/o/r/commits/s1/check-runs': [200, { total_count: 0, check_runs: [] }],  // US-33-R06: the zero-minutes path reads other apps' check runs
     'PUT /repos/o/r/pulls/1/merge': [200, {}],
   };
   let l = fake(routes);

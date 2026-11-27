@@ -203,13 +203,35 @@ export async function criticalityStep(db, ctx, t, ensureItem) {
   }
   const emitted = m.k_eff <= t.k_max ? await emitSuccessors(db, t, ctx, ensureItem) : 0; // control rod: above k_max nothing is emitted
   const ign = await deriveIgnitionGaps(db, ctx.nowIso, ctx.pulse || null, T);
-  const snap = { ...m, emitted_successors: emitted, queue_open: queued.n, idle, reasons, originated_now: origin, ...ign,
+  const br = await branchingRatio(db, t, ctx.now, T);  // US-26-R79: published with k_eff in the snapshot (org 'criticality', /health)
+  const snap = { ...m, emitted_successors: emitted, branching_ratio: br.branching_ratio, branching: { successors: br.successors, closed: br.closed }, queue_open: queued.n, idle, reasons, originated_now: origin, ...ign,
     self_sustaining: m.k_eff >= t.k_min && ign.open_ignition_gaps === 0 };
   snap.control = await controlStep(db, ctx, t, snap, ensureItem); // CRITICALITY-LOOP-1: act on the measurement, grade the last action, beat
   ctx.criticality = snap;
   await db.prepare(`INSERT INTO org (key, value) VALUES ('criticality', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(JSON.stringify(snap)).run();
   ctx.notes.push(`k_eff ${m.k_eff}${m.guard.tripped ? ' (guard: deploy rise not credited)' : ''}; open_ignition_gaps ${ign.open_ignition_gaps}${origin ? `; originated ${origin.id}` : ''}${snap.control.action ? `; lever ${snap.control.action.from} -> ${snap.control.action.to} (${snap.control.action.reason})` : ''}${snap.control.stalled ? '; stalled' : ''}`);
   return snap;
+}
+
+// US-26-R79: branching_ratio = successor items (the successor prefix) created in the window / done items updated in the window, successors and IDLE-
+// repairs left out, since those are the items that emit. Null when nothing closed (unmeasured, never 0). The counts move by hours against a window of
+// days, so they are kept in one org row per half hour and read again for a new half hour or another tenant (READ-BUDGET-10); an unreadable row is a fresh read.
+const BRANCHING_CACHE_MS = 1800e3;
+export async function branchingRatio(db, t, now, tenant) {
+  const from = iso(now - t.window_days * 86400e3), pre = t.successor.id_prefix, T = tenant || '';
+  const sig = JSON.stringify([Math.floor(now / BRANCHING_CACHE_MS), t.window_days, pre, T]);
+  try {
+    const c = JSON.parse(((await first(db, `SELECT value FROM org WHERE key = 'criticality_branching'`)) || {}).value || 'null');
+    if (c && c.sig === sig && c.fig) return c.fig;
+  } catch (e) { /* allow-silent: an unreadable cache row is a fresh read below */ }
+  // the prefix range on the primary key reads only successor ids; the closed count reads the (status, updated_at) index
+  const hi = pre.slice(0, -1) + String.fromCharCode(pre.charCodeAt(pre.length - 1) + 1);
+  const s = await first(db, `SELECT COUNT(*) AS n FROM items WHERE id >= ? AND id < ? AND created_at >= ? AND (tenant_id IS NULL OR tenant_id = ?)`, pre, hi, from, T);
+  const d = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status='done' AND updated_at >= ? AND NOT (id >= ? AND id < ?) AND id NOT LIKE 'IDLE-%' AND (tenant_id IS NULL OR tenant_id = ?)`, from, pre, hi, T);
+  const fig = { successors: s.n, closed: d.n, branching_ratio: d.n > 0 ? Number((s.n / d.n).toFixed(4)) : null };
+  try { await db.prepare(`INSERT INTO org (key, value) VALUES ('criticality_branching', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(JSON.stringify({ sig, fig })).run(); }
+  catch (e) { /* allow-silent: a cache write miss only costs the next call one more read */ console.error('criticality: branching ratio not cached:', e && e.message); }
+  return fig;
 }
 
 // Neutron emission: each closed item with no successor spawns one, so the reaction feeds itself from its own products.

@@ -111,3 +111,18 @@ test('US-27-R25: an answer naming a live node the label did not offer is dropped
   const ai = model(); await graphAiStep({ db, ai, now: NOW });
   assert.equal(ai.calls.filter(c => c.inp.messages && c.inp.messages[0].content.startsWith('Reply with JSON')).length, 8, 'twelve labels name ids, eight are sent');
 });
+
+test('US-27-R28: after a failed embedding call the cursor stays put and the same nodes get their vectors once the model answers', async () => {
+  const db = db0(); addNode(db, 'items:a', 'one', 1); addNode(db, 'items:b', 'two', 2);
+  const down = await graphAiStep({ db, ai: { run: async () => { throw new Error('model down'); } }, now: NOW });
+  assert.deepEqual(down.errors, ['embed: model down']); assert.equal(rows(db, `SELECT COUNT(*) AS n FROM kg_ai_cursor`)[0].n, 0, 'the cursor did not move');
+  const up = await graphAiStep({ db, ai: model(), now: NOW + 1 });
+  assert.equal(up.embedded, 2, 'the nodes of the failed batch are embedded once the call works');
+  assert.deepEqual(rows(db, `SELECT id FROM kg_vec ORDER BY id`).map(r => r.id), ['items:a', 'items:b']);
+  // a short answer embeds what it answered for and leaves the rest for the next pass
+  addNode(db, 'items:c', 'three', 3); addNode(db, 'items:d', 'four', 4);
+  const short = { run: async (m, inp) => ({ data: inp.text.slice(0, 1).map(() => [0.5, 0.5]) }) };
+  assert.equal((await graphAiStep({ db, ai: short, now: NOW + 2 })).embedded, 1);
+  assert.equal(rows(db, `SELECT at FROM kg_ai_cursor WHERE name='nodes'`)[0].at, T(3), 'the cursor stops at the last node embedded');
+  const rest = model(); assert.equal((await graphAiStep({ db, ai: rest, now: NOW + 3 })).embedded, 1); assert.deepEqual(rest.calls[0].inp.text, ['four']);
+});

@@ -357,7 +357,10 @@ const app = {
       const released = await claimsReleasedUnworked24h(env.DB, Date.now()).catch(() => null);  // workers#173 closing probe, target 0
       const cutover = await healthView(env.DB, env).catch(() => null);  // ACCOUNT-SPLIT-2: read by the peer account's tick every beat
       const ign = await readIgnition(env.DB).catch(() => null);  // SEED-AUTONOMY-1: the stage this system read for itself, so the launcher can tell ticking from autonomous without another route
-      return Response.json({ ok, org: config.org_slug, last_tick: last || null, claims_released_unworked_24h: released, cutover, ignition: ign ? { stage: ign.stage, since: ign.since, at: ign.at, blocking: ign.blocking ? { stage: ign.blocking.stage, why: String(ign.blocking.why || '').slice(0, 400) } : null } : null }, { status: ok || (cutover && cutover.slot !== 'primary') ? 200 : 503 });
+      // US-11-R01: the fields every member of a fleet reports, as core/org/index.js does: the halt branch and the D1-unavailable branch returned above,
+      // so a body that gets here is enabled and has its database binding.
+      return Response.json({ ok, status: ok ? 'ok' : 'degraded', org: config.org_slug, worker: config.org_slug ?? null, version: config.version ?? null, enabled: true, bindings_ok: true,
+        last_tick: last || null, claims_released_unworked_24h: released, cutover, ignition: ign ? { stage: ign.stage, since: ign.since, at: ign.at, blocking: ign.blocking ? { stage: ign.blocking.stage, why: String(ign.blocking.why || '').slice(0, 400) } : null } : null }, { status: ok || (cutover && cutover.slot !== 'primary') ? 200 : 503 });
     }
     if (url.pathname === '/live' || url.pathname === '/metrics/criticality.json') {  // CRITICALITY-1: k_eff of the last tick
       const c = await readCriticality(env.DB);

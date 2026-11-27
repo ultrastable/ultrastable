@@ -84,7 +84,7 @@ export async function gather(db, ctx, t, prev) {
     missing_tables: REQUIRED_TABLES.filter(x => !have.has(x)),
     roles: have.has('roles') ? await n(`SELECT COUNT(*) FROM roles`) : 0,
     tick_streak: streak, tick_missed_1h: missed, pulse: ctx.pulse || null,
-    closed_verified: await n(`SELECT COUNT(DISTINCT i.id) FROM items i JOIN outcomes o ON o.item_id = i.id WHERE i.status='done' AND o.result='verified' AND o.at >= ?`, since),
+    closed_verified: await n(`SELECT COUNT(DISTINCT i.id) FROM items i JOIN outcomes o ON o.item_id = i.id WHERE i.status='done' AND o.result='verified' AND o.at >= ? AND COALESCE(o.surface, '') <> 'ignition'`, since),  // US-26-R75: the ladder's own closures (surface ignition) are bookkeeping, not work
     silent_drops: await n(`SELECT COUNT(*) FROM outcomes WHERE result='silent_drop' AND at >= ?`, since),
     metrics: have.has('metrics') ? await n(`SELECT COUNT(*) FROM metrics WHERE tenant_id IS NULL`) : 0,
     declared_metrics: have.has('metrics') ? await n(`SELECT COUNT(*) FROM metrics WHERE tenant_id IS NULL AND source='declared'`) : 0,

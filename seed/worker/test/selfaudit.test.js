@@ -16,7 +16,7 @@ test('every probe in the register is one SELECT that runs on the real schema', a
   for (const m of reg.modes) { const r = await probeMode(db, m); assert.notEqual(r.healthy, null, `${m.id}: ${r.error}`); for (const k of ['failure', 'root_cause', 'owner_role', 'trigger', 'remedy']) assert.ok(m[k], `${m.id} lacks ${k}`); }
 });
 
-test('a red probe files FM-<id>; green closes it with evidence; a closed item with a red probe is reopened', async () => {
+test('US-17-R14, US-17-T07: a red probe files FM-<id>; green closes it with evidence; a closed item with a red probe is reopened', async () => {
   const db = makeDb();
   const one = { modes: [{ id: 'x', failure: 'f', root_cause: 'r', owner_role: 'operations', remedy: 'm', probe: "SELECT CASE WHEN (SELECT COUNT(*) FROM org WHERE key='ok')>0 THEN 1 ELSE 0 END" }] };
   let r = await selfAuditStep(db, ctx(), one, ensureItem);
@@ -35,7 +35,7 @@ test('a red probe files FM-<id>; green closes it with evidence; a closed item wi
   assert.ok(db.raw.prepare(`SELECT COUNT(*) n FROM failure_probe_runs WHERE mode_id='x'`).get().n === 3);
 });
 
-test('loop-breaker blocks an item dispatched 3 times with no outcome and files a LOOPBREAK item', async () => {
+test('US-08-R18, US-08-T09: loop-breaker blocks an item dispatched 3 times with no outcome and files a LOOPBREAK item', async () => {
   const db = makeDb();
   await ensureItem(db, { id: 'KIT-0', owner_role: 'operations', title: 't', done_check: 'd' });
   for (let i = 0; i < 3; i++) db.raw.prepare(`INSERT INTO dispatches (tick_id, role_id, item_id, model) VALUES (?, 'r', 'KIT-0', 'm')`).run(i);
@@ -76,7 +76,7 @@ test('the tick runs the selfaudit step and files FM items for red probes', async
   assert.ok(db.raw.prepare(`SELECT COUNT(*) n FROM items WHERE id LIKE 'FM-%'`).get().n >= 1);
 });
 
-test('COSTGUARD-1: a red budget probe files the next fix, an over-budget sample stays red, a green sample closes fix and mode', async () => {
+test('US-17-R15, COSTGUARD-1: a red budget probe files the next fix, an over-budget sample stays red, a green sample closes fix and mode', async () => {
   const { sampleCosts } = await import('../src/costsample.js');
   const db = makeDb();
   const m = {"id": "ext-db-d1-budget", "failure": "An external D1 reads more than 15M rows per hour (or the sampler cannot measure it).", "root_cause": "Full-table scans.", "spof": false, "owner_role": "operations", "trigger": "every tick (hourly sample)", "probe": "SELECT CASE WHEN (SELECT rows_read_1h FROM cost_samples WHERE target='ext-db' AND rows_read_1h IS NOT NULL AND at >= datetime('now','-3 hours') ORDER BY id DESC LIMIT 1) < 15000000 THEN 1 ELSE 0 END", "remedy": "index or LIMIT the heaviest scans.", "fixes": [{"id": "ext-db-fix-top-scan", "title": "Find the heaviest queries and add indexes or LIMITs to them."}, {"id": "ext-db-fix-debounce", "title": "Widen the debounce on the readers."}, {"id": "ext-db-fix-sampler", "title": "Bind CF_ANALYTICS_TOKEN to the tick Worker and set database_id, so the sampler can measure."}]};
@@ -95,6 +95,37 @@ test('COSTGUARD-1: a red budget probe files the next fix, an over-budget sample 
   await sampleCosts(db, { token: 't0k', budgets: [{ id: 'ext-db', account_id: 'a', database_id: 'd' }], fetch: fetch5, now: new Date(Date.now() + 2000) });
   r = await selfAuditStep(db, ctx(), one, ensureItem);
   assert.ok(r.closed.includes('FM-ext-db-d1-budget') && r.closed.includes('FIX-ext-db-fix-top-scan'), JSON.stringify(r));
+});
+
+test('US-17-R15: while the probe is red the first fix not done is filed; when every fix is done and it is still red ESCALATE-<id> asks for a different approach; green closes the mode and the escalation', async () => {
+  const db = makeDb();
+  const one = { modes: [{ id: 'x', failure: 'f', root_cause: 'r', owner_role: 'operations', remedy: 'm', probe: "SELECT CASE WHEN (SELECT COUNT(*) FROM org WHERE key='ok')>0 THEN 1 ELSE 0 END",
+    fixes: [{ id: 'x-1', title: 'first fix' }, { id: 'x-2', title: 'second fix' }] }] };
+  const has = id => db.raw.prepare(`SELECT status, owner_role FROM items WHERE id=?`).get(id);
+  await selfAuditStep(db, ctx(), one, ensureItem);
+  assert.ok(has('FIX-x-1') && !has('FIX-x-2') && !has('ESCALATE-x'), 'only the first fix is filed');
+  db.raw.exec(`UPDATE items SET status='done', disposition='shipped' WHERE id='FIX-x-1'`);
+  await selfAuditStep(db, ctx(), one, ensureItem);
+  assert.ok(has('FIX-x-2') && !has('ESCALATE-x'), 'the next fix follows a done one');
+  assert.equal(has('FIX-x-1').status, 'ready', 'US-17-R14: a fix may not stay closed while the probe is red, so it is reopened, and counted as tried');
+  db.raw.exec(`UPDATE items SET status='done', disposition='shipped' WHERE id='FIX-x-2'`);
+  await selfAuditStep(db, ctx(), one, ensureItem);
+  assert.equal(has('ESCALATE-x').owner_role, 'portfolio-manager', 'every fix done and still red: change the approach');
+  db.raw.exec(`INSERT INTO org (key, value) VALUES ('ok','1')`);
+  const r = await selfAuditStep(db, ctx(), one, ensureItem);
+  assert.ok(r.closed.includes('FM-x') && r.closed.includes('ESCALATE-x'), JSON.stringify(r));
+  assert.match(db.raw.prepare(`SELECT evidence FROM outcomes WHERE item_id='ESCALATE-x' AND result='verified'`).get().evidence, /selfaudit:x green/);
+});
+
+test('US-17-R16: a probe that cannot run (not one SELECT, an error, no number) is a red finding with its error recorded, never read as healthy', async () => {
+  const db = makeDb();
+  const mode = (id, probe) => ({ id, failure: 'f', root_cause: 'r', owner_role: 'operations', remedy: 'm', probe });
+  const reg3 = { modes: [mode('not-select', 'DELETE FROM org'), mode('errors', 'SELECT nope FROM no_such_table'), mode('no-number', "SELECT 'many'")] };
+  const r = await selfAuditStep(db, ctx(), reg3, ensureItem);
+  assert.deepEqual([r.red, r.green], [['not-select', 'errors', 'no-number'], []]);
+  const runs = db.raw.prepare(`SELECT mode_id, healthy, error FROM failure_probe_runs ORDER BY id`).all();
+  assert.ok(runs.every(x => x.healthy === null && x.error), JSON.stringify(runs));
+  for (const id of ['not-select', 'errors', 'no-number']) assert.match(db.raw.prepare(`SELECT title FROM items WHERE id=?`).get(`FM-${id}`).title, /is unprobeable/);
 });
 
 test('github-app-org-access probe follows repo_access', async () => {

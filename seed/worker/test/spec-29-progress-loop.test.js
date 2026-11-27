@@ -350,12 +350,19 @@ test('US-29-T09: a published snapshot gone stale is repaired once, and the syste
   assert.deepEqual(await watchFreshness({ token: 't', repo: 'o/r', fetchImpl: f, now: () => T + 7200e3 }), { status: 'fresh' });
 });
 
-// The closing probe of a known defect, PLANNED in section 7 (a todo test is recorded as planned, never as proof): freshness.js says a stale reading "goes red
-// in the beat", but pulse.js failed() reads only an error status, an ok of false, an error field or no-token, so a stale snapshot that nothing could repair leaves
-// the beat green.
-test('US-29-R74: a stale snapshot that could not be repaired makes its beat fail', { todo: 'seed/worker/src/freshness.js returns status stale with no error field, which failed() in pulse.js reads as a good beat' }, async () => {
-  const f = async u => (u.endsWith('/api/freshness') ? new Response(JSON.stringify({ ok: false, snapshot: { stale: true, age_s: 9e5 } }), { status: 503 }) : new Response(null, { status: 204 }));
-  const out = await watchFreshness({ fetchImpl: f });
+// The closing probe of a former defect: a stale snapshot that nothing could repair left the beat green, because the answer carried no error field. It now
+// carries one when the repair could not start (no token) or failed (a refused dispatch, a network error); a started repair or a cooldown stays a good beat.
+test('US-29-R74: a stale snapshot that could not be repaired makes its beat fail', async () => {
+  const stale = u => u.endsWith('/api/freshness') ? new Response(JSON.stringify({ ok: false, snapshot: { stale: true, age_s: 9e5 } }), { status: 503 }) : null;
+  const out = await watchFreshness({ fetchImpl: async u => stale(u) || new Response(null, { status: 204 }) });
   assert.equal(out.repair, 'no-token');
   assert.ok(failed(out), 'a stale snapshot with no way to repair it is a failed beat');
+  const refused = await watchFreshness({ token: 't', repo: 'o/r', fetchImpl: async u => stale(u) || (u.includes('/runs') ? new Response(JSON.stringify({ workflow_runs: [] })) : new Response(null, { status: 403 })) });
+  assert.equal(refused.repair, 'error HTTP 403'); assert.ok(failed(refused), 'a refused dispatch is a failed beat');
+  const down = await watchFreshness({ token: 't', repo: 'o/r', fetchImpl: async u => { const s = stale(u); if (s) return s; throw new Error('reset'); } });
+  assert.match(down.repair, /^error reset/); assert.ok(failed(down), 'a dispatch that could not be sent is a failed beat');
+  const started = await watchFreshness({ token: 't', repo: 'o/r', fetchImpl: async u => stale(u) || (u.includes('/runs') ? new Response(JSON.stringify({ workflow_runs: [] })) : new Response(null, { status: 204 })) });
+  assert.equal(started.repair, 'dispatched'); assert.equal(failed(started), null, 'a started repair is a good beat');
+  const changesOnly = await watchFreshness({ fetchImpl: async () => new Response(JSON.stringify({ ok: false, snapshot: { stale: false }, changes: { stale: true } }), { status: 503 }) });
+  assert.equal(failed(changesOnly), null, 'a stale changes cache, which this tick refreshes itself, is not a failed beat');
 });

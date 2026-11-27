@@ -10,7 +10,9 @@ export const PROVIDERS = [
   nativeProvider,  // ZERO-MINUTES-1: first choice, no Actions minutes; the Actions dispatch below is the fallback when this one is unavailable or fails
   orchestrateProvider,  // ORCHESTRATE-1: an item the single-shot lane failed is planned into steps, worked in parallel, reviewed by another model and integrated as one PR, one phase a tick
   {
-    id: 'github-actions',
+    // US-33-R75: `fallbackFor` makes this dispatch a backup for worker-native; after a native ok it is skipped and recorded, which saves an Actions run
+    // each tick. The orchestrator advances its own runs and is not a backup for anything, so it is dispatched either way.
+    id: 'github-actions', fallbackFor: 'worker-native',
     available: env => Boolean(env.GITHUB_DISPATCH_TOKEN && env.GITHUB_REPO),
     async dispatch(env, fetchImpl = fetch) {
       const r = await fetchImpl(`https://api.github.com/repos/${env.GITHUB_REPO}/dispatches`, {
@@ -34,6 +36,7 @@ export async function runExecutor(env, { providers = PROVIDERS, fetchImpl } = {}
   const results = [];
   for (const [i, p] of providers.entries()) {
     if (!p.available(env)) { results.push({ provider: p.id, ok: false, detail: 'not configured (binding missing)' }); continue; }
+    if (p.fallbackFor && results.some(x => x.provider === p.fallbackFor && x.ok === true)) { results.push({ provider: p.id, ok: null, skipped: true, detail: `fallback not dispatched: ${p.fallbackFor} answered ok` }); continue; }  // US-33-R75
     try {
       const r = await p.dispatch(env, fetchImpl);
       results.push({ provider: p.id, ...r });

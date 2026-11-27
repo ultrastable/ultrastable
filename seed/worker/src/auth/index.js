@@ -87,7 +87,7 @@ export async function ownerActs(db) {
   await store.ensureSchema(db);
   const rows = (await db.prepare('SELECT tenant, provider, status, last_error, updated_at, meta FROM credentials').all()).results || [];
   const metaOf = r => { try { return typeof r.meta === 'string' ? JSON.parse(r.meta) : (r.meta || {}); } catch { return {}; } };
-  const link = (p, r) => { const m = r ? metaOf(r) : {}; if (m.kind === 'mcp' && m.server) return '/connect/mcp?server=' + encodeURIComponent(m.server); return link0(p); };  // a remote MCP server is reconnected by its own address
+  const link = (p, r) => { const m = r ? metaOf(r) : {}; if (m.kind === 'mcp' && m.server) return '/connect/mcp?server=' + encodeURIComponent(m.server); if (p === 'oauth:mastodon' && m.instance && /^[a-z0-9.-]+$/i.test(m.instance)) return '/connect/mastodon/start?instance=' + encodeURIComponent(m.instance); return link0(p); };  // a remote MCP server is reconnected by its own address, a Mastodon account on the instance its row names (US-30-R06)
   const link0 = p => p === 'oauth:mastodon' ? '/connect/mastodon/start?instance=mstdn.science' : '/connect/' + p.replace(/^oauth:/, '').replace(/^github-.*/, 'github');  // SOCIAL-MODULE-1: one link for Mastodon, the instance is part of it
   const acts = rows.filter(isDead).map(r => ({ id: 'signin:' + r.provider, tenant: r.tenant, provider: r.provider, reason: r.last_error, since: r.updated_at, connect: link(r.provider, r) }));
   return acts;

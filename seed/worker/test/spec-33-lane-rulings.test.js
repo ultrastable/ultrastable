@@ -11,6 +11,7 @@ import { runLane } from '../src/lane.js';
 import { mergeNow } from '../src/mergenow.js';
 import { mergeForLane } from '../src/lanemerge.js';
 import { sweepOpenLoops } from '../src/sweeper.js';
+import { heldByComment } from '../src/holds.js';
 import { evaluate, SECRET_RES } from '../src/worker-gate.js';
 import { safePath, DENY_NAMES, DENY_PREFIXES } from '../src/pr-executor.js';
 import { verifySignature } from '../src/events.js';
@@ -37,6 +38,7 @@ test('US-33-R03: the zero-minutes merge accepts a blocked pull request as well a
     (m, p) => m === 'GET' && p.endsWith('/issues/1/comments?per_page=30') ? [200, []] : null,
     (m, p) => m === 'GET' && p === '/repos/a/b/commits/abc1234/status' ? [200, { statuses: status ? [{ context: 'worker-gate', state: 'success' }] : [] }] : null,
     (m, p) => m === 'GET' && p.startsWith('/repos/a/b/actions/runs?head_sha=abc1234') ? [200, { workflow_runs: [] }] : null,
+    (m, p) => m === 'GET' && p.startsWith('/repos/a/b/commits/abc1234/check-runs') ? [200, { total_count: 0, check_runs: [] }] : null,  // US-33-R06
     (m, p) => m === 'PUT' && p === '/repos/a/b/pulls/1/merge' ? [200, { sha: 'm1' }] : null);
   for (const state of ['unstable', 'blocked']) {
     const w = world(state); const r = await runLane({ token: 't', repos: ['a/b'], fetch: w.f, issueWorkflow: null, zeroActions: true });
@@ -186,24 +188,39 @@ test('US-33-R13: the tick lane holds on a HOLD: comment among the first 30 comme
   assert.ok(w.calls.some(c => c.m === 'GET' && c.path.endsWith('/issues/7/comments?per_page=30')), 'one page of 30');
 });
 
-// R103 is PLANNED: each test below is marked todo and is part of its closing probe; the todo comes off when the route reads a HOLD: comment.
-const R103 = { todo: 'R103 (US-SPEC-33 section 7): this route does not read a HOLD: comment yet' };
-test('US-33-R103: the event-driven pass holds a pull request whose comment starts with HOLD:', R103, async () => {
+// R103: every Worker merge route reads a HOLD: comment through the one shared reader (seed/worker/src/holds.js). These four tests were its closing probe.
+test('US-33-R103: the event-driven pass holds a pull request whose comment starts with HOLD:', async () => {
   const w = holdWorld({ comments: ['HOLD: not yet'] }); const r = await mergeNow({ token: 't', repo: 'o/r', numbers: [7], fetch: w.f, wait: async () => {} });
   assert.ok(!has(w.calls, 'PUT', /merge$/), 'mergeNow does not merge a pull request held by a HOLD: comment'); assert.deepEqual(r.merged, []);
 });
-test('US-33-R103: the sweeper holds a pull request whose comment starts with HOLD:', R103, async () => {
+test('US-33-R103: the sweeper holds a pull request whose comment starts with HOLD:', async () => {
   const w = holdWorld({ comments: ['HOLD: not yet'] }); await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: w.f, now: Date.now() });
   assert.ok(!has(w.calls, 'PUT', /merge$/), 'the sweeper does not merge a pull request held by a HOLD: comment');
 });
-test('US-33-R103: mergeForLane refuses a pull request whose comment starts with HOLD:', R103, async () => {
+test('US-33-R103: mergeForLane refuses a pull request whose comment starts with HOLD:', async () => {
   const w = holdWorld({ comments: ['HOLD: not yet'] }); const r = await mergeForLane({ token: 't', repo: 'o/r', pr: 7, sha: SHA7, fetch: w.f });
   assert.equal(r.ok, false, 'mergeForLane does not merge a pull request held by a HOLD: comment'); assert.ok(!has(w.calls, 'PUT', /merge$/));
 });
-test('US-33-R103: the tick lane holds on a HOLD: comment after the thirtieth, on a later page', { todo: 'R103 (US-SPEC-33 section 7): runLane reads one page of 30 comments' }, async () => {
+test('US-33-R103: the tick lane holds on a HOLD: comment after the thirtieth, on a later page', async () => {
   const w = holdWorld({ comments: [...Array(30).fill('looks fine'), 'HOLD: the migration first'] });
-  await runLane({ token: 't', repos: ['o/r'], fetch: w.f, issueWorkflow: null });
+  const r = await runLane({ token: 't', repos: ['o/r'], fetch: w.f, issueWorkflow: null });
   assert.ok(!has(w.calls, 'PUT', /merge$/), 'a HOLD: comment on the second page holds as one on the first does');
+  assert.deepEqual(r.held, ['o/r#7 HOLD']);
+  // far down a long thread it still holds; past what the reader reads it holds as unread; a short list with no hold merges
+  let x = holdWorld({ comments: [...Array(450).fill('looks fine'), 'HOLD: late'] });
+  assert.deepEqual((await mergeForLane({ token: 't', repo: 'o/r', pr: 7, sha: SHA7, fetch: x.f })).error, 'HOLD', 'the 451st comment holds');
+  x = holdWorld({ comments: Array(600).fill('looks fine') });
+  assert.deepEqual((await mergeForLane({ token: 't', repo: 'o/r', pr: 7, sha: SHA7, fetch: x.f })).error, 'HOLD unread', 'more comments than the reader reads are not read as no hold');
+  x = holdWorld({ comments: Array(31).fill('looks fine') });
+  assert.equal((await mergeForLane({ token: 't', repo: 'o/r', pr: 7, sha: SHA7, fetch: x.f })).ok, true, 'a long thread with no HOLD: comment merges');
+  assert.ok(x.calls.some(c => c.path.endsWith('/comments?per_page=100&page=1')), 'a full first page is read on from the start, 100 at a time');
+});
+test('US-33-R103: after a full first page, a later page that cannot be read holds as unread; an unreadable first page holds nothing', async () => {
+  const reader = (later) => async (m, p) => p.endsWith('?per_page=30') ? { ok: true, json: Array(30).fill({ body: 'looks fine' }) } : later;
+  assert.equal(await heldByComment(reader({ ok: false, status: 502 }), 'o/r', 7), 'HOLD unread', 'more comments exist and were not read');
+  assert.equal(await heldByComment(reader(null), 'o/r', 7), 'HOLD unread', 'a missing answer is not read as no hold');
+  assert.equal(await heldByComment(reader({ ok: true, json: [] }), 'o/r', 7), null, 'a readable empty later page holds nothing');
+  assert.equal(await heldByComment(async () => ({ ok: false, status: 502 }), 'o/r', 7), null, 'the label, not an unreadable first page, holds');
 });
 
 // ---- R06: the zero-minutes merge and check runs from other apps ----
@@ -218,7 +235,7 @@ const zeroWorld = (state, checkRuns) => github(
   (m, p) => m === 'GET' && p.includes('/commits/abc1234/check-runs') ? checkRuns : null,
   (m, p) => m === 'PUT' && p === '/repos/a/b/pulls/1/merge' ? [200, { sha: 'm1' }] : null);
 const actionsRun = { name: 'checks', status: 'completed', conclusion: 'failure', app: { slug: 'github-actions' } };
-test('US-33-R06: the zero-minutes merge holds on a check run of another app that failed, still runs, or cannot be read, and still merges past an Actions run that never started', { todo: 'R06 (US-SPEC-33 section 7): runLane judges the zero-minutes path by the worker-gate status and realRed, which read Actions runs only' }, async () => {
+test('US-33-R06: the zero-minutes merge holds on a check run of another app that failed, still runs, or cannot be read, and still merges past an Actions run that never started', async () => {
   for (const state of ['unstable', 'blocked']) {
     for (const [why, runs] of [
       ['a failed check run of another app', [200, { total_count: 2, check_runs: [actionsRun, { name: 'third-party-scanner', status: 'completed', conclusion: 'failure', app: { slug: 'scanner' } }] }]],

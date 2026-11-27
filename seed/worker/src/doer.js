@@ -165,7 +165,8 @@ async function successor(db, ctx, item, ensureItem) {
   const a = await ask(ctx, `${lead}\nAnswer with one JSON object only: {"title": string (max 120 chars), "owner_role": one of ${JSON.stringify(roles)}, "done_check": string, "closing_probe": string}`);
   if (!a) return settle(db, ctx, item, 'waiting', 'no model available this tick');
   const j = a.json || {};
-  if (!j.title || !j.done_check || !roles.includes(j.owner_role)) return settle(db, ctx, item, 'parked', `model ${a.adapter} answered without a valid item: ${JSON.stringify(j).slice(0, 200)}`, { blocker: 'successor not filed: model answer invalid; retried when unblocked' });
+  // US-04-R16: a successor is closed only by an item with a role that exists, a done check and a closing probe; an ORIGIN item keeps its own rule.
+  if (!j.title || !j.done_check || !roles.includes(j.owner_role) || (!origin && !String(j.closing_probe || '').trim())) return settle(db, ctx, item, 'parked', `model ${a.adapter} answered without a valid item: ${JSON.stringify(j).slice(0, 200)}`, { blocker: 'successor not filed: model answer invalid; retried when unblocked' });
   const id = (origin ? `FILED-${item.id}` : `PLUS-${base}`).slice(0, 80);
   await ensureItem(db, { id, kind: 'plus', owner_role: j.owner_role, priority: 30, title: String(j.title).slice(0, 200), done_check: String(j.done_check).slice(0, 300), closing_probe: String(j.closing_probe || '').slice(0, 300) || null });
   return settle(db, ctx, item, 'done', `filed ${id} (${j.owner_role}): ${String(j.title).slice(0, 120)} [${a.adapter}]`);

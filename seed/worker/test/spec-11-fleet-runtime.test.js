@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// US-SPEC-11 (fleet runtime) requirements the platform meets in the seed: R15 (a second producer for the heartbeat), R17 (a loop writes its
-// beat before its body and is judged by slots) and R18 (a loop that stops files one item that only the same reading closes).
+// US-SPEC-11 (fleet runtime) requirements the platform meets in the seed: R14 and R26 (a loop writes its beat before its body, and a thrown,
+// a hung and a never-called loop are three readings), R15 (a loop that returns without its work is a failed beat), R16 and R27 (state from
+// slots, and a loop that stops files one item that only the same reading closes), R17 and R24 (a second producer for the heartbeat; T07).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -15,7 +16,7 @@ const config = { org_slug: 't', claim_ttl_minutes: 120, max_wip_per_role: 3, plu
 const T0 = Date.parse('2026-11-10T00:00:00Z'), MIN = 60e3;
 const count = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).first()).n;
 
-test('US-11-R15: a stale heartbeat is run by the second producer and a fresh one is not; every call leaves a record', async () => {
+test('US-11-R17, US-11-R24 and US-11-T07: a stale heartbeat is run by the second producer and a fresh one is not; every call leaves a record', async () => {
   const db = makeDb();
   await runTick(db, { config, now: T0 });
   let ran = 0;
@@ -32,7 +33,7 @@ test('US-11-R15: a stale heartbeat is run by the second producer and a fresh one
   assert.equal(await count(empty, `SELECT COUNT(*) AS n FROM tick_runs`), 1);
 });
 
-test('US-11-R17: the beat is written before the body runs; a thrown error, a missing credential and ok:false are failed beats; the state names what is wrong', async () => {
+test('US-11-R14, US-11-R15, US-11-R16 and US-11-R26: the beat is written before the body runs; a thrown error, a missing credential and ok:false are failed beats; the state names what is wrong', async () => {
   const db = makeDb();
   let during = null;
   await beat(db, 'x', async () => { during = await db.prepare(`SELECT finished_at, ok FROM loop_beats WHERE loop = 'x'`).first(); return { status: 'ok' }; }, { now: () => T0 });
@@ -54,7 +55,7 @@ test('US-11-R17: the beat is written before the body runs; a thrown error, a mis
   assert.deepEqual([j.expected, j.ran, j.good, j.missed, j.coverage], [144, 132, 132, 12, 0.9167]);
 });
 
-test('US-11-R18: a loop that stops files one item on the second bad reading, only the same reading closes it, and a later stop reopens it', async () => {
+test('US-11-R16, US-11-R27 and US-11-T06: a loop that stops files one item on the second bad reading, only the same reading closes it, and a later stop reopens it', async () => {
   const db = makeDb();
   const tickAt = async (i, silent) => {
     const now = T0 + i * 10 * MIN;
@@ -76,6 +77,9 @@ test('US-11-R18: a loop that stops files one item on the second bad reading, onl
   const filed = await item();
   assert.equal(filed.closing_probe, 'pulse:cost-samples'); assert.notEqual(filed.status, 'done');
   assert.equal(await count(db, `SELECT COUNT(*) AS n FROM items WHERE id LIKE 'MISSED-cost-samples%'`), 1);   // one item, however many readings
+  const clock = (await db.prepare(`SELECT loop, state FROM loop_clock`).all()).results, others = LANE_LOOPS.filter(l => l !== 'cost-samples');
+  assert.ok(others.length > 0 && others.every(l => clock.some(c => c.loop === l && c.state === 'ticking')), 'the other loops still ran and are ticking');
+  assert.notEqual(clock.find(c => c.loop === 'cost-samples').state, 'ticking');
   while ((await streak()).state !== 'ticking' && i < 80) await tickAt(i++, null);
   const closed = await item();
   assert.equal(closed.status, 'done'); assert.match(closed.disposition, /^probe green: pulse:cost-samples ticking/);   // closed by the reading that filed it
@@ -83,4 +87,28 @@ test('US-11-R18: a loop that stops files one item on the second bad reading, onl
   const reopened = await item();
   assert.deepEqual([reopened.status, reopened.disposition], ['ready', null]);
   assert.equal((await readPulse(db)).not_ticking.some(x => x.loop === 'cost-samples'), true);
+});
+
+test('US-11-R01: the seed /health carries status, worker, version, enabled and bindings_ok beside its own fields', async () => {
+  const { writeFileSync, existsSync, rmSync } = await import('node:fs');
+  const cfg = new URL('../src/config.js', import.meta.url);
+  const made = !existsSync(cfg);
+  if (made) writeFileSync(cfg, 'export default ' + JSON.stringify({ org_slug: 'fleet-member', version: '4.5.6', budget: { usd_per_month: 0 } }) + ';\n');
+  try {
+    const mod = await import('../src/index.js');
+    const own = (await import('../src/config.js')).default;
+    const tickRow = { id: 9, started_at: '2026-11-10 00:00:00', finished_at: '2026-11-10 00:00:05', steps_completed: 3, steps_total: 3 };
+    const DB = { prepare(sql) { const o = { bind() { return o; }, run: async () => ({}), all: async () => ({ results: [] }),
+      first: async () => (/FROM tick_runs/i.test(sql) ? tickRow : null) }; return o; } };
+    const r = await mod.default.fetch(new Request('https://x/health'), { DB }, { waitUntil() {} });
+    const j = await r.json();
+    assert.equal(r.status, 200);
+    assert.deepEqual([j.status, j.worker, j.version, j.enabled, j.bindings_ok], ['ok', own.org_slug ?? null, own.version ?? null, true, true]);
+    assert.equal(j.ok, true); assert.equal(j.org, own.org_slug);
+    const failing = { ...tickRow, steps_completed: 2 };
+    const DB2 = { prepare(sql) { const o = { bind() { return o; }, run: async () => ({}), all: async () => ({ results: [] }),
+      first: async () => (/FROM tick_runs/i.test(sql) ? failing : null) }; return o; } };
+    const j2 = await (await mod.default.fetch(new Request('https://x/health'), { DB: DB2 }, { waitUntil() {} })).json();
+    assert.deepEqual([j2.ok, j2.status, j2.enabled, j2.bindings_ok], [false, 'degraded', true, true], 'a tick that did not complete reads degraded');
+  } finally { if (made) rmSync(cfg); }
 });

@@ -29,7 +29,7 @@ test('US-03-R20 and US-03-T09: health judges the newest finished tick, so a tick
   assert.equal(INFLIGHT_MS, 300e3);
 });
 
-test('US-03-R19: a step that throws on a missing table or column is retried once after migrate runs again, with no TICKFAIL; any other error still files one', async () => {
+test('US-03-R19 and US-03-T07: a step that throws on a missing table or column is retried once after migrate runs again, with no TICKFAIL; any other error still files one', async () => {
   const db = makeDb();
   const orig = { measure: STEPS.measure, migrate: STEPS.migrate };
   let calls = 0, migrates = 0;
@@ -51,7 +51,7 @@ test('US-03-R19: a step that throws on a missing table or column is retried once
   } finally { Object.assign(STEPS, orig); }
 });
 
-test('US-03-R18: under a cost breach the plan defers every step but the essential ones, a deferred step counts as completed, and the deferred steps run again on the first tick of every few hours', async () => {
+test('US-03-R18 and US-03-T08: under a cost breach the plan defers every step but the essential ones, a deferred step counts as completed, and the deferred steps run again on the first tick of every few hours', async () => {
   assert.deepEqual(COST_ESSENTIAL_STEPS, ['migrate', 'reconcile', 'measure', 'criticality']);
   const quiet = Date.parse('2026-11-10T01:30:00Z'), due = Date.parse('2026-11-10T03:05:00Z');
   assert.equal(LEAN_EVERY_H, 3);
@@ -130,7 +130,7 @@ test('US-03-R28: the worker variable HALT wins over the committed halt file in b
   assert.ok((src.match(/halted\(config, env\)/g) || []).length >= 5, 'the schedule, the hooks and the watch route each check it');
 });
 
-test('US-03-R21: the second producer runs a tick only when the newest one is older than two intervals, and leaves its own beat either way', async () => {
+test('US-03-R21 and US-03-T10: the second producer runs a tick only when the newest one is older than two intervals, and leaves its own beat either way', async () => {
   const db = makeDb();
   await runTick(db, { config, now: T0 });
   let ran = 0;
@@ -141,4 +141,10 @@ test('US-03-R21: the second producer runs a tick only when the newest one is old
   assert.equal(r.stale, true); assert.equal(r.completed, r.total);
   assert.equal(get(db, 'SELECT COUNT(*) AS n FROM tick_runs').n, 2);
   assert.equal(get(db, "SELECT COUNT(*) AS n FROM loop_beats WHERE loop='watchdog' AND ok=1").n, 2, 'a beat is left on both calls');
+  assert.match(String(get(db, "SELECT detail FROM loop_beats WHERE loop='watchdog' ORDER BY id DESC LIMIT 1").detail), new RegExp(`"ran_tick":${r.ran_tick}\\b`), 'the beat names the tick it ran');
+  const again = await watch(db, () => runTickNow(), { now: () => late + MIN, config });
+  function runTickNow() { throw new Error('a fresh tick must not start another'); }
+  assert.equal(again.stale, false, 'called again at once: the tick it just ran is fresh');
+  assert.equal(get(db, 'SELECT COUNT(*) AS n FROM tick_runs').n, 2, 'no new tick');
+  assert.equal(get(db, "SELECT COUNT(*) AS n FROM loop_beats WHERE loop='watchdog' AND ok=1").n, 3, 'and still a beat');
 });

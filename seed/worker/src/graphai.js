@@ -38,13 +38,19 @@ export async function graphAiStep({ db, ai, config = {}, spend = null, ensureIte
   const nodes = await all(db, `SELECT id, label, changed_at FROM kg_nodes WHERE changed_at > ? AND valid_to IS NULL ORDER BY changed_at LIMIT ?`, cur, b.embed);
   let calls = 0;
   if (nodes.length) {
+    // US-27-R28: `upto` counts the nodes of this batch that got a vector; the cursor and the relation pass stop there, so what a failed or short call
+    // left out is read again next time. It is drawn back past a run of equal changed_at, since the cursor reads changed_at > cursor.
+    let upto = 0;
     try {
       const r = await ai.run(k.embed_model, { text: nodes.map(n => String(n.label || n.id).slice(0, 500)) });
       calls++; out.neurons += k.cost.embed * nodes.length;
       const vs = (r && r.data) || [];
       for (let i = 0; i < nodes.length && i < vs.length; i++) { await runq(db, `INSERT INTO kg_vec (id, vec, at) VALUES (?,?,?) ON CONFLICT(id) DO UPDATE SET vec=excluded.vec, at=excluded.at`, nodes[i].id, JSON.stringify(vs[i].map(x => Math.round(x * 1e4) / 1e4)), nowIso); out.embedded++; }
+      upto = Math.min(nodes.length, vs.length);
     } catch (e) { out.errors.push('embed: ' + (e && e.message)); }
-    for (const n of nodes.filter(n => (String(n.label || '').match(ID) || []).length).slice(0, b.extract)) {
+    while (upto > 0 && upto < nodes.length && nodes[upto].changed_at === nodes[upto - 1].changed_at) upto--;
+    const done = nodes.slice(0, upto);
+    for (const n of done.filter(n => (String(n.label || '').match(ID) || []).length).slice(0, b.extract)) {
       try {
         const ids = [...new Set(String(n.label).match(ID))].slice(0, 6);
         const r = await ai.run(k.text_model, { messages: [{ role: 'system', content: 'Reply with JSON only: [{"dst":"<id>","rel":"<verb>"}] for each id the text clearly relates to. Use only the ids given.' }, { role: 'user', content: `Text: ${String(n.label).slice(0, 600)}\nIds: ${ids.join(', ')}` }], max_tokens: 200 });
@@ -60,7 +66,7 @@ export async function graphAiStep({ db, ai, config = {}, spend = null, ensureIte
         }
       } catch (e) { out.errors.push('extract: ' + (e && e.message)); }
     }
-    await runq(db, `INSERT INTO kg_ai_cursor (name, at) VALUES ('nodes', ?) ON CONFLICT(name) DO UPDATE SET at=excluded.at`, nodes[nodes.length - 1].changed_at);
+    if (done.length) await runq(db, `INSERT INTO kg_ai_cursor (name, at) VALUES ('nodes', ?) ON CONFLICT(name) DO UPDATE SET at=excluded.at`, done[done.length - 1].changed_at);
   }
   const comms = await all(db, `SELECT i.subject, i.text FROM kg_insights i LEFT JOIN kg_summaries s ON s.subject = i.subject WHERE i.kind='community' AND i.state='open' AND (s.at IS NULL OR s.at < i.last_seen) LIMIT ?`, b.summarize);
   for (const c of comms) {

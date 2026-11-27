@@ -81,3 +81,46 @@ test('the tick step digests, rolls, verifies and records an incident on a broken
   await a.step().run(db, { notes }); assert.match(notes[0], /chain intact`?/);
   db.raw.exec(`UPDATE audit_events SET summary='x' WHERE seq=1`); await a.step().run(db, { notes }); assert.match(notes[1], /BROKEN/);
 });
+test('US-01-R17: a sealed batch that does not read back keeps the day\'s rows, records the failure once, and the day is sealed when the store reads back again', async () => {
+  for (const fault of ['damaged', 'missing', 'throws']) {
+    const bucket = fakeBucket(), real = bucket.get;
+    bucket.get = async k => {
+      if (fault === 'missing') return null;
+      if (fault === 'throws') throw new Error('bucket offline');
+      const r = await real(k); const u8 = new Uint8Array(await r.arrayBuffer()); u8[u8.length - 12] ^= 0xff; return { arrayBuffer: async () => u8.buffer };
+    };
+    const { a, db, clock } = mk({ bucket }); await fill(a, clock, 4, 10); clock.set(T0 + 4 * DAY);
+    const r = await a.roll();
+    const oldRows = async () => (await db.prepare(`SELECT COUNT(*) c FROM audit_events WHERE kind='deploy' AND day < '2026-11-12'`).first()).c;
+    assert.equal(r.rolled.length, 0, `${fault}: nothing counts as sealed`);
+    assert.equal(r.kept.length, 2, `${fault}: both finished days are kept`);
+    assert.match(r.kept[1].reason, /waits for 2026-11-10/, `${fault}: the day after waits, because its anchor chains to the one before`);
+    assert.equal(await oldRows(), 20, `${fault}: every event row of the kept days is still in the store`);
+    assert.equal((await db.prepare(`SELECT COUNT(*) c FROM audit_days`).first()).c, 0, `${fault}: no anchor stands for a batch that did not read back`);
+    const incidents = async () => (await db.prepare(`SELECT COUNT(*) c FROM audit_events WHERE kind='incident' AND subject='seal'`).first()).c;
+    assert.equal(await incidents(), 1, `${fault}: the failure is recorded`);
+    await a.roll(); assert.equal(await incidents(), 1, `${fault}: a failure that repeats is recorded once`);
+    assert.equal((await a.verify({ deepDays: 5 })).ok, true, `${fault}: the chain is whole`);
+    bucket.get = real;
+    const healed = await a.roll();
+    assert.equal(healed.rolled.length, 2, `${fault}: sealed once the batch reads back`);
+    assert.equal(await oldRows(), 0);
+    assert.equal((await a.verify({ deepDays: 5 })).ok, true, JSON.stringify((await a.verify({ deepDays: 5 })).problems));
+  }
+});
+test('US-01-R17: an anchor left by an interrupted roll is read back before its rows are deleted', async () => {
+  const bucket = fakeBucket(), { a, db, clock } = mk({ bucket }); await fill(a, clock, 3, 5); clock.set(T0 + 3 * DAY);
+  const first = (await db.prepare(`SELECT * FROM audit_events WHERE day='2026-11-10' ORDER BY seq`).all()).results;
+  assert.equal((await a.roll()).rolled.length, 1);
+  // a crash between the anchor and the delete leaves the rows beside their anchor; here the archive is also gone
+  const put = rows => { for (const e of rows) db.prepare(`INSERT INTO audit_events (seq,day,at,actor,kind,subject,summary,ref,pay,prev,hash) VALUES (?,?,?,?,?,?,?,?,?,?,?)`).bind(e.seq, e.day, e.at, e.actor, e.kind, e.subject, e.summary, e.ref, e.pay, e.prev, e.hash).run(); };
+  put(first);
+  const key = (await db.prepare(`SELECT archive_key FROM audit_days WHERE day='2026-11-10'`).first()).archive_key, bytes = bucket.m.get(key);
+  bucket.m.delete(key);
+  const r = await a.roll();
+  assert.equal(r.kept.length, 1); assert.match(r.kept[0].reason, /archive missing/);
+  assert.equal((await db.prepare(`SELECT COUNT(*) c FROM audit_events WHERE day='2026-11-10'`).first()).c, first.length, 'the rows stay while their batch does not read back');
+  bucket.m.set(key, bytes);
+  assert.deepEqual((await a.roll()).kept, []);
+  assert.equal((await db.prepare(`SELECT COUNT(*) c FROM audit_events WHERE day='2026-11-10'`).first()).c, 0, 'deleted once the batch reads back and matches');
+});
