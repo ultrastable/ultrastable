@@ -6595,6 +6595,15 @@
    "body": "13 of 30 executor runs failed because one 502 from workers-ai-glm marked the whole workers-ai route DOWN, so llama, qwen and gpt-oss were never asked; GitHub Models (retired 2026-07-30) answered 200 OK and was routed first. Fixed with route_down (provider-wide failures only), retired adapters never routed, content-null handling and two added Workers AI rungs; tests pass (53 ladder tests) and the two new models were probed live through the account AI endpoint.",
    "probe": "grep:foundation/agent_ladder.py::def down_keys",
    "session": "session_0156nqDsxJd4poRv2mkbug9e"
+  },
+  {
+   "id": "decision-2026-11-27-executor-trailers-ride-in-the-pr-body-because-squash-merges-",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Executor trailers ride in the PR body because squash merges take it",
+   "body": "The repo squashes with PR_BODY as the message, so trailers only on the branch commit were lost at merge; standards --commits now fails an executor merge that lacks them (ZHC-R7 #2672).",
+   "probe": "grep:foundation/executor.py::ZHC-R7: squash merges take the PR body",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
   }
  ]
 }

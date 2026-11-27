@@ -44,7 +44,7 @@
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 43713,
+   "recent7": 43722,
    "series": [
     0,
     0,
@@ -75,17 +75,17 @@
     0,
     0,
     0,
-    43713
+    43722
    ],
    "share_recent": 0.109,
    "share_trend": 0.109,
-   "slope": 282.0194,
-   "total": 43713
+   "slope": 282.0774,
+   "total": 43722
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 42768,
+   "recent7": 42791,
    "series": [
     0,
     0,
@@ -116,12 +116,12 @@
     0,
     0,
     0,
-    42768
+    42791
    ],
    "share_recent": 0.106,
    "share_trend": 0.106,
-   "slope": 275.9226,
-   "total": 42768
+   "slope": 276.071,
+   "total": 42791
   },
   {
    "area": "seed/worker",
@@ -208,7 +208,7 @@
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 26129,
+   "recent7": 26139,
    "series": [
     0,
     0,
@@ -239,12 +239,12 @@
     0,
     0,
     0,
-    26129
+    26139
    ],
    "share_recent": 0.065,
    "share_trend": 0.065,
-   "slope": 168.5742,
-   "total": 26129
+   "slope": 168.6387,
+   "total": 26139
   },
   {
    "area": "instances",
@@ -1026,7 +1026,7 @@
    "total": 1500
   }
  ],
- "at": "2026-11-27T08:56:33Z",
+ "at": "2026-11-27T08:59:15Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1640,7 +1640,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 350,
+   "rows": 351,
    "series": [
     0,
     0,
@@ -1671,9 +1671,9 @@
     1,
     153,
     109,
-    17
+    18
    ],
-   "slope": 1.9057
+   "slope": 1.9121
   },
   {
    "loop": "resilience",
@@ -1830,7 +1830,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 596,
+   "rows": 597,
    "series": [
     0,
     0,
@@ -1861,9 +1861,9 @@
     55,
     88,
     189,
-    67
+    68
    ],
-   "slope": 3.2044
+   "slope": 3.2109
   },
   {
    "loop": "ultrastability",
