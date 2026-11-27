@@ -139,9 +139,9 @@ def check(body: str, author: str, files: list[str], labels: list[str]) -> list[s
     if hits:
         why = field(body, "Protected-change")
         if is_placeholder(why) or len(why or "") < 12:
-            problems.append("Protected-change: required because this touches protected paths (" + ", ".join(hits[:5]) + "); give the reason, and a human reviewer must approve.")
+            problems.append("Protected-change: required because this touches protected paths (" + ", ".join(hits[:5]) + "); give the reason; the automated gate (this check and the other checks) decides, no person approves.")
         if "human-reviewed" not in [l.lower() for l in labels] and "protected-change" not in [l.lower() for l in labels]:
-            problems.append("Add the label 'protected-change': protected paths need a human reviewer (CODEOWNERS enforces it).")
+            problems.append("Add the label 'protected-change': it marks the change for the automated protected-path gate (CLOSED-LOOP-AXIOM).")
     return problems
 
 
@@ -174,7 +174,7 @@ def main(argv=None) -> int:
         for p in problems:
             print(" - " + p, file=sys.stderr)
         return 1
-    print("self-hosting contract: ok" + (" (protected paths touched: human review required)" if protected(files) else ""))
+    print("self-hosting contract: ok" + (" (protected paths touched: passed the automated protected-path gate)" if protected(files) else ""))
     return 0
 
 

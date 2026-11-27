@@ -9,7 +9,7 @@
 export const CONFIG = {
   code_ext: ['.py', '.js', '.mjs', '.cjs', '.ts', '.sql', '.sh', '.toml', '.yml', '.yaml'],
   config_globs: ['doctrine/*.json', 'autonomy/*.json', 'seed/autonomy/*.json', 'seed/worker/*.json', 'actions-budget.json', 'spark.json'],
-  generated_globs: ['site/*-data.js', 'site/pins.json', 'site/probes.json', 'core-contract.json', 'doctrine/triggers.json', 'doctrine/decision-ledger.json',
+  generated_globs: ['site/*-data.js', 'spinoffs/registry.js', 'site/pins.json', 'site/probes.json', 'core-contract.json', 'doctrine/triggers.json', 'doctrine/decision-ledger.json',
     'instances/ultrastable/own-database.json', 'docs/security/multi-tenant-controls.json', 'seed/self/*', 'README.md', 'platform/adapters/README.md'],
   record_globs: ['*.jsonl', '*.md', '*.txt', 'docs/*', 'ops/*', 'ledger/*', 'doctrine/writeback/*', 'outreach/applications/*', '*.svg', '*.png', '*.pdf'],
   doc_keys: ['_doc', 'why', 'note', '_comment', 'description', '_why', 'reason'],
