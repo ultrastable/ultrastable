@@ -225,6 +225,7 @@
   "seed/worker/src/cutover.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "seed/worker/src/planner.js": "decision-shaped function with no declared metric yet; the plan verdict (kept or missed) is already recorded in the plans table; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "seed/worker/src/pr-executor.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "seed/worker/src/secondloop.js": "decision-shaped function with no declared metric yet; selectStep chooses the next step and settle judges it kept or reverted against the essential variables, but no decision row is logged; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "seed/worker/src/unknowns.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)"
  },
  "gap_item": "Q-DECISION-COVERAGE-1",
