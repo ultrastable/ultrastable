@@ -90,10 +90,10 @@
     },
     {
       "type": "application",
-      "bom-ref": "pkg:github/ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc",
+      "bom-ref": "pkg:github/ossf/scorecard-action@23f22cd43608bae7a1f1fa2603d7314dee9538a5",
       "name": "ossf/scorecard-action",
-      "version": "2d1146689b8cda280b9bc96326124645441f03bc",
-      "purl": "pkg:github/ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc",
+      "version": "23f22cd43608bae7a1f1fa2603d7314dee9538a5",
+      "purl": "pkg:github/ossf/scorecard-action@23f22cd43608bae7a1f1fa2603d7314dee9538a5",
       "scope": "required",
       "externalReferences": [
         {
@@ -104,7 +104,7 @@
       "properties": [
         {
           "name": "ultrastable:tag-comment",
-          "value": "v2.4.4"
+          "value": "v2.6.0"
         }
       ]
     },
@@ -195,5 +195,5 @@
       ]
     }
   ],
-  "serialNumber": "urn:uuid:f7e2ce2d-1a2d-594a-84bf-df5768bdf886"
+  "serialNumber": "urn:uuid:0728d5b4-168e-51f7-9a70-41dbce915cec"
 }

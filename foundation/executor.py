@@ -234,7 +234,27 @@ def safe_path(p: str) -> str | None:
     return None
 
 
+def check_reply_shape(edits) -> None:
+    """REPLY-SCHEMA-1 (ZHC-R12): the model's reply is data of one shape. A file entry is {path: str, content: str} or {path: str, edits: [{find: str, replace: str}]}; anything else is refused before any path is looked at."""
+    if not isinstance(edits, list):
+        raise ValueError("reply is not a list of files")
+    for e in edits:
+        if not isinstance(e, dict) or not isinstance(e.get("path"), str):
+            raise ValueError("reply file entry needs a string path")
+        extra = set(e) - {"path", "content", "edits"}
+        if extra:
+            raise ValueError(f"reply file entry has unknown keys {sorted(extra)}")
+        if "content" in e and not isinstance(e["content"], str):
+            raise ValueError("reply content is not a string")
+        if "edits" in e:
+            if not isinstance(e["edits"], list) or not all(isinstance(x, dict) and isinstance(x.get("find"), str) and isinstance(x.get("replace"), str) for x in e["edits"]):
+                raise ValueError("reply edits need string find and replace")
+        elif "content" not in e:
+            raise ValueError("reply file entry has neither content nor edits")
+
+
 def apply_edits(edits: list[dict], root=REPO) -> list[str]:
+    check_reply_shape(edits)
     if not edits or len(edits) > MAX_FILES:
         raise ValueError(f"need 1..{MAX_FILES} files, got {len(edits or [])}")
     total = 0

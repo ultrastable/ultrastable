@@ -495,6 +495,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["selfcode"]:
         from . import selfcode
         return selfcode.main(_av[1:])
+    if _av[:1] == ["deploydrift"]:  # DEPLOY-DRIFT-1: foundation/deploydrift.py
+        from . import deploydrift
+        return deploydrift.main(_av[1:])
     if _av[:1] == ["routehealth"]:  # ROUTE-CANARY-1: foundation/routehealth.py
         from . import routehealth
         return routehealth.main(_av[1:])
