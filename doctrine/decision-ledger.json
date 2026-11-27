@@ -6896,6 +6896,15 @@
    "body": "site/deployer.js seedD1 now reruns a file statement by statement and skips only a duplicate ADD COLUMN, matching migrate.js and apply-d1-migrations.mjs. A failed seed migration is already a row the seed-live detector files.",
    "probe": "grep:site/deployer.js::MIGRATE-IDEMPOTENT-1",
    "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-red-merge-1-measures-red-merges-to-main",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "RED-MERGE-1 measures red merges to main",
+   "body": "foundation/redmerge.py counts commits on main whose checks run failed in 7 days; the daily watchdog runs it.",
+   "probe": "grep:foundation/redmerge.py::RED-MERGE-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
   }
  ]
 }

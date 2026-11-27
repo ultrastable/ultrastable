@@ -38,14 +38,14 @@ export default {
     0,
     109467
    ],
-   "share_recent": 0.265,
-   "share_trend": 0.265,
+   "share_recent": 0.264,
+   "share_trend": 0.264,
    "total": 109467
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 45515,
+   "recent7": 45524,
    "series": [
     0,
     0,
@@ -76,16 +76,16 @@ export default {
     0,
     0,
     0,
-    45515
+    45524
    ],
    "share_recent": 0.11,
    "share_trend": 0.11,
-   "total": 45515
+   "total": 45524
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 45355,
+   "recent7": 45404,
    "series": [
     0,
     0,
@@ -116,11 +116,11 @@ export default {
     0,
     0,
     0,
-    45355
+    45404
    ],
    "share_recent": 0.11,
    "share_trend": 0.11,
-   "total": 45355
+   "total": 45404
   },
   {
    "area": "seed/worker",
@@ -165,7 +165,7 @@ export default {
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 30177,
+   "recent7": 30369,
    "series": [
     0,
     0,
@@ -196,16 +196,16 @@ export default {
     0,
     0,
     0,
-    30177
+    30369
    ],
    "share_recent": 0.073,
    "share_trend": 0.073,
-   "total": 30177
+   "total": 30369
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 27246,
+   "recent7": 27261,
    "series": [
     0,
     0,
@@ -236,11 +236,11 @@ export default {
     0,
     0,
     0,
-    27246
+    27261
    ],
    "share_recent": 0.066,
    "share_trend": 0.066,
-   "total": 27246
+   "total": 27261
   },
   {
    "area": "doctrine/schemas",
@@ -318,12 +318,12 @@ export default {
     0,
     17582
    ],
-   "share_recent": 0.043,
-   "share_trend": 0.043,
+   "share_recent": 0.042,
+   "share_trend": 0.042,
    "total": 17582
   }
  ],
- "at": "2026-11-27T12:14:35Z",
+ "at": "2026-11-27T12:16:27Z",
  "days": 30,
  "findings": [
   {
@@ -395,10 +395,10 @@ export default {
    0,
    0,
    0,
-   43
+   60
   ],
   "closed": 1396,
-  "opened": 1439
+  "opened": 1456
  },
  "loops": [
   {
@@ -552,7 +552,7 @@ export default {
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 640,
+   "rows": 641,
    "series": [
     0,
     0,
@@ -583,7 +583,7 @@ export default {
     55,
     88,
     189,
-    111
+    112
    ]
   },
   {
