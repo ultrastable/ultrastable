@@ -43,6 +43,13 @@ class Gate(Repo):
         code, out = self.gate("Item: #1\n")
         self.assertEqual(code, 1); self.assertIn("without a Protected-change: line", out)
 
+    def test_the_owner_owned_registries_need_the_protected_change_line(self):
+        """KERNEL-9 E1/S2: the EV registry, step repertoire, partitions and kernel pin are out of the fast loop's reach."""
+        for i, rel in enumerate(("seed/autonomy/essential-variables.json", "doctrine/step-repertoire.json", "doctrine/partitions.json", "doctrine/kernel9.json", "doctrine/kernel.lock", "doctrine/kernel-9.2.0.md")):
+            (self.d / rel).parent.mkdir(parents=True, exist_ok=True); (self.d / rel).write_text("{}\n" if rel.endswith("json") else "x\n")
+            code, out = self.gate("Item: #1\n")
+            self.assertEqual(code, 1, rel); self.assertIn("without a Protected-change: line", out, rel)
+
     def test_a_protected_change_with_its_reason_passes_with_no_person_in_the_path(self):
         (self.d / "SCOPE.md").write_text("# changed\n")
         code, out = self.gate("Item: #1\nProtected-change: tightening the scope wording\n")
