@@ -332,14 +332,6 @@
     {
      "file": "../seed/worker/test/spec-03-tick.test.js",
      "name": "US-03-R20 and US-03-T09: health judges the newest finished tick, so a tick in flight does not fail it, and an unfinished tick older than five minutes does"
-    },
-    {
-     "file": "../tests/foundation/test_spec_03_kernel_steps.py",
-     "name": "test US-03-T09 every kernel step names code that exists"
-    },
-    {
-     "file": "../tests/foundation/test_spec_03_kernel_steps.py",
-     "name": "test US-03-T09 the registry is the one foundation kernel check reads"
     }
    ]
   },
@@ -894,17 +886,32 @@
   {
    "id": "US-10-T07",
    "spec": "US-SPEC-10",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-T07 US-10-R23 the templates example idea is not staffed in a persons own system"
+    }
+   ]
   },
   {
    "id": "US-10-T08",
    "spec": "US-SPEC-10",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-T08 US-10-R21 a hosted system is asked for no secret and no budget approval"
+    }
+   ]
   },
   {
    "id": "US-10-T09",
    "spec": "US-SPEC-10",
-   "tests": []
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-T09 US-10-R19 a declared fault with no drill blocks the gate and the shipped drills pass"
+    }
+   ]
   },
   {
    "id": "US-11-T01",
@@ -2241,6 +2248,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../tests/foundation/test_spec_00_ids.py",
+     "name": "test US-00-R12 a built line that names a file that is not there is found"
+    },
+    {
      "file": "core/conformance/conformance.test.js",
      "name": "US-00-R01, US-00-R02 and US-00-R12: the declaration names the level, each specification version and every requirement not met, with its reason"
     },
@@ -3156,6 +3167,10 @@
      "name": "US-03-R18: under a cost breach the plan defers every step but the essential ones, a deferred step counts as completed, and the deferred steps run again on the first tick of every few hours"
     },
     {
+     "file": "../tests/foundation/test_spec_03_kernel_steps.py",
+     "name": "test US-03-R18 the deferral constants the specification states are the code values"
+    },
+    {
      "file": "core/test/tick.test.js",
      "name": "US-03-T10, US-03-R09 and US-03-R18: with a configuration that omits every limit a role is never given more than three claims and no step fails"
     },
@@ -3166,10 +3181,6 @@
     {
      "file": "core/test/tick.test.js",
      "name": "US-00-R07 and US-03-R18: a configured value overrides the default, an undefined value does not, and the caller configuration object is not changed"
-    },
-    {
-     "file": "core/test/tick.test.js",
-     "name": "US-03-R18: an omitted plus_share still opens the rebalance item (the default 20 percent applies)"
     }
    ]
   },
@@ -3254,14 +3265,6 @@
     {
      "file": "../seed/worker/test/spec-03-tick.test.js",
      "name": "US-03-R22: the system files at most twenty items of its own a day; the refusal is counted, and a new day files again"
-    },
-    {
-     "file": "../tests/foundation/test_spec_03_kernel_steps.py",
-     "name": "test US-03-R22 the specification table of the seed tick is the code"
-    },
-    {
-     "file": "../tests/foundation/test_spec_03_kernel_steps.py",
-     "name": "test US-03-R22 the deferral constants the specification states are the code values"
     }
    ]
   },
@@ -6017,9 +6020,14 @@
    "level": "L1",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-R17 a one off is told so in one card and nothing is staffed while a system is"
+    }
+   ]
   },
   {
    "id": "US-10-R18",
@@ -6027,9 +6035,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-R18 one objective per outcome nine liveness metrics and the declared measure breaches until probed"
+    }
+   ]
   },
   {
    "id": "US-10-R19",
@@ -6037,9 +6050,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-T09 US-10-R19 a declared fault with no drill blocks the gate and the shipped drills pass"
+    }
+   ]
   },
   {
    "id": "US-10-R20",
@@ -6047,9 +6065,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-R20 a boot is live only when health answers 200 after serving 503 before the first tick"
+    },
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-10-R20 a health route that never answers 200 blocks the boot and a dry run probes nothing"
+    }
+   ]
   },
   {
    "id": "US-11-R01",
@@ -6350,9 +6377,22 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_11_resilience.py",
+     "name": "test US-11-R16 the repository has no watcher that is watched by itself or only from its own host"
+    },
+    {
+     "file": "../tests/foundation/test_spec_11_resilience.py",
+     "name": "test US-11-R16 a watcher watched by itself fails"
+    },
+    {
+     "file": "../tests/foundation/test_spec_11_resilience.py",
+     "name": "test US-11-R16 a watcher watched by nobody and a single host fail"
+    }
+   ]
   },
   {
    "id": "US-11-R17",
@@ -8373,9 +8413,18 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_17_failure_ladder.py",
+     "name": "test US-17-R17 a probe never seen failing does not close the item"
+    },
+    {
+     "file": "../tests/foundation/test_spec_17_failure_ladder.py",
+     "name": "test US-17-R17 a relapsed item needs more than one consecutive pass"
+    }
+   ]
   },
   {
    "id": "US-17-R18",
@@ -9094,9 +9143,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-19-R23 the form has one required question and the rest are optional with stated defaults"
+    },
+    {
+     "file": "../tests/foundation/test_spec_10_seed_kernel.py",
+     "name": "test US-19-R23 the workflow writes the idea from the form boots it and tells the person without a manual step"
+    }
+   ]
   },
   {
    "id": "US-19-R24",
@@ -9339,24 +9397,24 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../tests/foundation/test_spec_20_protected_paths.py",
+     "name": "test US-20-R07 a protected change without a protected change line fails"
+    },
+    {
+     "file": "../tests/foundation/test_spec_20_protected_paths.py",
+     "name": "test US-20-R07 a protected change with the line passes and reports how many files"
+    },
+    {
+     "file": "../tests/foundation/test_spec_20_protected_paths.py",
+     "name": "test US-20-R07 deleting a guard file fails even with the reason line"
+    },
+    {
+     "file": "../tests/foundation/test_spec_20_protected_paths.py",
+     "name": "test US-20-R07 adding a human approver to codeowners fails"
+    },
+    {
      "file": "core/steward/measures.test.js",
      "name": "US-20-R07: a merged PR touching AGENTS.md without Protected-change is counted"
-    },
-    {
-     "file": "core/steward/selfhost-contract.test.js",
-     "name": "T20-4 and US-20-R07: a change to a protected path without Protected-change and the label fails the check; with both it passes"
-    },
-    {
-     "file": "tests/test_selfhost.py",
-     "name": "test T20 4 US-20-R07 protected paths need a reason and the label"
-    },
-    {
-     "file": "tests/test_selfhost.py",
-     "name": "test US-20-R07 the guard files themselves are protected"
-    },
-    {
-     "file": "tests/test_selfhost.py",
-     "name": "test US-20-R07 every codeowners path is protected"
     }
    ]
   },
@@ -9683,6 +9741,10 @@
    "proof": "named test",
    "tests": [
     {
+     "file": "../tests/foundation/test_spec_21_plugins.py",
+     "name": "test US-21-R10 a failing transport is recorded without the secret"
+    },
+    {
      "file": "core/packs/offline.test.js",
      "name": "US-21-R10: every shipped pack test file passes with the network globals replaced by throwers, and none is called"
     },
@@ -9824,6 +9886,10 @@
    "status": "met",
    "proof": "named test",
    "tests": [
+    {
+     "file": "../tests/foundation/test_spec_21_plugins.py",
+     "name": "test US-21-R16 an unlisted egress host is refused"
+    },
     {
      "file": "core/packs/egress.test.js",
      "name": "US-21-R16: createEgressFetch refuses http, an unlisted host and a lookalike suffix, and passes an allowed host and its subdomain"
@@ -10122,9 +10188,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_22_surfaces.py",
+     "name": "test US-22-R13 a sentence that states a cadence with no bound claim fails and a bound one passes"
+    }
+   ]
   },
   {
    "id": "US-23-R01",
@@ -10388,9 +10459,14 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_23_loops.py",
+     "name": "test US-23-R13 a change that adds code and no write back fails and a write back passes"
+    }
+   ]
   },
   {
    "id": "US-23-R14",
@@ -10398,9 +10474,18 @@
    "level": "L2",
    "tagged": false,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_23_loops.py",
+     "name": "test US-23-R14 a loop without its record fails the registry check"
+    },
+    {
+     "file": "../tests/foundation/test_spec_23_loops.py",
+     "name": "test US-23-R14 a loop whose only owner is a client session fails"
+    }
+   ]
   },
   {
    "id": "US-24-R01",
@@ -10408,9 +10493,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_24_substrate.py",
+     "name": "test US-24-R01 an item is one issue found again by its marker and the file wins"
+    }
+   ]
   },
   {
    "id": "US-24-R02",
@@ -10418,9 +10508,14 @@
    "level": "L2",
    "tagged": true,
    "must": false,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_24_substrate.py",
+     "name": "test US-24-R02 discussions are off for the platform repository and the settings script enables them only when asked"
+    }
+   ]
   },
   {
    "id": "US-24-R03",
@@ -10463,9 +10558,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_24_substrate.py",
+     "name": "test US-24-R06 a duty with one live host or one credential fails the two route check"
+    }
+   ]
   },
   {
    "id": "US-24-R07",
@@ -10473,9 +10573,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_24_substrate.py",
+     "name": "test US-24-R07 the ruleset refuses deletion and force push has no bypass actor and is gated on a private repository"
+    }
+   ]
   },
   {
    "id": "US-24-R10",
@@ -10834,9 +10939,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_24_substrate.py",
+     "name": "test US-24-R40 a public repository relaxes no lint rule and only the minutes pause is waived"
+    }
+   ]
   },
   {
    "id": "US-24-R41",
@@ -11054,9 +11164,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_24_substrate.py",
+     "name": "test US-24-R59 the count of unpinned action references does not rise and a tag reference is found"
+    }
+   ]
   },
   {
    "id": "US-24-R60",
@@ -11064,9 +11179,14 @@
    "level": "L2",
    "tagged": true,
    "must": true,
-   "status": "deviation",
-   "reason": "no test in this repository cites this requirement",
-   "tests": []
+   "status": "met",
+   "proof": "named test",
+   "tests": [
+    {
+     "file": "../tests/foundation/test_spec_24_substrate.py",
+     "name": "test US-24-R60 one standard is read back gated where the plan withholds it and unmeasured where it cannot be read"
+    }
+   ]
   },
   {
    "id": "US-24-R61",
