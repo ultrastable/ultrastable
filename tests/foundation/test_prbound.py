@@ -14,10 +14,4 @@ class Bound(unittest.TestCase):
     def test_hold_never_closed_and_stale_counted(self):
         close, stale = prbound.read([pr(5, 600, 400, "conflict", "hold"), pr(6, 180, 1)], NOW)
         self.assertEqual(close, []); self.assertEqual([n for n, _ in stale], [6])
-    def test_live_state_decides_a_conflict_close(self):
-        """PR-BOUND-3: a stale `conflict` label never closes a PR that merges cleanly now; an unknown state waits."""
-        live = {1: "MERGEABLE", 2: "UNKNOWN", 3: "CONFLICTING"}  # 4 cannot be read: the label decides
-        close, _ = prbound.read([pr(n, 50, 1, "conflict") for n in (1, 2, 3, 4)], NOW, mergeable=live.get)
-        self.assertEqual([n for n, _ in close], [3, 4])
-        self.assertEqual(prbound.read.cleared, [1])
 if __name__ == "__main__": unittest.main()

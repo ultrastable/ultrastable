@@ -10,6 +10,9 @@ const BOT_PREFIX = ['claude/', 'agent/', 'worker/', 'parked/'];
 export function prTier({ ageMin, idleMin, state, branch }, sla = SLA.pr) {
   if (!BOT_PREFIX.some(p => String(branch || '').startsWith(p))) return 'ok';
   if (state === 'clean') return 'ok';
+  // PR-NEVER-LOSE-1: only a real conflict or a failing check is superseded. An unknown or empty state (GitHub still computing it), a branch that is only behind, and a PR
+  // that is mergeable are never closed on this clock; sweeper.js also re-reads the PR live before it closes.
+  if (!['dirty', 'blocked', 'unstable'].includes(String(state || '').toLowerCase())) return 'ok';
   if (ageMin > sla.hard_min && idleMin > sla.idle_min) return 'supersede';
   if (ageMin > sla.act_min) return 'act';
   return 'ok';
