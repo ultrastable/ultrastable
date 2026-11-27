@@ -803,6 +803,14 @@
       "url": "registers.schema.json"
     },
     {
+      "name": "replay-set.json",
+      "description": "Contract for doctrine/replay-set.json",
+      "fileMatch": [
+        "doctrine/replay-set.json"
+      ],
+      "url": "replay-set.schema.json"
+    },
+    {
       "name": "repo-design.json",
       "description": "Contract for doctrine/repo-design.json",
       "fileMatch": [

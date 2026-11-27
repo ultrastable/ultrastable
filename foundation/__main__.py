@@ -515,6 +515,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["tokenlog"]:  # TOKEN-LOG-1: foundation/tokenlog.py
         from . import tokenlog
         return tokenlog.main(_av[1:])
+    if _av[:1] == ["perceptcost"]:  # PERCEPT-COST-1: foundation/perceptcost.py
+        from . import perceptcost
+        return perceptcost.main(_av[1:])
     if _av[:1] == ["repomap"]:  # REPO-MAP-1: foundation/repomap.py
         from . import repomap
         return repomap.main(_av[1:])
