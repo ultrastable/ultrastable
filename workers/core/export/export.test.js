@@ -6,7 +6,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { makeDb } from '../_shared/testdb.js';
-import { createExporter, classify, splitStatements, memoryStore, lintMigrations } from './index.js';
+import { createExporter, classify, splitStatements, memoryStore, lintMigrations, oneStatement } from './index.js';
 
 const MIG = fileURLToPath(new URL('./migrations/', import.meta.url));
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
@@ -122,4 +122,187 @@ test('US-01-R04: a table in an attached schema cannot be exported here, so the m
   assert.equal(r.applied, false); assert.equal(r.refusal, 'table_unresolved');
   assert.equal(count(db, `SELECT COUNT(*) AS n FROM org`), 1);
   assert.equal(db.raw.prepare(`SELECT outcome FROM export_migrations WHERE name='0012_attached'`).get().outcome, 'refused');
+});
+
+test('US-01-R04: a quoted table name is read whole, and a destructive statement whose table is not a plain name is refused before anything runs', async () => {
+  assert.deepEqual(classify('DROP TABLE "my items";').tables, ['my items'], 'the whole quoted name, not its first word');
+  assert.deepEqual(classify('DELETE FROM [my items] WHERE 1;').tables, ['my items']);
+  assert.deepEqual(classify('UPDATE `odd``name` SET x = 1;').tables, ['odd`name'], 'a doubled quote inside the name is one quote');
+  assert.deepEqual(classify('DROP TABLE "items";').unresolved, [], 'a quoted plain name resolves');
+  for (const sql of ['DROP TABLE "my items";', 'DROP TABLE "1x";', 'DROP TABLE ítems;', 'ALTER TABLE "a.b" DROP COLUMN c;']) {
+    const c = classify(sql);
+    assert.equal(c.destructive, true, `${sql} is destructive`);
+    assert.equal(c.unresolved.length, 1, `${sql} names a table that cannot be exported`);
+    assert.equal(lintMigrations([{ name: 'x.sql', sql }]).length, 1, `${sql} is caught by the lint`);
+  }
+  assert.equal(classify('ALTER TABLE "my items" ADD COLUMN note TEXT;').destructive, false, 'an added column loses nothing');
+  assert.equal(classify(`ALTER TABLE x ADD COLUMN note TEXT DEFAULT 'drop';`).destructive, false, 'a word inside a default is not an action');
+  for (const name of ['my items', '1x']) {
+    const { db, store, ex } = setup();
+    db.raw.exec(`CREATE TABLE "${name}" (x); INSERT INTO "${name}" VALUES (1);`);
+    const r = await ex.applyMigration(`0020_${name.replace(/\W/g, '')}`, `DROP TABLE "${name}";`);
+    assert.equal(r.applied, false); assert.equal(r.refusal, 'table_unresolved');
+    assert.equal(count(db, `SELECT COUNT(*) AS n FROM "${name}"`), 1, 'the table and its row are still there');
+    assert.equal(store.m.size, 0);
+  }
+});
+
+test('US-01-R04: a statement that starts like a drop or a rewrite but names no table the classifier can read is destructive and unresolved, never additive', async () => {
+  const c = classify('ALTER TABLE ; DROP TABLE');
+  assert.equal(c.destructive, true);
+  assert.ok(c.unresolved.length >= 1);
+  assert.equal(classify('INSERT OR ROLLBACK INTO org (key, value) VALUES (1, 2) ON CONFLICT(key) DO UPDATE SET value = 3;').tables[0], 'org', 'an upsert with a conflict clause on the verb is an upsert');
+  const { db, ex } = setup();
+  db.raw.exec(`INSERT INTO org (key, value) VALUES ('name', 'Example')`);
+  const r = await ex.applyMigration('0021_mixed', `DELETE FROM org; DROP TABLE "my items";`);
+  assert.equal(r.applied, false); assert.equal(r.refusal, 'table_unresolved');
+  assert.equal(r.exports.length, 0, 'the refusal comes before any export');
+  assert.equal(count(db, `SELECT COUNT(*) AS n FROM org`), 1);
+});
+
+// Three rounds of residuals in one deny-list: a name quoted with backticks or brackets hid the statements after it, a CTE in front of an upsert
+// read as additive, and a trigger created and fired in one file emptied a table with nothing exported. The split now follows SQLite's own lexical
+// rules and its statement-completion state machine, and the verdict is default-deny.
+const HIDDEN = {
+  backtick_comment: 'CREATE TABLE IF NOT EXISTS `a/*b` (x); DROP TABLE org; CREATE TABLE IF NOT EXISTS `c*/` (y);',
+  backtick_quote: "CREATE TABLE `it's` (a); DELETE FROM org;",
+  bracket_dashes: 'CREATE TABLE [a--b] (x); DELETE FROM org;',
+};
+const CTE_UPSERT = v => `WITH x AS (SELECT 1) INSERT OR ${v} INTO org (key, value) SELECT 'name','lost' WHERE true ON CONFLICT(key) DO UPDATE SET value = excluded.value;`;
+const FIRED = 'CREATE TRIGGER tr AFTER INSERT ON t BEGIN DELETE FROM kept; END; INSERT INTO t VALUES (1);';
+const withTables = (db) => db.raw.exec(`CREATE TABLE t (a); CREATE TABLE kept (x); INSERT INTO kept VALUES (1), (2);`);
+
+test('US-01-R04: a backtick or bracket name that holds a quote, a comment marker or dashes hides no statement: the split follows all four SQLite quoting forms', async () => {
+  assert.deepEqual(splitStatements(HIDDEN.backtick_comment), ['CREATE TABLE IF NOT EXISTS `a/*b` (x)', 'DROP TABLE org', 'CREATE TABLE IF NOT EXISTS `c*/` (y)']);
+  for (const [name, sql] of Object.entries(HIDDEN)) {
+    const c = classify(sql);
+    assert.equal(c.destructive, true, `${name} is destructive`);
+    assert.deepEqual(c.tables, ['org'], `${name} names the table it drops or empties`);
+    assert.equal(lintMigrations([{ name: `${name}.sql`, sql }]).length, 1, `${name} is caught by the lint`);
+  }
+  const { db, ex } = setup();
+  db.raw.exec(`INSERT INTO org (key, value) VALUES ('name', 'Example'), ('slug', 'example')`);
+  const r = await ex.applyMigration('0040_hidden_drop', HIDDEN.backtick_comment);
+  assert.equal(r.applied, true); assert.equal(r.exports.length, 1); assert.equal(r.exports[0].rows, 2);
+  assert.equal(count(db, `SELECT COUNT(*) AS n FROM sqlite_master WHERE name='org'`), 0, 'the drop ran');
+  assert.equal(count(db, "SELECT COUNT(*) AS n FROM sqlite_master WHERE name IN ('a/*b', 'c*/')"), 2, 'every statement of the file ran, none was swallowed into another');
+  assert.deepEqual(await ex.readExport((await ex.ledger())[0].object_key), [{ key: 'name', value: 'Example' }, { key: 'slug', value: 'example' }]);
+  const b = setup();
+  b.db.raw.exec(`INSERT INTO org (key, value) VALUES ('name', 'Example')`);
+  assert.equal((await b.ex.applyMigration('0041_dashes', HIDDEN.bracket_dashes)).exports.length, 1);
+  assert.equal(count(b.db, `SELECT COUNT(*) AS n FROM org`), 0);
+  assert.deepEqual(await b.ex.readExport((await b.ex.ledger())[0].object_key), [{ key: 'name', value: 'Example' }]);
+});
+
+test('US-01-R04: a common table expression in front of an upsert is an upsert, whatever conflict verb the insert carries', async () => {
+  for (const v of ['IGNORE', 'ABORT', 'FAIL', 'ROLLBACK']) {
+    const c = classify(CTE_UPSERT(v));
+    assert.equal(c.destructive, true, `WITH ... INSERT OR ${v} ... DO UPDATE is destructive`);
+    assert.deepEqual(c.tables, ['org']); assert.equal(c.findings[0].kind, 'upsert rows');
+  }
+  assert.equal(classify(`WITH x AS (SELECT 1) INSERT OR IGNORE INTO org (key, value) SELECT 'a', 'b' ON CONFLICT DO NOTHING;`).destructive, false);
+  assert.equal(classify(`WITH RECURSIVE x(n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM x WHERE n < 3) SELECT n FROM x;`).destructive, false);
+  assert.equal(classify(`INSERT INTO org (key, value) VALUES ('k', 'on conflict do update');`).destructive, false, 'words inside a string are not a clause');
+  assert.deepEqual(classify(`WITH "delete" AS (SELECT 1) DELETE FROM org;`).tables, ['org'], 'a quoted CTE name is not the verb');
+  const { db, ex } = setup();
+  db.raw.exec(`INSERT INTO org (key, value) VALUES ('name', 'precious')`);
+  const r = await ex.applyMigration('0042_cte_upsert', CTE_UPSERT('IGNORE'));
+  assert.equal(r.applied, true); assert.equal(r.destructive, true); assert.equal(r.exports.length, 1);
+  assert.equal(db.raw.prepare(`SELECT value FROM org WHERE key = 'name'`).get().value, 'lost');
+  assert.deepEqual(await ex.readExport((await ex.ledger())[0].object_key), [{ key: 'name', value: 'precious' }], 'the row it overwrote was exported first');
+});
+
+test('US-01-R04: a trigger created and fired in the same file, or already in the store, counts its body: the tables it empties are exported first', async () => {
+  const c = classify(FIRED);
+  assert.equal(c.destructive, true); assert.deepEqual(c.tables, ['kept']);
+  assert.equal(c.findings[0].kind, 'delete rows'); assert.equal(c.findings[0].via, 'tr');
+  assert.equal(classify('CREATE TRIGGER tr AFTER INSERT ON t BEGIN DELETE FROM kept; END;').destructive, false, 'a trigger nothing fires is schema');
+  assert.equal(classify('CREATE TRIGGER tr AFTER DELETE ON t BEGIN DELETE FROM kept; END; INSERT INTO t VALUES (1);').destructive, false, 'an insert does not fire a delete trigger');
+  assert.deepEqual(classify('CREATE TRIGGER a1 AFTER INSERT ON t BEGIN INSERT INTO u VALUES (NEW.a); END; CREATE TRIGGER b1 AFTER INSERT ON u BEGIN DELETE FROM kept; END; INSERT INTO t VALUES (1);').tables, ['kept'], 'a trigger that fires another is followed');
+  assert.equal(classify('CREATE TRIGGER tr AFTER INSERT ON t BEGIN DELETE FROM kept; END; DROP TRIGGER tr; INSERT INTO t VALUES (1);').destructive, false, 'a dropped trigger no longer fires');
+  assert.deepEqual(classify('INSERT INTO t VALUES (1);', { schema: ['CREATE TRIGGER tr AFTER INSERT ON t BEGIN DELETE FROM kept; END'] }).tables, ['kept'], 'a trigger already in the store fires too');
+  const { db, ex } = setup(); withTables(db);
+  const r = await ex.applyMigration('0043_fired', FIRED);
+  assert.equal(r.applied, true); assert.equal(r.exports.length, 1); assert.equal(r.exports[0].table, 'kept');
+  assert.equal(count(db, `SELECT COUNT(*) AS n FROM kept`), 0);
+  assert.deepEqual(await ex.readExport((await ex.ledger())[0].object_key), [{ x: 1 }, { x: 2 }]);
+  const old = setup(); withTables(old.db);
+  old.db.raw.exec(`CREATE TRIGGER tr AFTER INSERT ON t BEGIN DELETE FROM kept; END;`);
+  const r2 = await old.ex.applyMigration('0044_insert', 'INSERT INTO t VALUES (2);');
+  assert.equal(r2.destructive, true, 'the applier reads the triggers the store already holds');
+  assert.equal(r2.exports.length, 1); assert.equal(r2.exports[0].table, 'kept');
+});
+
+test('US-01-R04: classification is default-deny: a statement on no allow-list is destructive and unresolved, and a comment between words hides no verb', async () => {
+  for (const sql of ['PRAGMA writable_schema = 1;', 'VACUUM;', "ATTACH DATABASE 'x.db' AS x;", 'REINDEX;', 'EXPLAIN DELETE FROM org;', 'BEGIN; COMMIT;', 'SAVEPOINT s; ROLLBACK TO s;', 'INSERT OR SOMETHING INTO org VALUES (1, 2);']) {
+    const c = classify(sql);
+    assert.equal(c.destructive, true, `${sql} is not on the allow-list`);
+    assert.ok(c.unresolved.length >= 1, `${sql} is unresolved`);
+  }
+  assert.deepEqual(classify('DROP/**/TABLE org;').tables, ['org'], 'a comment is whitespace, so the verb is read');
+  assert.deepEqual(classify('DELETE -- note\nFROM org;').tables, ['org']);
+  assert.deepEqual(classify(`DROP TABLE 'org';`).tables, ['org'], 'a single-quoted name SQLite accepts as a table is read as that table');
+  assert.equal(classify('CREATE VIRTUAL TABLE f USING fts5(body); CREATE TEMP VIEW v AS SELECT 1; DROP INDEX IF EXISTS i; ALTER TABLE org ADD COLUMN note TEXT;').destructive, false);
+  const { db, ex } = setup();
+  db.raw.exec(`INSERT INTO org (key, value) VALUES ('name', 'Example')`);
+  const r = await ex.applyMigration('0045_pragma', 'PRAGMA writable_schema = 1;');
+  assert.equal(r.applied, false); assert.equal(r.refusal, 'table_unresolved');
+});
+
+test('US-01-R04: a piece the applier runs is one statement: a trigger is one piece, an unfinished trigger is refused before anything runs', async () => {
+  assert.equal(oneStatement('CREATE TABLE a (x)'), true);
+  assert.equal(oneStatement(`CREATE TABLE a (x TEXT DEFAULT ';')`), true);
+  assert.equal(oneStatement('CREATE TRIGGER tr AFTER INSERT ON t BEGIN UPDATE t SET a = CASE WHEN a > 1 THEN 1 END; DELETE FROM kept; END'), true);
+  assert.equal(oneStatement('CREATE TABLE a (x); DROP TABLE org'), false);
+  const unfinished = 'CREATE TRIGGER tr AFTER INSERT ON t BEGIN DELETE FROM kept; DELETE FROM org';
+  assert.equal(oneStatement(unfinished), false);
+  assert.equal(classify(unfinished).destructive, true); assert.equal(classify(unfinished).unresolved.length, 1);
+  const { db, ex } = setup(); withTables(db);
+  db.raw.exec(`INSERT INTO org (key, value) VALUES ('name', 'Example')`);
+  const r = await ex.applyMigration('0046_unfinished', unfinished);
+  assert.equal(r.applied, false); assert.equal(r.refusal, 'table_unresolved');
+  assert.equal(count(db, `SELECT COUNT(*) AS n FROM org`), 1); assert.equal(count(db, `SELECT COUNT(*) AS n FROM kept`), 2);
+});
+
+const REPLACE_ORG = 'CREATE TABLE org (key TEXT PRIMARY KEY ON CONFLICT REPLACE, value TEXT)';
+const PARENT = 'CREATE TABLE parent (id INTEGER PRIMARY KEY)';
+const CHILD = 'CREATE TABLE child (pid INTEGER REFERENCES parent(id) ON DELETE CASCADE, note TEXT)';
+
+test('US-01-R04: what SQLite does past the statement text counts: a REPLACE conflict clause in the table and a foreign key action lose rows the export must hold', async () => {
+  const ins = `INSERT INTO org (key, value) VALUES ('name', 'lost');`;
+  const c = classify(ins, { schema: [REPLACE_ORG] });
+  assert.deepEqual(c.tables, ['org']); assert.equal(c.findings[0].kind, 'replace rows');
+  assert.equal(classify(`INSERT OR IGNORE INTO org (key, value) VALUES ('name', 'kept');`, { schema: [REPLACE_ORG] }).destructive, false, 'the statement\'s own conflict verb wins over the table\'s');
+  assert.deepEqual(classify('CREATE TABLE r (k PRIMARY KEY ON CONFLICT REPLACE, v); INSERT INTO r VALUES (1, 2);').tables, ['r'], 'a table made in the same file counts');
+  assert.equal(classify('CREATE TABLE IF NOT EXISTS org (key TEXT PRIMARY KEY, value TEXT); ' + ins, { schema: [REPLACE_ORG] }).destructive, true, 'IF NOT EXISTS keeps the definition the store holds');
+  const fk = classify('DELETE FROM parent WHERE id = 1;', { schema: [PARENT, CHILD] });
+  assert.deepEqual(fk.tables, ['parent', 'child']);
+  assert.deepEqual(fk.findings.map(f => [f.table, f.kind, f.via]), [['parent', 'delete rows', undefined], ['child', 'delete rows', 'foreign key of child']]);
+  const cases = [
+    ['CREATE TABLE child (pid INTEGER REFERENCES parent ON DELETE SET NULL)', 'DELETE FROM parent;', ['parent', 'child'], 'rewrite rows'],
+    ['CREATE TABLE child (pid INTEGER, note TEXT, FOREIGN KEY (pid) REFERENCES parent (id) ON UPDATE CASCADE)', 'UPDATE parent SET id = 2;', ['parent', 'child'], 'rewrite rows'],
+    ['CREATE TABLE child (pid INTEGER REFERENCES parent(id) ON DELETE RESTRICT ON UPDATE NO ACTION)', 'DELETE FROM parent;', ['parent'], null],
+    [CHILD, 'DROP TABLE parent;', ['parent', 'child'], 'delete rows'],
+    [CHILD, `INSERT OR REPLACE INTO parent VALUES (1);`, ['parent', 'child'], 'delete rows'],
+  ];
+  for (const [child, sql, tables, kind] of cases) {
+    const r = classify(sql, { schema: [PARENT, child] });
+    assert.deepEqual(r.tables, tables, `${sql} with ${child}`);
+    if (kind) assert.equal(r.findings.find(f => f.table === 'child').kind, kind);
+  }
+  assert.deepEqual(classify('ALTER TABLE child ADD COLUMN gid INTEGER REFERENCES parent(id) ON DELETE CASCADE; DELETE FROM parent;', { schema: [PARENT, 'CREATE TABLE child (x)'] }).tables, ['parent', 'child'], 'a column added with a foreign key counts');
+  assert.deepEqual(classify('DELETE FROM parent;', { schema: [PARENT, CHILD, 'CREATE TABLE grand (cid INTEGER REFERENCES child(pid) ON DELETE CASCADE)'] }).tables, ['parent', 'child', 'grand'], 'a cascade is followed down');
+  assert.deepEqual(classify('DELETE FROM parent;', { schema: [PARENT, CHILD, 'CREATE TRIGGER tc AFTER DELETE ON child BEGIN DELETE FROM kept; END'] }).tables, ['parent', 'child', 'kept'], 'a cascaded delete fires the child table\'s triggers');
+  const trig = 'CREATE TRIGGER tr AFTER INSERT ON t BEGIN DELETE FROM kept; END';
+  assert.deepEqual(classify('ALTER TABLE t RENAME TO t2; INSERT INTO t2 VALUES (1);', { schema: ['CREATE TABLE t (a)', trig] }).tables, ['t', 'kept'], 'a renamed table keeps its triggers');
+  assert.deepEqual(classify('DROP TABLE t; CREATE TABLE t (a); INSERT INTO t VALUES (1);', { schema: ['CREATE TABLE t (a)', trig] }).tables, ['t'], 'a dropped table takes its triggers with it');
+  // through the applier, with the schema read from the store (node:sqlite, like D1, enforces foreign keys)
+  const r1 = setup(); r1.db.raw.exec(`CREATE TABLE r_org (key TEXT PRIMARY KEY ON CONFLICT REPLACE, value TEXT); INSERT INTO r_org VALUES ('name', 'precious');`);
+  const a1 = await r1.ex.applyMigration('0047_replace', `INSERT INTO r_org (key, value) VALUES ('name', 'lost');`);
+  assert.equal(a1.destructive, true); assert.equal(a1.exports.length, 1);
+  assert.deepEqual(await r1.ex.readExport((await r1.ex.ledger())[0].object_key), [{ key: 'name', value: 'precious' }]);
+  const r2 = setup(); r2.db.raw.exec(`${PARENT}; ${CHILD}; INSERT INTO parent VALUES (1); INSERT INTO child VALUES (1, 'kept');`);
+  const a2 = await r2.ex.applyMigration('0048_cascade', 'DELETE FROM parent WHERE id = 1;');
+  assert.deepEqual(a2.exports.map(e => [e.table, e.rows]), [['parent', 1], ['child', 1]]);
+  assert.equal(count(r2.db, `SELECT COUNT(*) AS n FROM child`), 0, 'the cascade ran after both exports');
 });

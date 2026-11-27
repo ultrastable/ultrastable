@@ -7,10 +7,13 @@
 import { TenantStore, DEFAULT_BUDGET } from '../../../core/tenantstore/store.js';
 import { isWriteStatement } from '../../../core/tenantstore/sqlclass.js';
 
-// US-25-R21: how long after the first unflushed operation of a burst the object writes its metering (env TENANT_FLUSH_MS overrides). An object is
-// evicted when idle, and eviction is not a crash: a flush before it keeps the daily bound a bound across lifetimes. Cost: one alarm and a two-row
-// flush per burst, and none while nothing is unflushed.
+// US-25-R21: how long after the first unflushed operation of a burst the object writes its metering (env TENANT_FLUSH_MS overrides, never below
+// MIN_FLUSH_DELAY_MS). An object is evicted when idle, and eviction is not a crash: a flush before it keeps the daily bound a bound across lifetimes.
+// Cost: one alarm (billed as one row written) and a two-row flush per burst, none while nothing is unflushed and none for a refusal, and each alarm
+// is charged to the tenant's own budget (its row when armed, BudgetGuard.chargeAlarm; one request and the rows it writes when it fires,
+// BudgetGuard.chargeFlush), so spaced bursts cannot cost the account more than the budgets allow (worstCaseDay).
 export const FLUSH_DELAY_MS = 5000;
+export const MIN_FLUSH_DELAY_MS = 1000;
 
 const stmtTooWide = (cur, rows) => Object.assign(new Error('statement_too_wide'), { code: 'statement_too_wide', rowsRead: cur.rowsRead ?? rows, rowsWritten: cur.rowsWritten ?? 0 });
 
@@ -80,15 +83,19 @@ export const makeTenantDO = (Base) => class TenantDO extends Base {
   _armFlush() {
     const st = this._store, storage = this.ctx.storage;
     if (!st || this._alarmArmed || !st.guard.hasUnflushed() || typeof storage.setAlarm !== 'function') return;
-    const ms = this.env.TENANT_FLUSH_MS !== undefined && Number(this.env.TENANT_FLUSH_MS) >= 0 ? Number(this.env.TENANT_FLUSH_MS) : FLUSH_DELAY_MS;
+    const ms = this.env.TENANT_FLUSH_MS !== undefined && Number(this.env.TENANT_FLUSH_MS) >= 0 ? Math.max(MIN_FLUSH_DELAY_MS, Number(this.env.TENANT_FLUSH_MS)) : FLUSH_DELAY_MS;
     this._alarmArmed = true;
+    st.guard.chargeAlarm();                   // the setAlarm call is billed as one row written; charged to the tenant (US-25-R21)
     const failed = (e) => { this._alarmArmed = false; this.flushError = String((e && e.message) || e); };
     try { Promise.resolve(storage.setAlarm(Date.now() + ms)).catch(failed); } catch (e) { failed(e); }
   }
   // The Durable Object alarm: write the metering the object still holds. A fresh object after an eviction holds nothing and has nothing to write.
   alarm() {
     this._alarmArmed = false;
-    try { if (this._store) this._store.flush(); this.flushError = null; } catch (e) { this.flushError = String((e && e.message) || e); }
+    try {
+      if (this._store && this._store.guard.hasUnflushed()) { this._store.guard.chargeFlush(); this._store.flush(); }
+      this.flushError = null;
+    } catch (e) { this.flushError = String((e && e.message) || e); }
   }
   // The same, for calls that await a port (the Vectorize binding, US-25-R09); the error shape is identical.
   async _doAsync(tenantId, fn) {

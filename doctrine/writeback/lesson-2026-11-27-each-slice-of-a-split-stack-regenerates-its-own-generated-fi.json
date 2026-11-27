@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-each-slice-of-a-split-stack-regenerates-its-own-generated-fi",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "Each slice of a split stack regenerates its own generated files",
+  "body": "A stack cut from one large tree is merged in order and CI runs on every prefix, so a generated file copied from the final tree is wrong in every slice but the last: the conformance manifest would name test titles a prefix does not carry and the claim counts (seed test totals in the READMEs and claims data) would not match the prefix's tests. Each slice was built by taking its own files from the final tree and then running the generators (conformance --write, claims --fix --apply in the root and the seed); the last slice then equals the final tree byte for byte, which proves the generators are deterministic.",
+  "probe": "grep:workers/core/conformance/cli.js::--write",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "lesson",
+ "title": "Each slice of a split stack regenerates its own generated files",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}
