@@ -44,7 +44,7 @@
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 45542,
+   "recent7": 45551,
    "series": [
     0,
     0,
@@ -75,12 +75,12 @@
     0,
     0,
     0,
-    45542
+    45551
    ],
    "share_recent": 0.11,
    "share_trend": 0.11,
-   "slope": 293.8194,
-   "total": 45542
+   "slope": 293.8774,
+   "total": 45551
   },
   {
    "area": "foundation",
@@ -167,7 +167,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 30177,
+   "recent7": 30323,
    "series": [
     0,
     0,
@@ -198,12 +198,12 @@
     0,
     0,
     0,
-    30177
+    30323
    ],
    "share_recent": 0.073,
    "share_trend": 0.073,
-   "slope": 194.6903,
-   "total": 30177
+   "slope": 195.6323,
+   "total": 30323
   },
   {
    "area": "tests/foundation",
@@ -782,7 +782,7 @@
   {
    "area": "research",
    "quiet_days": 0,
-   "recent7": 2650,
+   "recent7": 2654,
    "series": [
     0,
     0,
@@ -813,12 +813,12 @@
     0,
     0,
     0,
-    2650
+    2654
    ],
    "share_recent": 0.006,
    "share_trend": 0.006,
-   "slope": 17.0968,
-   "total": 2650
+   "slope": 17.1226,
+   "total": 2654
   },
   {
    "area": "brand",
@@ -1026,7 +1026,7 @@
    "total": 1697
   }
  ],
- "at": "2026-11-27T12:21:42Z",
+ "at": "2026-11-27T12:23:25Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1830,7 +1830,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 644,
+   "rows": 645,
    "series": [
     0,
     0,
@@ -1861,9 +1861,9 @@
     55,
     88,
     189,
-    115
+    116
    ],
-   "slope": 3.5141
+   "slope": 3.5206
   },
   {
    "loop": "ultrastability",
@@ -1906,7 +1906,7 @@
   {
    "loop": "worker-merge-evidence",
    "quiet_days": 0,
-   "rows": 34,
+   "rows": 35,
    "series": [
     0,
     0,
@@ -1937,9 +1937,9 @@
     0,
     7,
     1,
-    2
+    3
    ],
-   "slope": 0.1513
+   "slope": 0.1577
   },
   {
    "loop": "yearsim",
