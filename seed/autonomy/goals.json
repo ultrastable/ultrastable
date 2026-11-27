@@ -4,7 +4,13 @@
     "stale_days": 14,
     "achieve_after": 12,
     "max_adjust_per_run": 3,
-    "max_stretch_per_day": 2
+    "max_stretch_per_day": 2,
+    "essential": [
+      "core.close.drops",
+      "core.close.breaches",
+      "core.cost.peak",
+      "core.year.unattended"
+    ]
   },
   "goals": [
     {
