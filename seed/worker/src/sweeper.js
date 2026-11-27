@@ -26,7 +26,7 @@ const hours = (iso, now) => Math.max(0, (now - Date.parse(iso)) / 36e5);
 // PR-LATENCY-1: a PR open longer than stallMin minutes is a stall (alarm), whatever its state.
 export const PR_STALL_MIN = 15;
 export const PR_LATENCY_DDL = ['ALTER TABLE sweeper_runs ADD COLUMN merge_p50_min REAL', 'ALTER TABLE sweeper_runs ADD COLUMN merge_p95_min REAL', 'ALTER TABLE sweeper_runs ADD COLUMN oldest_open_pr_min REAL', 'ALTER TABLE sweeper_runs ADD COLUMN stalled_prs INTEGER NOT NULL DEFAULT 0'];
-export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now = Date.now(), maxAgeH = 24, laneOwned = ['ultrastable/ultrastable'], stallMin = PR_STALL_MIN }) {
+export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now = Date.now(), maxAgeH = 24, laneOwned = ['ultrastable/ultrastable'], stallMin = PR_STALL_MIN, strictRepos = [] }) {
   const out = { status: 'ok', merged: [], refreshed: [], reconciled: [], filed: [], lane_owned: [], released: [], errors: [], open_loop_age_hours: 0, stalled: [], pr_latency: null };
   let reconciles = 0;
   if (!token) return { ...out, status: 'no-token' };
@@ -38,7 +38,9 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
         const tag = `${repo}#${p.number}`;
         let d = (await gh(f, token, 'GET', `/repos/${repo}/pulls/${p.number}`)).json || p;
         if (d.draft) { const r = await gh(f, token, 'POST', `/repos/${repo}/pulls/${p.number}/ready_for_review`); if (r.ok) d = (await gh(f, token, 'GET', `/repos/${repo}/pulls/${p.number}`)).json || d; }
-        if (d.mergeable_state === 'behind') { const u = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${p.number}/update-branch`); if (u.ok) out.refreshed.push(tag); }
+        // ZHC-R3 (#2668): 'behind' is only worth an update-branch (a full CI rerun) when the base requires an up-to-date head; a non-strict ruleset
+        // merges a behind PR as is, so refreshing it was churn that restarted checks on every merge to main. strictRepos lists the strict ones.
+        if (d.mergeable_state === 'behind' && strictRepos.includes(repo)) { const u = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${p.number}/update-branch`); if (u.ok) out.refreshed.push(tag); }
         // MERGE-NOW-1: a conflict on generated files or claim values is reconciled here too (one per pass), not left for a person or the daily lane
         // STALL-ACT-1 (Rowan 2026-11-21, six-hour PRs): the one reconcile slot per pass was taken every pass by the same failing PR (#1746: code-conflict / ref 422),
         // so every other dirty PR starved for hours. Now each dirty PR gets its own try (up to 4 per pass); one that cannot be reconciled and is a bot-made

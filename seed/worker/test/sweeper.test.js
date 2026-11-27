@@ -127,3 +127,11 @@ test('PR-NEVER-LOSE-1: when the head cannot be pinned the PR stays open', async 
   const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
   assert.equal(r.superseded, undefined); assert.ok(!a.calls.includes('PATCH /repos/o/r/pulls/5'));
 });
+test('ZHC-R3: a behind PR on a non-strict base is not refreshed (no CI rerun churn); a strict base still is', async () => {
+  const a = fake({ prs: [pr], detail: { ...pr, mergeable: true, mergeable_state: 'behind' } });
+  await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: a.f, now: NOW });
+  assert.ok(!a.calls.includes('PUT /repos/o/r/pulls/5/update-branch'));
+  const b = fake({ prs: [pr], detail: { ...pr, mergeable: true, mergeable_state: 'behind' } });
+  await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: b.f, now: NOW, strictRepos: ['o/r'] });
+  assert.ok(b.calls.includes('PUT /repos/o/r/pulls/5/update-branch'));
+});
