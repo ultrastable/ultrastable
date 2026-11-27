@@ -1,0 +1,11 @@
+{
+ "id": "Q-ASHBY-observer",
+ "title": "Q-ASHBY-observer: No scheduled disturbance is injected per partition, so re-stabilisation time is unmeasured (journal 4160)",
+ "body": "**Owner:** product-manager\n**Trigger:** ASHBY-KERNEL-1 merged (PR 2629); work record issue 2620\n**Done check:** cmd:grep -q disturb seed/worker/src/ashby.js\n**Closing probe:** `node --test seed/worker/test/ashby.test.js seed/worker/test/organization.test.js` passes with a test that exercises it, and grep -q disturb seed/worker/src/ashby.js exits 0\n**Prediction:** ashby_concepts_implemented >= 18 within 336 h\n**Out of scope:** copying any text or image from ashby.info; blind random search\n**Status:** open\n\nProblem: No scheduled disturbance is injected per partition, so re-stabilisation time is unmeasured (journal 4160). Build: a weekly drill that breaches one guard metric in a sandbox store and records ticks to re-stabilise.",
+ "labels": [
+  "role:product-manager",
+  "open-loop"
+ ],
+ "milestone": "Now",
+ "workstream": "Open loops"
+}

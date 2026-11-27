@@ -383,22 +383,22 @@
  "not_yet_code": [
   {
    "id": "dispersion",
-   "item": "OL-20261127-5",
+   "item": "Q-ASHBY-dispersion",
    "why": "routing a disturbance to different parts by its kind (journal 3851, 2988, 4418) needs the disturbance classes the variety ledger will record first"
   },
   {
    "id": "observer-disturbance",
-   "item": "OL-20261127-2",
+   "item": "Q-ASHBY-observer",
    "why": "ultrastability is shown only under an injected disturbance (journal 4160); a scheduled fault per partition is the next step"
   },
   {
    "id": "adaptation-ledger",
-   "item": "OL-20261127-6",
+   "item": "Q-ASHBY-ledger",
    "why": "step trials, commits and rollbacks need their own table before interference and failure recall can be read from live data (journal 5410, 5592, 5601, 5775)"
   },
   {
    "id": "journal-index",
-   "item": "OL-20261127-4",
+   "item": "Q-ASHBY-index",
    "why": "the 678 keywords and the Other Index as page-number metadata; the two DAMS categories and the archive's copyright page were not read in this pass"
   },
   {
@@ -408,7 +408,7 @@
   },
   {
    "id": "organisation-live-readings",
-   "item": "OL-20261127-3",
+   "item": "Q-ASHBY-org-live",
    "why": "controlSystem, prescribe and evoke run on rows passed to them; reading them from the fleet's own outcomes and spend per role each tick is the next step"
   }
  ],
