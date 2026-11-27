@@ -61,7 +61,7 @@ Engineers: the same boot runs anywhere with Python 3.11+ (`bootstrap/bootstrap.p
 | [`bootstrap/bootstrap.py`](bootstrap/bootstrap.py) | The bootstrapper: read, detect, select, plan, provision, start, report. Stdlib only, idempotent. |
 | [`worker/`](worker/) | The server-side runtime: Cloudflare Worker with the tick, D1 migrations, tests. |
 | [`plugins/`](plugins/SCOPE.json) | Optional plugin tier (email, mailing list, social, YouTube, GCP, self-description, guided communication flow). Dry-run by default, never in the core path. Spec: `docs/architecture/plugins.md`. |
-| [`tests/`](tests/) | Bootstrapper and policy tests, <!-- claim:seed-py-tests -->129<!-- /claim --> in all (`python3 -m unittest discover tests`). |
+| [`tests/`](tests/) | Bootstrapper and policy tests, <!-- claim:seed-py-tests -->134<!-- /claim --> in all (`python3 -m unittest discover tests`). |
 | [`docs/bootstrapping.md`](docs/bootstrapping.md) | The boot sequence, stage by stage, and what each stage learned from AIOS. |
 
 ## Rules the seed carries into every org it starts
