@@ -42,6 +42,21 @@ class Ladder(unittest.TestCase):
         self.assertIn(agents.route_authors(CF)[0]["route"], L.DOWN)  # the whole provider route is down; with every route down the full list comes back rather than nothing
         L.DOWN.clear()
 
+    def test_a_5xx_on_one_model_leaves_the_route_up(self):  # LADDER-ROUTE-SCOPE-1
+        import urllib.error
+        rs = L.rungs(self.d, CF)
+        seen = []
+        def send(a, p, e):
+            seen.append(a["id"])
+            if a["id"] == rs[0]["id"]:
+                raise urllib.error.HTTPError("u", 502, "Bad Gateway", {}, None)
+            return '{"files": []}', {}
+        out, meta = L.call("p", 0, root=self.d, env=CF, send=send)
+        self.assertEqual(seen, [rs[0]["id"], rs[1]["id"]])
+        self.assertEqual(rs[1]["route"], rs[0]["route"])  # a sibling on the same route answered
+        self.assertNotIn(rs[0]["route"], L.DOWN)
+        L.DOWN.clear()
+
     def test_a_dead_rung_does_not_spend_the_attempt(self):  # LADDER-FALLTHROUGH-1
         GH = {**CF, "GITHUB_TOKEN": "g"}
         rs = L.rungs(self.d, GH)
