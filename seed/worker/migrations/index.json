@@ -33,5 +33,6 @@
  "0031_datagraph.sql",
  "0032_read_indexes_5.sql",
  "0033_orchestrate.sql",
- "0034_read_indexes_6.sql"
+ "0034_read_indexes_6.sql",
+ "0035_disposition.sql"
 ]

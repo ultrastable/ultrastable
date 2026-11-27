@@ -320,6 +320,50 @@ class StallIsNotSwallowed(unittest.TestCase):
         self.assertIn("checks failed after 1 attempts", row["detail"])
 
 
+class FlaggedDisposition(unittest.TestCase):
+    """FLAG-1 (kernel 9.0.0 F2): a contradiction is recorded as `flagged`, nothing is applied, and the run returns instead of failing."""
+
+    def test_flag_reply_records_flagged_and_applies_nothing(self):
+        import subprocess
+        from unittest import mock
+        d = scratch()
+        (d / "docs/issues").mkdir(parents=True)
+        body = "\n".join(["**Owner:** executor", "**Trigger:** tick", "**Done check:** file:x", "**Status:** open", "", "work"])
+        (d / "docs/issues/Q-1.json").write_text(json.dumps({"id": "Q-1", "title": "one", "body": body, "labels": ["p1"]}))
+        for c in (["init", "-q"], ["add", "-A"], ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "i"]):
+            subprocess.run(["git", *c], cwd=d, check=True, capture_output=True)
+        from foundation import agents
+        reply = agents.parse_json("<<<FLAG>>>\nthe test asserts 2 but the spec says 3 (tests/t.py:4)\n<<<END>>>")
+        with mock.patch.dict(os.environ, {"EXECUTOR_SOURCE": "queue"}):
+            row = executor.run("o/r", apply=True, issue_no="Q-1", root=d, model_call=lambda p: reply, checks=[])
+        self.assertEqual(row["result"], "flagged")
+        self.assertIn("spec says 3", row["detail"])
+        self.assertIn("flagged", executor.SKIP_LABELS)
+
+    def test_a_dead_ladder_is_no_route_not_a_failed_item(self):
+        import subprocess
+        from unittest import mock
+        d = scratch()
+        (d / "docs/issues").mkdir(parents=True)
+        body = "\n".join(["**Owner:** executor", "**Trigger:** tick", "**Done check:** file:x", "**Status:** open", "", "work"])
+        (d / "docs/issues/Q-1.json").write_text(json.dumps({"id": "Q-1", "title": "one", "body": body, "labels": ["p1"]}))
+        for c in (["init", "-q"], ["add", "-A"], ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "i"]):
+            subprocess.run(["git", *c], cwd=d, check=True, capture_output=True)
+        calls = []
+        def dead(prompt):
+            calls.append(1); raise RuntimeError("every code agent rung failed: workers-ai-glm: HTTPError: HTTP Error 502: Bad Gateway")
+        with mock.patch.dict(os.environ, {"EXECUTOR_SOURCE": "queue"}):
+            row = executor.run("o/r", apply=True, issue_no="Q-1", root=d, model_call=dead, checks=[])
+        self.assertEqual((row["result"], len(calls)), ("no-route", 1))
+        from foundation import disposition
+        self.assertEqual(disposition.classify(row)[0], "deferred_budget")
+
+    def test_a_reply_with_edits_is_not_a_flag(self):
+        from foundation import agents
+        out = agents.parse_json("<<<FLAG>>>\nx\n<<<END>>>\n<<<FILE a.py>>>\nx = 1\n<<<END>>>")
+        self.assertNotIn("flag", out)
+
+
 class TargetedChecks(unittest.TestCase):
     """CHECKS-TARGETED-1: the pre-PR checks are the tests related to the change, not the whole suite that cannot finish inside the watchdog."""
 

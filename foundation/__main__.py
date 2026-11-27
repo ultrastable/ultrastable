@@ -36,6 +36,7 @@
   python3 -m foundation failmine [--run [--apply]|--report|--probe HASH|--check]   FAILMINE-1: mine every failure record, classify root causes, register new modes, escalate recurrence
   python3 -m foundation intentyield [--run [--apply]|--probe|--check|--report]   INTENT-YIELD-1: owner directives kept per unit of attention; no counts, no person scored
   python3 -m foundation temporal [--run [--apply]|--settled ID|--probe|--check|--report]   TEMPORAL-1: series per area, loop and entry; hotspots, neglect and stopped loops feed the failure-mode machinery
+  python3 -m foundation disposition [--check|--summary]   DISPOSITION-1: every executor run ends in one of five dispositions; done names its verifier
   python3 -m foundation kernel9 [--check|--gaps]   KERNEL-9-1: kernel 9.0.0 pinned by sha256, each clause mapped to its enforcer
   python3 -m foundation constitution [--check|--fresh|--render]   CONSTITUTION-1: the seed states what an ultrastable system is; every rule has a detector and a remediation in code
   python3 -m foundation systemspec [--check|--write|--gaps|--rule ID]   SYSTEM-SPEC-1: seed/SYSTEM.md, the definition every system carries, generated from code and probed
@@ -528,6 +529,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["churn"]:  # CHURN-GUARD-1: foundation/churn.py
         from . import churn
         return churn.main(_av[1:])
+    if _av[:1] == ["disposition"]:  # DISPOSITION-1: foundation/disposition.py
+        from . import disposition
+        return disposition.main(_av[1:])
     if _av[:1] == ["kernel9"]:  # KERNEL-9-1: foundation/kernel9.py
         from . import kernel9
         return kernel9.main(_av[1:])

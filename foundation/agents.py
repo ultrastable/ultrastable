@@ -158,7 +158,11 @@ def invoke(a: dict, prompt: str, env=None, transport=None) -> str:
 BLOCK_FORMAT = ("SUMMARY: one line\n"
                 "<<<EDIT relative/path>>>\n<<<FIND>>>\na few lines copied exactly from the existing file\n<<<REPLACE>>>\nthe lines that replace them\n<<<END>>>\n"
                 "<<<FILE relative/path>>>\nfull content of a NEW file, written plainly with no escaping\n<<<END>>>\n"
-                "(EDIT blocks for a file that exists, one per place changed, each FIND unique in the file; a FILE block only for a new file; nothing else in the reply)")
+                "(EDIT blocks for a file that exists, one per place changed, each FIND unique in the file; a FILE block only for a new file; nothing else in the reply)\n"
+                "If the issue, its spec or its tests contradict each other, or it cannot be done as specified, reply with only:\n"
+                "<<<FLAG>>>\nthe contradiction, with the file and line that show it\n<<<END>>>\n"
+                "(a flag is recorded and the next item is taken; never make a check pass by editing, skipping or special-casing it)")
+_FLAG = re.compile(r"<<<FLAG>>>\r?\n(.*?)\r?\n?<<<END>>>", re.S)
 _BLOCK = re.compile(r"<<<FILE ([^>\n]+)>>>\r?\n(.*?)\r?\n?<<<END>>>", re.S)
 _EDIT = re.compile(r"<<<EDIT ([^>\n]+)>>>\r?\n<<<FIND>>>\r?\n(.*?)\r?\n?<<<REPLACE>>>\r?\n?(.*?)\r?\n?<<<END>>>", re.S)
 
@@ -168,6 +172,9 @@ def parse_json(text: str) -> dict:
     small models break that (3 of the first 11 executor failures were JSONDecodeError), so a reply in BLOCK_FORMAT is accepted too: no escaping to get wrong.
     PATCH-EDIT-1: an EDIT block changes part of an existing file ({path, edits: [{find, replace}]}), so a small model never has to reproduce a file it
     cannot hold (every roadmap attempt on 2026-11-20 rewrote site/worker.js from about 1,150 lines to under 60 and was refused)."""
+    m = _FLAG.search(text)  # FLAG-1 (kernel 9.0.0 F2): a contradiction is a disposition, not a forced pass
+    if m and not (_BLOCK.search(text) or _EDIT.search(text)):
+        return {"summary": "flagged", "flag": m.group(1).strip()[:2000], "files": []}
     s, e = text.find("{"), text.rfind("}")
     try:
         out = json.loads(text[s:e + 1])

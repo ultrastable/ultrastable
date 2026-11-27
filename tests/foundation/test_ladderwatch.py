@@ -41,3 +41,17 @@ class Ladder(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class NoRouteReading(unittest.TestCase):
+    def test_no_route_rows_mark_the_ladder_dead(self):
+        d = Path(tempfile.mkdtemp())
+        (d / "docs/issues").mkdir(parents=True)
+        now = datetime(2026, 11, 27, 13, 0, tzinfo=timezone.utc)
+        rows = [{"at": "2026-11-27T12:0%d:00Z" % i, "issue": f"Q-{i}", "result": "no-route",
+                 "detail": "every code agent rung failed: workers-ai-glm: HTTPError: HTTP Error 502: Bad Gateway"} for i in range(3)]
+        r = ladderwatch.read(d, now=now, executor_rows=rows)
+        self.assertEqual((r["state"], r["no_route_runs"]), ("dead", 3))
+        self.assertIn("workers-ai-glm", r["rungs_failing"])
+        rows += [{"at": "2026-11-27T12:3%d:00Z" % i, "issue": "Q-ok", "result": "pr-opened"} for i in range(4)]
+        self.assertEqual(ladderwatch.read(d, now=now, executor_rows=rows)["state"], "ok")

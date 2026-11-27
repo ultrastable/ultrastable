@@ -30,9 +30,10 @@
    "says": "refusals, limits and failures stated with reasons and written to the ledger",
    "status": "partial",
    "enforced_by": [
-    "foundation/kernel.py"
+    "foundation/kernel.py",
+    "foundation/disposition.py"
    ],
-   "missing": "lint covers the report shape (blocker-without-coverage); no refusal ledger row"
+   "missing": "every executor run has a disposition with its reason in detail; refusals outside the executor (sessions) are linted, not ledgered"
   },
   {
    "id": "R4",
@@ -92,18 +93,23 @@
   {
    "id": "F1",
    "says": "done requires an independent check that reproduced the result",
-   "status": "gap",
-   "enforced_by": [],
-   "missing": "no disposition row with a NOT NULL verifier"
+   "status": "built",
+   "enforced_by": [
+    "foundation/disposition.py",
+    "seed/worker/migrations/0035_disposition.sql"
+   ],
+   "missing": ""
   },
   {
    "id": "F2",
    "says": "flagged is a recorded disposition that never stops the tick",
-   "status": "gap",
+   "status": "built",
    "enforced_by": [
-    "foundation/dispose.py"
+    "foundation/executor.py",
+    "foundation/agents.py",
+    "foundation/disposition.py"
    ],
-   "missing": "dispose.py knows gate and shelved; the executor has no flagged outcome"
+   "missing": ""
   },
   {
    "id": "F3",

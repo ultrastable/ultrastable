@@ -16,7 +16,17 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 LOG = "ops/executor-log.jsonl"
-SKIP_LABELS = {"hold", "blocked", "owner", "gate", "identity-bound", "wontfix", "in-progress", "executor-failed"}
+SKIP_LABELS = {"hold", "blocked", "owner", "gate", "identity-bound", "wontfix", "in-progress", "executor-failed", "flagged"}
+
+
+class NoRoute(Exception):
+    """NO-ROUTE-1: every model route failed in transport (measured 2026-11-27: 549 of 592 failed rows were provider 502s or a retired route, recorded as
+    "the reply was not valid JSON", three attempts spent and the item labelled executor-failed). An outage is not the item's defect: the run stops at once,
+    the claim is released and the row is `no-route` (disposition deferred_budget)."""
+
+
+class Flagged(Exception):
+    """FLAG-1 (kernel 9.0.0 F2): the model found the item contradictory or impossible as specified. Recorded as disposition `flagged`; the tick goes on."""
 CLAIM_LABEL = "in-progress"
 DENY_PREFIXES = (".git/", ".github/", "autonomy/", "ops/executor-log", "actions-budget.json", "ops/halt.json")  # KILL-SWITCH-GUARD-1: #2661 overwrote the Actions kill switch with an unrelated config
 DENY_NAMES = (".env", "id_rsa", "credentials")
@@ -691,8 +701,16 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                     bad = selfcode.scope_violation([e.get("path", "") for e in out["files"]], lroot)
                     if bad:
                         raise ValueError("outside the self-code scope: " + ", ".join(bad))
+                if isinstance(out, dict) and out.get("flag"):
+                    raise Flagged(str(out["flag"])[:600])
                 files = apply_edits(out["files"], root)
-            except (ValueError, KeyError, TypeError, OSError, AttributeError, RuntimeError) as e:  # FREE-LLM-3: a provider failure (RuntimeError) also moves to the next rung instead of ending the run; unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
+            except RuntimeError as e:
+                if "every code agent rung failed" in str(e) or "no code agent adapter is available" in str(e):
+                    raise NoRoute(str(e)[:600])
+                failed.append("the model call failed: " + type(e).__name__ + ": " + str(e)[:300])
+                row.setdefault("attempts", []).append([failed[-1][:400]])
+                continue
+            except (ValueError, KeyError, TypeError, OSError, AttributeError) as e:  # FREE-LLM-3: a provider failure (RuntimeError) also moves to the next rung instead of ending the run; unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
                 failed.append("the reply was not valid JSON with a files list: " + type(e).__name__ + ": " + str(e)[:300])
                 row.setdefault("attempts", []).append([failed[-1][:400]])
                 if attempt < REPAIRS:
@@ -786,6 +804,19 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             if kc:
                 row["kick_failed"] = (row.get("kick_failed", "") + f" {' '.join(kick[:3])}: {ko[-120:]}").strip()
         log(lroot, row)
+    except NoRoute as e:  # NO-ROUTE-1: release the claim, no failure label; the next tick retries when a route answers
+        row.update(result="no-route", detail=str(e))
+        sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd", *KEEP_ON_CLEAN], root)
+        gi(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL], root)
+        log(lroot, row)
+        return row
+    except Flagged as f:  # FLAG-1: nothing is applied; the item is labelled `flagged` (a skip label) with the contradiction, and the run ends as a disposition
+        row.update(result="flagged", detail=str(f))
+        sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd", *KEEP_ON_CLEAN], root)
+        gi(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL, "--add-label", "flagged"], root)
+        gi(["gh", "issue", "comment", str(n), "-R", repo, "--body", f"flagged: {row['detail']}\n\nThe item contradicts itself or cannot be done as specified (kernel 9.0.0 F2). Fix the item and remove `flagged` to retry."], root)
+        log(lroot, row)
+        return row
     except Exception as e:  # recorded, labelled, never swallowed
         row.update(result="failed", detail=f"{type(e).__name__}: {str(e)[:600]}")
         from . import publicread
@@ -857,6 +888,7 @@ def main(argv=None) -> int:
     ap.add_argument("--pick", action="store_true", help="print the top takeable issue and exit; needs no model credential (Claude-session route)")
     ap.add_argument("--record", action="store_true", help="append one provenance row for work done by a model session (with --issue --result [--pr --detail --host])")
     ap.add_argument("--result"); ap.add_argument("--pr"); ap.add_argument("--detail", default=""); ap.add_argument("--host", default="claude-session")
+    ap.add_argument("--verify", help="with --record: the independent check behind a done result (a probe, a CI run id); DISPOSITION-1 refuses a done row without it")
     a = ap.parse_args(argv)
     if a.fold:
         print(json.dumps(fold_outcomes(apply=a.apply), indent=1)); return 0
@@ -866,9 +898,16 @@ def main(argv=None) -> int:
     if a.record:
         if not (a.issue and a.result):
             ap.error("--record needs --issue and --result")
+        from . import disposition
         row = {"issue": a.issue, "result": a.result, "detail": a.detail, "prediction": f"issue_{a.issue}_closed = 1 within 24 h"}
         if a.pr:
             row["pr"] = a.pr
+        if a.verify:
+            row["verify"] = a.verify
+        if a.result not in disposition.MAP:
+            ap.error(f"--result {a.result!r} has no disposition; one of {sorted(disposition.MAP)}")
+        if disposition.MAP[a.result] == "done" and not disposition.verifier(row):
+            ap.error("a done result needs --verify: a session's own word is not an independent check (kernel 9.0.0 F1)")
         os.environ["ULTRASTABLE_HOST"] = a.host
         log(REPO, row); print(json.dumps(row, indent=2)); return 0
     # EXEC-WATCHDOG-1: a hung step (measured 2026-11-19: the job ran its full 12 minutes and was cancelled with no row written, so the
