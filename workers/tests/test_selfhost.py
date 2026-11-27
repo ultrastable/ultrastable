@@ -70,6 +70,19 @@ class PullRequestContract(unittest.TestCase):
         ok = self.check(GOOD + "Protected-change: tightening the review rule after a trial finding\n", files=["agents/CONTRACT.md"], labels=["protected-change"])
         self.assertEqual(ok, [])
 
+    def test_us_20_r07_the_gate_never_tells_a_worker_to_wait_for_a_person(self):
+        for p in self.check(files=["agents/CONTRACT.md"]):
+            self.assertNotRegex(p, r"(?i)human review|human reviewer|must approve", p)
+        with tempfile.TemporaryDirectory() as d:
+            body = Path(d) / "pr.md"
+            body.write_text(GOOD + "Protected-change: tightening the review rule after a trial finding\n", encoding="utf-8")
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                rc = sc.main(["--body-file", str(body), "--author", "someone", "--files", "agents/CONTRACT.md", "--labels", "protected-change"])
+            self.assertEqual(rc, 0)
+            self.assertNotRegex(out.getvalue(), r"(?i)human review")
+            self.assertIn("automated", out.getvalue())
+
     def test_us_20_r03_dependency_bots_are_exempt(self):
         self.assertEqual(sc.check("", "dependabot[bot]", ["package.json"], []), [])
 
@@ -443,6 +456,16 @@ class MergeDoors(unittest.TestCase):
         self.assertTrue(any(p.startswith("R2") for p in rg.gate({**self.GATE, "body": "Author: tool-a\nReviewer: tool-b\nEvidence: looks fine"})))
         self.assertTrue(any(p.startswith("R3") for p in rg.gate({**self.GATE, "checks": "pending"})))
         self.assertTrue(any(p.startswith("R4") for p in rg.gate({**self.GATE, "labels": ["protected-change"]})))
+
+    def test_us_20_r02_us_20_r17_a_blank_review_gate_field_never_takes_the_next_line_as_its_value(self):
+        for nl in ("\n", "\r\n"):
+            blank_evidence = nl.join(["Reviewer: tool-b", "Evidence:", "Author: tool-a 151 pass"])
+            self.assertTrue(any(p.startswith("R2") for p in rg.gate({**self.GATE, "body": blank_evidence})), repr(nl))
+            blank_reviewer = nl.join(["Author: tool-a", "Reviewer:", "Evidence: 151 pass"])
+            self.assertTrue(any(p.startswith("R1") for p in rg.gate({**self.GATE, "body": blank_reviewer})), repr(nl))
+            blank_reason = nl.join(["Author: tool-a", "Reviewer: tool-b", "Evidence: 151 pass", "Protected-change:", "Spec: US-20-R07"])
+            self.assertTrue(any(p.startswith("R4") for p in rg.gate({**self.GATE, "body": blank_reason, "labels": ["protected-change"]})), repr(nl))
+            self.assertEqual(rg.gate({**self.GATE, "body": nl.join(["Author: tool-a", "Reviewer: tool-b", "Evidence: 151 pass"])}), [], repr(nl))
 
     def test_us_20_r17_canary_revert_treats_no_evidence_as_revert_and_prints_the_commands_without_running_them(self):
         self.assertEqual(cr.decide({"ok": True, "results": []})[0], "keep")

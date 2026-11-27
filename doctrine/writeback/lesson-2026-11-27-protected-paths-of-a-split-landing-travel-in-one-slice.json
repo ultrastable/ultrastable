@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-protected-paths-of-a-split-landing-travel-in-one-slice",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "Protected paths of a split landing travel in one slice",
+  "body": "The round-3 landing changed three protected paths together (the requirement-id check, the protected-path gate and the record check). A stack that spread them over several slices would need a Protected-change line on each pull request and would gate each partial guard alone; they were kept in the first slice of the stack with the tests that read them (test_spec_ids, test_protected_paths, test_selfhost) and the workflow budget file those tests and the lint read, so one Protected-change line covers them and every later slice touches no protected path.",
+  "probe": "grep:scripts/protected_paths.py::def reason_problem",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "lesson",
+ "title": "Protected paths of a split landing travel in one slice",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}

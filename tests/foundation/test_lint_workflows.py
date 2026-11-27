@@ -2,8 +2,10 @@
 # Copyright (c) Ultrastable
 """US-24-R19: the workflow budget lint (scripts/lint_workflows.py) runs on the real workflow files as a test, and each of its rules
 (US-24-R11, R12, R14, R15, R56) is shown to fire on a workflow that breaks it. The kill switch for non-essential workflows
-(scripts/actions_guard.py, US-24-R25) leaves an essential or unpaused workflow alone without calling the code host."""
+(scripts/actions_guard.py, US-24-R25) leaves an essential or unpaused workflow alone without calling the code host, exempts a public
+repository and fails a run it cannot cancel (US-24-R59)."""
 import contextlib, importlib.util, io, json, os, tempfile, unittest
+from unittest import mock
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
@@ -57,9 +59,11 @@ class LintWorkflows(unittest.TestCase):
         self.assertIn("0 problem(s)", out)
 
     def test_a_daily_schedule_with_headers_timeout_and_concurrency_passes(self):
+        """US-24-T09: a daily cron that carries all three header comments passes."""
         self.assertEqual(self._one(GOOD)[0], 0)
 
     def test_each_rule_fires(self):
+        """US-24-R56 US-24-T09: an hourly cron, a missing header comment and a matrix each fail and name their rule."""
         cases = {
             "missing header comment '# budget:'": GOOD.replace("# budget: 2 min a run\n", ""),
             "missing header comment '# trigger:'": GOOD.replace("# trigger: push, because the check reads the change\n", ""),
@@ -88,9 +92,35 @@ class ActionsGuard(unittest.TestCase):
                 os.chdir(old)
 
     def test_essential_and_unpaused_workflows_run_with_no_call_to_the_code_host(self):
+        """US-24-R59: an essential workflow always runs, even with the budget paused."""
         # neither branch reads GITHUB_REPOSITORY or calls gh: a KeyError here would mean the guard went on to cancel
         self.assertEqual(self._run({"paused": True, "essential": ["checks"]}, "checks"), 0)
         self.assertEqual(self._run({"paused": False, "paused_workflows": ["scout"], "essential": []}, "uiux"), 0)
+
+    def test_us_24_r59_a_public_repository_is_exempt_from_the_pause_and_a_run_the_pause_cannot_cancel_fails(self):
+        guard, old = _load("actions_guard"), os.getcwd()
+        calls = []
+        def fake(answers):
+            def run(cmd, capture_output=True, text=True):
+                calls.append(" ".join(cmd))
+                return answers.pop(0)
+            return run
+        ok = lambda out="": mock.Mock(returncode=0, stdout=out, stderr="")
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "actions-budget.json").write_text(json.dumps({"paused": True, "essential": ["checks"]}), encoding="utf-8")
+            os.chdir(d)
+            try:
+                env = {"GITHUB_REPOSITORY": "o/r", "GITHUB_RUN_ID": "9"}
+                with mock.patch.dict("os.environ", env), mock.patch.object(guard.subprocess, "run", fake([ok("false")])):
+                    self.assertEqual(guard.main("scout"), 0, "a public repository: no minute is billed, the pause does not apply")
+                self.assertEqual(len(calls), 1, "only the visibility was read; nothing was cancelled")
+                with mock.patch.dict("os.environ", env), mock.patch.object(guard.subprocess, "run", fake([ok("true"), mock.Mock(returncode=1, stdout="", stderr="forbidden")])):
+                    self.assertEqual(guard.main("scout"), 1, "a pause that cannot cancel the run fails it, so no work runs")
+                with mock.patch.dict("os.environ", env), mock.patch.object(guard.subprocess, "run", fake([ok("true"), ok()])), mock.patch.object(guard.time, "sleep", lambda s: None):
+                    self.assertEqual(guard.main("scout"), 0, "a private repository's paused run is cancelled")
+                self.assertTrue(any("/cancel" in str(c) for c in calls))
+            finally:
+                os.chdir(old)
 
     def test_the_committed_budget_names_the_essential_workflows(self):
         cfg = json.loads((REPO / "actions-budget.json").read_text("utf-8"))
