@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """INSTRUCTIONS-BUDGET-1: a map stays small; an oversize file may only shrink; a dead link fails."""
 import json, sys, tempfile, unittest
 from pathlib import Path

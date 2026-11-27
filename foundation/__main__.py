@@ -506,6 +506,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["churn"]:  # CHURN-GUARD-1: foundation/churn.py
         from . import churn
         return churn.main(_av[1:])
+    if _av[:1] == ["regulator"]:  # CODE-REGULATOR-1: foundation/regulator/
+        from .regulator import cli as _regcli
+        return _regcli.main(_av[1:])
     if _av[:1] == ["identities"]:  # IDENTITIES-1: foundation/identities.py
         from . import identities
         return identities.main(_av[1:])
