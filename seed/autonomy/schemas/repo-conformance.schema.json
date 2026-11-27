@@ -2,42 +2,38 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ultrastable.io/schemas/seed/autonomy/repo-conformance.schema.json",
   "title": "repo-conformance (seed/autonomy/repo-conformance.json)",
-  "description": "Contract for seed/autonomy/repo-conformance.json. Generated as a floor by `python3 -m foundation configschema --gen`; tighten it by hand, it is never overwritten.",
+  "description": "Contract for seed/autonomy/repo-conformance.json (REPO-CONFORM-2): one row per file, each naming the validator in scripts/repoconform.py that reads it. The validator enum equals repoconform.VALIDATORS (tests/test_repoconform.py). Tightened by hand; configschema --gen never overwrites it.",
   "type": "object",
+  "required": ["$schema", "version", "about", "files"],
+  "additionalProperties": false,
   "properties": {
-    "version": {
-      "type": "number"
-    },
-    "about": {
-      "type": "string"
-    },
+    "$schema": {"type": "string"},
+    "version": {"const": 2},
+    "about": {"type": "string", "minLength": 1},
     "files": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
+        "required": ["path", "validator", "standard", "source"],
+        "additionalProperties": false,
         "properties": {
-          "contains": {
-            "type": "string"
-          },
-          "path": {
-            "type": "string"
-          },
-          "source": {
-            "type": "string"
-          },
-          "standard": {
-            "type": "string"
+          "path": {"type": "string", "pattern": "^[^/][^\\s]*$"},
+          "validator": {"enum": ["agents_md", "llms_txt", "reuse_toml", "license", "cff", "publiccode", "catalog_info", "manifest", "editorconfig",
+                                 "dependabot", "devcontainer", "changelog", "readme", "contributing", "security"]},
+          "standard": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "pattern": "^https://"},
+          "options": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "max_chain_bytes": {"type": "integer", "minimum": 1},
+              "chain_exempt_dirs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+              "why": {"type": "string", "minLength": 20}
+            }
           }
         }
       }
-    },
-    "$schema": {
-      "type": "string"
     }
-  },
-  "required": [
-    "about",
-    "files",
-    "version"
-  ]
+  }
 }

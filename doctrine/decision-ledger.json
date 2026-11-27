@@ -6941,6 +6941,49 @@
    "body": "test_ideas and test_spinoff copied ops/free-tier.json, which the spinoff loop rewrites daily with real usage. When #2765 landed a snapshot at level shed, both suites failed on main. They now copy tests/foundation/fixtures/free-tier-2026-11-17.json.",
    "probe": "grep:tests/foundation/test_spinoff.py::free-tier-2026-11-17",
    "session": "session_0156nqDtsm3xWA5HrxzuWq8X"
+  },
+  {
+   "id": "decision-2026-11-27-job-trust-1-rule-of-two-per-workflow-job",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "JOB-TRUST-1 rule of two per workflow job",
+   "body": "foundation/jobtrust.py fails a workflow job holding untrusted text, secrets and write access together; baseline is empty and only shrinks.",
+   "probe": "grep:foundation/jobtrust.py::JOB-TRUST-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "decision-2026-11-27-one-repo-model-two-fronts",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "One repo model, two fronts",
+   "body": "The tarball prototype was already on main as foundation/regulator (#2742). repomap and impact now call it instead of keeping a second parser; it gained JS and TS files and a byte-stable map test. conclusions stays as the committed, shared ledger beside the regulator's per-machine cache. Issue 2741.",
+   "probe": "grep:foundation/repomap.py::from .regulator import"
+  },
+  {
+   "id": "decision-2026-11-27-repo-conform-2-stage-2-of-3-conformance-reader-and-core-root",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "REPO-CONFORM-2 stage 2 of 3: conformance reader and core-root files; agent entry stays AGENT-ENTRY-1's design",
+   "body": "The structural-validator conformance reader (seed/scripts/repoconform.py) reads every machine-readable file against its own standard and reports an unreadable file as unmeasured. The core root carries the same identity files. The agent-instruction entry files keep the AGENT-ENTRY-1 design (#2686); the reader's agents_md validator accepts its Commands heading. Session: session_0156nqDuSa1pdM6rAaTQ1irE",
+   "probe": "file:seed/scripts/repoconform.py"
+  },
+  {
+   "id": "decision-2026-11-27-state-sink-1-staged-move-of-state-out-of-git",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "STATE-SINK-1 staged move of state out of git",
+   "body": "doctrine/state-sink.json gives each state area a stage (git, dual, moved) with one canary; foundation/statesink.py reads the share, the writers and readers per area and the next move.",
+   "probe": "grep:foundation/statesink.py::STATE-SINK-1",
+   "session": "session_0156nqDt9gEBLnAkrzTTZ8gV"
+  },
+  {
+   "id": "lesson-2026-11-27-filed-audit-items-must-meet-the-spec-gate-the-sample-audit-t",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Filed audit items must meet the spec gate: the sample-audit template lacked prediction, scope and proof",
+   "body": "16 open Q-AUDIT items failed specgate (spec_quality 0.59); tests pass after the template gained all three parts and a regression test verified it.",
+   "probe": "grep:foundation/sampleaudit.py::Closing probe",
+   "session": "session_0156nqDsxJd4poRv2mkbug9e"
   }
  ]
 }

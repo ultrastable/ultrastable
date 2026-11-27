@@ -35,7 +35,7 @@
           "homegrown": {"type": "array", "items": {"type": "string"}},
           "conformance": {"type": "string"},
           "cost": {"type": "string", "pattern": "^(none|S|M|L)\\b"},
-          "probes": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^(file|grep|glob|absent):.+|^(schemas|commits)$"}},
+          "probes": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^(file|grep|glob|absent):.+|^conform:[^:]*::.+|^(schemas|commits)$"}},
           "live": {"type": "array", "items": {"type": "object", "required": ["url"], "properties": {"url": {"type": "string", "pattern": "^https://"}, "contains": {"type": "array", "items": {"type": "string"}}, "content_type": {"type": "string"}, "json_keys": {"type": "array", "items": {"type": "string"}}, "status": {"type": "integer"}}}},
           "watch": {"type": "string", "pattern": "^[a-z0-9-]+$"},
           "revisit": {"type": "string"},

@@ -58,5 +58,12 @@ class SampleAuditTest(unittest.TestCase):
             self.assertTrue(sa.probe(9, d))
 
 
+class FiledItemsMeetTheSpec(unittest.TestCase):
+    def test_an_audit_item_carries_every_part_specgate_requires(self):
+        from foundation import specgate
+        body = sa.item({"n": 7, "title": "t", "merged_at": "2026-11-01T00:00:00Z", "why": "sampled"})["body"]
+        self.assertEqual(specgate.missing(body), [])
+
+
 if __name__ == "__main__":
     unittest.main()

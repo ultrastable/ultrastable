@@ -25,16 +25,10 @@ class OpenStandards(unittest.TestCase):
             self.assertTrue(d.get("image") or d.get("build") or d.get("dockerComposeFile"))
 
     def test_dependabot_covers_every_ecosystem(self):
-        for root, prefix in ((ROOT, ""), (ROOT / "seed", "")):
-            cfg = yaml.safe_load((root / ".github/dependabot.yml").read_text())
-            dirs = {(u["package-ecosystem"], u["directory"].rstrip("/") or "/") for u in cfg["updates"]}
-            self.assertIn(("github-actions", "/"), dirs, root)
-            for pkg in glob.glob(str(root / "**/package.json"), recursive=True):
-                rel = os.path.relpath(os.path.dirname(pkg), root)
-                if "node_modules" in rel or rel.startswith("seed") and root == ROOT or "/vendor" in rel:
-                    continue
-                want = "/" if rel == "." else "/" + rel  # a manifest at the repository root (the kit's package.json for the deploy button) is the "/" directory
-                self.assertIn(("npm", want), dirs, f"{root}: {rel} has a package.json and no Dependabot entry")
+        from foundation import deprot  # the one coverage reader every system carries, seed/scripts/deprot.py (USER-BACKEND-1)
+        for root in (ROOT, ROOT / "seed"):
+            self.assertIn(("github-actions", "/"), deprot.covered(root), root)
+            self.assertEqual(deprot.missing(root), [], f"{root}: a manifest directory has no Dependabot entry")
 
     def test_supply_chain_loop_files_and_closes(self):
         cfg = json.loads((ROOT / supplychain.CFG).read_text())

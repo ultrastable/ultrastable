@@ -78,7 +78,8 @@ def pick(prs: list[dict], r: float, day: str, filesof) -> list[dict]:
 
 def item(p: dict) -> dict:
     n = p["n"]
-    body = (f"**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation sampleaudit --probe {n}\n**Status:** open\n\n"
+    body = (f"**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation sampleaudit --probe {n}\n**Closing probe:** python3 -m foundation sampleaudit --probe {n}\n"
+            f"**Prediction:** spec_quality >= 0 within 72 h\n**Out of scope:** re-auditing other pull requests; fixing a defect inside this item (a defect gets its own fix item)\n**Status:** open\n\n"
             f"SAMPLE-AUDIT-1: PR #{n} ({p['title']}) merged at {p['merged_at']} was picked for audit ({p['why']}).\n\n"
             f"Read the merged diff with a clean context; the reviewer is not the author. Write `\"verdict\": \"clean\"` or `\"verdict\": \"defect\"` "
             f"and a `\"reason\"` into this file. A defect also gets its own fix item.")

@@ -508,6 +508,22 @@ export default {
     "tracked_by": null
    },
    {
+    "id": "keep-a-changelog",
+    "name": "Keep a Changelog",
+    "body": "keepachangelog.com",
+    "status": "de-facto",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "community-health",
+    "name": "GitHub community health files",
+    "body": "GitHub",
+    "status": "de-facto",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
     "id": "spdx-sbom",
     "name": "SPDX 2.3 SBOM from the dependency graph",
     "body": "Linux Foundation (ISO/IEC 5962)",

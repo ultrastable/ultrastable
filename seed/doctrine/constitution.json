@@ -1089,6 +1089,34 @@
           "has": "agentrules.py --for"
         }
       ]
+    },
+    {
+      "id": "machine-readable-by-birth",
+      "rule": "Every repository carries the files agents and tools read before the code, each on an open standard: the identity files are rendered from one manifest, the community files are created when missing, and each file is validated against its own standard by a named validator; a file that cannot be read is unmeasured, never passing.",
+      "source": "Rowan, 2026-11-27",
+      "covers": [
+        "REPO-CONFORM-2"
+      ],
+      "detector": [
+        {
+          "file": "scripts/repoconform.py",
+          "has": "VALIDATORS"
+        },
+        {
+          "file": "autonomy/repo-conformance.json",
+          "has": "\"validator\""
+        }
+      ],
+      "remediation": [
+        {
+          "file": "scripts/surfaces.py",
+          "has": "def scaffold"
+        },
+        {
+          "file": "scripts/surfaces.py",
+          "has": "def adopt"
+        }
+      ]
     }
   ]
 }

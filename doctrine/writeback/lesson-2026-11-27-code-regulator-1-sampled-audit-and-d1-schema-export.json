@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-code-regulator-1-sampled-audit-and-d1-schema-export",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "CODE-REGULATOR-1 sampled audit and D1 schema export",
+  "body": "Adds P8 audit sampling (protected paths always, others by a deterministic rate that doubles on a defect and halves on a clean audit) and the ledger SQL for a D1 mirror. Ran 20 regulator tests, they pass. Nothing calls the sampler yet, so the hypothesis that sampled audit lowers reviewer cost is untested.",
+  "probe": "grep:foundation/regulator/audit.py::def should_audit",
+  "session": "session_0156nqDsD3rf97bBozkQVuW7"
+ },
+ "kind": "lesson",
+ "title": "CODE-REGULATOR-1 sampled audit and D1 schema export",
+ "session": "session_0156nqDsD3rf97bBozkQVuW7"
+}

@@ -165,3 +165,6 @@ Each rule has a detector that sees it break and a remediation that repairs it, b
 - **short-agent-entry** (Rowan, 2026-11-27): An agent loads one short entry file before its first step, inside a byte and line budget, and fetches the standing rules that govern the paths it will change. The rules stay enforced by their checks; nothing depends on an agent having read all of them.
   - detector: `scripts/agentrules.py`, `autonomy/agent-entry.json`
   - remediation: `scripts/agentrules.py`, `AGENTS.md`
+- **machine-readable-by-birth** (Rowan, 2026-11-27): Every repository carries the files agents and tools read before the code, each on an open standard: the identity files are rendered from one manifest, the community files are created when missing, and each file is validated against its own standard by a named validator; a file that cannot be read is unmeasured, never passing.
+  - detector: `scripts/repoconform.py`, `autonomy/repo-conformance.json`
+  - remediation: `scripts/surfaces.py`, `scripts/surfaces.py`

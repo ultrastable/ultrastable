@@ -1,16 +1,27 @@
 # Ultrastable
 
-> The platform repository: the tick Worker, the site, the dashboard, doctrine, checks and the seed/ kernel are written here. Licence: LicenseRef-Ultrastable-USL-1.0 (source-available, non-commercial use free).
+> The platform: all code, rules, doctrine, the website, the dashboard and the seed/ kernel are written here and nowhere else.
+
+It reads its own measures, files the next improvement, hands it to its executor, merges, deploys, probes the result live and scores the prediction, for itself and for every system it runs.
+
+## Live
+
+- [Ultrastable](https://ultrastable.io/): the running system
+- [Health report](https://ultrastable.io/health): the result of its last tick
+- [Statements](https://ultrastable.io/claims.json): what it states, and the endpoint behind each statement
+- [llms.txt](https://ultrastable.io/llms.txt): the index the running system serves, with every route it answers
 
 ## Start here
 
-- [AGENTS.md](agents/AGENTS.md): the operating agreement every agent follows
-- [seed/SYSTEM.md](seed/SYSTEM.md): what a system is, generated from its code
-- [docs/PROJECT-MEMORY.md](docs/PROJECT-MEMORY.md): project memory
-- [doctrine/repo-design.json](doctrine/repo-design.json): why the repositories are shaped this way, each answer tied to a probe
+- [README.md](README.md): what it is, where it runs and how it runs
+- [AGENTS.md](AGENTS.md): instructions for any coding agent
+- [ultrastable.json](ultrastable.json): the manifest this file, the README blocks, CITATION.cff, publiccode.yml and codemeta.json are rendered from
+- [codemeta.json](codemeta.json): software metadata (CodeMeta 3.0)
 
-## Code
+## Optional
 
-- [foundation/](foundation/): the Python checks and loops (`python3 -m foundation <cmd>`)
-- [seed/worker/src/tick.js](seed/worker/src/tick.js): the heartbeat
-- [foundation/agent_ladder.py](foundation/agent_ladder.py): the executor's model ladder
+- [Source](https://github.com/ultrastable/ultrastable): the repository
+- [LICENSE](LICENSE): the licence, LicenseRef-Ultrastable-USL-1.0
+- [CONTRIBUTING.md](CONTRIBUTING.md): how work is contributed
+- [SECURITY.md](SECURITY.md): how to report a vulnerability
+- [CHANGELOG.md](CHANGELOG.md): what changed, release by release
