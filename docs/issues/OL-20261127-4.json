@@ -1,0 +1,12 @@
+{
+  "id": "OL-20261127-4",
+  "title": "ASHBY step 3: every knob move records a snapshot of all knobs and can be restored",
+  "owner_role": "operations",
+  "trigger": "issue 2620 step 3",
+  "status": "done",
+  "done_check": "grep:seed/worker/src/goals.js::export async function restoreSnapshot",
+  "prediction": "goals_test_failures == 0 within 24 h",
+  "out_of_scope": "automatic restore on an essential-variable veto (later step)",
+  "closing_probe": "grep:seed/worker/test/goals.test.js::ASHBY step 3",
+  "body": "**Done check:** grep:seed/worker/src/goals.js::export async function restoreSnapshot\n**Prediction:** goals_test_failures == 0 within 24 h\n**Out of scope:** automatic restore on a veto\n**Closing probe:** grep:seed/worker/test/goals.test.js::ASHBY step 3\n**Evidence:** node --test worker/test/goals.test.js: 13 pass, 0 fail\n**Session:** https://claude.ai/code/session_0156nqDredxRjgVfePwXUrAp"
+}

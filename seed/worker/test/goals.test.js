@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeDb } from './d1shim.js';
-import { pullFeeds, goalsStep, seedGoals, registerTenant, reportReadings, knobValues, withKnobs, readGoals, validate, trend } from '../src/goals.js';
+import { pullFeeds, goalsStep, seedGoals, registerTenant, reportReadings, knobValues, withKnobs, readGoals, validate, trend, knobSnapshot, restoreSnapshot } from '../src/goals.js';
 import { METRICS } from '../src/tick.js';
 
 const H = 3600e3, t0 = Date.parse('2026-11-18T00:00:00Z');
@@ -114,4 +114,15 @@ test('PEREZ-LOPEZ-1: while an essential goal is off target, no other goal moves 
   assert.equal(r.adjusted.length, 0); assert.deepEqual(r.held, [{ goal: 'core.t', essential_off: ['core.ev'] }]);
   ev = 0; const r2 = await goalsStep(db, { now: t0 + H }, c, { builtins: b });
   assert.deepEqual(r2.adjusted.map(a => a.knob), ['core.k']);
+});
+test('ASHBY step 3: every knob move records a snapshot of all knobs, and restoring it undoes the step', async () => {
+  const db = makeDb(); val = 0.2;
+  await step(db, t0);
+  const row = await db.prepare("SELECT data FROM audit_log WHERE kind='goal.knob'").first();
+  const snap = JSON.parse(row.data).snapshot;
+  assert.deepEqual(snap, { 'core.k': 4 });
+  assert.deepEqual(await knobSnapshot(db), { 'core.k': 3 });
+  assert.deepEqual(await restoreSnapshot(db, snap, { now: t0 + H }), ['core.k']);
+  assert.equal((await knobValues(db, 'core'))['core.k'].value, 4);
+  assert.deepEqual(await restoreSnapshot(db, snap, { now: t0 + 2 * H }), []);  // idempotent
 });
