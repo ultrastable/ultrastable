@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS disposition (
   evidence_uri TEXT NOT NULL,
   verifier TEXT,
   resolved INTEGER NOT NULL DEFAULT 0,
-  created_at INTEGER NOT NULL DEFAULT (unixepoch()),
+  created_at INTEGER NOT NULL DEFAULT (unixepoch() * 1000),
   PRIMARY KEY (item, tick),
   CHECK (kind <> 'done' OR verifier IS NOT NULL)
 );

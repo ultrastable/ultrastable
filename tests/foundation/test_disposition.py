@@ -32,7 +32,7 @@ class Disposition(unittest.TestCase):
 
     def test_migration_refuses_done_without_verifier(self):
         db = sqlite3.connect(":memory:")
-        db.executescript((REPO / "seed/worker/migrations/0035_disposition.sql").read_text().replace("(unixepoch())", "0"))
+        db.executescript((REPO / "seed/worker/migrations/0035_disposition.sql").read_text().replace("(unixepoch() * 1000)", "0"))
         db.execute("INSERT INTO disposition(item,tick,kind,evidence_uri,verifier) VALUES('a',1,'done','r2://x','ci:1')")
         db.execute("INSERT INTO disposition(item,tick,kind,evidence_uri) VALUES('b',1,'flagged','r2://y')")
         with self.assertRaises(sqlite3.IntegrityError):

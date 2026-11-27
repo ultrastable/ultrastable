@@ -226,6 +226,13 @@
       "keep_days": 60,
       "reason": "LIVE-FRESH-1: one row per repository, rewritten every pass"
     },
+    "disposition": {
+      "column": "created_at",
+      "unit": "ms",
+      "keep_days": 90,
+      "reason": "DISPOSITION-1 (kernel 9.0.0 F1, F2): one disposition per item and tick; flag backlog and recall read the last weeks, the executor ledger keeps the full history",
+      "archive": true
+    },
     "decision_log": {
       "column": "at",
       "unit": "ms",
