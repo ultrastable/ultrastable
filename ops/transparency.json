@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-27T07:40:03Z",
- "commit": "10bba5250",
+ "generated": "2026-11-27T07:46:06Z",
+ "commit": "f5b939b84",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 120,
@@ -18,7 +18,7 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 208,
   "prs_merged_unattended": 6,
-  "backlog_open": 19,
+  "backlog_open": 21,
   "backlog_items": 1245
  },
  "unknowns": {
@@ -58,11 +58,11 @@
   "queue": {
    "items": 1245,
    "by_status": {
-    "closed": 1214,
-    "open": 19,
+    "closed": 1212,
+    "open": 21,
     "done": 12
    },
-   "takeable_now": 13
+   "takeable_now": 17
   },
   "merged": {
    "total": 208,
@@ -1818,8 +1818,9 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "success": 14,
-    "failure": 16
+    "": 1,
+    "failure": 15,
+    "success": 14
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 6,
@@ -1869,7 +1870,7 @@
    "id": "heartbeat",
    "what": "the Cloudflare tick ran",
    "sla_s": 900,
-   "age_s": 461.3,
+   "age_s": 237.8,
    "status": "fresh",
    "missed": 0
   },
@@ -1877,7 +1878,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 140.3,
+   "age_s": 13.8,
    "status": "fresh",
    "missed": 0
   },
@@ -1901,7 +1902,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 278.3,
+   "age_s": 362.8,
    "status": "fresh",
    "missed": 0
   },
@@ -1909,7 +1910,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 58275.3,
+   "age_s": 58650.8,
    "status": "fresh",
    "missed": 0
   }
@@ -1918,12 +1919,52 @@
   "counts": {
    "merged": 0,
    "closed": 0,
-   "parked": 196,
+   "parked": 188,
    "failed": 0,
    "expired": 0,
    "open": 0
   },
   "names": [
+   {
+    "name": "Q-SYNC-DRIFT-practical-solutions",
+    "state": "parked",
+    "failures": 3
+   },
+   {
+    "name": "Q-ULTRA-second_loop_keep_rate-REDESIGN",
+    "state": "parked",
+    "failures": 1
+   },
+   {
+    "name": "Q-EXP-cd9db55b",
+    "state": "parked",
+    "failures": 3
+   },
+   {
+    "name": "Q-SPEC-20-GATE",
+    "state": "parked",
+    "failures": 3
+   },
+   {
+    "name": "Q-SPEC-14-KIT-SLOT",
+    "state": "parked",
+    "failures": 3
+   },
+   {
+    "name": "Q-EXP-d6b832ee",
+    "state": "parked",
+    "failures": 3
+   },
+   {
+    "name": "Q-FIND-replication-ledger",
+    "state": "parked",
+    "failures": 3
+   },
+   {
+    "name": "Q-FIND-ultrastable",
+    "state": "parked",
+    "failures": 3
+   },
    {
     "name": "Q-FIND-unlearn",
     "state": "parked",
@@ -1952,7 +1993,7 @@
    {
     "name": "Q-CLEANROOM-boot",
     "state": "parked",
-    "failures": 3
+    "failures": 2
    },
    {
     "name": "Q-CIFAIL-ultrastable-cleanroom",
@@ -2082,53 +2123,13 @@
    {
     "name": "Q-ULTRA-air-quality-spend-REDESIGN",
     "state": "parked",
-    "failures": 3
-   },
-   {
-    "name": "Q-ULTRA-blindspot-spend-REDESIGN",
-    "state": "parked",
-    "failures": 3
-   },
-   {
-    "name": "Q-CLEANROOM-definition",
-    "state": "parked",
-    "failures": 3
-   },
-   {
-    "name": "Q-CIFAIL-mergeaudit-2644",
-    "state": "parked",
-    "failures": 3
-   },
-   {
-    "name": "Q-ULTRA-country-snapshot-spend-REDESIGN",
-    "state": "parked",
-    "failures": 3
-   },
-   {
-    "name": "Q-ULTRA-free-tier-meter-spend-REDESIGN",
-    "state": "parked",
-    "failures": 1
-   },
-   {
-    "name": "Q-ULTRA-numbers-board-spend-REDESIGN",
-    "state": "parked",
-    "failures": 3
-   },
-   {
-    "name": "Q-ULTRA-portfolio-board-spend-REDESIGN",
-    "state": "parked",
-    "failures": 3
-   },
-   {
-    "name": "Q-SEED-replication-ledger",
-    "state": "parked",
     "failures": 1
    }
   ],
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-27T07:38:52Z",
+  "generated": "2026-11-27T07:45:01Z",
   "blindspots": {
    "domains": {
     "ok": true,
@@ -2158,10 +2159,10 @@
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1413.9,
-    "value": 13085,
+    "expected_today": 1414.0,
+    "value": 13086,
     "behind": false,
-    "progress": 61.97
+    "progress": 61.98
    },
    {
     "id": "visitors_7d",
@@ -2177,18 +2178,18 @@
     "baseline": 817,
     "target": 1000,
     "expected_today": 917.1,
-    "value": 11659,
+    "value": 11664,
     "behind": false,
-    "progress": 59.25
+    "progress": 59.27
    },
    {
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
     "expected_today": 366.5,
-    "value": 4118,
+    "value": 4119,
     "behind": false,
-    "progress": 51.24
+    "progress": 51.26
    }
   ],
   "experiments": [
@@ -2437,20 +2438,20 @@
  "growth": {
   "mix": {
    "growth": 0,
-   "fix": 1,
-   "maintenance": 19,
+   "fix": 0,
+   "maintenance": 20,
    "total": 20,
    "growth_share": 0.0,
    "target": 0.4
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 0,
-  "items_takeable": 13,
+  "items_takeable": 17,
   "metrics": [
    {
     "id": "pageviews_7d",
     "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)",
-    "value": 13085,
+    "value": 13086,
     "target": 1500,
     "breach": false
    },
@@ -2464,14 +2465,14 @@
    {
     "id": "agent_hits_7d",
     "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)",
-    "value": 11659,
+    "value": 11668,
     "target": 1000,
     "breach": false
    },
    {
     "id": "pilot_page_views_7d",
     "what": "views of the pilot application page in the last 7 days",
-    "value": 4118,
+    "value": 4119,
     "target": 400,
     "breach": false
    }
@@ -2484,7 +2485,7 @@
    "what": "the org's heartbeat on Cloudflare (cron every 10 minutes): reconcile, claims, gates, predictions, dispatch",
    "source": "d1",
    "route": "health",
-   "last_beat_age_s": 543.0,
+   "last_beat_age_s": 306.5,
    "expected_interval_s": 600,
    "beats_24h": 1,
    "expected_24h": 144.0,
@@ -2495,7 +2496,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 40.0,
+   "last_beat_age_s": 25.5,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -2506,7 +2507,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 58357.0,
+   "last_beat_age_s": 58719.5,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2517,7 +2518,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 10582.0,
+   "last_beat_age_s": 10944.5,
    "expected_interval_s": 86400,
    "beats_24h": 13,
    "expected_24h": 1.0,
@@ -2528,7 +2529,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 222176.0,
+   "last_beat_age_s": 222538.5,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2539,7 +2540,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 142749.0,
+   "last_beat_age_s": 143111.5,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2557,7 +2558,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 51662.0,
+   "last_beat_age_s": 52024.5,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2568,7 +2569,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 16.0,
+   "last_beat_age_s": 7.5,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2579,7 +2580,7 @@
    "id": "temporal",
    "what": "the daily trend read: series per component, loop and entry, and what they show",
    "source": "workflow",
-   "last_beat_age_s": 53360.0,
+   "last_beat_age_s": 53722.5,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2591,7 +2592,7 @@
    "what": "Unlearn tenant beat (cron 41 * * * * on ultrastable-unlearn; a visit catches up a silent cron): check a batch of encyclopedia entries against Crossref and Europe PMC, re-learn coaching move weights, measure, open the next phase, prune",
    "source": "d1",
    "route": "health",
-   "last_beat_age_s": 3480.0,
+   "last_beat_age_s": 240.0,
    "expected_interval_s": 3600,
    "beats_24h": 1,
    "expected_24h": 24.0,
@@ -2602,7 +2603,7 @@
    "id": "intent-yield",
    "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield",
    "source": "workflow",
-   "last_beat_age_s": 49805.0,
+   "last_beat_age_s": 50167.5,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2614,7 +2615,7 @@
    "what": "What Works tenant beat (cron 17 * * * * on ultrastable-what-works; a visit catches up a silent cron): check a batch of programmes against Crossref, OpenAlex and Europe PMC (a refusing index rested for an hour, one beat at a time), read new trials in, re-grade and log every move",
    "source": "d1",
    "route": "health",
-   "last_beat_age_s": 1320.0,
+   "last_beat_age_s": 1680.0,
    "expected_interval_s": 3600,
    "beats_24h": 1,
    "expected_24h": 24.0,
@@ -2632,7 +2633,7 @@
    "id": "funding-maintenance",
    "what": "the weekly re-verification of funding registry rows at their primary sources",
    "source": "workflow",
-   "last_beat_age_s": 304631.0,
+   "last_beat_age_s": 304993.5,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2643,7 +2644,7 @@
    "id": "cost-guard",
    "what": "the daily cost reading against budgets (D1 rows read, Workers AI neurons) and the criticality log",
    "source": "workflow",
-   "last_beat_age_s": 53295.0,
+   "last_beat_age_s": 53657.5,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2654,7 +2655,7 @@
    "id": "backup-drill",
    "what": "the weekly export and restore drill of every D1 database and KV namespace",
    "source": "workflow",
-   "last_beat_age_s": 314086.0,
+   "last_beat_age_s": 314448.5,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2665,7 +2666,7 @@
    "id": "social-post",
    "what": "the daily publish of gate-cleared posts and the thought-leadership pass",
    "source": "workflow",
-   "last_beat_age_s": 28041.0,
+   "last_beat_age_s": 28403.5,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2676,7 +2677,7 @@
    "id": "demo-video",
    "what": "the weekly rebuild of the demo video from the storyboard (pushes to the storyboard also start it; only scheduled and dispatched runs are beats)",
    "source": "workflow",
-   "last_beat_age_s": 305890.0,
+   "last_beat_age_s": 306252.5,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2687,7 +2688,7 @@
    "id": "outreach",
    "what": "the weekly outreach pass: programmes, packets, guard, queue and the intro lane",
    "source": "workflow",
-   "last_beat_age_s": 306622.0,
+   "last_beat_age_s": 306984.5,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2698,7 +2699,7 @@
    "id": "spinoff",
    "what": "the daily spinoff pass over the idea queue and the free-tier headroom",
    "source": "workflow",
-   "last_beat_age_s": 51800.0,
+   "last_beat_age_s": 52162.5,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2709,7 +2710,7 @@
    "id": "product-manager",
    "what": "the daily product manager pass: growth mix, insight findings, improvement items",
    "source": "workflow",
-   "last_beat_age_s": 50309.0,
+   "last_beat_age_s": 50671.5,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2720,7 +2721,7 @@
    "id": "fleet",
    "what": "the daily fleet queue pass across every repository: dispositions, balance, drift (the tick Worker may also dispatch it; every run is a beat)",
    "source": "workflow",
-   "last_beat_age_s": 516.0,
+   "last_beat_age_s": -3.5,
    "expected_interval_s": 86400,
    "beats_24h": 60,
    "expected_24h": 1.0,
@@ -2731,7 +2732,7 @@
    "id": "issues",
    "what": "the daily issue sweep: triage and SLA (issue events also start the workflow; only scheduled and dispatched runs are beats)",
    "source": "workflow",
-   "last_beat_age_s": 53688.0,
+   "last_beat_age_s": 54050.5,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2742,7 +2743,7 @@
    "id": "retriage",
    "what": "the weekly re-triage of open issues",
    "source": "workflow",
-   "last_beat_age_s": 307347.0,
+   "last_beat_age_s": 307709.5,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2753,7 +2754,7 @@
    "id": "uiux",
    "what": "UIUX-1: the weekly browser audit of every user page and path",
    "source": "workflow",
-   "last_beat_age_s": 143414.0,
+   "last_beat_age_s": 143776.5,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2764,7 +2765,7 @@
    "id": "cleanroom",
    "what": "the daily clean-room bootstrap: a sandbox system from the seed alone, a simulated day, teardown, and the satellite agent-file coherence check",
    "source": "workflow",
-   "last_beat_age_s": 8646.0,
+   "last_beat_age_s": 9008.5,
    "expected_interval_s": 86400,
    "beats_24h": 26,
    "expected_24h": 1.0,
@@ -4979,13 +4980,31 @@
  "changes": {
   "commits": [
    {
-    "sha": "10bba5250",
-    "at": "2026-11-27T07:28:21+00:00",
-    "author": "Claude",
-    "subject": "fix(lane): a skipped required check never merges; restore and protect the Actions kill switch (SKIPPED-NOT-GREEN-1, KILL-SWITCH-GUARD-1)",
+    "sha": "f5b939b84",
+    "at": "2026-11-27T07:38:27+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
     "pr": null,
-    "item": "SKIPPED-NOT-GREEN-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/10bba525082890e24895537e8ec89b51a67ead09"
+    "item": "RESILIENCE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/f5b939b849e657e8e94712ee86206c4415f4bfc1"
+   },
+   {
+    "sha": "9665456e7",
+    "at": "2026-11-27T07:32:55+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
+    "pr": null,
+    "item": "RESILIENCE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/9665456e769688ccfc23eeba20cd540604fb0ff6"
+   },
+   {
+    "sha": "5247d4bbb",
+    "at": "2026-11-27T07:32:33+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "queue: closing-probe verdicts for 4 item(s) (QUEUE-PERSIST-1) [skip ci]",
+    "pr": null,
+    "item": "QUEUE-PERSIST-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/5247d4bbb399a97abeb301d4c465c59876849925"
    },
    {
     "sha": "fea6388a9",
@@ -5319,24 +5338,6 @@
     "pr": null,
     "item": "REGEN-GENERATED-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/e8c9f22df0136b781e75187f32b276b5ccb79fb9"
-   },
-   {
-    "sha": "9391b8250",
-    "at": "2026-11-27T04:58:57+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "chore(cleanroom): record the clean-room bootstrap run (CLEANROOM-1) [skip ci]",
-    "pr": null,
-    "item": "CLEANROOM-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/9391b8250f05951cea44b11f6823e0a8914caf7d"
-   },
-   {
-    "sha": "6f3f2d80d",
-    "at": "2026-11-27T04:58:50+00:00",
-    "author": "ultrastable-209646[bot]",
-    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
-    "pr": null,
-    "item": "RESILIENCE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/6f3f2d80dfe83902e98914974d59d8d5deee54c6"
    }
   ],
   "pull_requests": []
