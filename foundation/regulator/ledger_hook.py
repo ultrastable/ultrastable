@@ -14,3 +14,15 @@ def record(store, payload, task_id="session"):
     inp = json.dumps(payload.get("tool_input", ""))
     out = json.dumps(payload.get("tool_response", ""))
     store.log_tokens(payload.get("session_id", task_id), "-", KIND.get(tool, "other"), len(out) // 4, len(inp) // 4)
+
+
+def safe_record(store, raw):
+    """A hook must never break the agent's tool call: bad input is dropped, not raised. Returns True when a row was written."""
+    try:
+        payload = json.loads(raw or "{}")
+        if not isinstance(payload, dict):
+            return False
+        record(store, payload)
+        return True
+    except Exception:
+        return False
