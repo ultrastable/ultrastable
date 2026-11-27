@@ -6747,6 +6747,32 @@
    "body": "The Conant and Ashby study summary said 'you must model it'. The generated paper carried the line, docs_audit --check read it as telling a person to act, and main went red for every pull request. The summary now states the same idea without addressing a reader. Study text is generated into papers and read by the same audit as any document.",
    "probe": "grep:research/studies/conant-ashby-1970.json::requires a model",
    "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
+  },
+  {
+   "id": "decision-2026-11-27-p-rez-l-pez-1974-ingested-both-verdicts-on-every-action-free",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "Pérez López 1974 ingested; both verdicts on every action (FREELY-ADAPTIVE-1)",
+   "body": "Every settled action gets an effectiveness verdict (its own) and an efficiency verdict (another essential variable of its scope left its limits while it was open). Inconsistent action classes file Q-FAS items; the three survival levels are the essential variable survival_levels.",
+   "probe": "grep:foundation/freeadapt.py::def levels\\(",
+   "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
+  },
+  {
+   "id": "lesson-2026-11-27-live-pages-need-a-visible-date",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Live pages need a visible date",
+   "body": "A page with no date reads as stale even when its data is current. Every site page and response now carries a recency line and headers from seed/worker/src/recency.js (the site through site/edge.js); site/recency.test.mjs fails a page without them.",
+   "probe": "grep:seed/worker/src/recency.js::RECENCY-1"
+  },
+  {
+   "id": "lesson-2026-11-27-research-items-must-pass-spec-gate-1-at-birth",
+   "kind": "lesson",
+   "date": "2026-11-27",
+   "title": "Research items must pass SPEC-GATE-1 at birth",
+   "body": "research.file_items wrote Q-RES items without an out-of-scope or closing-probe line, so each one lowered spec_quality. Item writers now emit both lines; the freeadapt test checks its items with specgate.missing.",
+   "probe": "grep:foundation/research.py::\\*\\*Out of scope:\\*\\* editing the study",
+   "session": "session_0156nqDsPJ1YLdic5NVSU9iG"
   }
  ]
 }
