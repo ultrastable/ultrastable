@@ -49,7 +49,7 @@ export default {
      "AI systems leave their loops open. Put in place: an output with no code consumer fails the build. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 19; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 171 (n = 21184; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.737 (n = 19; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 171 (n = 21260; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.778 (n = 18; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. Chapters 7 and 8 were not machine-read for this paper: the archive.org text the research loop could reach ends in chapter 2. Ashby's mechanism is stated here in our own words from the book's contents and preface; the only verbatim quotation is from the preface (page v).",
@@ -129,7 +129,7 @@ export default {
      "metric_label": "share of declared essential variables that have limits (doctrine/ultrastability.json)",
      "measured": 1.0,
      "status": "met",
-     "n": 19,
+     "n": 18,
      "source": "doctrine/ultrastability.json",
      "item": null
     },
@@ -160,7 +160,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 171,
      "status": "met",
-     "n": 21184,
+     "n": 21260,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -184,9 +184,9 @@ export default {
      },
      "prediction": "step_function_share >= 0.5 within 336 h",
      "metric_label": "share of essential variables whose second loop can change a parameter of the first loop",
-     "measured": 0.737,
+     "measured": 0.778,
      "status": "met",
-     "n": 19,
+     "n": 18,
      "source": "doctrine/ultrastability.json",
      "item": null
     },
@@ -1080,7 +1080,7 @@ export default {
      "One halt stops everything. Put in place: one worker variable or committed file stops every cron, webhook and workflow job. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 4 of 6 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 19; source: doctrine/ultrastability.json). Commits on main whose subject starts with Revert, per merged pull request in the window reads 0.0 (n = 360; source: git log of main, subjects starting with Revert). Share of uploaded deploys proven live against their commit reads 0.999 (n = 720; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 4 of 6 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 18; source: doctrine/ultrastability.json). Commits on main whose subject starts with Revert, per merged pull request in the window reads 0.0 (n = 360; source: git log of main, subjects starting with Revert). Share of uploaded deploys proven live against their commit reads 0.999 (n = 720; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Scale. One organization: 500 closed pull requests (360 merged) over 7.85 days. Our numbers describe this system; they are not a causal estimate and are not compared with the study's effect sizes as if they were.",
@@ -1156,7 +1156,7 @@ export default {
      "metric_label": "share of declared essential variables that have limits (doctrine/ultrastability.json)",
      "measured": 1.0,
      "status": "met",
-     "n": 19,
+     "n": 18,
      "source": "doctrine/ultrastability.json",
      "item": null
     },
@@ -1555,7 +1555,7 @@ export default {
      "Limits on everything that matters. Put in place: the check fails a variable with no limits. Check it with one number, share of declared essential variables that have limits (doctrine/ultrastability.json), and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 72 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.0 (n = 164; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.5 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 1 of 5 of these checks pass today. Owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl) reads 73 (n = None; source: ops/provenance.jsonl, last 7 days). Share of second-order steps that brought the variable back inside its limits and were kept reads 0.0 (n = 164; source: ops/ultrastability.jsonl verdicts). Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.0 (n = None; source: foundation/specgate.py over docs/issues). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Source. Own R&D question set, regenerated from this system's records, version 2026-11-25."
@@ -1625,7 +1625,7 @@ export default {
      },
      "prediction": "owner_interventions_7d <= 0 within 72 h",
      "metric_label": "owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl)",
-     "measured": 72,
+     "measured": 73,
      "status": "not-met",
      "n": null,
      "source": "ops/provenance.jsonl, last 7 days",
@@ -1677,7 +1677,7 @@ export default {
      },
      "prediction": "spec_quality >= 0.9 within 72 h",
      "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.5,
+     "measured": 0.0,
      "status": "not-met",
      "n": null,
      "source": "foundation/specgate.py over docs/issues",
@@ -1708,9 +1708,9 @@ export default {
      },
      "prediction": "research_findings_met_share >= 1.0 within 72 h",
      "metric_label": "share of every finding in every paper whose own measurement meets its target, excluding this metric (RESEARCH-LOOP-1)",
-     "measured": 0.556,
+     "measured": 0.621,
      "status": "not-met",
-     "n": 36,
+     "n": 29,
      "source": "research/studies, each finding measured as above",
      "item": "Q-RES-second-loop-2026-S4"
     },
@@ -1736,7 +1736,7 @@ export default {
      "metric_label": "share of declared essential variables that have limits (doctrine/ultrastability.json)",
      "measured": 1.0,
      "status": "met",
-     "n": 19,
+     "n": 18,
      "source": "doctrine/ultrastability.json",
      "item": null
     }
@@ -1769,422 +1769,6 @@ export default {
     }
    ],
    "leads_route": "lexical-512-17t7jq7",
-   "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
-  },
-  {
-   "study_id": "perez-lopez-1974",
-   "slug": "perez-lopez-1974",
-   "order": 6,
-   "title": "Effective is not enough: P\u00e9rez L\u00f3pez's freely-adaptive system and the two kinds of learning an autonomous system needs",
-   "sections": {
-    "summary": [
-     "Many people believe that an autonomous system is under control when every action it takes is scored on whether it reached its own target. This paper argues otherwise: an action can reach its target and still push something else the system needs out of its limits. A system has to score both, learn which of its actions keep doing harm, and drop them, or it learns only half of what experience teaches.",
-     "P\u00e9rez L\u00f3pez took Ashby's ultrastable system from the organism to the organization. He shows that every action has to be judged twice, on whether it reached its goal and on what it did to everything else the system needs, and that an organization survives only while it is effective, attractive and consistent at once. We state each of his points as a property this system can fail, measure it from the system's own ledgers, and built the reading that was missing: a second verdict on every settled action and the three survival levels.",
-     "It is written for people who build or run AI systems and want them to keep working without someone watching. It names 7 concrete problems, the mechanism that answers each one, and how to put that mechanism in place."
-    ],
-    "problem": [
-     "Ashby's ultrastable system explains how an organism learns to keep its essential variables in limits, but nature builds that mechanism into organisms and no one builds it into organizations, so it must be built on purpose. Every action has an effectiveness (its explicit, predictable consequence), an efficiency (its consequences for the system's other needs, learned only by experience) and a consistency (how its efficiency changes as the system learns). An organization survives only if it is effective, attractive to its members and consistent at once. [1]",
-     "This matters now because the usual answer, hitting the target is enough, sends teams after the wrong fix. A better model or another reviewer does not close a loop that nothing checks.",
-     "The problems in detail:"
-    ],
-    "problem_list": [
-     "A control system that only corrects deviations from plans. In a stable system feedback only corrects deviations from a plan that someone outside set. In an ultrastable system the aim of the control function is twofold: \"Ensure that plans are consistent with objectives\" and \"Ensure that plans are accomplished\". A system whose work items carry no objective to be measured against can only do the second. [1]",
-     "Not knowing that an essential variable is disturbed. Nature has given organisms the mechanisms that keep essential variables in limits; it has not given them to organizations, so they must be built in on purpose. \"An organism may die because it does not have a 'program' to cope with disturbances in the value of its essential variables. An organization may die because it does not know that its essential variables are disturbed.\" [1]",
-     "Scoring only whether an action reached its target. An action is effective when it reaches its explicit goal and efficient when its unsought consequences do not offset that. Barnard runs the two together, but they teach different things: when the predicted result does not happen, the model is incorrect; when it happens and produces offsetting dissatisfactions, the model is incomplete. A system that scores only predictions learns only the first. [1]",
-     "Repeating actions whose side effects keep growing. \"An ultrastable system is one that has a built-in mechanism which ensures consistency, that is to say, a mechanism which systematically discards action alternatives that have been found to have decreasing efficiency after they were tried.\" [1]",
-     "Surviving on one level only. \"An organization, to survive, must accomplish goals at all three levels\": effective (it must generate more resources than are needed to motivate membership), attractive (it must create enough motivation in its members to persuade them to cooperate) and consistent (otherwise it lasts only as long as it can buy back lost attractiveness with greater rewards, until it needs more resources to motivate people than it obtains). [1]",
-     "A memory that leaves past mistakes out. Selective use of memory is central: an evoked set can leave out what shows that previous actions were wrong. The working paper defines \"pride\" as the attitude \"which tends to eliminate from the 'evoked set' all those elements in memory which show that previous actions were wrong\". A system that records its mistakes but lets nothing act on them has that blind spot. [1]",
-     "The member knowing better than the organization. Organizational values forbid tasks that do not satisfy a member's needs \"even though that fact may not be known to the individual\", and \"an organization will be successful insofar as it knows better than the individual himself what actions by the individual will satisfy the individual's needs.\" Each time the owner has to step in and correct the system, the reverse held. [1]"
-    ],
-    "approach": [
-     "The approach follows Ashby's ultrastable system [2]: a first loop acts on the world, and a second loop changes the first loop's settings whenever a variable that matters leaves its limits, and keeps changing them until it is back inside.",
-     "Ultrastable is that design as working code [3]. For each problem above it uses a specific mechanism:"
-    ],
-    "approach_list": [
-     "A control system that only corrects deviations from plans: the system keeps its own goal hierarchy and turns bounded knobs toward each target (GOALS-1, `seed/worker/src/goals.js`); the goal furthest out of bounds becomes a task tree, gated on a fresh reading of that goal (PLAN-1, `seed/worker/src/planner.js`); a work item needs a done check, a prediction on a metric, an out-of-scope line and a live probe (SPEC-GATE-1, `seed/scripts/specgate.py`)",
-     "Not knowing that an essential variable is disturbed: every essential variable is read each tick; one that cannot be read is never in bounds and files its own UNMEASURED item (ULTRASTABILITY-1, `foundation/ultrastability.py`); a reading with no data never counts as met (REDTEAM-1, `foundation/redteam.py`)",
-     "Scoring only whether an action reached its target: every settled decision, growth experiment and second-loop step gets an efficiency verdict beside its own: did another essential variable of its scope leave its limits while it was open (FREELY-ADAPTIVE-1, `foundation/freeadapt.py`); every decision logs its prediction and is scored against the measured outcome (the effectiveness verdict) (DECISIONS-1, `foundation/decisions.py`)",
-     "Repeating actions whose side effects keep growing: an action class whose recent actions mostly disturbed other essential variables files a Q-FAS item to redesign or retire it, closed only when the same reading passes (FREELY-ADAPTIVE-1, `foundation/freeadapt.py`); a second-loop step is kept only when its variable is back inside its limits; otherwise it is undone (ULTRASTABILITY-1, `foundation/ultrastability.py`)",
-     "Surviving on one level only: the three levels are read every pass: k at or above its floor, the share of the executor's attempts that are merged, and that share not falling between the earlier and later half (FREELY-ADAPTIVE-1, `foundation/freeadapt.py`); k = verified deploys over normalized cost and human touches, logged every tick (CRITICALITY-1, `foundation/criticality.py`); survival_levels is an essential variable held at 3, so the second loop acts when one level fails (ULTRASTABILITY-1, `doctrine/ultrastability.json`)",
-     "A memory that leaves past mistakes out: every recorded lesson is bound to a check, variable, detector or test, or carried by an open item until it is (LESSONS-1, `foundation/lessons.py`); every failure mode has a live detector and a failing one files its own item (FAILURE-RESOLVE-1, `foundation/failure_audit.py`)",
-     "The member knowing better than the organization: what the owner does not know is computed (known minus told), never asked (IGNORANCE-1, `foundation/ignorance.py`); a register of needs the owner is not expected to know, each with a probe (BLINDSPOT-1, `foundation/blindspots.py`); owner interventions are an essential variable held at 0 (SECOND-LOOP-2, `foundation/ultrastability.py`)"
-    ],
-    "practice": [
-     "To apply this to your own system, one step per problem:"
-    ],
-    "practice_list": [
-     "A control system that only corrects deviations from plans. Put in place: the system keeps its own goal hierarchy and turns bounded knobs toward each target. Check it with one number, share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py), and set a limit for it (>= 0.9 is the limit we use).",
-     "Not knowing that an essential variable is disturbed. Put in place: every essential variable is read each tick; one that cannot be read is never in bounds and files its own UNMEASURED item. Check it with one number, share of essential variables (platform and tenant) whose latest reading in the last 7 days has a value (ops/ultrastability.jsonl), and set a limit for it (>= 0.95 is the limit we use).",
-     "Scoring only whether an action reached its target. Put in place: every settled decision, growth experiment and second-loop step gets an efficiency verdict beside its own: did another essential variable of its scope leave its limits while it was open. Check it with one number, share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py), and set a limit for it (>= 0.8 is the limit we use).",
-     "Repeating actions whose side effects keep growing. Put in place: an action class whose recent actions mostly disturbed other essential variables files a Q-FAS item to redesign or retire it, closed only when the same reading passes. Check it with one number, share of judged action classes whose recent actions mostly left the other essential variables inside their limits (foundation/freeadapt.py), and set a limit for it (>= 0.9 is the limit we use).",
-     "Surviving on one level only. Put in place: the three levels are read every pass: k at or above its floor, the share of the executor's attempts that are merged, and that share not falling between the earlier and later half. Check it with one number, how many of the three survival levels hold now: effective, attractive, consistent (foundation/freeadapt.py), and set a limit for it (>= 3 is the limit we use).",
-     "A memory that leaves past mistakes out. Put in place: every recorded lesson is bound to a check, variable, detector or test, or carried by an open item until it is. Check it with one number, share of recorded lessons bound to a check, variable, detector or test (doctrine/lessons.json), and set a limit for it (>= 1.0 is the limit we use).",
-     "The member knowing better than the organization. Put in place: what the owner does not know is computed (known minus told), never asked. Check it with one number, owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl), and set a limit for it (<= 0 is the limit we use)."
-    ],
-    "practice_note": [
-     "In our own system, 2 of 7 of these checks pass today. Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.5 (n = None; source: foundation/specgate.py over docs/issues). Share of essential variables (platform and tenant) whose latest reading in the last 7 days has a value (ops/ultrastability.jsonl) reads 0.717 (n = 46; source: ops/ultrastability.jsonl, latest reading per variable in the last 7 days). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.874 (n = 199; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
-    ],
-    "tradeoffs": [
-     "Reading. The whole working paper was read from the IESE PDF the owner supplied; the passages quoted in the findings are verbatim.",
-     "Members. P\u00e9rez L\u00f3pez's members are people with motives. The members whose acceptance is read here are the executor's attempts on work orders (merged against discarded); a model has no motives, so attractiveness is an operational analogue of his concept, not a claim about motivation.",
-     "Attribution. An essential variable that left its limits while an action was open is counted against every action open at the time. Co-occurrence is not causation, so the count of incomplete-model actions is an upper bound on the actions that really caused a disturbance.",
-     "Effectiveness of an action is the verdict its own loop recorded (a decision scored as a hit, a growth experiment kept, a second-loop step kept). Actions that recorded no verdict are not counted, and an action with no earlier reading of any other variable has no efficiency verdict.",
-     "Organizational effectiveness reads k from the latest criticality tick, which counts deploys driven from outside the system; k_self, the system's own share, is reported beside it and is not what the level is judged on.",
-     "P\u00e9rez L\u00f3pez leaves measurement aside on purpose (chapter IV). The floors used here (half of recent actions efficient, half of attempts merged) are this system's choices, stated in foundation/freeadapt.py, not figures from the paper.",
-     "Source. Working paper, version WP No 5, July 1974."
-    ],
-    "action": [
-     "Read the code that does this; it is source-available: https://github.com/ultrastable/ultrastable",
-     "Start a system of your own on the same foundation: https://ultrastable.io/start",
-     "Follow new papers by feed: https://ultrastable.io/research.atom"
-    ]
-   },
-   "references": [
-    {
-     "key": "perez-lopez-1974",
-     "text": "Juan A. P\u00e9rez L\u00f3pez (WP No 5, July 1974). Organizational Theory: A Cybernetic Approach. IESE Business School, University of Navarra; working paper.",
-     "url": "https://www.iese.edu/media/research/pdfs/DI-0005-E.pdf"
-    },
-    {
-     "key": "ashby1952",
-     "text": "Ashby, W. R. (1952; corrected 1954). Design for a Brain: The Origin of Adaptive Behaviour. John Wiley & Sons, New York.",
-     "url": "https://archive.org/details/designforbrain00ashb"
-    },
-    {
-     "key": "ultrastable",
-     "text": "Ultrastable (2026). Source code, ledgers and loop registry of the Ultrastable system. Read for this paper at the date of generation.",
-     "url": "https://github.com/ultrastable/ultrastable"
-    }
-   ],
-   "derived": [
-    87,
-    0
-   ],
-   "study": {
-    "title": "Organizational Theory: A Cybernetic Approach",
-    "authors": [
-     "Juan A. P\u00e9rez L\u00f3pez"
-    ],
-    "institution": "IESE Business School, University of Navarra",
-    "kind": "working paper",
-    "version": "WP No 5, July 1974",
-    "data": "Theory, building on Barnard's The Functions of the Executive and Ashby's Design for a Brain. Chapter I cybernetic theory of organization, II building the model, III individuals as ultrastable systems, IV the control system of an organization, V the freely-adaptive-system.",
-    "summary": "Ashby's ultrastable system explains how an organism learns to keep its essential variables in limits, but nature builds that mechanism into organisms and no one builds it into organizations, so it must be built on purpose. Every action has an effectiveness (its explicit, predictable consequence), an efficiency (its consequences for the system's other needs, learned only by experience) and a consistency (how its efficiency changes as the system learns). An organization survives only if it is effective, attractive to its members and consistent at once."
-   },
-   "abstract": "Juan A. P\u00e9rez L\u00f3pez (IESE Business School, University of Navarra): Ashby's ultrastable system explains how an organism learns to keep its essential variables in limits, but nature builds that mechanism into organisms and no one builds it into organizations, so it must be built on purpose. Every action has an effectiveness (its explicit, predictable consequence), an efficiency (its consequences for the system's other needs, learned only by experience) and a consistency (how its efficiency changes as the system learns). An organization survives only if it is effective, attractive to its members and consistent at once. P\u00e9rez L\u00f3pez took Ashby's ultrastable system from the organism to the organization. He shows that every action has to be judged twice, on whether it reached its goal and on what it did to everything else the system needs, and that an organization survives only while it is effective, attractive and consistent at once. We state each of his points as a property this system can fail, measure it from the system's own ledgers, and built the reading that was missing: a second verdict on every settled action and the three survival levels. 2 of 7 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.",
-   "window": {
-    "start": "2026-11-19T01:23:24Z",
-    "end": "2026-11-26T21:42:44Z",
-    "days": 7.85,
-    "prs": 500,
-    "merged": 360,
-    "regime": "driven",
-    "k_self": 0.0,
-    "as_of": "2026-11-27T01:40:50.218Z"
-   },
-   "findings": [
-    {
-     "id": "P1",
-     "concern": "A control system that only corrects deviations from plans",
-     "claim": "In a stable system feedback only corrects deviations from a plan that someone outside set. In an ultrastable system the aim of the control function is twofold: \"Ensure that plans are consistent with objectives\" and \"Ensure that plans are accomplished\". A system whose work items carry no objective to be measured against can only do the second.",
-     "where": "Chapter I, pages 4 and 5",
-     "perspective": "systems",
-     "mechanisms": [
-      {
-       "rule": "GOALS-1",
-       "path": "seed/worker/src/goals.js",
-       "how": "the system keeps its own goal hierarchy and turns bounded knobs toward each target"
-      },
-      {
-       "rule": "PLAN-1",
-       "path": "seed/worker/src/planner.js",
-       "how": "the goal furthest out of bounds becomes a task tree, gated on a fresh reading of that goal"
-      },
-      {
-       "rule": "SPEC-GATE-1",
-       "path": "seed/scripts/specgate.py",
-       "how": "a work item needs a done check, a prediction on a metric, an out-of-scope line and a live probe"
-      }
-     ],
-     "metric": "spec_quality",
-     "target": {
-      "op": ">=",
-      "value": 0.9
-     },
-     "prediction": "spec_quality >= 0.9 within 336 h",
-     "metric_label": "share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py)",
-     "measured": 0.5,
-     "status": "not-met",
-     "n": null,
-     "source": "foundation/specgate.py over docs/issues",
-     "item": "Q-RES-perez-lopez-1974-P1"
-    },
-    {
-     "id": "P2",
-     "concern": "Not knowing that an essential variable is disturbed",
-     "claim": "Nature has given organisms the mechanisms that keep essential variables in limits; it has not given them to organizations, so they must be built in on purpose. \"An organism may die because it does not have a 'program' to cope with disturbances in the value of its essential variables. An organization may die because it does not know that its essential variables are disturbed.\"",
-     "where": "Chapter I, page 5",
-     "perspective": "reliability",
-     "mechanisms": [
-      {
-       "rule": "ULTRASTABILITY-1",
-       "path": "foundation/ultrastability.py",
-       "how": "every essential variable is read each tick; one that cannot be read is never in bounds and files its own UNMEASURED item"
-      },
-      {
-       "rule": "REDTEAM-1",
-       "path": "foundation/redteam.py",
-       "how": "a reading with no data never counts as met"
-      }
-     ],
-     "metric": "essential_measured_share",
-     "target": {
-      "op": ">=",
-      "value": 0.95
-     },
-     "prediction": "essential_measured_share >= 0.95 within 336 h",
-     "metric_label": "share of essential variables (platform and tenant) whose latest reading in the last 7 days has a value (ops/ultrastability.jsonl)",
-     "measured": 0.717,
-     "status": "not-met",
-     "n": 46,
-     "source": "ops/ultrastability.jsonl, latest reading per variable in the last 7 days",
-     "item": "Q-RES-perez-lopez-1974-P2"
-    },
-    {
-     "id": "P3",
-     "concern": "Scoring only whether an action reached its target",
-     "claim": "An action is effective when it reaches its explicit goal and efficient when its unsought consequences do not offset that. Barnard runs the two together, but they teach different things: when the predicted result does not happen, the model is incorrect; when it happens and produces offsetting dissatisfactions, the model is incomplete. A system that scores only predictions learns only the first.",
-     "where": "Chapter III, pages 11 to 13",
-     "perspective": "systems",
-     "mechanisms": [
-      {
-       "rule": "FREELY-ADAPTIVE-1",
-       "path": "foundation/freeadapt.py",
-       "how": "every settled decision, growth experiment and second-loop step gets an efficiency verdict beside its own: did another essential variable of its scope leave its limits while it was open"
-      },
-      {
-       "rule": "DECISIONS-1",
-       "path": "foundation/decisions.py",
-       "how": "every decision logs its prediction and is scored against the measured outcome (the effectiveness verdict)"
-      }
-     ],
-     "metric": "efficiency_verdict_share",
-     "target": {
-      "op": ">=",
-      "value": 0.8
-     },
-     "prediction": "efficiency_verdict_share >= 0.8 within 168 h",
-     "metric_label": "share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py)",
-     "measured": 0.874,
-     "status": "met",
-     "n": 199,
-     "source": "ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl",
-     "item": null
-    },
-    {
-     "id": "P4",
-     "concern": "Repeating actions whose side effects keep growing",
-     "claim": "\"An ultrastable system is one that has a built-in mechanism which ensures consistency, that is to say, a mechanism which systematically discards action alternatives that have been found to have decreasing efficiency after they were tried.\"",
-     "where": "Chapter III, page 11",
-     "perspective": "reliability",
-     "mechanisms": [
-      {
-       "rule": "FREELY-ADAPTIVE-1",
-       "path": "foundation/freeadapt.py",
-       "how": "an action class whose recent actions mostly disturbed other essential variables files a Q-FAS item to redesign or retire it, closed only when the same reading passes"
-      },
-      {
-       "rule": "ULTRASTABILITY-1",
-       "path": "foundation/ultrastability.py",
-       "how": "a second-loop step is kept only when its variable is back inside its limits; otherwise it is undone"
-      }
-     ],
-     "metric": "action_classes_consistent_share",
-     "target": {
-      "op": ">=",
-      "value": 0.9
-     },
-     "prediction": "action_classes_consistent_share >= 0.9 within 336 h",
-     "metric_label": "share of judged action classes whose recent actions mostly left the other essential variables inside their limits (foundation/freeadapt.py)",
-     "measured": 0.842,
-     "status": "not-met",
-     "n": 19,
-     "source": "foundation/freeadapt.py over the same ledgers",
-     "item": "Q-RES-perez-lopez-1974-P4"
-    },
-    {
-     "id": "P5",
-     "concern": "Surviving on one level only",
-     "claim": "\"An organization, to survive, must accomplish goals at all three levels\": effective (it must generate more resources than are needed to motivate membership), attractive (it must create enough motivation in its members to persuade them to cooperate) and consistent (otherwise it lasts only as long as it can buy back lost attractiveness with greater rewards, until it needs more resources to motivate people than it obtains).",
-     "where": "Chapter V, pages 18 to 20",
-     "perspective": "economics",
-     "mechanisms": [
-      {
-       "rule": "FREELY-ADAPTIVE-1",
-       "path": "foundation/freeadapt.py",
-       "how": "the three levels are read every pass: k at or above its floor, the share of the executor's attempts that are merged, and that share not falling between the earlier and later half"
-      },
-      {
-       "rule": "CRITICALITY-1",
-       "path": "foundation/criticality.py",
-       "how": "k = verified deploys over normalized cost and human touches, logged every tick"
-      },
-      {
-       "rule": "ULTRASTABILITY-1",
-       "path": "doctrine/ultrastability.json",
-       "how": "survival_levels is an essential variable held at 3, so the second loop acts when one level fails"
-      }
-     ],
-     "metric": "survival_levels_met",
-     "target": {
-      "op": ">=",
-      "value": 3
-     },
-     "prediction": "survival_levels_met >= 3 within 168 h",
-     "metric_label": "how many of the three survival levels hold now: effective, attractive, consistent (foundation/freeadapt.py)",
-     "measured": 3,
-     "status": "met",
-     "n": 3,
-     "source": "ops/criticality.jsonl and ops/executor-log.jsonl (foundation/freeadapt.py)",
-     "item": null
-    },
-    {
-     "id": "P6",
-     "concern": "A memory that leaves past mistakes out",
-     "claim": "Selective use of memory is central: an evoked set can leave out what shows that previous actions were wrong. The working paper defines \"pride\" as the attitude \"which tends to eliminate from the 'evoked set' all those elements in memory which show that previous actions were wrong\". A system that records its mistakes but lets nothing act on them has that blind spot.",
-     "where": "Chapter III, page 11 and footnote 3",
-     "perspective": "oversight",
-     "mechanisms": [
-      {
-       "rule": "LESSONS-1",
-       "path": "foundation/lessons.py",
-       "how": "every recorded lesson is bound to a check, variable, detector or test, or carried by an open item until it is"
-      },
-      {
-       "rule": "FAILURE-RESOLVE-1",
-       "path": "foundation/failure_audit.py",
-       "how": "every failure mode has a live detector and a failing one files its own item"
-      }
-     ],
-     "metric": "lessons_enforced_share",
-     "target": {
-      "op": ">=",
-      "value": 1.0
-     },
-     "prediction": "lessons_enforced_share >= 1 within 336 h",
-     "metric_label": "share of recorded lessons bound to a check, variable, detector or test (doctrine/lessons.json)",
-     "measured": 0.692,
-     "status": "not-met",
-     "n": 1,
-     "source": "doctrine/lessons.json (foundation/lessons.py)",
-     "item": "Q-RES-perez-lopez-1974-P6"
-    },
-    {
-     "id": "P7",
-     "concern": "The member knowing better than the organization",
-     "claim": "Organizational values forbid tasks that do not satisfy a member's needs \"even though that fact may not be known to the individual\", and \"an organization will be successful insofar as it knows better than the individual himself what actions by the individual will satisfy the individual's needs.\" Each time the owner has to step in and correct the system, the reverse held.",
-     "where": "Chapter V, page 20",
-     "perspective": "oversight",
-     "mechanisms": [
-      {
-       "rule": "IGNORANCE-1",
-       "path": "foundation/ignorance.py",
-       "how": "what the owner does not know is computed (known minus told), never asked"
-      },
-      {
-       "rule": "BLINDSPOT-1",
-       "path": "foundation/blindspots.py",
-       "how": "a register of needs the owner is not expected to know, each with a probe"
-      },
-      {
-       "rule": "SECOND-LOOP-2",
-       "path": "foundation/ultrastability.py",
-       "how": "owner interventions are an essential variable held at 0"
-      }
-     ],
-     "metric": "owner_interventions_7d",
-     "target": {
-      "op": "<=",
-      "value": 0
-     },
-     "prediction": "owner_interventions_7d <= 0 within 336 h",
-     "metric_label": "owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl)",
-     "measured": 72,
-     "status": "not-met",
-     "n": null,
-     "source": "ops/provenance.jsonl, last 7 days",
-     "item": "Q-RES-perez-lopez-1974-P7"
-    }
-   ],
-   "met": 2,
-   "total": 7,
-   "limits": [
-    "Reading. The whole working paper was read from the IESE PDF the owner supplied; the passages quoted in the findings are verbatim.",
-    "Members. P\u00e9rez L\u00f3pez's members are people with motives. The members whose acceptance is read here are the executor's attempts on work orders (merged against discarded); a model has no motives, so attractiveness is an operational analogue of his concept, not a claim about motivation.",
-    "Attribution. An essential variable that left its limits while an action was open is counted against every action open at the time. Co-occurrence is not causation, so the count of incomplete-model actions is an upper bound on the actions that really caused a disturbance.",
-    "Effectiveness of an action is the verdict its own loop recorded (a decision scored as a hit, a growth experiment kept, a second-loop step kept). Actions that recorded no verdict are not counted, and an action with no earlier reading of any other variable has no efficiency verdict.",
-    "Organizational effectiveness reads k from the latest criticality tick, which counts deploys driven from outside the system; k_self, the system's own share, is reported beside it and is not what the level is judged on.",
-    "P\u00e9rez L\u00f3pez leaves measurement aside on purpose (chapter IV). The floors used here (half of recent actions efficient, half of attempts merged) are this system's choices, stated in foundation/freeadapt.py, not figures from the paper.",
-    "Source. Working paper, version WP No 5, July 1974."
-   ],
-   "leads": [
-    {
-     "finding": "P1",
-     "rule": "META-SIGNAL-1",
-     "score": 0.172
-    },
-    {
-     "finding": "P2",
-     "rule": "ORCHESTRATE-1",
-     "score": 0.136
-    },
-    {
-     "finding": "P2",
-     "rule": "INTENT-YIELD-1",
-     "score": 0.103
-    },
-    {
-     "finding": "P3",
-     "rule": "GOALS-1",
-     "score": 0.099
-    },
-    {
-     "finding": "P3",
-     "rule": "WORK-RECORD-1",
-     "score": 0.097
-    },
-    {
-     "finding": "P4",
-     "rule": "RESEARCH-1",
-     "score": 0.144
-    },
-    {
-     "finding": "P5",
-     "rule": "CLOSED-LOOP-1",
-     "score": 0.096
-    },
-    {
-     "finding": "P6",
-     "rule": "SUBSTANCE-1",
-     "score": 0.138
-    },
-    {
-     "finding": "P6",
-     "rule": "DATAGRAPH-1",
-     "score": 0.115
-    },
-    {
-     "finding": "P7",
-     "rule": "FRONT-BACKED-1",
-     "score": 0.113
-    },
-    {
-     "finding": "P7",
-     "rule": "BREADTH-1",
-     "score": 0.107
-    }
-   ],
-   "leads_route": "lexical-512-1p4i28i",
    "method": "Metrics come from the system's own files: ops/research/prs.json (closed pull requests read from GitHub), ops/deploys.jsonl, ops/criticality.jsonl, ops/ultrastability.jsonl, doctrine/ultrastability.json, the loop registry and git history. Reproduce with `python3 -m foundation research --report`; every finding not met has a Q-RES item whose closing probe is `python3 -m foundation research --probe STUDY:F`."
   }
  ],
