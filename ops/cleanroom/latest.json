@@ -1,13 +1,13 @@
 {
- "at": "2026-11-27T03:47:35Z",
+ "at": "2026-11-27T03:58:09Z",
  "ticks": 144,
- "passed": true,
+ "passed": false,
  "results": [
   {
    "id": "boot",
    "what": "the bootstrap runs every stage without a blocked one",
-   "ok": true,
-   "evidence": "15 stages, none blocked"
+   "ok": false,
+   "evidence": "constitute: 1 constitution disagreement(s): standing rule PR-NEVER-LOSE-1 is in the agent instructions but has no entry in doctrine/constitution.json (add a rule with its detector and remediation, or list it under `covers`)"
   },
   {
    "id": "no-human-steps",
@@ -96,8 +96,8 @@
   {
    "id": "definition",
    "what": "the booted seed still meets its own definition (SYSTEM-SPEC-1: scripts/system.py --check against autonomy/system.json): SYSTEM.md is current, every clause's probe passes and every standing rule has its enforcement",
-   "ok": true,
-   "evidence": "system spec ok"
+   "ok": false,
+   "evidence": "SYSTEM.md is stale: run python3 scripts/system.py --write "
   },
   {
    "id": "human-voice",
@@ -124,5 +124,8 @@
    "evidence": "sandbox deleted"
   }
  ],
- "findings": []
+ "findings": [
+  "boot",
+  "definition"
+ ]
 }
