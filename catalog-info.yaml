@@ -524,7 +524,7 @@ apiVersion: "backstage.io/v1alpha1"
 kind: "System"
 metadata:
   name: "base-rates"
-  description: "its own repository holds the code; the platform deploys its Worker from main through doctrine/topology.json, and the row turns own-repo once a deploy row and a live verify read exist (Q-SEED-base-rates)"
+  description: "its own repository holds the code and the platform deploys its Worker from main (doctrine/topology.json); live and answering /health, so the row is own-repo (FLOW-AUDIT-1, 2026-11-28: as planned it was outside the deploy watcher and the live Worker lagged main by over a day)"
   annotations:
     github.com/project-slug: "ultrastable/base-rates"
 spec:
@@ -546,7 +546,7 @@ apiVersion: "backstage.io/v1alpha1"
 kind: "System"
 metadata:
   name: "open-questions"
-  description: "its own repository holds the code; the platform deploys its Worker from main through doctrine/topology.json, and the row turns own-repo once a deploy row and a live verify read exist (Q-SEED-open-questions)"
+  description: "its own repository holds the code and the platform deploys its Worker from main (doctrine/topology.json); live and answering /health, so the row is own-repo (FLOW-AUDIT-1, 2026-11-28: as planned it was outside the deploy watcher and the live Worker lagged main by over a day)"
   annotations:
     github.com/project-slug: "ultrastable/open-questions"
 spec:

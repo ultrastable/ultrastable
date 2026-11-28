@@ -356,6 +356,26 @@ export default {
    "domain": "org",
    "home": "https://replication-ledger.ultrastable.org/",
    "homeLabel": "Open the atlas"
+  },
+  {
+   "id": "open-questions",
+   "name": "Open Questions",
+   "tag": "Tenant system, live",
+   "status": "live",
+   "summary": "Open Questions: a tenant system running on Ultrastable.",
+   "domain": "org",
+   "home": "https://open-questions.ultrastable.org/",
+   "homeLabel": "Open Open Questions"
+  },
+  {
+   "id": "base-rates",
+   "name": "Base Rates",
+   "tag": "Tenant system, live",
+   "status": "live",
+   "summary": "Base Rates: a tenant system running on Ultrastable.",
+   "domain": "org",
+   "home": "https://base-rates.ultrastable.org/",
+   "homeLabel": "Open Base Rates"
   }
  ],
  "domains": {

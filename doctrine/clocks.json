@@ -318,7 +318,7 @@
       "d1_id": "7b50f33e-9493-4536-bcc2-c330dbabb6b6",
       "table": "beats",
       "column": "started_at",
-      "expected_interval_s": 3600,
+      "expected_interval_s": 604800,
       "periodic": true,
       "replicas": [
         {
