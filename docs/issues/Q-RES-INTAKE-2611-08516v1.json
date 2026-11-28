@@ -1,0 +1,11 @@
+{
+  "id": "Q-RES-INTAKE-2611-08516v1",
+  "title": "Q-RES-INTAKE-2611-08516v1: ingest candidate study: Aegis OS: A Transactional Multi-Tenant Operating System Runtime for Eliminating Authorizat",
+  "body": "**Owner:** product-manager\n**Trigger:** research intake, perspective security, score 4\n**Done check:** cmd:python3 -m foundation research --probe intake:2611.08516v1\n**Prediction:** research_studies >= 14 within 336 h\n**Status:** open\n\nCandidate study: Aegis OS: A Transactional Multi-Tenant Operating System Runtime for Eliminating Authorization Fatigue in Autonomous Coding Agents (https://arxiv.org/abs/2611.08516v1). Read it; if it has findings about AI systems that this system can test, add research/studies/<id>.json with \"source_id\": \"2611.08516v1\", one entry per finding (concern, claim, mechanisms with paths, metric from foundation/research.py METRICS, target, prediction). If it has none, add its id to ops/research/intake.json \"declined\" with the reason. Either closes this item.",
+  "labels": [
+    "role:product-manager",
+    "research"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

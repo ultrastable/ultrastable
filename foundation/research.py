@@ -89,6 +89,11 @@ def _jsonl(path: Path) -> list[dict]:
     return out
 
 
+def _payload(row: dict) -> dict:
+    """The data of a ledger row: a CloudEvents 1.0 envelope carries it in `data`, a row written before the ledger met the standard is the data."""
+    return row["data"] if row.get("specversion") == "1.0" and isinstance(row.get("data"), dict) else row
+
+
 def _median(xs):
     return round(statistics.median(xs), 2) if xs else None
 
@@ -603,7 +608,7 @@ def experiments(root, pol, keyed, ms, apply, now=None) -> dict:
     """One open experiment per finding or question: settle it when its window has passed, then open the next round."""
     now = now or NOW()
     st = Path(root) / pol["state_dir"]
-    exps, outs = _jsonl(st / "experiments.jsonl"), _jsonl(st / "outcomes.jsonl")
+    exps, outs = _jsonl(st / "experiments.jsonl"), [_payload(r) for r in _jsonl(st / "outcomes.jsonl")]
     settled = {(o["key"], o["opened_at"]) for o in outs}
     latest = {}
     for e in exps:
@@ -621,9 +626,10 @@ def experiments(root, pol, keyed, ms, apply, now=None) -> dict:
                 continue
         new_e.append({"key": key, "opened_at": ISO(now), "metric": mt["metric"], "op": mt["op"], "value": float(mt["value"]), "window_h": int(mt["h"]), "baseline": cur})
     if apply:
+        from . import openstd  # OPEN-STANDARDS-1: every event ledger line is a CloudEvents 1.0 event
         st.mkdir(parents=True, exist_ok=True)
         with (st / "outcomes.jsonl").open("a", encoding="utf-8") as fh:
-            fh.writelines(json.dumps(o) + "\n" for o in new_o)
+            fh.writelines(json.dumps(openstd.cloudevent("io.ultrastable.research.outcome_settled", "/loop/research", o, subject=o["key"], now=now)) + "\n" for o in new_o)
         with (st / "experiments.jsonl").open("a", encoding="utf-8") as fh:
             fh.writelines(json.dumps(e) + "\n" for e in new_e)
     return {"opened": len(new_e), "settled": len(new_o), "met": sum(1 for o in new_o if o["met"])}

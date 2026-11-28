@@ -86,6 +86,32 @@ class Research(unittest.TestCase):
         r = R.experiments(self.d, pol, keyed, ms, True, now=t0 + timedelta(hours=25))
         self.assertEqual((r["settled"], r["met"], r["opened"]), (1, 1, 1))
 
+    def test_settled_outcome_is_a_cloudevent_and_old_rows_still_read(self):
+        """OPEN-STANDARDS-1: the outcomes ledger is an event ledger, so a settled outcome is written as a CloudEvents 1.0 envelope; a row written before that still reads."""
+        pol = R.load(self.d)
+        ms = R.measures(self.d)
+        keyed = [("s1:F2", STUDY["findings"][1])]
+        t0 = datetime(2026, 11, 21, tzinfo=timezone.utc)
+        R.experiments(self.d, pol, keyed, ms, True, now=t0)
+        R.experiments(self.d, pol, keyed, ms, True, now=t0 + timedelta(hours=25))
+        lines = (self.d / pol["state_dir"] / "outcomes.jsonl").read_text().splitlines()
+        self.assertEqual(len(lines), 1)
+        ev = json.loads(lines[0])
+        self.assertEqual(ev["specversion"], "1.0")
+        for k in ("id", "source", "type", "time"):
+            self.assertTrue(isinstance(ev[k], str) and ev[k], k)
+        self.assertEqual(ev["type"], "io.ultrastable.research.outcome_settled")
+        self.assertEqual(ev["data"]["key"], "s1:F2")
+        from foundation import openstd
+        self.assertTrue(openstd.ledger_ok(self.d, pol["state_dir"] + "/outcomes.jsonl"))
+        # a plain row written before the ledger met the standard has the same payload as its envelope
+        plain = ev["data"]
+        self.assertEqual(R._payload(plain), plain)
+        self.assertEqual(R._payload(ev), plain)
+        # and a settled key is not settled twice whichever form the ledger holds
+        out = R.experiments(self.d, pol, keyed, ms, True, now=t0 + timedelta(hours=26))
+        self.assertEqual(out["settled"], 0)
+
     def test_paper_limits_are_computed(self):
         R.run(self.d, apply=True, with_leads=False)
         md = (self.d / "research/papers/s1.md").read_text()

@@ -1,0 +1,399 @@
+{
+ "candidates": [
+  {
+   "id": "2611.19536v1",
+   "title": "Agent Authenticator: Passkey-Grade, Hardware-Bound Authentication for AI Agents",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2611.19536v1",
+   "score": 4,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.08516v1",
+   "title": "Aegis OS: A Transactional Multi-Tenant Operating System Runtime for Eliminating Authorization Fatigue in Autonomous Coding Agents",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2611.08516v1",
+   "score": 4,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.28763v1",
+   "title": "Who Is Prompt-Injecting Coding Agents? An Empirical Study of Hidden AI-Directed Text on GitHub",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2611.28763v1",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.26553v1",
+   "title": "Replication of Agentic Security Events: Audit and Investigation (ROGUE-AI)",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2611.26553v1",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.19090v1",
+   "title": "When the Spec Sheet Lies: Injection Attacks on LLM-Generated Compliance Artifacts",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2611.19090v1",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.00725v1",
+   "title": "The Long Con on the Web: Earn-then-Exploit Fraud Attacks against Coding Agents",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2611.00725v1",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2610.22987v1",
+   "title": "From Approval to Abuse: Privilege Escalation Attacks on Harness-Protected Coding Agents",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2610.22987v1",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2610.14488v1",
+   "title": "Names Are Not Objects: Object-Bound Confinement for Compromised AI Coding Agents",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2610.14488v1",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2610.09264v1",
+   "title": "Package Hallucination Attacks on Coding Agents through Prompt Injection in Rule Files",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2610.09264v1",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2609.36817v1",
+   "title": "pikit: A Composable Toolkit for Indirect Prompt Injection Research and Evaluation",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2609.36817v1",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2609.19587v2",
+   "title": "Red-Teaming Auto Mode: Improving Blocking Classifiers Against Malign Coding Agents",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2609.19587v2",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.03092v1",
+   "title": "Avatar Intelligence: Amplifying Human Agency Through Persistent Personal Agents",
+   "perspective": "oversight",
+   "url": "https://arxiv.org/abs/2611.03092v1",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2610.35835v3",
+   "title": "I-HITL: Inalienable Human-in-the-Loop",
+   "perspective": "oversight",
+   "url": "https://arxiv.org/abs/2610.35835v3",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2610.30445v1",
+   "title": "A Three-Pillar Governance Framework for Safe and Trustworthy AI Agents",
+   "perspective": "oversight",
+   "url": "https://arxiv.org/abs/2610.30445v1",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2611.02566v2",
+   "title": "CR-Bench-v2: Evaluating the Real-World Utility of AI Code Review Agents",
+   "perspective": "quality",
+   "url": "https://arxiv.org/abs/2611.02566v2",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2610.36010v1",
+   "title": "CIVER: Causal Intervention Verification for Reliable Code Review",
+   "perspective": "quality",
+   "url": "https://arxiv.org/abs/2610.36010v1",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2609.37405v1",
+   "title": "Complexity-Aware Evaluation of LLM Comprehension",
+   "perspective": "quality",
+   "url": "https://arxiv.org/abs/2609.37405v1",
+   "score": 3,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2611.32917v1",
+   "title": "SOARS: System One Assisted Reranking for Agentic Search",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.32917v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.31233v1",
+   "title": "TowerBridge: Bridging the Dual-Encoder Modality Gap via Weight-Space Programming",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.31233v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.31065v1",
+   "title": "Decoupling Solving from Abstention: Single-Rollout Conformal Risk Control for Hard-Budget LLM Reasoning",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.31065v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.30873v1",
+   "title": "Semantic-aware Decoding for Diverse Text-to-SQL under Schema Ambiguity",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.30873v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.28667v1",
+   "title": "When to Test, Repair, or Regenerate: Decision-Guided Efficient RTL Generation",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.28667v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.28368v1",
+   "title": "Schedule, Rank, Profile: Continuous Evaluation of LLM Agents in Games",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.28368v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.27326v1",
+   "title": "Reasoning in Fewer Tokens: Concept-Normalized Multilingual Scratchpads and Reversible Model-Adaptive Reasoning Codes",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.27326v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.26906v1",
+   "title": "Budget-Aware Predict-and-Verify Theorem Proving with Heterogeneous LLM Solvers",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.26906v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.25971v1",
+   "title": "Kameleo: In-Situ Activation-Precision Selection for Bit-Serial LLM Accelerators",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.25971v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.25247v1",
+   "title": "Retrieving Patristic References and Modelling Topics in Bullinger's Reformation Correspondence",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.25247v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.26657v1",
+   "title": "BitPrefill: W1.58A4 Tensor-Core Acceleration for Compute-Bound LLM Prefill",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.26657v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.24357v1",
+   "title": "Semantic Context Handoff with On-Demand Evidence for Long-Horizon Agents",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.24357v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.24043v1",
+   "title": "Compression Effects on Low-Resource Multilingual Translation",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.24043v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.23091v1",
+   "title": "BugGen 2.0: Rethinking the Roles of LLMs for Scalable RTL Bug Synthesis",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.23091v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.22589v1",
+   "title": "Adaptive LLM-Driven Honeypots vs. LLM-Driven Attackers: Does Narrative Coherence Improve Deception?",
+   "perspective": "cost",
+   "url": "https://arxiv.org/abs/2611.22589v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.11438v1",
+   "title": "When Coding Agents Get Arms: Safety Risks Across the Digital-Physical Boundary",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2611.11438v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2609.39678v2",
+   "title": "Aletheia: Permission-Minimality Testing for Coding-Agent Rules",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2609.39678v2",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2609.33910v1",
+   "title": "When Consent Outlives Context: Residual Authority Replay in Long-Lived Agents",
+   "perspective": "security",
+   "url": "https://arxiv.org/abs/2609.33910v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.34065v1",
+   "title": "How AI Is Reconfiguring Work in India: A Task-Based Framework for Understanding Augmentation, Displacement, New Roles and the Changing Structure of Jobs",
+   "perspective": "economics",
+   "url": "https://arxiv.org/abs/2611.34065v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:29Z"
+  },
+  {
+   "id": "2611.26942v1",
+   "title": "CodeReviewBench: An Automated Benchmark for Evaluating the Software Factory",
+   "perspective": "oversight",
+   "url": "https://arxiv.org/abs/2611.26942v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2610.34239v2",
+   "title": "Honesty Testing of LLMs and AI Agents: A Vision for Software Engineering",
+   "perspective": "oversight",
+   "url": "https://arxiv.org/abs/2610.34239v2",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2611.21624v1",
+   "title": "Trustworthy AI Teammates for Software Engineering: A Research Agenda for Lifecycle Context, Explainability, and Agentic Collaboration",
+   "perspective": "oversight",
+   "url": "https://arxiv.org/abs/2611.21624v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2608.23642v4",
+   "title": "AI Agents Push Humans Out of the Loop",
+   "perspective": "oversight",
+   "url": "https://arxiv.org/abs/2608.23642v4",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2611.32676v1",
+   "title": "AI-Generated Code Issues: A Taxonomy from Repository Histories, AI Conversations, and Developer Interviews",
+   "perspective": "quality",
+   "url": "https://arxiv.org/abs/2611.32676v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2611.29162v2",
+   "title": "Fixed or Deleted? External Feedback Lets Cheaper AI Coding Agents Repair Rule Violations",
+   "perspective": "quality",
+   "url": "https://arxiv.org/abs/2611.29162v2",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2611.19086v1",
+   "title": "Beyond Benchmarks: Evaluating Large Language Models and Agentic Patterns for Static Code Analysis Warning Classification",
+   "perspective": "quality",
+   "url": "https://arxiv.org/abs/2611.19086v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2611.18964v1",
+   "title": "Context Matters: Improving LLM-Based Code Summarization with Hierarchical Information",
+   "perspective": "quality",
+   "url": "https://arxiv.org/abs/2611.18964v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2611.18293v1",
+   "title": "PrivacyPR: A Dataset of Real-World Privacy Fixes for Benchmarking Privacy-Aware Code Review",
+   "perspective": "quality",
+   "url": "https://arxiv.org/abs/2611.18293v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2611.05251v1",
+   "title": "A semi-autonomous multi-agent pipeline for high-energy astrophysics research with enforced provenance and verifiable self-extension",
+   "perspective": "quality",
+   "url": "https://arxiv.org/abs/2611.05251v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2610.33509v2",
+   "title": "Can Agentic Code Review Catch Vulnerabilities Before They Are Merged?",
+   "perspective": "quality",
+   "url": "https://arxiv.org/abs/2610.33509v2",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2610.21914v1",
+   "title": "CodeHealth Predicts the Token Cost of Agentic Code Review: A Pre-Registered Study of 465 Agent-Authored Pull Requests",
+   "perspective": "quality",
+   "url": "https://arxiv.org/abs/2610.21914v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  },
+  {
+   "id": "2611.23346v1",
+   "title": "Securing and Auditing Long-Horizon LLM Agents: State-Transfer Auditing and Controls in the Agent Harness",
+   "perspective": "reliability",
+   "url": "https://arxiv.org/abs/2611.23346v1",
+   "score": 2,
+   "found_at": "2026-11-28T04:19:30Z"
+  }
+ ],
+ "declined": {},
+ "errors": [],
+ "at": "2026-11-28T04:19:31Z"
+}

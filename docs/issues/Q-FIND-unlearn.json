@@ -1,7 +1,7 @@
 {
   "id": "Q-FIND-unlearn",
   "title": "Q-FIND-unlearn: make https://unlearn.ultrastable.org/ findable (3 gaps)",
-  "body": "**Owner:** executor\n**Trigger:** findable workflow, daily\n**Done check:** cmd:python3 -m foundation findable --probe unlearn\n**Prediction:** findable_gaps <= 0 within 168 h\n**Out of scope:** paid listings, new accounts, and any page that is not this property's own\n**Closing probe:** cmd:python3 -m foundation findable --probe unlearn\n**Status:** closed\n\nhttps://unlearn.ultrastable.org/ is missing what search engines and AI agents read: Open Graph title; schema.org JSON-LD; no llms.txt. Fix the property's own pages (shared seed modules first, so every system gets it). Closed by the same daily reading.\n\n**Disposition:** shelved (ttl, 2026-11-26T18:08:03Z, DISPOSE-1)\n\n**Evidence:** open 10.2 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** executor\n**Trigger:** findable workflow, daily\n**Done check:** cmd:python3 -m foundation findable --probe unlearn\n**Prediction:** findable_gaps <= 0 within 168 h\n**Out of scope:** paid listings, new accounts, and any page that is not this property's own\n**Closing probe:** cmd:python3 -m foundation findable --probe unlearn\n**Status:** open\n\nhttps://unlearn.ultrastable.org/ is missing what search engines and AI agents read: Open Graph title; schema.org JSON-LD; no llms.txt. Fix the property's own pages (shared seed modules first, so every system gets it). Closed by the same daily reading.",
   "status": "open",
   "labels": [
     "role:executor",

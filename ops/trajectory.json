@@ -3,9 +3,8 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 173800,
+   "recent7": 171716,
    "series": [
-    0,
     0,
     0,
     0,
@@ -34,19 +33,19 @@
     1383,
     30834,
     55832,
-    66015
+    72504,
+    3704
    ],
-   "share_recent": 0.379,
-   "share_trend": 0.249,
-   "slope": 1055.6861,
-   "total": 194811
+   "share_recent": 0.427,
+   "share_trend": 0.261,
+   "slope": 1031.8812,
+   "total": 205004
   },
   {
    "area": "doctrine",
-   "quiet_days": 0,
-   "recent7": 66004,
+   "quiet_days": 1,
+   "recent7": 49507,
    "series": [
-    0,
     0,
     0,
     0,
@@ -75,19 +74,19 @@
     2,
     17148,
     4563,
-    8541
+    8559,
+    0
    ],
-   "share_recent": 0.144,
-   "share_trend": 0.06,
-   "slope": 408.2191,
-   "total": 140317
+   "share_recent": 0.123,
+   "share_trend": 0.047,
+   "slope": 345.8948,
+   "total": 140335
   },
   {
    "area": "workers",
-   "quiet_days": 0,
-   "recent7": 50637,
+   "quiet_days": 1,
+   "recent7": 50314,
    "series": [
-    0,
     0,
     0,
     0,
@@ -116,19 +115,19 @@
     0,
     894,
     35661,
-    13522
+    13522,
+    0
    ],
-   "share_recent": 0.11,
-   "share_trend": 0.178,
-   "slope": 457.6661,
+   "share_recent": 0.125,
+   "share_trend": 0.177,
+   "slope": 402.6712,
    "total": 123601
   },
   {
    "area": "foundation",
-   "quiet_days": 0,
-   "recent7": 23821,
+   "quiet_days": 1,
+   "recent7": 16666,
    "series": [
-    0,
     0,
     0,
     0,
@@ -157,19 +156,19 @@
     0,
     8601,
     2236,
-    4788
+    4788,
+    0
    ],
-   "share_recent": 0.052,
-   "share_trend": -0.007,
-   "slope": 153.0067,
+   "share_recent": 0.041,
+   "share_trend": -0.01,
+   "slope": 130.5341,
    "total": 50507
   },
   {
    "area": "instances",
-   "quiet_days": 0,
-   "recent7": 22657,
+   "quiet_days": 1,
+   "recent7": 21036,
    "series": [
-    0,
     0,
     0,
     0,
@@ -198,16 +197,17 @@
     0,
     11406,
     5128,
-    87
+    87,
+    0
    ],
-   "share_recent": 0.049,
-   "share_trend": -0.003,
-   "slope": 134.9566,
+   "share_recent": 0.052,
+   "share_trend": -0.005,
+   "slope": 117.0879,
    "total": 40160
   },
   {
    "area": "qnfo-platform-thread",
-   "quiet_days": 12,
+   "quiet_days": 13,
    "recent7": 0,
    "series": [
     0,
@@ -221,13 +221,13 @@
     0,
     0,
     0,
-    0,
     19412,
     0,
     0,
     0,
     0,
     19412,
+    0,
     0,
     0,
     0,
@@ -242,16 +242,15 @@
     0
    ],
    "share_recent": 0.0,
-   "share_trend": -0.091,
-   "slope": 0.0,
+   "share_trend": -0.086,
+   "slope": -17.2743,
    "total": 38824
   },
   {
    "area": "seed/worker",
-   "quiet_days": 0,
-   "recent7": 20770,
+   "quiet_days": 1,
+   "recent7": 18204,
    "series": [
-    0,
     0,
     0,
     0,
@@ -280,19 +279,19 @@
     0,
     3778,
     8630,
-    4923
+    4923,
+    0
    ],
    "share_recent": 0.045,
-   "share_trend": 0.036,
-   "slope": 136.5066,
+   "share_trend": 0.026,
+   "slope": 121.299,
    "total": 34179
   },
   {
    "area": "ip",
-   "quiet_days": 6,
-   "recent7": 14241,
+   "quiet_days": 7,
+   "recent7": 0,
    "series": [
-    0,
     0,
     0,
     0,
@@ -321,19 +320,19 @@
     0,
     0,
     0,
+    0,
     0
    ],
-   "share_recent": 0.031,
-   "share_trend": -0.083,
-   "slope": 35.4703,
+   "share_recent": 0.0,
+   "share_trend": -0.079,
+   "slope": 21.57,
    "total": 31241
   },
   {
    "area": "tests/foundation",
-   "quiet_days": 0,
-   "recent7": 19266,
+   "quiet_days": 1,
+   "recent7": 16844,
    "series": [
-    0,
     0,
     0,
     0,
@@ -362,16 +361,17 @@
     0,
     3825,
     7583,
-    4990
+    4990,
+    0
    ],
    "share_recent": 0.042,
-   "share_trend": 0.011,
-   "slope": 121.6298,
+   "share_trend": 0.009,
+   "slope": 108.4552,
    "total": 29610
   },
   {
    "area": "doctrine/schemas",
-   "quiet_days": 0,
+   "quiet_days": 1,
    "recent7": 19846,
    "series": [
     0,
@@ -400,22 +400,21 @@
     0,
     0,
     0,
-    0,
     18135,
     816,
-    895
+    895,
+    0
    ],
-   "share_recent": 0.043,
-   "share_trend": 0.029,
-   "slope": 111.5377,
+   "share_recent": 0.049,
+   "share_trend": 0.028,
+   "slope": 102.7075,
    "total": 19846
   },
   {
    "area": "platform",
-   "quiet_days": 0,
-   "recent7": 196,
+   "quiet_days": 1,
+   "recent7": 136,
    "series": [
-    0,
     0,
     0,
     0,
@@ -444,16 +443,17 @@
     0,
     34,
     58,
-    28
+    28,
+    0
    ],
    "share_recent": 0.0,
-   "share_trend": -0.087,
-   "slope": -14.2549,
+   "share_trend": -0.083,
+   "slope": -20.7457,
    "total": 14588
   },
   {
    "area": "kit",
-   "quiet_days": 15,
+   "quiet_days": 16,
    "recent7": 0,
    "series": [
     0,
@@ -467,10 +467,10 @@
     0,
     0,
     0,
-    0,
     4833,
     0,
     4833,
+    0,
     0,
     0,
     0,
@@ -488,16 +488,15 @@
     0
    ],
    "share_recent": 0.0,
-   "share_trend": -0.059,
-   "slope": -6.4512,
+   "share_trend": -0.057,
+   "slope": -10.7519,
    "total": 9666
   },
   {
    "area": "org-repos",
-   "quiet_days": 17,
+   "quiet_days": 18,
    "recent7": 0,
    "series": [
-    0,
     0,
     0,
     0,
@@ -526,19 +525,19 @@
     0,
     0,
     0,
+    0,
     0
    ],
    "share_recent": 0.0,
-   "share_trend": -0.058,
-   "slope": -10.5584,
+   "share_trend": -0.056,
+   "slope": -14.7818,
    "total": 9492
   },
   {
    "area": "seed/scripts",
-   "quiet_days": 0,
-   "recent7": 7178,
+   "quiet_days": 1,
+   "recent7": 6135,
    "series": [
-    0,
     0,
     0,
     0,
@@ -567,19 +566,19 @@
     0,
     2015,
     1052,
-    2529
+    2529,
+    0
    ],
-   "share_recent": 0.016,
+   "share_recent": 0.015,
    "share_trend": 0.008,
-   "slope": 41.0834,
+   "slope": 37.0932,
    "total": 8968
   },
   {
    "area": "local-workspace",
-   "quiet_days": 17,
+   "quiet_days": 18,
    "recent7": 0,
    "series": [
-    0,
     0,
     0,
     0,
@@ -608,19 +607,19 @@
     0,
     0,
     0,
+    0,
     0
    ],
    "share_recent": 0.0,
-   "share_trend": -0.05,
-   "slope": -9.0211,
+   "share_trend": -0.048,
+   "slope": -12.6296,
    "total": 8110
   },
   {
    "area": "scripts",
-   "quiet_days": 0,
-   "recent7": 1957,
+   "quiet_days": 1,
+   "recent7": 1335,
    "series": [
-    0,
     0,
     0,
     0,
@@ -649,19 +648,19 @@
     0,
     392,
     174,
-    497
+    497,
+    0
    ],
-   "share_recent": 0.004,
-   "share_trend": -0.014,
-   "slope": 12.5135,
+   "share_recent": 0.003,
+   "share_trend": -0.015,
+   "slope": 8.9744,
    "total": 7954
   },
   {
    "area": "seed/standards",
-   "quiet_days": 0,
-   "recent7": 2653,
+   "quiet_days": 1,
+   "recent7": 2601,
    "series": [
-    0,
     0,
     0,
     0,
@@ -690,19 +689,19 @@
     0,
     2227,
     124,
-    211
+    211,
+    0
    ],
    "share_recent": 0.006,
    "share_trend": -0.001,
-   "slope": 20.1164,
+   "slope": 16.9684,
    "total": 7075
   },
   {
    "area": "dashboard",
-   "quiet_days": 0,
-   "recent7": 4427,
+   "quiet_days": 1,
+   "recent7": 3264,
    "series": [
-    0,
     0,
     0,
     0,
@@ -731,19 +730,19 @@
     508,
     0,
     868,
-    499
+    499,
+    0
    ],
-   "share_recent": 0.01,
+   "share_recent": 0.008,
    "share_trend": 0.002,
-   "slope": 22.5931,
+   "slope": 19.7402,
    "total": 6412
   },
   {
    "area": "research",
    "quiet_days": 0,
-   "recent7": 5337,
+   "recent7": 3922,
    "series": [
-    0,
     0,
     0,
     0,
@@ -772,19 +771,19 @@
     0,
     1185,
     220,
-    2225
+    2265,
+    40
    ],
-   "share_recent": 0.012,
+   "share_recent": 0.01,
    "share_trend": 0.008,
-   "slope": 28.8436,
-   "total": 5344
+   "slope": 26.9642,
+   "total": 5424
   },
   {
    "area": "specs",
-   "quiet_days": 1,
+   "quiet_days": 2,
    "recent7": 875,
    "series": [
-    0,
     0,
     0,
     0,
@@ -813,19 +812,19 @@
     0,
     0,
     875,
+    0,
     0
    ],
    "share_recent": 0.002,
    "share_trend": 0.002,
-   "slope": 11.6877,
+   "slope": 9.3998,
    "total": 5142
   },
   {
    "area": "seed/autonomy",
-   "quiet_days": 0,
-   "recent7": 4200,
+   "quiet_days": 1,
+   "recent7": 3955,
    "series": [
-    0,
     0,
     0,
     0,
@@ -854,19 +853,19 @@
     0,
     2427,
     454,
-    1013
+    1013,
+    0
    ],
-   "share_recent": 0.009,
-   "share_trend": 0.007,
-   "slope": 25.3878,
+   "share_recent": 0.01,
+   "share_trend": 0.006,
+   "slope": 23.1132,
    "total": 5112
   },
   {
    "area": "deploy/sibling-patches",
-   "quiet_days": 15,
+   "quiet_days": 16,
    "recent7": 0,
    "series": [
-    0,
     0,
     0,
     0,
@@ -895,19 +894,19 @@
     0,
     0,
     0,
+    0,
     0
    ],
    "share_recent": 0.0,
-   "share_trend": -0.031,
-   "slope": -1.1362,
+   "share_trend": -0.03,
+   "slope": -3.4085,
    "total": 5107
   },
   {
    "area": ".github",
-   "quiet_days": 0,
-   "recent7": 1655,
+   "quiet_days": 1,
+   "recent7": 1064,
    "series": [
-    0,
     0,
     0,
     0,
@@ -936,19 +935,19 @@
     0,
     617,
     214,
-    111
+    111,
+    0
    ],
-   "share_recent": 0.004,
-   "share_trend": -0.005,
-   "slope": 9.5764,
+   "share_recent": 0.003,
+   "share_trend": -0.006,
+   "slope": 7.5315,
    "total": 4596
   },
   {
    "area": "business",
-   "quiet_days": 6,
-   "recent7": 1427,
+   "quiet_days": 7,
+   "recent7": 0,
    "series": [
-    0,
     0,
     0,
     0,
@@ -977,19 +976,19 @@
     0,
     0,
     0,
+    0,
     0
    ],
-   "share_recent": 0.003,
+   "share_recent": 0.0,
    "share_trend": -0.009,
-   "slope": 4.4392,
+   "slope": 2.6968,
    "total": 3916
   },
   {
    "area": "outreach",
-   "quiet_days": 4,
-   "recent7": 127,
+   "quiet_days": 5,
+   "recent7": 125,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1018,15 +1017,16 @@
     0,
     0,
     0,
+    0,
     0
    ],
    "share_recent": 0.0,
    "share_trend": -0.011,
-   "slope": 0.1422,
+   "slope": -1.5597,
    "total": 3825
   }
  ],
- "at": "2026-11-27T17:04:26Z",
+ "at": "2026-11-28T06:08:43Z",
  "days": 30,
  "files": [
   {
@@ -1059,11 +1059,11 @@
   },
   {
    "days": 15,
-   "file": "doctrine/decision-ledger.json"
+   "file": "README.md"
   },
   {
    "days": 15,
-   "file": "README.md"
+   "file": "doctrine/decision-ledger.json"
   },
   {
    "days": 13,
@@ -1072,16 +1072,16 @@
  ],
  "findings": [
   {
-   "evidence": "recent7 173800 lines, prior weekly mean 6394.7",
+   "evidence": "recent7 171716 lines, prior weekly mean 10131.1",
    "id": "site",
    "kind": "hotspot",
-   "why": "site drew 38% of the last week's change, 27.2x its earlier weekly pace"
+   "why": "site drew 43% of the last week's change, 16.9x its earlier weekly pace"
   },
   {
-   "evidence": "share 3% then 27%",
+   "evidence": "share 3% then 29%",
    "id": "site",
    "kind": "drift",
-   "why": "site's share of attention moved 25 points between the first and second half of the window"
+   "why": "site's share of attention moved 26 points between the first and second half of the window"
   },
   {
    "evidence": "share 0% then 18%",
@@ -1090,52 +1090,52 @@
    "why": "workers's share of attention moved 18 points between the first and second half of the window"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 458306",
+   "evidence": "quiet_days 7; system change in the last 7 days 401787",
+   "id": "ip",
+   "kind": "neglected",
+   "why": "ip had 31241 lines of change, then nothing for 7 days while the rest of the system moved"
+  },
+  {
+   "evidence": "quiet_days 7; system change in the last 7 days 401787",
+   "id": "business",
+   "kind": "neglected",
+   "why": "business had 3916 lines of change, then nothing for 7 days while the rest of the system moved"
+  },
+  {
+   "evidence": "quiet_days 8; system change in the last 7 days 401787",
    "id": "demos",
    "kind": "neglected",
-   "why": "demos had 1346 lines of change, then nothing for 7 days while the rest of the system moved"
+   "why": "demos had 1346 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 8; system change in the last 7 days 458306",
+   "evidence": "quiet_days 9; system change in the last 7 days 401787",
    "id": "GLOSSARY.md",
    "kind": "neglected",
-   "why": "GLOSSARY.md had 961 lines of change, then nothing for 8 days while the rest of the system moved"
+   "why": "GLOSSARY.md had 961 lines of change, then nothing for 9 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 458306",
+   "evidence": "quiet_days 8; system change in the last 7 days 401787",
    "id": "deploy/transfer",
    "kind": "neglected",
-   "why": "deploy/transfer had 510 lines of change, then nothing for 7 days while the rest of the system moved"
+   "why": "deploy/transfer had 510 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 458306",
+   "evidence": "quiet_days 8; system change in the last 7 days 401787",
    "id": "products",
    "kind": "neglected",
-   "why": "products had 507 lines of change, then nothing for 7 days while the rest of the system moved"
+   "why": "products had 507 lines of change, then nothing for 8 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 9; system change in the last 7 days 458306",
+   "evidence": "quiet_days 10; system change in the last 7 days 401787",
    "id": "docs/ops",
    "kind": "neglected",
-   "why": "docs/ops had 396 lines of change, then nothing for 9 days while the rest of the system moved"
+   "why": "docs/ops had 396 lines of change, then nothing for 10 days while the rest of the system moved"
   },
   {
-   "evidence": "quiet_days 7; system change in the last 7 days 458306",
-   "id": "src",
+   "evidence": "quiet_days 7; system change in the last 7 days 401787",
+   "id": "docs/ip",
    "kind": "neglected",
-   "why": "src had 230 lines of change, then nothing for 7 days while the rest of the system moved"
-  },
-  {
-   "evidence": "quiet_days 11; system change in the last 7 days 458306",
-   "id": "docs/architecture",
-   "kind": "neglected",
-   "why": "docs/architecture had 192 lines of change, then nothing for 11 days while the rest of the system moved"
-  },
-  {
-   "evidence": "quiet_days 10; system change in the last 7 days 458306",
-   "id": "seed/self",
-   "kind": "neglected",
-   "why": "seed/self had 151 lines of change, then nothing for 10 days while the rest of the system moved"
+   "why": "docs/ip had 268 lines of change, then nothing for 7 days while the rest of the system moved"
   },
   {
    "evidence": "days with changes: 17",
@@ -1168,40 +1168,39 @@
    "why": ".github/workflows/checks.yml was rewritten on 16 of 30 days"
   },
   {
-   "evidence": "quiet_days 12",
+   "evidence": "quiet_days 13",
    "id": "loop:bindings",
    "kind": "neglected",
-   "why": "the bindings ledger had 15 rows, then none for 12 days: the loop that writes it has gone quiet"
+   "why": "the bindings ledger had 15 rows, then none for 13 days: the loop that writes it has gone quiet"
   },
   {
-   "evidence": "quiet_days 10",
+   "evidence": "quiet_days 11",
    "id": "loop:ciwatch",
    "kind": "neglected",
-   "why": "the ciwatch ledger had 24 rows, then none for 10 days: the loop that writes it has gone quiet"
+   "why": "the ciwatch ledger had 24 rows, then none for 11 days: the loop that writes it has gone quiet"
   },
   {
-   "evidence": "quiet_days 12",
+   "evidence": "quiet_days 13",
    "id": "loop:issue-lifecycle",
    "kind": "neglected",
-   "why": "the issue-lifecycle ledger had 203 rows, then none for 12 days: the loop that writes it has gone quiet"
+   "why": "the issue-lifecycle ledger had 203 rows, then none for 13 days: the loop that writes it has gone quiet"
   },
   {
-   "evidence": "quiet_days 12",
+   "evidence": "quiet_days 13",
    "id": "loop:metric-loop",
    "kind": "neglected",
-   "why": "the metric-loop ledger had 10 rows, then none for 12 days: the loop that writes it has gone quiet"
+   "why": "the metric-loop ledger had 10 rows, then none for 13 days: the loop that writes it has gone quiet"
   },
   {
-   "evidence": "quiet_days 7",
+   "evidence": "quiet_days 8",
    "id": "loop:told",
    "kind": "neglected",
-   "why": "the told ledger had 6 rows, then none for 7 days: the loop that writes it has gone quiet"
+   "why": "the told ledger had 6 rows, then none for 8 days: the loop that writes it has gone quiet"
   }
  ],
- "history_days": 18,
+ "history_days": 19,
  "issues": {
   "backlog_series": [
-   0,
    0,
    0,
    0,
@@ -1230,18 +1229,18 @@
    -1222,
    -1649,
    -2643,
-   -3280
+   -3318,
+   -3299
   ],
-  "closed": 4780,
-  "opened": 1500
+  "closed": 4820,
+  "opened": 1521
  },
  "loops": [
   {
    "loop": "agent-cost",
-   "quiet_days": 0,
+   "quiet_days": 1,
    "rows": 65,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1270,16 +1269,16 @@
     0,
     0,
     8,
-    4
+    4,
+    0
    ],
-   "slope": 0.2618
+   "slope": 0.2329
   },
   {
    "loop": "agentwork",
-   "quiet_days": 0,
+   "quiet_days": 1,
    "rows": 15,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1308,16 +1307,16 @@
     0,
     0,
     2,
-    1
+    1,
+    0
    ],
-   "slope": 0.0625
+   "slope": 0.0558
   },
   {
    "loop": "bindings",
-   "quiet_days": 12,
+   "quiet_days": 13,
    "rows": 15,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1346,16 +1345,16 @@
     0,
     0,
     0,
+    0,
     0
    ],
-   "slope": 0.0113
+   "slope": 0.0047
   },
   {
    "loop": "boot-accept",
-   "quiet_days": 0,
-   "rows": 6,
+   "quiet_days": 1,
+   "rows": 7,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1384,16 +1383,16 @@
     0,
     4,
     1,
-    1
+    2,
+    0
    ],
-   "slope": 0.0347
+   "slope": 0.038
   },
   {
    "loop": "checks-session",
-   "quiet_days": 0,
+   "quiet_days": 1,
    "rows": 109,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1422,16 +1421,16 @@
     0,
     7,
     2,
-    1
+    1,
+    0
    ],
-   "slope": 0.2894
+   "slope": 0.2409
   },
   {
    "loop": "ciwatch",
-   "quiet_days": 10,
+   "quiet_days": 11,
    "rows": 24,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1460,16 +1459,16 @@
     0,
     0,
     0,
+    0,
     0
    ],
-   "slope": 0.0481
+   "slope": 0.0374
   },
   {
    "loop": "contracts",
-   "quiet_days": 2,
+   "quiet_days": 3,
    "rows": 1071,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1498,13 +1497,14 @@
     0,
     704,
     0,
+    0,
     0
    ],
-   "slope": 4.3237
+   "slope": 3.8472
   },
   {
    "loop": "cost",
-   "quiet_days": 0,
+   "quiet_days": 1,
    "rows": 12,
    "series": [
     0,
@@ -1521,7 +1521,6 @@
     0,
     0,
     0,
-    0,
     1,
     0,
     0,
@@ -1536,16 +1535,16 @@
     1,
     0,
     1,
-    1
+    1,
+    0
    ],
-   "slope": 0.0454
+   "slope": 0.04
   },
   {
    "loop": "criticality",
-   "quiet_days": 0,
+   "quiet_days": 1,
    "rows": 15,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1574,16 +1573,16 @@
     1,
     0,
     1,
-    1
+    1,
+    0
    ],
-   "slope": 0.0492
+   "slope": 0.0425
   },
   {
    "loop": "deploys",
-   "quiet_days": 0,
-   "rows": 1694,
+   "quiet_days": 1,
+   "rows": 1709,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1612,16 +1611,16 @@
     0,
     212,
     268,
-    300
+    315,
+    0
    ],
-   "slope": 7.2076
+   "slope": 6.5439
   },
   {
    "loop": "executor-log",
-   "quiet_days": 0,
+   "quiet_days": 1,
    "rows": 25,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1650,16 +1649,16 @@
     0,
     0,
     3,
-    1
+    1,
+    0
    ],
-   "slope": 0.0963
+   "slope": 0.0852
   },
   {
    "loop": "improvements",
-   "quiet_days": 0,
+   "quiet_days": 1,
    "rows": 975,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1688,16 +1687,16 @@
     0,
     65,
     25,
-    10
+    10,
+    0
    ],
-   "slope": 2.03
+   "slope": 1.5962
   },
   {
    "loop": "issue-lifecycle",
-   "quiet_days": 12,
+   "quiet_days": 13,
    "rows": 203,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1726,16 +1725,16 @@
     0,
     0,
     0,
+    0,
     0
    ],
-   "slope": 0.0149
+   "slope": -0.0754
   },
   {
    "loop": "metric-loop",
-   "quiet_days": 12,
+   "quiet_days": 13,
    "rows": 10,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1764,13 +1763,14 @@
     0,
     0,
     0,
+    0,
     0
    ],
-   "slope": 0.0111
+   "slope": 0.0067
   },
   {
    "loop": "perception-cost",
-   "quiet_days": 0,
+   "quiet_days": 1,
    "rows": 1,
    "series": [
     0,
@@ -1801,17 +1801,16 @@
     0,
     0,
     0,
-    0,
-    1
+    1,
+    0
    ],
-   "slope": 0.0065
+   "slope": 0.006
   },
   {
    "loop": "provenance",
-   "quiet_days": 0,
-   "rows": 423,
+   "quiet_days": 1,
+   "rows": 497,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1840,16 +1839,16 @@
     1,
     153,
     109,
-    90
+    164,
+    0
    ],
-   "slope": 2.3766
+   "slope": 2.6329
   },
   {
    "loop": "resilience",
    "quiet_days": 0,
-   "rows": 645,
+   "rows": 725,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1878,16 +1877,16 @@
     55,
     62,
     154,
-    108
+    149,
+    39
    ],
-   "slope": 3.339
+   "slope": 3.5499
   },
   {
    "loop": "saydo",
    "quiet_days": 0,
-   "rows": 559,
+   "rows": 638,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1916,16 +1915,16 @@
     55,
     62,
     143,
-    99
+    140,
+    38
    ],
-   "slope": 3.0013
+   "slope": 3.244
   },
   {
    "loop": "seed-launches",
-   "quiet_days": 0,
-   "rows": 17,
+   "quiet_days": 1,
+   "rows": 19,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1954,16 +1953,16 @@
     0,
     8,
     3,
-    2
+    4,
+    0
    ],
-   "slope": 0.0914
+   "slope": 0.0959
   },
   {
    "loop": "told",
-   "quiet_days": 7,
+   "quiet_days": 8,
    "rows": 6,
    "series": [
-    0,
     0,
     0,
     0,
@@ -1992,16 +1991,16 @@
     0,
     0,
     0,
+    0,
     0
    ],
-   "slope": 0.0067
+   "slope": 0.004
   },
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 691,
+   "rows": 772,
    "series": [
-    0,
     0,
     0,
     0,
@@ -2030,16 +2029,16 @@
     55,
     88,
     189,
-    162
+    206,
+    37
    ],
-   "slope": 3.8174
+   "slope": 4.0129
   },
   {
    "loop": "ultrastability",
    "quiet_days": 0,
-   "rows": 24415,
+   "rows": 27496,
    "series": [
-    0,
     0,
     0,
     0,
@@ -2068,16 +2067,16 @@
     2312,
     2535,
     5558,
-    3884
+    5483,
+    1482
    ],
-   "slope": 127.4627
+   "slope": 135.7655
   },
   {
    "loop": "worker-merge-evidence",
-   "quiet_days": 0,
+   "quiet_days": 1,
    "rows": 35,
    "series": [
-    0,
     0,
     0,
     0,
@@ -2106,16 +2105,16 @@
     0,
     7,
     1,
-    3
+    3,
+    0
    ],
-   "slope": 0.1577
+   "slope": 0.1422
   },
   {
    "loop": "yearsim",
    "quiet_days": 0,
-   "rows": 560,
+   "rows": 639,
    "series": [
-    0,
     0,
     0,
     0,
@@ -2144,19 +2143,19 @@
     55,
     62,
     143,
-    99
+    140,
+    38
    ],
-   "slope": 3.0051
+   "slope": 3.2474
   }
  ],
  "observed": {
   "ci_unavailable": {
-   "days": 18,
+   "days": 19,
    "events": 109,
-   "rate_year": 2210.3,
-   "recent_year": 730.0,
+   "rate_year": 2093.9,
+   "recent_year": 669.2,
    "series": [
-    0,
     0,
     0,
     0,
@@ -2185,14 +2184,15 @@
     0,
     7,
     2,
-    1
+    1,
+    0
    ],
-   "trend": -0.75
+   "trend": -0.76
   },
   "conflict_merges": {
-   "days": 18,
+   "days": 19,
    "events": 8,
-   "rate_year": 162.2,
+   "rate_year": 153.7,
    "recent_year": 60.8,
    "series": [
     0,
@@ -2209,7 +2209,6 @@
     0,
     0,
     0,
-    0,
     1,
     0,
     1,
@@ -2224,14 +2223,15 @@
     0,
     0,
     0,
-    1
+    1,
+    0
    ],
-   "trend": -0.71
+   "trend": -0.69
   },
   "deploy_not_live": {
-   "days": 18,
+   "days": 19,
    "events": 1,
-   "rate_year": 20.3,
+   "rate_year": 19.2,
    "recent_year": 0.0,
    "series": [
     0,
@@ -2256,8 +2256,8 @@
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -2268,7 +2268,7 @@
    "trend": -0.9
   },
   "reverts": {
-   "days": 18,
+   "days": 19,
    "events": 0,
    "rate_year": 0.0,
    "recent_year": 0.0,
@@ -2307,5 +2307,5 @@
    "trend": 0.0
   }
  },
- "today": "2026-11-27"
+ "today": "2026-11-28"
 }

@@ -1,0 +1,12 @@
+{
+  "id": "Q-SCOUT-crewai-b3cef031",
+  "title": "Q-SCOUT-crewai-b3cef031: 1.15.45 (crewai)",
+  "body": "**Owner:** product-manager\n**Trigger:** every scout pass\n**Done check:** cmd:python3 -m foundation scout --decided Q-SCOUT-crewai-b3cef031\n**Prediction:** scout_undecided <= 0 within 336 h\n**Status:** open\n\nScout finding from crewai (agent orchestration), score 5.0, matched gap:executor-merged-pr, gap:capability-evidence-precision.\n1.15.45\nhttps://github.com/crewAIInc/crewAI/releases/tag/1.15.45\n\n What's Changed \n Features \n \n Add ability to save HTML or markdown output as a PDF artifact. \n \n Bug Fixes \n \n Fix dependency issue by bumping e2b for Python &gt;=3.11 to pull patched wcmatch. \n Wrap file-like inputs in  normalize_input_files . \n Reject negative checkpoint prune retention counts. \n\n\nDecide: adopt (ship the change that closes a gap or adds the capability) or decline with a reason, then record `python3 -m foundation scout --adopt Q-SCOUT-crewai-b3cef031 --outcome adopted|declined --reason ...`. The outcome re-weights this source.\n\n**Out of scope:** work the release note does not name, and a decision recorded without a reason.\n\n**Closing probe:** cmd:python3 -m foundation scout --decided Q-SCOUT-crewai-b3cef031",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "scout"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}
