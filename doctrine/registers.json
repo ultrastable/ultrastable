@@ -888,6 +888,18 @@
    "status": "open",
    "cadence_ticks": 144,
    "probe": "grep:foundation/failmine.py::def probe"
+  },
+  {
+   "id": "fm-stale-flow",
+   "trigger": "a tenant issue stays open past 48 hours or a pull request past an hour with no disposition (Open Questions #11, #13, #16 and 14 base-rates issues, 2026-11-26 to 28)",
+   "symptom": "queue items and fix pull requests sit idle while every run reports green",
+   "blast_radius": "every tenant loop that works from issues, and the claim that the system resolves its own work",
+   "detection": "python3 -m foundation.tenant_flow",
+   "root_cause": "retries repeated their input, nothing capped attempts, a 200 reply with the wrong body read as a negative finding, tests were not run, and no job merged the system's own pull requests",
+   "remediation": "FLOW-AUDIT-1: the tenant-flow detector reads every tenant daily and files Q-AUDIT-tenant-flow; AUTOMERGE-1 merges the fix; TEST-COVERAGE-1 and ATTEMPTS-CAP-1 hold the causes",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:foundation/tenant_flow.py::def findings"
   }
  ],
  "controls": [
