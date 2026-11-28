@@ -45,6 +45,22 @@ class CiWatch(unittest.TestCase):
         self.assertEqual(ciwatch.scan(self.d, False, lambda *a: (1, "nope"))[0]["result"], "unmeasured")
         self.assertEqual(len((self.d / ciwatch.LEDGER).read_text().splitlines()), 1)
 
+    def test_every_registered_tenant_is_watched_without_a_typed_entry(self):
+        (self.d / "doctrine/tenant-repos.json").write_text(json.dumps({"tenants": {"a": {"repo": "o/a"}, "b": {"repo": "o/r"}}}))
+        self.assertEqual(ciwatch.watched(self.d), ["o/r", "o/a"])
+
+    def test_a_queue_issue_open_past_the_limit_files_one_item_and_a_fresh_one_does_not(self):
+        import datetime as dt
+        now = dt.datetime(2026, 11, 28, tzinfo=dt.timezone.utc)
+        def gh(*a):
+            return (0, json.dumps([{"number": 3, "title": "old", "created_at": "2026-11-20T00:00:00Z", "comments": 1}, {"number": 9, "title": "new", "created_at": "2026-11-27T00:00:00Z", "comments": 0}])) if "issues?state=open" in " ".join(a) else (1, "unexpected")
+        rows = ciwatch.aged(self.d, True, gh, now); ciwatch.aged(self.d, True, gh, now)
+        self.assertEqual((rows[0]["result"], rows[0]["issues"]), ("filed", [3]))
+        files = list((self.d / "docs/issues").iterdir()); self.assertEqual(len(files), 1)
+        j = json.loads(files[0].read_text()); self.assertEqual(j["id"], "Q-AGED-r-aged-queue"); self.assertIn("--probe-aged o/r", j["body"]); self.assertNotIn("#9", j["body"])
+        self.assertEqual(ciwatch.aged(self.d, False, lambda *a: (1, "nope"), now)[0]["result"], "unmeasured")
+        self.assertEqual(ciwatch.probe_aged("o/r", self.d, gh), 1)
+
     def test_probe(self):
         self.assertEqual(ciwatch.probe("o/r", "ci", REPO, fake([r(1, "ci", "failure")], "")), 1)
         self.assertEqual(ciwatch.probe("o/r", "ci", REPO, fake([r(1, "ci", "success")], "")), 0)

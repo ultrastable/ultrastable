@@ -48,6 +48,18 @@ def latest(repo: str, run=gh) -> list[dict]:
     return out
 
 
+def watched(root=REPO, cfg=None) -> list[str]:
+    """The typed `repos` plus every registered tenant repository (doctrine/tenant-repos.json), so a new tenant is watched the day it is registered.
+    Measured 2026-11-28: base-rates and five other tenants were absent from the typed list, so nothing watched them."""
+    cfg, out = cfg or load(root), []
+    p = Path(root) / "doctrine/tenant-repos.json"
+    tenants = json.loads(p.read_text(encoding="utf-8")).get("tenants", {}) if p.is_file() else {}
+    for r in list(cfg["repos"]) + [t["repo"] for t in tenants.values() if t.get("repo")]:
+        if r not in out:
+            out.append(r)
+    return out
+
+
 def slug(repo: str, wf: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", f"{repo.split('/')[-1]}-{wf}".lower()).strip("-")
 
@@ -67,7 +79,7 @@ def item(repo: str, run: dict, tail: str) -> dict:
 def scan(root=REPO, apply=False, run=gh, now=None) -> list[dict]:
     root, cfg, rows, filed = Path(root), load(root), [], 0
     at = (now or dt.datetime.now(dt.timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
-    for repo in cfg["repos"]:
+    for repo in watched(root, cfg):
         try:
             runs = latest(repo, run)
         except RuntimeError as e:  # an unreadable repo is unmeasured, which is a finding, not a pass
@@ -97,6 +109,55 @@ def scan(root=REPO, apply=False, run=gh, now=None) -> list[dict]:
     return rows
 
 
+def aged_item(repo: str, old: list[dict], days: int) -> dict:
+    s = slug(repo, "aged-queue")
+    lines = "\n".join(f"- #{i['number']} {i['title']} (open since {i['created_at']}, {i['comments']} comment(s))" for i in old)
+    body = (f"**Owner:** staff\n**Trigger:** every ciwatch run\n**Done check:** cmd:python3 -m foundation ciwatch --probe-aged {repo}\n**Status:** open\n\n"
+            f"CIWATCH-1: {len(old)} queue issue(s) in {repo} have been open more than {days} days, so the loop that owns them is not closing them (a silent drop).\n{lines}\n\n"
+            "Read the loop's last comments on them and its latest run, find the root cause in the loop's code (a retry that repeats its input, a cap that never closes, a gate that can never pass), "
+            "fix it where the defect lives, and close the issue with a disposition. Do not close an issue by hand to clear this item.")
+    return {"id": f"Q-AGED-{s}", "title": f"Q-AGED-{s}: queue issues are idling open in {repo}", "body": body, "labels": ["role:staff", "aged-queue"], "milestone": "Now", "workstream": "Reliability"}
+
+
+def aged_issues(repo: str, cfg: dict, run=gh, now=None) -> list[dict]:
+    """Open `queue_label` issues older than `max_open_days`; raises RuntimeError if unreadable (unmeasured, never clean)."""
+    code, o = run("api", f"repos/{repo}/issues?state=open&labels={cfg['queue_label']}&per_page=100", "--jq", "[.[]|select(has(\"pull_request\")|not)|{number,title,created_at,comments}]")
+    if code:
+        raise RuntimeError(f"{repo}: issues unreadable ({o.strip()[:120]})")
+    cut = (now or dt.datetime.now(dt.timezone.utc)) - dt.timedelta(days=cfg["max_open_days"])
+    return [i for i in json.loads(o or "[]") if dt.datetime.strptime(i["created_at"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc) < cut]
+
+
+def aged(root=REPO, apply=False, run=gh, now=None) -> list[dict]:
+    """The second detector: a queue that idles open is a failure no red run shows. One item per repository with the issues listed."""
+    root, cfg, rows = Path(root), load(root), []
+    at = (now or dt.datetime.now(dt.timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    for repo in watched(root, cfg):
+        try:
+            old = aged_issues(repo, cfg, run, now)
+        except RuntimeError as e:
+            rows.append({"at": at, "repo": repo, "check": "aged-queue", "result": "unmeasured", "detail": str(e)}); continue
+        if not old:
+            rows.append({"at": at, "repo": repo, "check": "aged-queue", "result": "clean"}); continue
+        it = aged_item(repo, old, cfg["max_open_days"]); p = root / "docs/issues" / f"{it['id']}.json"
+        if apply and not p.exists():
+            p.parent.mkdir(parents=True, exist_ok=True); p.write_text(json.dumps(it, indent=2) + "\n", encoding="utf-8")
+        rows.append({"at": at, "repo": repo, "check": "aged-queue", "result": "filed", "item": it["id"], "issues": [i["number"] for i in old]})
+    if apply:
+        p = root / LEDGER; p.parent.mkdir(parents=True, exist_ok=True)
+        with p.open("a", encoding="utf-8") as f:
+            for r in rows:
+                f.write(json.dumps(r, separators=(",", ":")) + "\n")
+    return rows
+
+
+def probe_aged(repo: str, root=REPO, run=gh) -> int:
+    try:
+        return 1 if aged_issues(repo, load(root), run) else 0
+    except RuntimeError:
+        return 1
+
+
 def probe(repo: str, wf: str, root=REPO, run=gh) -> int:
     for r in latest(repo, run):
         if r["name"] == wf:
@@ -116,10 +177,12 @@ def check(root=REPO) -> list[str]:
 
 def main(argv=None) -> int:
     a = argv if argv is not None else sys.argv[1:]
+    if "--probe-aged" in a:
+        return probe_aged(a[a.index("--probe-aged") + 1])
     if "--probe" in a:
         i = a.index("--probe"); return probe(a[i + 1], " ".join(a[i + 2:]))
     if "--run" in a:
-        rows = scan(apply="--apply" in a)
+        rows = scan(apply="--apply" in a) + aged(apply="--apply" in a)
         for r in rows:
             print(json.dumps(r))
         red = [r for r in rows if r.get("result") in ("filed", "rerun", "rerun-failed", "deferred", "unmeasured")]
