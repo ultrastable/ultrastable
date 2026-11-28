@@ -713,3 +713,4 @@
 {"age_s": 907413.4, "at": "2026-11-28T04:18:51Z", "clock": "scout", "detail": "https://github.com/ultrastable/ultrastable/actions/runs/46106959407", "kind": "restart", "ok": true, "route": "workflow_dispatch", "seq": 711}
 {"at": "2026-11-28T04:18:51Z", "clocks": 47, "kind": "beat", "seq": 712, "stalled": 4, "stalled_ids": ["scout", "unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
 {"at": "2026-11-28T04:24:57Z", "clocks": 47, "kind": "beat", "seq": 713, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
+{"at": "2026-11-28T04:37:28Z", "clocks": 47, "kind": "beat", "seq": 714, "stalled": 3, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat"], "unmeasured": 0}
