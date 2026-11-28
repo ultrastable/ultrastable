@@ -2598,7 +2598,8 @@
         "file:doctrine/open-standards.json",
         "file:doctrine/open-standards-baseline.json",
         "file:tests/foundation/test_openstd.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]openstd\\b"
+        "grep:.github/workflows/checks.yml::openstd_gate\\.sh",
+        "grep:scripts/openstd_gate.sh::foundation[ .]openstd\\b"
       ],
       "bound_by": "cited"
     },
@@ -3817,7 +3818,8 @@
         "file:doctrine/open-standards.json",
         "file:doctrine/open-standards-baseline.json",
         "file:tests/foundation/test_openstd.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]openstd\\b"
+        "grep:.github/workflows/checks.yml::openstd_gate\\.sh",
+        "grep:scripts/openstd_gate.sh::foundation[ .]openstd\\b"
       ],
       "bound_by": "mirror",
       "of": "cited-897a8cdffd"
