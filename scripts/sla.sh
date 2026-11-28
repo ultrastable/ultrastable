@@ -10,7 +10,10 @@ gh issue list -R "$repo" --state open --limit 300 --json number,createdAt,labels
   n=$(jq -r .number <<<"$i"); l=",$(jq -r '[.labels[].name]|join(",")' <<<"$i"),"
   p=""; for x in p0 p1 p2 p3; do case "$l" in *,$x,*) p=$x; break;; esac; done
   [ -z "$p" ] && continue
-  case "$l" in *,queue,*|*,hold,*|*,gate:filed,*|*,"m:After filing",*|*,later,*) continue;; esac
+  case "$l" in *,hold,*|*,gate:filed,*|*,"m:After filing",*|*,later,*) continue;; esac
+  # GH-MIRROR-1: `queue` issues mirror docs/issues files the queue loop owns. A work record (label `work`, WORK-RECORD-1) has no file: `worklog reap` adds `queue`
+  # to it, which used to exempt it from this clock, so records sat for days past their SLA with their priority unchanged. It is aged like any other issue.
+  case "$l" in *,work,*) ;; *,queue,*) continue;; esac
   age=$(( (now - $(date -d "$(jq -r .createdAt <<<"$i")" +%s)) / 3600 )); sla=$(hrs "$p")
   if [ "$age" -gt "$sla" ]; then
     case "$l" in

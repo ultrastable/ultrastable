@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-28-a-label-that-exempts-an-issue-from-the-probe-loop-and-the-sl",
+  "kind": "lesson",
+  "date": "2026-11-28",
+  "title": "A label that exempts an issue from the probe loop and the SLA clock needs a loop that owns it",
+  "body": "worklog reap added the queue label to every silent work record. issueloop and scripts/sla.sh both skip queue issues because the queue loop owns them, but that loop only drives issues mirrored from docs/issues files, and a work record has none. A reaped record was therefore in no loop at all: never probed, never aged, never escalated, and nothing consumes the resume state. Ten records sat for two days past their 72 hour SLA with p2 unchanged. The exemption now excludes work records (probeable in foundation/issueloop.py, the case block in scripts/sla.sh), Done when lines are read as probes, and Q-WORK-RESUME-1 tracks the missing consumer. Session: session_0156nqDuSa1pdM6rAaTQ1irE",
+  "probe": "grep:foundation/issueloop.py::def probeable"
+ },
+ "kind": "lesson",
+ "title": "A label that exempts an issue from the probe loop and the SLA clock needs a loop that owns it",
+ "session": ""
+}

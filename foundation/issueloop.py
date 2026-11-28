@@ -16,8 +16,10 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 THIS = "ultrastable/ultrastable"
-LINE = re.compile(r"^\W*(?:closing probe|done check|probe)\W*:\W*(.+)$", re.I | re.M)
+LINE = re.compile(r"^\W*(?:closing probe|done check|done when|probe)\W*:\W*(.+)$", re.I | re.M)
 GET = re.compile(r"GET\s+(https://\S+?)\s+expect\s+[\"“']([^\"”']+)[\"”']", re.I)
+# WORK-RECORD-1 records state their done check as `Done when: GET <url> [and <path>] answer <code>`; the loop reads that form too
+STATUS = re.compile(r"GET\s+(https://\S+?)(?:\s+and\s+(/\S*?))?\s+answers?\s+(\d{3})\b", re.I)
 
 
 def parse_probe(body: str):
@@ -26,6 +28,11 @@ def parse_probe(body: str):
         g = GET.search(s)
         if g:
             return ("get", g.group(1), g.group(2))
+        st = STATUS.search(s)
+        if st:
+            from urllib.parse import urljoin
+            urls = [st.group(1)] + ([urljoin(st.group(1), st.group(2))] if st.group(2) else [])
+            return ("status", urls, int(st.group(3)))
         if re.match(r"(file|grep|cmd):", s):
             return ("local", s, None)
     return None
@@ -36,12 +43,28 @@ def _fetch(url):
         return r.read().decode("utf-8", "replace")
 
 
-def evaluate(repo: str, issue: dict, root=REPO, fetch=_fetch):
+def _status(url):
+    """HTTP status of a GET; an HTTP error answers with its code, an unreachable host raises."""
+    import urllib.error
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers={"user-agent": "ultrastable-issueloop/1"}), timeout=20) as r:
+            return r.status
+    except urllib.error.HTTPError as e:
+        return e.code
+
+
+def evaluate(repo: str, issue: dict, root=REPO, fetch=_fetch, status=_status):
     """-> (verdict, evidence). verdict: pass | fail | unprobed | unmeasured"""
     pr = parse_probe(issue.get("body") or "")
     if not pr:
         return "unprobed", "no probe line in the body"
     kind, a, b = pr
+    if kind == "status":
+        try:
+            got = {u: status(u) for u in a}
+        except Exception as e:  # unreachable is unmeasured, never passed
+            return "unmeasured", f"GET {a}: {e}"
+        return ("pass" if all(c == b for c in got.values()) else "fail"), "; ".join(f"GET {u} answered {c} (want {b})" for u, c in got.items())
     if kind == "get":
         try:
             return ("pass" if b in fetch(a) else "fail"), f"GET {a} expect {b!r}"
@@ -52,6 +75,14 @@ def evaluate(repo: str, issue: dict, root=REPO, fetch=_fetch):
     from . import queue
     ok, ev = queue.probe(root, a)
     return ("pass" if ok else "fail"), ev or a
+
+
+def probeable(issue: dict) -> bool:
+    """GH-MIRROR-1: an issue carrying the sync label `queue` mirrors a docs/issues file; the queue loop closes the file and the mirror follows, so it is not probed
+    here. A work record (label `work`, WORK-RECORD-1) has no such file: `worklog reap` adds `queue` to it, which used to leave it in no loop at all (not probed
+    here, not aged by scripts/sla.sh), so records sat for days. It is probed like any other issue."""
+    names = {l.get("name") for l in issue.get("labels") or []}
+    return "pull_request" not in issue and ("queue" not in names or "work" in names)
 
 
 def gh_issues(repo):
@@ -65,8 +96,7 @@ def gh_issues(repo):
     for chunk in p.stdout.replace("][", "]\n[").splitlines():
         if chunk.strip():
             out += json.loads(chunk)
-    # GH-MIRROR-1: issues carrying the sync label `queue` mirror docs/issues files; the queue loop closes the file and the mirror follows, so they are not probed here
-    return [i for i in out if "pull_request" not in i and "queue" not in {l.get("name") for l in i.get("labels") or []}]
+    return [i for i in out if probeable(i)]
 
 
 def close(repo, number, evidence):
