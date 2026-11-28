@@ -4,77 +4,77 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": true,
    "value": 1.0
   },
   "happy_paths": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": false,
    "value": 87
   },
   "research_in_code": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": false,
    "value": 0.564
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": false,
    "value": 0.033
   },
   "self_shipping": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": false,
    "value": 0.786
   },
   "spec_quality": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": false,
    "value": 0.281
   },
   "spend": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": false,
    "value": 4.166
   },
   "stalled_clocks": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": false,
    "value": 5
   },
   "survival_levels": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": true,
    "value": 3
   },
   "ui_findings": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-28T20:10:03Z",
+   "at": "2026-11-28T20:16:29Z",
    "ok": true,
    "value": 10.802
   }
