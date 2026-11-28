@@ -122,6 +122,24 @@ def _tests_text(tenant: Path) -> str:
     return "\n".join(p.read_text(encoding="utf-8", errors="replace") for p in sorted((tenant / "worker").glob("*.test.mjs"))) if (tenant / "worker").is_dir() else ""
 
 
+def uncovered_tests(tenant: Path) -> list[str]:
+    """TEST-COVERAGE-1: a test file that `npm test` does not run is a test that never fails. Base Rates' github/verify.test.mjs sat outside
+    package.json's `test` script, so CI never exercised the loop and a retry that repeated the same input kept every queue issue open for days.
+    Returns each *.test.mjs / *.test.js file (outside vendor/ and SKIP_DIRS) whose directory glob or own path the `test` script does not name."""
+    pkg = _json(tenant / "package.json")
+    if pkg is None:  # no package.json: not a Node tenant, nothing for `npm test` to cover
+        return []
+    script = str((pkg.get("scripts") or {}).get("test", ""))
+    out = []
+    for p in sorted(tenant.rglob("*.test.*")):
+        rel = p.relative_to(tenant)
+        if p.suffix not in (".mjs", ".js") or set(rel.parts) & SKIP_DIRS or rel.parts[0] == "vendor":
+            continue
+        if rel.as_posix() not in script and f"{rel.parent.as_posix()}/*.test" not in script and f"{rel.parent.as_posix()}/" not in script:
+            out.append(rel.as_posix())
+    return out
+
+
 def deployment(slug: str, root: Path) -> tuple[bool, str]:
     """Where a tenant runs, from the registries: (deployed, public URL). Deployed is a `frontend`, or a live topology Worker with a route."""
     row = (_json(root / REG) or {}).get("tenants", {}).get(slug, {})
@@ -347,6 +365,7 @@ def check_tenant(tenant: Path, std: dict | None = None, root: Path | None = None
             bad.append(f"runway: risk {r['id']} names {rest}, which is not in the repository")
         elif kind not in ("test", "file", "grep", "cmd"):
             bad.append(f"runway: risk {r['id']} has an unknown probe kind `{kind}`")
+    bad += [f"tests: {t} is not run by package.json `test` (TEST-COVERAGE-1)" for t in uncovered_tests(tenant)]
     for k in ("dependencies", "devDependencies"):
         if pkg.get(k):
             bad.append(f"package: package.json has {k} ({std['package']['why']})")

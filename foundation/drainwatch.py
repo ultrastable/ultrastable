@@ -12,7 +12,15 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 def repos(root=REPO) -> list[str]:
-    return sorted(json.loads((Path(root) / "github/org-settings.json").read_text(encoding="utf-8"))["repos"])
+    """The repositories in github/org-settings.json plus every registered tenant (doctrine/tenant-repos.json). Measured 2026-11-28: base-rates,
+    open-questions and did-it-work were in the registry but not in org-settings, so 14 Base Rates issues sat open for days inside a fleet
+    that read as drained; the registry is the source of what exists, so a tenant is measured the day it is registered."""
+    root = Path(root)
+    out = set(json.loads((root / "github/org-settings.json").read_text(encoding="utf-8"))["repos"])
+    p = root / "doctrine/tenant-repos.json"
+    if p.is_file():
+        out |= {t["repo"] for t in json.loads(p.read_text(encoding="utf-8")).get("tenants", {}).values() if t.get("repo") and t.get("state") != "retired"}
+    return sorted(out)
 
 
 def gh_list(path: str):
