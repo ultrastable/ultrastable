@@ -64,6 +64,14 @@ export async function pulseTenants({ targets = [], fetchImpl = fetch } = {}) {
 // Once an hour the tick reads each declared GitHub-only loop (config.gh_only, built from tenant rows with `gh_only` by deploy/deploy-workers.mjs)
 // and dispatches its workflow when (a) no run started in max_gap_hours, or (b) Pages is on but nothing is published yet, so the site goes live
 // the hour Pages is switched on, with no hand-off. A run already queued or in progress is left alone, so the step never stacks runs.
+// GH-ONLY-WATCH-1: what the watch could not do, as "<repo>: reason" lines the tick files as items. Measured 2026-11-28: the tick never dispatched
+// base-rates' or open-questions' loop (the only dispatches in either repository were by hand) through gaps of 8 to 12 hours, and nothing said so,
+// because the unmeasured lines of this reading were returned and dropped. A reading that cannot dispatch is a failure, never a pass.
+export function ghOnlyFailures(r, loops = []) {
+  if (r && r.status === 'no-token') return loops.map(l => `${l.repo}: ${r.why}`);
+  return (r && r.unmeasured) || [];
+}
+
 export async function watchGhOnly({ token, loops = [], fetchImpl = fetch, now = Date.now() } = {}) {
   if (!token) return { status: 'no-token', why: 'no GitHub token: GitHub-only loops cannot be read or dispatched from here' };
   const A = gh(fetchImpl, token), out = { status: 'ok', checked: 0, dispatched: [], unmeasured: [] };
