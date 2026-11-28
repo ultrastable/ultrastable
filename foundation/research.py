@@ -23,6 +23,11 @@ from __future__ import annotations
 import datetime as dt, json, os, re, statistics, subprocess, sys, urllib.request, xml.etree.ElementTree as ET
 from pathlib import Path
 
+try:
+    from . import openstd as _openstd
+except ImportError:  # run as a script
+    import openstd as _openstd
+
 REPO = Path(__file__).resolve().parents[1]
 POLICY = "doctrine/research.json"
 OPS = {"<=": lambda a, b: a <= b, ">=": lambda a, b: a >= b, "<": lambda a, b: a < b, ">": lambda a, b: a > b}
@@ -77,6 +82,11 @@ def load(root=REPO) -> dict:
 def studies(root=REPO, pol=None) -> list[dict]:
     pol = pol or load(root)
     return [json.loads(p.read_text(encoding="utf-8")) for p in sorted((Path(root) / pol["studies_dir"]).glob("*.json"))]
+
+
+def _unwrap(o: dict) -> dict:
+    """OPEN-STANDARDS-1: outcomes are CloudEvents 1.0 lines whose `data` is the outcome; a line written before that is the bare outcome."""
+    return o["data"] if o.get("specversion") == "1.0" and isinstance(o.get("data"), dict) else o
 
 
 def _jsonl(path: Path) -> list[dict]:
@@ -603,7 +613,7 @@ def experiments(root, pol, keyed, ms, apply, now=None) -> dict:
     """One open experiment per finding or question: settle it when its window has passed, then open the next round."""
     now = now or NOW()
     st = Path(root) / pol["state_dir"]
-    exps, outs = _jsonl(st / "experiments.jsonl"), _jsonl(st / "outcomes.jsonl")
+    exps, outs = _jsonl(st / "experiments.jsonl"), [_unwrap(o) for o in _jsonl(st / "outcomes.jsonl")]
     settled = {(o["key"], o["opened_at"]) for o in outs}
     latest = {}
     for e in exps:
@@ -623,7 +633,7 @@ def experiments(root, pol, keyed, ms, apply, now=None) -> dict:
     if apply:
         st.mkdir(parents=True, exist_ok=True)
         with (st / "outcomes.jsonl").open("a", encoding="utf-8") as fh:
-            fh.writelines(json.dumps(o) + "\n" for o in new_o)
+            fh.writelines(json.dumps(_openstd.cloudevent("org.ultrastable.research.outcome", "/foundation/research", o, subject=o["key"], now=now)) + "\n" for o in new_o)
         with (st / "experiments.jsonl").open("a", encoding="utf-8") as fh:
             fh.writelines(json.dumps(e) + "\n" for e in new_e)
     return {"opened": len(new_e), "settled": len(new_o), "met": sum(1 for o in new_o if o["met"])}

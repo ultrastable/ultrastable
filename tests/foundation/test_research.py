@@ -125,6 +125,19 @@ if __name__ == "__main__":
     unittest.main()
 
 
+class OutcomesAreCloudEvents(unittest.TestCase):
+    """OPEN-STANDARDS-1: ops/research/outcomes.jsonl lines are CloudEvents 1.0; a bare line written earlier still reads."""
+    def test_unwrap_reads_both_shapes(self):
+        o = {"key": "k", "opened_at": "2026-11-21T00:00:00Z"}
+        ev = {"specversion": "1.0", "id": "i", "source": "/s", "type": "t", "data": o}
+        self.assertEqual(R._unwrap(ev), o)
+        self.assertEqual(R._unwrap(o), o)
+
+    def test_the_committed_ledger_meets_the_standard(self):
+        for line in (Path(__file__).resolve().parents[2] / "ops/research/outcomes.jsonl").read_text().splitlines():
+            self.assertEqual(json.loads(line)["specversion"], "1.0")
+
+
 class NoMadeUpNumbers(unittest.TestCase):
     """NO-MADE-UP-NUMBERS-1: a number that traces to no measurement or cited source blocks the paper."""
     def test_invented_number_is_blocked(self):
