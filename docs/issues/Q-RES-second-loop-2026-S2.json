@@ -1,0 +1,12 @@
+{
+  "id": "Q-RES-second-loop-2026-S2",
+  "title": "Q-RES-second-loop-2026-S2: A slow loop that never learns (measured 0.006, target >= 0.25)",
+  "body": "**Owner:** product-manager\n**Trigger:** research pass: second-loop-2026 finding S2 is not-met (measured 0.006)\n**Done check:** cmd:python3 -m foundation research --probe second-loop-2026:S2\n**Prediction:** second_loop_kept_share >= 0.25 within 72 h\n**Out of scope:** editing the study, its target or the paper to match the code; the measurement is changed only by changing the mechanism\n**Closing probe:** `python3 -m foundation research --probe second-loop-2026:S2`\n**Status:** open\n\nConcern: A slow loop that never learns. The study: Before this change the slow loop had judged 91 of its own steps and reverted all 91. A loop that only moves is not adapting. Its keep rate is now an essential variable, and its first step on that variable is to change its own settle window.\n\nMechanisms that should answer it: SECOND-LOOP-2 (foundation/ultrastability.py).\n\nMetric: share of second-order steps that brought the variable back inside its limits and were kept, target >= 0.25. Improve the mechanism (or add one) until the probe passes; the white paper at /research updates itself from the same measurement.",
+  "labels": [
+    "role:product-manager",
+    "research",
+    "plus"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

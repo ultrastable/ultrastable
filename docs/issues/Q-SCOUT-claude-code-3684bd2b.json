@@ -1,0 +1,12 @@
+{
+  "id": "Q-SCOUT-claude-code-3684bd2b",
+  "title": "Q-SCOUT-claude-code-3684bd2b: v2.1.328 (claude-code)",
+  "body": "**Owner:** product-manager\n**Trigger:** every scout pass\n**Done check:** cmd:python3 -m foundation scout --decided Q-SCOUT-claude-code-3684bd2b\n**Prediction:** scout_undecided <= 0 within 336 h\n**Status:** open\n\nScout finding from claude-code (coding agents), score 7.5, matched gap:durable-agent-runs, gap:site-agent-protocol-parity, component:trust-permissions, need:mcp, need:permission.\nv2.1.328\nhttps://github.com/anthropics/claude-code/releases/tag/v2.1.328\n\n What's changed \n \n Added auto mode for Claude Opus 4.6 and Sonnet 4.6 on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry and Claude apps gateway; interactive sessions with no permission mode start in it \n Added  \"onFailure\": \"block\"  for  mcp_tool  hooks, as for command and HTTP ho\n\nDecide: adopt (ship the change that closes a gap or adds the capability) or decline with a reason, then record `python3 -m foundation scout --adopt Q-SCOUT-claude-code-3684bd2b --outcome adopted|declined --reason ...`. The outcome re-weights this source.\n\n**Out of scope:** work the release note does not name, and a decision recorded without a reason.\n\n**Closing probe:** cmd:python3 -m foundation scout --decided Q-SCOUT-claude-code-3684bd2b",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "scout"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

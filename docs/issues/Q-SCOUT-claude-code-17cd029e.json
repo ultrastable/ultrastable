@@ -1,0 +1,12 @@
+{
+  "id": "Q-SCOUT-claude-code-17cd029e",
+  "title": "Q-SCOUT-claude-code-17cd029e: v2.1.330 (claude-code)",
+  "body": "**Owner:** product-manager\n**Trigger:** every scout pass\n**Done check:** cmd:python3 -m foundation scout --decided Q-SCOUT-claude-code-17cd029e\n**Prediction:** scout_undecided <= 0 within 336 h\n**Status:** open\n\nScout finding from claude-code (coding agents), score 8.75, matched gap:org-setup-in-thread, gap:other-cloud-proof, gap:chat-entry, need:self-host, need:mcp.\nv2.1.330\nhttps://github.com/anthropics/claude-code/releases/tag/v2.1.330\n\n What's changed \n \n Added sign-in to organizations managed in Anthropic's Enterprise Admin Console: after  claude auth login , Claude Code applies the organization's settings and uses its cloud provider or gateway \n Added easel, a built-in mod that draws charts when asked and under MCP metrics resul\n\nDecide: adopt (ship the change that closes a gap or adds the capability) or decline with a reason, then record `python3 -m foundation scout --adopt Q-SCOUT-claude-code-17cd029e --outcome adopted|declined --reason ...`. The outcome re-weights this source.\n\n**Out of scope:** work the release note does not name, and a decision recorded without a reason.\n\n**Closing probe:** cmd:python3 -m foundation scout --decided Q-SCOUT-claude-code-17cd029e",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "scout"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

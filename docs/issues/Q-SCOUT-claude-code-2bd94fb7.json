@@ -1,0 +1,12 @@
+{
+  "id": "Q-SCOUT-claude-code-2bd94fb7",
+  "title": "Q-SCOUT-claude-code-2bd94fb7: v2.1.332 (claude-code)",
+  "body": "**Owner:** product-manager\n**Trigger:** every scout pass\n**Done check:** cmd:python3 -m foundation scout --decided Q-SCOUT-claude-code-2bd94fb7\n**Prediction:** scout_undecided <= 0 within 336 h\n**Status:** open\n\nScout finding from claude-code (coding agents), score 4.38, matched gap:capability-evidence-precision, need:mcp.\nv2.1.332\nhttps://github.com/anthropics/claude-code/releases/tag/v2.1.332\n\n What's changed \n \n Added skills from MCP servers (beta). They show as  server:skill  in the  /  menu; other skills keep their names \n Added a  PreSkillShellCommand  hook event that can refuse a skill or command's inline shell commands as it loads; on 2.1.331 and older, a settings file naming it ope\n\nDecide: adopt (ship the change that closes a gap or adds the capability) or decline with a reason, then record `python3 -m foundation scout --adopt Q-SCOUT-claude-code-2bd94fb7 --outcome adopted|declined --reason ...`. The outcome re-weights this source.\n\n**Out of scope:** work the release note does not name, and a decision recorded without a reason.\n\n**Closing probe:** cmd:python3 -m foundation scout --decided Q-SCOUT-claude-code-2bd94fb7",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "scout"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

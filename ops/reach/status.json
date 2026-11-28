@@ -2,55 +2,54 @@
  "targets": {
   "external_referrals_7d": 94,
   "ps_page_views_7d": 98,
-  "feed_hits_7d": 12
+  "feed_hits_7d": 12,
+  "search_referrals_7d": 50
  },
  "met_runs": {
-  "external_referrals_7d": 0,
+  "external_referrals_7d": 1,
   "social_referrals_7d": 0,
-  "search_referrals_7d": 1,
-  "feed_hits_7d": 0,
-  "ps_page_views_7d": 0,
+  "search_referrals_7d": 0,
+  "feed_hits_7d": 1,
+  "ps_page_views_7d": 1,
   "posts_published_7d": 0
  },
  "last": {
   "feed_entries": 40,
-  "at": "2026-11-26T23:52:30.442150+00:00",
+  "at": "2026-11-27T23:28:11.365992+00:00",
   "added": [
    {
-    "id": "ev:pv-d0b0fd1082a0",
+    "id": "ev:pv-2aec27fa39af",
     "arm": "shipped"
    },
    {
-    "id": "ev:pv-504bf3710667",
+    "id": "ev:pv-9630e3e87a74",
     "arm": "shipped"
    },
    {
-    "id": "ev:pv-e947ff4830d9",
+    "id": "ev:pv-be2b32e88314",
     "arm": "shipped"
    },
    {
-    "id": "ev:pv-25c55d099e37",
+    "id": "ev:pv-0b92005e4dc4",
     "arm": "shipped"
    }
   ],
   "metrics_error": "HTTPError: HTTP Error 403: Forbidden",
   "metrics_route": "site",
   "metrics": {
-   "external_referrals_7d": 88,
+   "external_referrals_7d": 97,
    "social_referrals_7d": 0,
-   "search_referrals_7d": 43,
-   "feed_hits_7d": 16,
-   "ps_page_views_7d": 210,
+   "search_referrals_7d": 50,
+   "feed_hits_7d": 20,
+   "ps_page_views_7d": 232,
    "posts_published_7d": 0,
    "suggestions_7d": null
   },
   "breaches": [
-   "external_referrals_7d",
    "social_referrals_7d",
    "posts_published_7d"
   ],
   "filed": [
-   "Q-REACH-external_referrals_7d",
    "Q-REACH-social_referrals_7d",
    "Q-REACH-posts_published_7d"
   ],
