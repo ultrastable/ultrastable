@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-28
 
+- 2026-11-28: feat: TEST-COVERAGE-1, CloudEvents research ledger, and ciwatch covering tenants and idle queues (#2870)
+- 2026-11-28: fix(scout): the bot commit that skips CI runs the standards check itself (OPEN-STANDARDS-1) (#2875)
+- 2026-11-28: fix(deploydrift): measure tenant Workers against their repository and redeploy when behind (#2878)
 - 2026-11-28: chore(tenants): remove the six conformance-pending exceptions; the fleet reads 12 of 12 conforming (REPO-CONFORM-2) (#2848)
 - 2026-11-28: scout: weekly scout and rnd pass, findings filed, profiles refreshed, sources re-weighted (part 3/3) [skip ci]
 - 2026-11-28: scout: weekly scout and rnd pass, findings filed, profiles refreshed, sources re-weighted (part 2/3) [skip ci]
