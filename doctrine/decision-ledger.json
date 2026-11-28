@@ -7267,6 +7267,14 @@
    "title": "REPO-CONFORM-2: the six tenant conformance exceptions are removed once the fleet reads 12 of 12",
    "body": "Every tenant repository's own pull request merged and python3 seed/scripts/repoconform.py --fleet doctrine/fleet-map.json reads 12 of 12 repositories conforming from GitHub. The dated conformance-pending exceptions in doctrine/tenant-standard.json held findings only until those pull requests landed, so they are removed; the Q-CONFORM items close by their own probe on the daily queue pass. Session: session_0156nqDuSa1pdM6rAaTQ1irE",
    "probe": "grep:doctrine/tenant-standard.json::exceptions"
+  },
+  {
+   "id": "lesson-2026-11-28-a-drift-check-that-skips-a-class-of-workers-measures-nothing",
+   "kind": "lesson",
+   "date": "2026-11-28",
+   "title": "A drift check that skips a class of workers measures nothing for them",
+   "body": "deploydrift reported every Worker whose source lives in a tenant repository as external and never read it, so ultrastable-base-rates served 3 entries while its main held 7 (its /api/beats showed the same stub note for a day). A Worker bundles its data at deploy, so every commit its loop makes is stale until redeployed. Rule: every live Worker gets a reading, an exemption class reads unmeasured at worst, never clean or skipped; deploydrift now compares a tenant Worker's last recorded deploy with the newest commit on its source ref and the watchdog redeploys it.",
+   "probe": "grep:foundation/deploydrift.py::source_head_at"
   }
  ]
 }
