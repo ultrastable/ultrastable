@@ -7318,6 +7318,14 @@
    "body": "Open Questions and base-rates queue issues idled for days: retries repeated their input, no attempts cap, a 200 non-JSON model reply read as a negative finding, github tests never ran in CI, and no job merged the system's own PRs. The live Worker lagged main because the deploy watcher shipped only state moved while live tenants were marked planned. Held by: TEST-COVERAGE-1 (tenantstd), AUTOMERGE-1 (scaffold workflow), FLOW-AUDIT-1 (tenant-flow detector, fm-stale-flow), own-repo rows with admission rows, watcher shipping own-repo. Entries in doctrine/LESSONS.md dated 2026-11-28.",
    "probe": "grep:foundation/tenant_flow.py::def findings",
    "session": "session_0156nqDsJkfAA7ULcYgh9DNh"
+  },
+  {
+   "id": "lesson-2026-11-28-a-watch-whose-failure-is-returned-and-dropped-is-not-a-watch",
+   "kind": "lesson",
+   "date": "2026-11-28",
+   "title": "A watch whose failure is returned and dropped is not a watch",
+   "body": "The tick's GH-ONLY-WATCH-1 reading returned unmeasured lines for loops it could not read or dispatch, and the tick discarded them, so base-rates and open-questions loops were never dispatched through gaps of 8 to 12 hours (the only dispatches in either repository were by hand) and GitHub's cron ran them about twice a day instead of four times. Rule: every reading's inability to act is filed as an item with a probe (ghOnlyFailures into declaredItems), the same as a failed pulse.",
+   "probe": "grep:seed/worker/src/declared.js::ghOnlyFailures"
   }
  ]
 }
