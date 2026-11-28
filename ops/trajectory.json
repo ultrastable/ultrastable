@@ -3,7 +3,7 @@
   {
    "area": "workers",
    "quiet_days": 0,
-   "recent7": 113485,
+   "recent7": 113522,
    "series": [
     0,
     0,
@@ -34,17 +34,17 @@
     0,
     0,
     0,
-    113485
+    113522
    ],
    "share_recent": 0.266,
    "share_trend": 0.266,
-   "slope": 732.1613,
-   "total": 113485
+   "slope": 732.4,
+   "total": 113522
   },
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 46901,
+   "recent7": 46911,
    "series": [
     0,
     0,
@@ -75,17 +75,17 @@
     0,
     0,
     0,
-    46901
+    46911
    ],
    "share_recent": 0.11,
    "share_trend": 0.11,
-   "slope": 302.5871,
-   "total": 46901
+   "slope": 302.6516,
+   "total": 46911
   },
   {
    "area": "foundation",
    "quiet_days": 0,
-   "recent7": 46139,
+   "recent7": 46229,
    "series": [
     0,
     0,
@@ -116,12 +116,12 @@
     0,
     0,
     0,
-    46139
+    46229
    ],
    "share_recent": 0.108,
    "share_trend": 0.108,
-   "slope": 297.671,
-   "total": 46139
+   "slope": 298.2516,
+   "total": 46229
   },
   {
    "area": "seed/worker",
@@ -167,7 +167,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 30482,
+   "recent7": 31056,
    "series": [
     0,
     0,
@@ -198,17 +198,17 @@
     0,
     0,
     0,
-    30482
+    31056
    ],
-   "share_recent": 0.071,
-   "share_trend": 0.071,
-   "slope": 196.6581,
-   "total": 30482
+   "share_recent": 0.073,
+   "share_trend": 0.073,
+   "slope": 200.3613,
+   "total": 31056
   },
   {
    "area": "tests/foundation",
    "quiet_days": 0,
-   "recent7": 28577,
+   "recent7": 28633,
    "series": [
     0,
     0,
@@ -239,12 +239,12 @@
     0,
     0,
     0,
-    28577
+    28633
    ],
    "share_recent": 0.067,
    "share_trend": 0.067,
-   "slope": 184.3677,
-   "total": 28577
+   "slope": 184.729,
+   "total": 28633
   },
   {
    "area": "doctrine/schemas",
@@ -569,8 +569,8 @@
     0,
     4054
    ],
-   "share_recent": 0.01,
-   "share_trend": 0.01,
+   "share_recent": 0.009,
+   "share_trend": 0.009,
    "slope": 26.1548,
    "total": 4054
   },
@@ -618,7 +618,7 @@
   {
    "area": ".github",
    "quiet_days": 0,
-   "recent7": 3469,
+   "recent7": 3476,
    "series": [
     0,
     0,
@@ -649,12 +649,12 @@
     0,
     0,
     0,
-    3469
+    3476
    ],
    "share_recent": 0.008,
    "share_trend": 0.008,
-   "slope": 22.3806,
-   "total": 3469
+   "slope": 22.4258,
+   "total": 3476
   },
   {
    "area": "outreach",
@@ -782,7 +782,7 @@
   {
    "area": "research",
    "quiet_days": 0,
-   "recent7": 2650,
+   "recent7": 2662,
    "series": [
     0,
     0,
@@ -813,12 +813,12 @@
     0,
     0,
     0,
-    2650
+    2662
    ],
    "share_recent": 0.006,
    "share_trend": 0.006,
-   "slope": 17.0968,
-   "total": 2650
+   "slope": 17.1742,
+   "total": 2662
   },
   {
    "area": "seed/tests",
@@ -905,7 +905,7 @@
   {
    "area": "docs",
    "quiet_days": 0,
-   "recent7": 2111,
+   "recent7": 2114,
    "series": [
     0,
     0,
@@ -936,12 +936,12 @@
     0,
     0,
     0,
-    2111
+    2114
    ],
    "share_recent": 0.005,
    "share_trend": 0.005,
-   "slope": 13.6194,
-   "total": 2111
+   "slope": 13.6387,
+   "total": 2114
   },
   {
    "area": "agents",
@@ -1026,7 +1026,7 @@
    "total": 1772
   }
  ],
- "at": "2026-11-28T06:33:10Z",
+ "at": "2026-11-28T06:35:57Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1684,7 +1684,7 @@
   {
    "loop": "provenance",
    "quiet_days": 0,
-   "rows": 499,
+   "rows": 503,
    "series": [
     0,
     0,
@@ -1715,9 +1715,9 @@
     153,
     109,
     164,
-    2
+    6
    ],
-   "slope": 2.6458
+   "slope": 2.6716
   },
   {
    "loop": "resilience",
@@ -1874,7 +1874,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 775,
+   "rows": 776,
    "series": [
     0,
     0,
@@ -1905,9 +1905,9 @@
     88,
     189,
     206,
-    40
+    41
    ],
-   "slope": 4.0323
+   "slope": 4.0387
   },
   {
    "loop": "ultrastability",

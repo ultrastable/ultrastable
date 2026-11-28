@@ -343,6 +343,7 @@
   },
   "lane.yml": {
    "events": [
+    "pull_request",
     "workflow_dispatch",
     "workflow_run"
    ],
