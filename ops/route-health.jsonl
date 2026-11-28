@@ -981,3 +981,8 @@
 {"at": "2026-11-28T17:42:52Z", "id": "workers-ai-qwen-coder", "route": "workers-ai", "model": "@cf/qwen/qwen2.5-coder-32b-instruct", "pass": false, "why": "HTTPError: HTTP Error 502: Bad Gateway"}
 {"at": "2026-11-28T17:42:52Z", "id": "workers-ai-gpt-oss", "route": "workers-ai", "model": "@cf/openai/gpt-oss-20b", "pass": false, "why": "HTTPError: HTTP Error 502: Bad Gateway"}
 {"at": "2026-11-28T17:42:52Z", "id": "workers-ai-qwen3", "route": "workers-ai", "model": "@cf/qwen/qwen3.8-27b", "pass": false, "why": "HTTPError: HTTP Error 502: Bad Gateway"}
+{"at": "2026-11-28T17:53:08Z", "id": "workers-ai-glm", "route": "workers-ai", "model": "@cf/zai-org/glm-4.7-flash", "pass": false, "why": "HTTPError: HTTP Error 502: Bad Gateway"}
+{"at": "2026-11-28T17:53:08Z", "id": "workers-ai-llama", "route": "workers-ai", "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "pass": false, "why": "HTTPError: HTTP Error 502: Bad Gateway"}
+{"at": "2026-11-28T17:53:08Z", "id": "workers-ai-qwen-coder", "route": "workers-ai", "model": "@cf/qwen/qwen2.5-coder-32b-instruct", "pass": false, "why": "HTTPError: HTTP Error 502: Bad Gateway"}
+{"at": "2026-11-28T17:53:08Z", "id": "workers-ai-gpt-oss", "route": "workers-ai", "model": "@cf/openai/gpt-oss-20b", "pass": false, "why": "HTTPError: HTTP Error 502: Bad Gateway"}
+{"at": "2026-11-28T17:53:08Z", "id": "workers-ai-qwen3", "route": "workers-ai", "model": "@cf/qwen/qwen3.8-27b", "pass": false, "why": "HTTPError: HTTP Error 502: Bad Gateway"}
