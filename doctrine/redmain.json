@@ -10,6 +10,11 @@
    "cmd": "bash scripts/site_tests.sh",
    "paths": ["site", "seed/analytics", "seed/worker/src", "spinoffs"],
    "workflows": [".github/workflows/deploy-site.yml", ".github/workflows/checks.yml"]
+  },
+  "open-standards": {
+   "cmd": "bash scripts/openstd_gate.sh",
+   "paths": ["ops", "doctrine", "research"],
+   "workflows": [".github/workflows/checks.yml"]
   }
  }
 }

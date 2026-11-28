@@ -173,7 +173,7 @@ jobs:
           python3 -m foundation rulerefs --check  # RULE-REFS-1: every path, command, test, workflow and route the rule files name resolves
           python3 -m foundation jobtrust --check  # JOB-TRUST-1: no job holds untrusted text, secrets and write access at once (R12)
           python3 -m foundation datagraph --check
-          python3 -m foundation openstd --check  # OPEN-STANDARDS-1: registered open standards; no new bespoke format
+          bash scripts/openstd_gate.sh  # OPEN-STANDARDS-1 (GATE-PARITY-1: the gate redmain repairs main against): registered open standards; no new bespoke format
           python3 -m foundation coldstart --check  # COLDSTART-1: the seed carries every capability a system owes from birth; named commands resolve; agent files agree
           python3 -m foundation cfposture --check
           python3 -m foundation standingorder --check

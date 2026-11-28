@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-28-redmain-1-has-a-second-gate-openstd",
+  "kind": "decision",
+  "date": "2026-11-28",
+  "title": "REDMAIN-1 has a second gate: openstd",
+  "body": "Evidence: main failed python3 -m foundation openstd --check twice in two days (ops/perception-cost.jsonl, fixed by 37d2074da; ops/research/outcomes.jsonl, fixed in foundation/research.py) because a bot wrote a ledger row without the CloudEvents envelope, and the bot commit skips CI. doctrine/redmain.json listed one gate, deploy-site, so no repair ran for a red checks run. Change: doctrine/redmain.json gate open-standards runs scripts/openstd_gate.sh, the command .github/workflows/checks.yml runs too (GATE-PARITY-1), so ciwatch opens the repair as a pull request the lane merges. Probe: python3 -m foundation redmain --check and tests/foundation/test_redmain.py pass. Session: session_0156nqDuSa1pdM6rAaTQ1irE",
+  "probe": "grep:doctrine/redmain.json::open-standards"
+ },
+ "kind": "decision",
+ "title": "REDMAIN-1 has a second gate: openstd",
+ "session": ""
+}
