@@ -1,0 +1,11 @@
+{
+  "id": "Q-SMOKE-io-freshness",
+  "title": "Q-SMOKE-io-freshness: production does not match the claim (io-freshness)",
+  "body": "**Owner:** executor\n**Trigger:** smoke-live (daily)\n**Done check:** grep:scripts/smoke_live.py::io-freshness\n**Status:** open\n\nSMOKE-LIVE-1: deploy lag: /api/freshness ok\n\nLive evidence: `HTTP 503 {\"snapshot\":{\"at\":\"2026-11-26T15:51:19Z\",\"age_s\":172117,\"cadence_s\":93600,\"stale\":true},\"changes\":{\"at\":\"2026-11-28T15:30:36.398Z\",\"age_s\":559,\"cadence_s\":1800,\"stale\":false},\"pages\":{\"at\":\"2026-11-28`\n\nFix the code or the words so production does what is claimed, deploy, and smoke-live closes this.\n\nsize: S\n\n**Closing probe:** workflow smoke-live, check `io-freshness` = PASS.\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Claims"
+}
