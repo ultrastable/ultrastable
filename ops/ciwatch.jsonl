@@ -22,3 +22,102 @@
 {"at":"2026-11-17T15:14:56Z","repo":"ultrastable/practical-solutions","workflow":"Graph Update: pip in /reference/python #1712239921","run":44108864327,"conclusion":"success","result":"green"}
 {"at":"2026-11-17T15:14:56Z","repo":"ultrastable/practical-solutions","workflow":"bootstrap","run":44096335543,"conclusion":"failure","result":"filed","item":"Q-CIFAIL-practical-solutions-bootstrap","existed":true}
 {"at":"2026-11-17T15:14:56Z","repo":"ultrastable/practical-solutions","workflow":"cycle","run":44077866261,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/ultrastable","workflow":"worklog","run":46191998662,"conclusion":"failure","result":"filed","item":"Q-CIFAIL-ultrastable-worklog","existed":true}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/ultrastable","workflow":"executor","run":46191998728,"conclusion":"failure","result":"filed","item":"Q-CIFAIL-ultrastable-executor","existed":true}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/ultrastable","workflow":"ciwatch","run":46191423250,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/ultrastable","workflow":"watchdog","run":46191423977,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/ultrastable","workflow":"fleet","run":46191158571,"conclusion":"failure","result":"filed","item":"Q-CIFAIL-ultrastable-fleet","existed":true}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/workers","workflow":"Graph Update: pip in /products/gaplint, /runtimes/python #1716037341","run":44482256650,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/workers","workflow":"loops","run":44136082206,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/workers","workflow":"ci","run":44133543544,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/workers","workflow":"idea-intake","run":44125065945,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/workers","workflow":"self-start","run":44046610961,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/spec","workflow":"loop-lints","run":44130734311,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"deploy-backend","run":46187703172,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"deploy-lag","run":46187692008,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"branch-sweep","run":46187691804,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"agent","run":46186850910,"conclusion":"failure","result":"filed","item":"Q-CIFAIL-practical-solutions-agent","existed":true}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"impact-loop","run":46186819703,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"audit-anchor","run":46164869995,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"deploy-tenant","run":46164132828,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"pipeline","run":46164061111,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"release","run":46161719398,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"count-claims","run":46160927082,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"changes-watch","run":46160170283,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"indexnow","run":46160067194,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"host-sync","run":46154851411,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"ci","run":46153918970,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"connections","run":46153637401,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"ensemble","run":46153219498,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"vendor-seed","run":46153215848,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"translate","run":46150736748,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"redteam","run":46150283344,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"branch-cleanup","run":46147206669,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"synth","run":46143816213,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"cycle","run":46141316513,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"problemscan","run":46141083924,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/practical-solutions","workflow":"context","run":46136209497,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/ops","result":"unmeasured","detail":"ultrastable/ops: unreadable ({\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/repos/repos#get-a-repository\",\"status\":\"404\"}gh)"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/.github","workflow":"agent-files","run":46155446811,"conclusion":"failure","result":"filed","item":"Q-CIFAIL-github-agent-files","existed":true}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/.github","workflow":"branch-cleanup","run":46147314477,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/.github","workflow":"openstd","run":46038662612,"conclusion":"failure","result":"filed","item":"Q-CIFAIL-github-openstd","existed":true}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/.github","workflow":"github_actions in /. - Update #1733534639","run":45908747302,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/.github","workflow":"github_actions in /. - Update #1733534396","run":45908742767,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/unlearn","workflow":"vendor-sync","run":46155444417,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/unlearn","workflow":"branch-cleanup","run":46148456629,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/unlearn","workflow":"ci","run":46071056399,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/unlearn","workflow":"github_actions in /. - Update #1733534867","run":45908754744,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/unlearn","workflow":"npm_and_yarn in /. - Update #1733534881","run":45908755748,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/unlearn","workflow":"npm_and_yarn in /. - Update #1733534520","run":45908745972,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/unlearn","workflow":"github_actions in /. - Update #1733534489","run":45908745907,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/what-works","workflow":"vendor-sync","run":46154950077,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/what-works","workflow":"branch-cleanup","run":46147071220,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/what-works","workflow":"github_actions in /. - Update #1735566807","run":46084142235,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/what-works","workflow":"npm_and_yarn in /. - Update #1735414628","run":46071051632,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/what-works","workflow":"github_actions in /. - Update #1735414620","run":46071050107,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/what-works","workflow":"npm_and_yarn in /. - Update #1735414530","run":46071046139,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/what-works","workflow":"github_actions in /. - Update #1735414516","run":46071046127,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/what-works","workflow":"ci","run":46071034998,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/what-works","workflow":"citations","run":45696762672,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/replication-ledger","workflow":"vendor-sync","run":46154587158,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/replication-ledger","workflow":"branch-cleanup","run":46147297007,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/replication-ledger","workflow":"github_actions in /. - Update #1735414230","run":46071029869,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/replication-ledger","workflow":"github_actions in /. - Update #1735414165","run":46071027584,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/replication-ledger","workflow":"npm_and_yarn in /. - Update #1735414173","run":46071027510,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/replication-ledger","workflow":"ci","run":46071019465,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/base-rates","workflow":"loop","run":46187192198,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/base-rates","workflow":"ci","run":46159455889,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/base-rates","workflow":"branch-cleanup","run":46159455930,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/base-rates","workflow":"vendor-sync","run":46155425551,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/base-rates","workflow":"npm_and_yarn in /. - Update #1735413504","run":46070980827,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/base-rates","workflow":"github_actions in /. - Update #1735413492","run":46070981467,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/base-rates","workflow":"github_actions in /. - Update #1735413353","run":46070975823,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/base-rates","workflow":"npm_and_yarn in /. - Update #1735413364","run":46070975931,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/did-it-work","workflow":"vendor-sync","run":46154764073,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/did-it-work","workflow":"branch-cleanup","run":46147432671,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/did-it-work","workflow":"npm_and_yarn in /. - Update #1735413837","run":46070999533,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/did-it-work","workflow":"github_actions in /. - Update #1735413822","run":46070999055,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/did-it-work","workflow":"npm_and_yarn in /. - Update #1735413766","run":46070998790,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/did-it-work","workflow":"github_actions in /. - Update #1735413753","run":46070998773,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/did-it-work","workflow":"ci","run":46070990284,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/open-questions","workflow":"automerge","run":46161822029,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/open-questions","workflow":"loop","run":46159450597,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/open-questions","workflow":"ci","run":46159450585,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/open-questions","workflow":"branch-cleanup","run":46159450647,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/open-questions","workflow":"vendor-sync","run":46153383985,"conclusion":"failure","result":"deferred","detail":"max_items_per_run reached; next run takes it"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/open-questions","workflow":"npm_and_yarn in /. - Update #1735414045","run":46071013976,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/open-questions","workflow":"npm_and_yarn in /. - Update #1735414008","run":46071012283,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/open-questions","workflow":"github_actions in /. - Update #1735414038","run":46071013255,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:35:44Z","repo":"ultrastable/open-questions","workflow":"github_actions in /. - Update #1735414007","run":46071012291,"conclusion":"success","result":"green"}
+{"at":"2026-11-28T21:36:07Z","repo":"ultrastable/ultrastable","check":"aged-queue","result":"clean"}
+{"at":"2026-11-28T21:36:07Z","repo":"ultrastable/workers","check":"aged-queue","result":"clean"}
+{"at":"2026-11-28T21:36:07Z","repo":"ultrastable/spec","check":"aged-queue","result":"clean"}
+{"at":"2026-11-28T21:36:07Z","repo":"ultrastable/practical-solutions","check":"aged-queue","result":"clean"}
+{"at":"2026-11-28T21:36:07Z","repo":"ultrastable/ops","check":"aged-queue","result":"unmeasured","detail":"ultrastable/ops: issues unreadable ({\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/issues/issues#list-repository-issues\",\"status\":)"}
+{"at":"2026-11-28T21:36:07Z","repo":"ultrastable/.github","check":"aged-queue","result":"clean"}
+{"at":"2026-11-28T21:36:07Z","repo":"ultrastable/unlearn","check":"aged-queue","result":"clean"}
+{"at":"2026-11-28T21:36:07Z","repo":"ultrastable/what-works","check":"aged-queue","result":"clean"}
+{"at":"2026-11-28T21:36:07Z","repo":"ultrastable/replication-ledger","check":"aged-queue","result":"clean"}
+{"at":"2026-11-28T21:36:07Z","repo":"ultrastable/base-rates","check":"aged-queue","result":"clean"}
+{"at":"2026-11-28T21:36:07Z","repo":"ultrastable/did-it-work","check":"aged-queue","result":"clean"}
+{"at":"2026-11-28T21:36:07Z","repo":"ultrastable/open-questions","check":"aged-queue","result":"clean"}
