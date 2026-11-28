@@ -805,3 +805,4 @@
 {"at": "2026-11-28T17:09:42Z", "clocks": 49, "kind": "beat", "seq": 803, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 0}
 {"at": "2026-11-28T17:15:15Z", "clocks": 49, "kind": "beat", "seq": 804, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 0}
 {"at": "2026-11-28T17:26:51Z", "clocks": 49, "kind": "beat", "seq": 805, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 0}
+{"at": "2026-11-28T17:35:29Z", "clocks": 49, "kind": "beat", "seq": 806, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 0}
