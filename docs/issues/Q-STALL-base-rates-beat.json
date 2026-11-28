@@ -1,0 +1,11 @@
+{
+  "id": "Q-STALL-base-rates-beat",
+  "title": "Q-STALL-base-rates-beat: clock base-rates-beat stopped and restarts did not take",
+  "body": "**Owner:** executor\n**Trigger:** clock `base-rates-beat` stopped (last beat age None s, expected every 3600 s) and 2 restarts did not take\n**Done check:** cmd:python3 -m foundation resilience --probe base-rates-beat\n**Status:** open\n\nRESILIENCE-1: find why the clock stopped (disabled schedule, failing job, dead route), fix the cause, and add a second independent trigger so it cannot stop silently again. Escalated through the queue, never by email.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation resilience --probe base-rates-beat` reports ticking.\n",
+  "labels": [
+    "p0",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Resilience"
+}
