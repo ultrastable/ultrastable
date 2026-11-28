@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-27-archive-closed-queue-items-without-breaking-readers",
+  "kind": "lesson",
+  "date": "2026-11-27",
+  "title": "Archive closed queue items without breaking readers",
+  "body": "Readers find closed docs/issues items by id: site pins, failure-audit, queue residuals and shelved items. The archive keeps an item when another tracked file names it, when it is shelved or gated, or when it holds a thread residual. Ledgers under ops only log ids, so they do not pin an item. The dry run moves 717 items and the state share reads 0.2128 against the 0.25 budget.",
+  "probe": "grep:foundation/statesink.py::def referenced_ids"
+ },
+ "kind": "lesson",
+ "title": "Archive closed queue items without breaking readers",
+ "session": ""
+}

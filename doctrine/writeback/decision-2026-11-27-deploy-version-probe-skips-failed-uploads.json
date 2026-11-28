@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-deploy-version-probe-skips-failed-uploads",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "Deploy version probe skips failed uploads",
+  "body": "ZHC-R6 closes on deploydrift --versions: every uploaded deploy row must carry a version id and a live read that matched the commit. A failed upload has no version, so it is not counted. Since 2026-11-26 it passes on all 540 uploaded rows; the 40 seed rows without a version all failed a migration and never uploaded.",
+  "probe": "grep:foundation/deploydrift.py::def unprobed"
+ },
+ "kind": "decision",
+ "title": "Deploy version probe skips failed uploads",
+ "session": ""
+}

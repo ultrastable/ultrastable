@@ -206,7 +206,13 @@ def main(argv=None) -> int:
             m["filed"] = file_items(REPO, m)
         print(json.dumps(m, indent=1)); return 0
     if a.run:
-        print(json.dumps(run(REPO, a.apply, a.tenant), indent=1)); return 0
+        print(json.dumps(run(REPO, a.apply, a.tenant), indent=1))
+        if a.apply and not a.tenant:  # KERNEL-LOCK-1 (ZHC-R9): the canary's kernel.lock PR, opened or recorded once merged
+            from . import kernellock
+            r = kernellock.open_pr(REPO, apply=True)
+            if r["action"] in ("opened", "synced", "failed"): ledger(REPO, {"tenant": r["tenant"], "action": "kernel-" + r["action"], **{k: v for k, v in r.items() if k in ("pin", "pr", "why")}})
+            print(json.dumps(r))
+        return 0
     bad = check(); print("\n".join(bad) or "every repository has a role; the tenant-sync tool is present"); return 1 if bad else 0
 
 

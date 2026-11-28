@@ -2,6 +2,8 @@
 """DEPLOY-DRIFT-1 (ZHC-R6, #2671): is every live Worker running what main holds?
 
   python3 -m foundation deploydrift [--json]   print each Worker's last recorded deploy and the commits to its code since; exit 1 on drift
+  python3 -m foundation deploydrift --versions [--since ISO]   ZHC-R6 closing probe: every deploy row that uploaded (no error) carries the new version id
+      and a live read that matched the commit; exit 1 naming the rows that do not. A failed upload has no version to probe and is not counted.
 
 The reading uses only the repository: the last row of ops/deploys.jsonl per Worker (the commit it was verified at) against the commits on main that touched
 that Worker's code since. A Worker with no row is unmeasured and counts as drift, never as clean. A Worker whose source lives in its own repository
@@ -101,7 +103,23 @@ def redeploy(rows: list, run=subprocess.run) -> int:
     return 0 if p.returncode == 0 else 1
 
 
+def unprobed(lines, since: str = "") -> list:
+    """Deploy rows since `since` that uploaded but lack a version id or a live read matching the commit."""
+    bad = []
+    for line in lines:
+        try: d = json.loads(line)
+        except ValueError: continue
+        if not isinstance(d, dict) or d.get("at", "") < since or d.get("error") or d.get("uploaded") is False: continue
+        if not d.get("version") or d.get("live_matches_commit") is not True: bad.append(f"{d.get('at')} {d.get('worker')}")
+    return bad
+
+
 def main(argv: list) -> int:
+    if "--versions" in argv:
+        since = argv[argv.index("--since") + 1] if "--since" in argv else ""
+        bad = unprobed(open(os.path.join(ROOT, "ops/deploys.jsonl"), encoding="utf8"), since)
+        print("\n".join(bad) if bad else "every uploaded deploy row has a probed version id")
+        return 1 if bad else 0
     topo = json.load(open(os.path.join(ROOT, "doctrine/topology.json"), encoding="utf8"))
     rows = read(topo, last_deploys(), times=last_deploy_times())
     if "--redeploy" in argv:

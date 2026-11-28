@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-27-canary-kernel-pin-moves-by-a-tenant-pr",
+  "kind": "decision",
+  "date": "2026-11-27",
+  "title": "Canary kernel pin moves by a tenant PR",
+  "body": "kernellock --open-pr opens a kernel.lock PR in the canary tenant repo for the current seed tree. The platform row moves only after the tenant main holds that pin, so the other tenants follow a merged canary, never an open one. tenant-sync.yml runs it daily with LANE_PAT.",
+  "probe": "grep:foundation/kernellock.py::def open_pr"
+ },
+ "kind": "decision",
+ "title": "Canary kernel pin moves by a tenant PR",
+ "session": ""
+}
