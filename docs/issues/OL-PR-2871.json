@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2871",
+  "title": "OL-PR-2871: land or supersede pull request #2871 (ci-failed)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2871 is ci-failed\n**Done check:** cmd:python3 -m foundation loopowner --closed 2871\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2871 (`ccr-61ee34af-j1vv6u` at 4f0f20ebe2, opened by rwnq8): feat(tenantstd): TEST-COVERAGE-1 and the stuck-queue lesson. The session that opened it is not its closer and is never asked to act. A check failed on the head commit. Read the failing run, then land the same change so that every check passes: push a fix to the branch, or open a new pull request from main that carries the change and close this one as superseded. Failed checks: foundation. Files (9): doctrine/LESSONS.md, doctrine/detectors.json, doctrine/registers.json, doctrine/tenant-standard.json, foundation/tenant_flow.py, foundation/tenantstd.py, scaffold/tenant/.github/workflows/automerge.yml.tmpl, tests/foundation/test_tenant_flow.py, tests/foundation/test_tenantstd.py.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2871 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2871` exits 0 (pull request #2871 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
