@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261126-2",
+  "title": "OL-20261126-2: READ-BUDGET-10 follow-ups: remaining D1 readers and the Actions executor's model rungs",
+  "body": "**Owner:** operations\n**Trigger:** next hourly cost sample over the cap, or executor run failing on every rung\n**Done check:** grep:foundation/agents.py::MODELS-ORG-1\n**Status:** open\n\nEvidence: after the 0034 indexes and the ROI and criticality caches the org D1 rolling-hour reading fell from 187k to about 139-158k rows against the 120k cap (cost_samples, 2026-11-26 14:33 UTC), so the lean mode may persist for another sample or two. Remaining readers by rows an hour: the originated-item count in the criticality window (about 25k; its count must stay live, because a stale value would make the tick originate duplicates), verified_outcomes_7d in tick.js (about 11k), live_changes (about 17k). Separately, the Actions executor's code-agent rungs all fail: GitHub Models answers HTTP 200 with the text OK on both endpoints and the Workers AI route through the site Worker returns 502; the tick Worker's own executor does not use them.",
+  "labels": [
+    "role:operations",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
