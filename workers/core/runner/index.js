@@ -38,6 +38,17 @@ function parseJson(text) {
 }
 
 // Strict schema for the doer: { summary: string, files: [{ path, content }] } (whole-file replacements).
+// Lessons from the practical-solutions code agent (10 stuck issues): a patched file must parse, and must import only what is installed (relative paths, node: built-ins, allowed_imports).
+export function checkPatchFile({ path, content }, allowed_imports = []) {
+  if (/\.json$/i.test(path)) { try { JSON.parse(content); } catch { return `${path} is not valid JSON`; } }
+  if (/\.m?js$/i.test(path)) {
+    for (const m of content.matchAll(/(?:\bfrom|\bimport)\s*\(?\s*['"]([^'"]+)['"]/g)) {
+      const spec = m[1];
+      if (!/^(\.|\/|node:)/.test(spec) && !allowed_imports.includes(spec)) return `${path} imports '${spec}', which is not installed`;
+    }
+  }
+  return null;
+}
 export function parseDoerOutput(text, { max_files, max_file_bytes }) {
   const obj = parseJson(text);
   if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return { error: 'not a JSON object' };
@@ -199,6 +210,10 @@ export function createRunner({ db, now = () => Date.now(), config = {}, env = {}
       await run(`INSERT OR IGNORE INTO predictions (id, item_id, metric, op, target, due_at) VALUES (?, ?, 'runner_checks_pass', '=', 1, ?)`, pid, r.item_id, iso(now() + 7 * 86400e3));
       await patchRun(r, { prediction_id: pid }); r = { ...r, prediction_id: pid };
     }
+    // The doer returns whole files; a target longer than its output budget can never come back complete (a cut-off answer is invalid JSON), so stop before spending calls.
+    const capacity = Math.floor((c.doer.max_tokens || 4096) * 3);
+    const big = (ctx.targets || []).filter(t => (t.content || '').length > capacity);
+    if (big.length) return refuse(r, 'target_too_large', `Item ${r.item_id} targets ${big.map(t => t.path).join(', ')}, longer than the doer can rewrite in one answer (${capacity} chars)`, 'split the file or the item; nothing was sent to a model', 'failed', 'target larger than the doer output budget');
     const user = { task: ctx.item, spec_reference: ctx.spec_ref, spec_text: ctx.spec_text, files: ctx.targets, test: ctx.test, failing_test: ctx.failing_test };
     if (r.feedback) {
       user.rework = { instruction: 'Your previous patch was not accepted. Fix every point below and return the full replacement files again.', feedback: r.feedback, previous_files: r.patch_json ? JSON.parse(r.patch_json) : [] };
@@ -217,6 +232,13 @@ export function createRunner({ db, now = () => Date.now(), config = {}, env = {}
     if (prot.length) {
       return refuse(r, 'protected_path', `Doer output for ${r.item_id} touches protected path(s): ${prot.map(f => f.path).join(', ')}`,
         'protected paths are owner-reviewed; nothing was pushed', 'failed', 'doer touched a protected path');
+    }
+    const unfit = parsed.files.map(f => checkPatchFile(f, c.allowed_imports || [])).find(Boolean);
+    if (unfit) {
+      const attempts = r.doer_attempts + 1;
+      if (attempts >= c.max_doer_retries) return refuse(r, 'invalid_output', `Doer returned invalid output ${attempts} times for ${r.item_id}`, unfit, 'failed', 'invalid doer output');
+      await patchRun(r, { doer_attempts: attempts, last_error: 'invalid doer output: ' + unfit });
+      return;
     }
     const slug = r.item_id.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
     const branch = r.branch || `${c.branch_prefix}${slug}-${r.id}`;

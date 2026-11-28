@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-28-code-agents-cap-retries-refuse-unfit-targets-validate-patche",
+  "kind": "lesson",
+  "date": "2026-11-28",
+  "title": "Code agents: cap retries, refuse unfit targets, validate patches before tests",
+  "body": "practical-solutions agent left 10 issues open: whole-file rewrites cut off at the output budget, invented npm imports and files, unlimited retries. Runner now refuses targets longer than the doer output budget and rejects patches that import uninstalled packages or are invalid JSON; retry caps already existed (max_doer_retries, max_rework).",
+  "probe": "grep:workers/core/runner/index.js::checkPatchFile"
+ },
+ "kind": "lesson",
+ "title": "Code agents: cap retries, refuse unfit targets, validate patches before tests",
+ "session": ""
+}
