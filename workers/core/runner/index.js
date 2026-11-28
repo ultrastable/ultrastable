@@ -38,7 +38,7 @@ function parseJson(text) {
 }
 
 // Strict schema for the doer: { summary: string, files: [{ path, content }] } (whole-file replacements).
-// Lessons from the practical-solutions code agent (10 stuck issues): a patched file must parse, and must import only what is installed (relative paths, node: built-ins, allowed_imports).
+// Lessons from a downstream code agent that left 10 issues stuck: a patched file must parse, and must import only what is installed (relative paths, node: built-ins, allowed_imports).
 export function checkPatchFile({ path, content }, allowed_imports = []) {
   if (/\.json$/i.test(path)) { try { JSON.parse(content); } catch { return `${path} is not valid JSON`; } }
   if (/\.m?js$/i.test(path)) {
