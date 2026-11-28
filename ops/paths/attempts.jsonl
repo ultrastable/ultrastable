@@ -493,3 +493,4 @@
 {"at": "2026-11-28T15:41:08+00:00", "ask": "ledger:deploys:ultrastable-tick", "class": "prior-working-config", "route": "regress:deploy/deploy-workers.mjs", "ok": false, "detail": "0 suspect commits since 40a98bad8131"}
 {"at": "2026-11-28T15:41:09+00:00", "ask": "ledger:deploys:ultrastable-seed-second-tenant", "class": "prior-working-config", "route": "regress:deploy/deploy-workers.mjs", "ok": false, "detail": "0 suspect commits since 1eb9ae7c72f1"}
 {"at": "2026-11-28T15:41:09+00:00", "ask": "ledger:deploys:ultrastable-spinoffs", "class": "prior-working-config", "route": "regress:deploy/deploy-workers.mjs", "ok": false, "detail": "0 suspect commits since 40a98bad8131"}
+{"at": "2026-11-28T19:37:09+00:00", "ask": "ledger:deploys:ultrastable-open-questions", "class": "prior-working-config", "route": "regress:deploy/deploy-workers.mjs", "ok": false, "detail": "0 suspect commits since 40a98bad8131"}
