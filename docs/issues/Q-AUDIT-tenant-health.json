@@ -1,0 +1,14 @@
+{
+  "id": "Q-AUDIT-tenant-health",
+  "title": "Q-AUDIT-tenant-health: fm-tenant-unhealthy failing (fail): Read the tenant's /health and its last beats' reports (error samples per source); fix the tenant repository by PR; the tick's tenant-deploy step ships it.",
+  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe tenant-health\n**Status:** open\n\nFailure mode `fm-tenant-unhealthy` detected by `tenant-health`, failing since 2026-11-28T14:46:32Z.\nEvidence: ,\n   \"discovery not ok: {\\\"reading_stalled\\\": true, \\\"oldest_unread_hours\\\": 55, \\\"last_answer_hours\\\": 1, \\\"candidates\\\": {\\\"added\\\": 19, \\\"attached\\\": 2, \\\"new\\\": 208, \\\"no-abstract\\\": 295, \\\"no-abstract-anywhere\\\": 18, \\\"rejected\\\": 37, \\\"skipped\\\": 120, \\\"unrelated\\\": 75}, \\\"programme\"\n  ]\n }\n}\n\nSignature: d10b36aa74a5 (disposition: fix).\nSuspected root cause: a tenant worker's clock stopped, or a part it reports (its evidence search, reader or feed) says ok false while the clock still ticks\nChanged since the last passing commit 79341a3140: `.github/workflows/lane.yml`, `.github/workflows/scout.yml`, `.gitignore`, `CHANGELOG.md`, `README.md`, `VERSION`, `catalog-info.yaml`, `dashboard/temporal-data.js`, `docs/PROJECT-MEMORY.md`, `docs/handoff/spec-workflow-result.md`, `doctrine/LESSONS.md`, `doctrine/ciwatch.json` (and 285 more)\nRemedy: Read the tenant's /health and its last beats' reports (error samples per source); fix the tenant repository by PR; the tick's tenant-deploy step ships it.\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe tenant-health\n",
+  "labels": [
+    "role:operations",
+    "audit",
+    "fix",
+    "agent-ready",
+    "p1"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}

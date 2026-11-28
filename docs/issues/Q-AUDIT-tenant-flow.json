@@ -1,0 +1,14 @@
+{
+  "id": "Q-AUDIT-tenant-flow",
+  "title": "Q-AUDIT-tenant-flow: fm-stale-flow failing (fail): Read the idle item's last comments for the cause, fix the loop in the tenant by pull request, and let the tenant's automerge land it; add the cause to doctrine/LESSONS.md and a lint where c",
+  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe tenant-flow\n**Status:** open\n\nFailure mode `fm-stale-flow` detected by `tenant-flow`, failing since 2026-11-28T14:52:22Z.\nEvidence: on approach: a bundle of an \nultrastable/practical-solutions#235: issue open 68h (limit 48h) with 3 comment(s): Impact: what keeps \"Subsidise grid connections for rural hou\nultrastable/spinoffs: cannot read (gh api repos/ultrastable/spinoffs/issues?state=open&per_page=100: gh: Not Found (HTTP 404))\n\nSignature: b1d97889b40e (disposition: fix).\nSuspected root cause: a tenant's queue issue or pull request idles because its retry repeats its input, it has no cap or no merger, or a parallel fix collides with it (Open Questions and base-rates, 2026-11-26 to 28)\nRemedy: Read the idle item's last comments for the cause, fix the loop in the tenant by pull request, and let the tenant's automerge land it; add the cause to doctrine/LESSONS.md and a lint where code can hold it.\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe tenant-flow\n",
+  "labels": [
+    "role:operations",
+    "audit",
+    "fix",
+    "agent-ready",
+    "p1"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}

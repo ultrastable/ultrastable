@@ -1,11 +1,11 @@
 {
   "id": "Q-AUDIT-foundation-tests",
   "title": "Q-AUDIT-foundation-tests: fm-tests-red failing (fail): Fix the root cause in code or make the test host-independent; never delete the failing test.",
-  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe foundation-tests\n**Status:** closed\n\nFailure mode `fm-tests-red` detected by `foundation-tests`, failing since 2026-11-21T13:41:13Z.\nEvidence: timeout\nSignature: f77d1bb58da8 (disposition: fix).\nSuspected root cause: a foundation check regressed or a test depends on the host\nRemedy: Fix the root cause in code or make the test host-independent; never delete the failing test.\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe foundation-tests\n\n**Disposition:** shelved (ttl, 2026-11-27T16:04:51Z, DISPOSE-1)\n\n**Evidence:** open 146.4 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
+  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe foundation-tests\n**Status:** open\n\nFailure mode `fm-tests-red` detected by `foundation-tests`, failing since 2026-11-21T13:41:13Z.\nEvidence: timeout\nSignature: f77d1bb58da8 (disposition: mutate).\nSuspected root cause: a foundation check regressed or a test depends on the host\nRemedy: Fix the root cause in code or make the test host-independent; never delete the failing test.\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\nSame signature twice: do not retry the same fix, change the approach (guiding directive section 2).\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe foundation-tests\n",
   "labels": [
     "role:operations",
     "audit",
-    "fix",
+    "mutate",
     "agent-ready",
     "p1"
   ],

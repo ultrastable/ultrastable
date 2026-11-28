@@ -1,10 +1,10 @@
 {
   "id": "Q-RECUR-95160dac44",
-  "title": "Q-RECUR-95160dac44: loop-stalled recurred 2x: selftest workflows last scheduled runs all failed silent loop stop ultrastable p",
-  "body": "**Owner:** executor\n**Trigger:** the failure miner files it after every merge and daily\n**Done check:** cmd:python3 -m foundation failmine --probe 95160dac44\n**Status:** open\n\nRecurring failure, class `loop-stalled`, seen 2 times (open 2, last 2026-11-26T16:01:07Z).\nSignature: selftest workflows last scheduled runs all failed silent loop stop ultrastable practical solutions github\nEvents: audit-selftest-workflows-2026-11-25T21:07:12Z, audit-selftest-workflows-2026-11-26T16:01:07Z\nRoot cause (5 whys): a loop has one trigger and that trigger did not fire\nOwning mechanism: foundation/resilience.py, seed/worker/src/pulse.js\nSeen twice: the last fix did not hold. Change the approach, do not repeat the fix.\n\n**Closing probe:** cmd:python3 -m foundation failmine --probe 95160dac44\n\n\n**Vacuous:** 2026-11-27T16:04:21Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "title": "Q-RECUR-95160dac44: loop-stalled recurred 3x: selftest workflows last scheduled runs all failed silent loop stop ultrastable p",
+  "body": "**Owner:** executor\n**Trigger:** the failure miner files it after every merge and daily\n**Done check:** cmd:python3 -m foundation failmine --probe 95160dac44\n**Status:** open\n\nRecurring failure, class `loop-stalled`, seen 3 times (open 3, last 2026-11-27T15:52:22Z).\nSignature: selftest workflows last scheduled runs all failed silent loop stop ultrastable practical solutions github\nEvents: audit-selftest-workflows-2026-11-25T21:07:12Z, audit-selftest-workflows-2026-11-26T16:01:07Z, audit-selftest-workflows-2026-11-27T15:52:22Z\nRoot cause (5 whys): a loop has one trigger and that trigger did not fire\nOwning mechanism: foundation/resilience.py, seed/worker/src/pulse.js\nSeen three or more times: incident. Redesign the owning mechanism so this class cannot recur; a fourth attempt of the same fix is not allowed.\n\n**Closing probe:** cmd:python3 -m foundation failmine --probe 95160dac44\n",
   "labels": [
     "audit",
-    "mutate",
+    "incident",
     "agent-ready",
     "p1",
     "raises-self"
