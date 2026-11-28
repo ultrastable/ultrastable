@@ -232,7 +232,7 @@ function pilot() {
     + "<p class=\"meta\">Your answers are scored and stored when you apply; to reach a person, email the pilot team. The form above is the interview: it scores your answers against the four system-test questions.</p>");
 }
 
-function lis(a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; }
+function lis(a) { return "<ul>" + (a || []).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; }
 function crumbs(items) { return "<nav class=\"crumbs\" aria-label=\"Breadcrumb\">" + items.map(function (i, k) { return k < items.length - 1 ? "<a href=\"" + i[1] + "\">" + esc(i[0]) + "</a> / " : "<span aria-current=\"page\">" + esc(i[0]) + "</span>"; }).join("") + "</nav>"; }
 function domLabel(k) { const x = SH.domains[k]; return x ? x.host : ""; }
 // DISCOVER-1: every system built on Ultrastable, generated from the tenant registry; each links the others through /directory.
@@ -269,7 +269,7 @@ function showcaseCase(id) {
     + (c.separate ? "<p class=\"us-note\" role=\"note\">" + esc(c.separate) + "</p>" : "")
     + "<h2>The problem</h2><p>" + esc(c.problem) + "</p><h2>What the loop did</h2><p>" + esc(c.loop) + "</p><h2>Results</h2>" + lis(c.results)
     + "<h2>What we learned</h2><p>" + esc(c.learned) + "</p>"
-    + "<div class=\"us-actions\">" + (c.home ? "<a class=\"btn btn-primary\" href=\"" + esc(c.home) + "\" rel=\"noopener\">" + esc(c.homeLabel || "Open it") + "</a>" : "") + c.links.map(function (l, k) { return "<a class=\"btn" + (k === 0 && !c.home ? " btn-primary" : "") + "\" href=\"" + esc(l.href) + "\">" + esc(l.label) + "</a>"; }).join("") + "</div>"
+    + "<div class=\"us-actions\">" + (c.home ? "<a class=\"btn btn-primary\" href=\"" + esc(c.home) + "\" rel=\"noopener\">" + esc(c.homeLabel || "Open it") + "</a>" : "") + (c.links || []).map(function (l, k) { return "<a class=\"btn" + (k === 0 && !c.home ? " btn-primary" : "") + "\" href=\"" + esc(l.href) + "\">" + esc(l.label) + "</a>"; }).join("") + "</div>"
     + "<p class=\"meta\">Part of the Ultrastable family: " + (c.domain === "org" ? "a public-benefit demo, homed on " + esc(domLabel("org")) + " and described here on " + esc(domLabel("io")) + "." : "a case study on " + esc(domLabel("io")) + ".") + " <a href=\"/for\">Find your path</a></p>");
 }
 

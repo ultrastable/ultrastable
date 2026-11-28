@@ -365,7 +365,25 @@ export default {
    "summary": "Open Questions: a tenant system running on Ultrastable.",
    "domain": "org",
    "home": "https://open-questions.ultrastable.org/",
-   "homeLabel": "Open Open Questions"
+   "homeLabel": "Open Open Questions",
+   "problem": "Public knowledge rarely says plainly what science does not know yet or where the evidence leans today, so people meet false certainty and funders lack a map of the questions worth answering.",
+   "loop": "Twice a day a GitHub Actions run takes the next open question from its queue and searches Crossref for review abstracts. A model must return one sentence copied word for word that says where the evidence leans or that it is unresolved. Code (github/verify.mjs) publishes an entry only when the DOI is one of the fetched sources and the quote is literally in its abstract. A question with no such sentence stays in the queue as an issue, reads a new page of sources on each retry, and closes as not planned after six tries.",
+   "results": [
+    "Each published entry is a quoted sentence with its DOI and source, read live at /api/entries.json; the count is not typed here.",
+    "The beat record is public at /api/beats and the health report at /health.",
+    "Every entry carries the grade 'lean quoted from the source abstract; study design not yet graded': no stronger grade is claimed."
+   ],
+   "learned": "Its own queue showed that a retry which repeats its input never resolves: three issues sat open for two days. The fix (vary each retry, cap attempts, record a failed model route) became fleet rules (FLOW-AUDIT-1, TEST-COVERAGE-1, AUTOMERGE-1).",
+   "links": [
+    {
+     "label": "Operations dashboard",
+     "href": "/ops"
+    },
+    {
+     "label": "Get in touch",
+     "href": "/contact"
+    }
+   ]
   },
   {
    "id": "base-rates",
@@ -375,7 +393,25 @@ export default {
    "summary": "Base Rates: a tenant system running on Ultrastable.",
    "domain": "org",
    "home": "https://base-rates.ultrastable.org/",
-   "homeLabel": "Open Base Rates"
+   "homeLabel": "Open Base Rates",
+   "problem": "People and institutions forecast from the story in front of them and ignore how often such things usually go, which makes plans overconfident and wastes public money.",
+   "loop": "Twice a day a GitHub Actions run takes the next reference class from its queue and searches Crossref for study abstracts. A model must return one sentence copied word for word that states a base rate. Code (github/verify.mjs) publishes an entry only when the DOI is one of the fetched sources, the quote is literally in its abstract and every number stated is in that quote. A class with no such sentence stays in the queue as an issue, reads a new page of sources on each retry, and closes as not planned after six tries.",
+   "results": [
+    "Each published base rate is a quoted sentence with its DOI and source, read live at /api/entries.json; the count is not typed here.",
+    "The beat record is public at /api/beats and the health report at /health.",
+    "Every entry carries the grade 'quoted from the source abstract; study design not yet graded': no stronger grade is claimed."
+   ],
+   "learned": "Fourteen of its queue issues sat open for two days because every retry read the same sources. The fix was shared with Open Questions and became fleet rules (FLOW-AUDIT-1, TEST-COVERAGE-1, AUTOMERGE-1).",
+   "links": [
+    {
+     "label": "Operations dashboard",
+     "href": "/ops"
+    },
+    {
+     "label": "Get in touch",
+     "href": "/contact"
+    }
+   ]
   }
  ],
  "domains": {
