@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-base-rates-branch-cleanup",
+  "title": "Q-CIFAIL-base-rates-branch-cleanup: branch-cleanup is failing in ultrastable/base-rates",
+  "body": "**Owner:** staff\n**Trigger:** every executor run and every ciwatch run\n**Done check:** cmd:python3 -m foundation ciwatch --probe ultrastable/base-rates branch-cleanup\n**Status:** open\n\nCIWATCH-1: workflow `branch-cleanup` in ultrastable/base-rates is red on its default branch (failure, 2026-11-28T06:11:30Z): https://github.com/ultrastable/base-rates/actions/runs/46115456391\n\nFix the root cause in the repository where the defect lives; do not skip or weaken the check. Failed log tail:\n\n```\ncleanup\tProbe (red while a stale branch remains)\t\ufeff2026-11-28T06:12:01.8418335Z ##[group]Run python3 scripts/branch_cleanup.py --check\ncleanup\tProbe (red while a stale branch remains)\t2026-11-28T06:12:01.8419256Z ^[[36;1mpython3 scripts/branch_cleanup.py --check^[[0m\ncleanup\tProbe (red while a stale branch remains)\t2026-11-28T06:12:01.8442923Z shell: /usr/bin/bash -e {0}\ncleanup\tProbe (red while a stale branch remains)\t2026-11-28T06:12:01.8443272Z env:\ncleanup\tProbe (red while a stale branch remains)\t2026-11-28T06:12:01.8445400Z   GH_TOKEN: ***\ncleanup\tProbe (red while a stale branch remains)\t2026-11-28T06:12:01.8445665Z   BRANCH_CLEANUP_REPOS: base-rates\ncleanup\tProbe (red while a stale branch remains)\t2026-11-28T06:12:01.8445968Z   BRANCH_CLEANUP_ORG: ultrastable\ncleanup\tProbe (red while a stale branch remains)\t2026-11-28T06:12:01.8446235Z   BRANCH_CLEANUP_SETTINGS: off\ncleanup\tProbe (red while a stale branch remains)\t2026-11-28T06:12:01.8446482Z ##[endgroup]\ncleanup\tProbe (red while a stale branch remains)\t2026-11-28T06:12:03.5346026Z ultrastable/base-rates: stale fix-attempt-index (pr #33:closed)\ncleanup\tProbe (red while a stale branch remains)\t2026-11-28T06:12:03.5346688Z {\"stale_before\": 1, \"fixed\": 0, \"errors\": 0}\ncleanup\tProbe (red while a stale branch remains)\t2026-11-28T06:12:03.5408454Z ##[error]Process completed with exit code 1.\n```",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
