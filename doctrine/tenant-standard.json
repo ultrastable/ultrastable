@@ -73,6 +73,7 @@
    {"path": ".github/workflows/ci.yml", "mode": "managed"},
    {"path": ".github/workflows/vendor-sync.yml", "mode": "managed"},
    {"path": ".github/workflows/branch-cleanup.yml", "mode": "create"},
+   {"path": ".github/workflows/automerge.yml", "mode": "create"},
    {"path": "AGENTS.md", "mode": "block", "block": "standard"},
    {"path": "README.md", "mode": "block", "block": "live", "at": "after-title"},
    {"path": "package.json", "mode": "json"},
