@@ -129,6 +129,8 @@ def main(argv):
         ok = is_closed(argv[1]); print("closed" if ok else "open or unreadable"); return 0 if ok else 1
     res = run(apply="--apply" in argv)
     if "--file" in argv:
+        from . import statesink  # STATE-ARCHIVE-1 (ZHC-R1): closed items leave docs/issues in the same run that commits it
+        print("archived: " + str(len(statesink.archive(REPO, apply="--apply" in argv)["archived"])))
         print("filed: " + ", ".join(file_items(REPO, res) or ["none"]))
     if "--json" in argv:
         print(json.dumps(res, indent=1))

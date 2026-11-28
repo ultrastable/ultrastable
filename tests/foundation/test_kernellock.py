@@ -54,4 +54,10 @@ class Bump(unittest.TestCase):
         self.assertEqual(kernellock.load(d)["tenants"]["c"]["pin"], cur)
         self.assertEqual(kernellock.open_pr(d, apply=True, gh=self._gh({}, []), current=cur)["action"], "none")
 
+    def test_ledger_synced_pin_overlays_the_lock(self):
+        import json
+        d = self._root(None); (d / "ops/tenant-sync").mkdir(parents=True)
+        (d / "ops/tenant-sync/ledger.jsonl").write_text(json.dumps({"action": "kernel-synced", "tenant": "c", "pin": "e" * 40}) + "\n")
+        self.assertEqual(kernellock.load(d)["tenants"]["c"]["pin"], "e" * 40)
+
 if __name__ == "__main__": unittest.main()

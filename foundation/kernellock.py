@@ -4,7 +4,7 @@
 #   python3 -m foundation kernellock --hash    the tree hash of seed/ at HEAD (what a pin names)
 #   python3 -m foundation kernellock --bump [--apply]  the canary takes the current kernel first; the rest only when the canary is on it (R9)
 #   python3 -m foundation kernellock --open-pr [--apply]  R9 pin-PR opener: the canary repo gets a kernel.lock PR for the current kernel; once its
-#       main holds that pin, the row here is written (the PR merged, so the rest may follow). Run daily by tenant-sync.yml with LANE_PAT.
+#       main holds that pin, the row here is written (the PR merged, so the rest may follow). Run daily by `tenantsync --run --apply` (tenant-sync.yml, LANE_PAT); a merged pin is logged as kernel-synced in ops/tenant-sync/ledger.jsonl, which load() reads.
 #   python3 -m foundation kernellock --status  per tenant: pinned to current, behind, or unpinned; the canary is listed first
 import base64, json, os, re, subprocess, sys
 from pathlib import Path
@@ -15,7 +15,15 @@ HASH = re.compile(r"^[0-9a-f]{40}$")
 
 
 def load(root=ROOT):
-    return json.loads((Path(root) / LOCK).read_text())
+    """The lock file, with any canary pin the tenant-sync ledger recorded since (its workflow commits the ledger, not this file)."""
+    lock = json.loads((Path(root) / LOCK).read_text())
+    led = Path(root) / "ops/tenant-sync/ledger.jsonl"
+    if led.exists():
+        for ln in led.read_text().splitlines():
+            try: e = json.loads(ln)
+            except ValueError: continue
+            if e.get("action") == "kernel-synced" and e.get("tenant") in lock["tenants"] and HASH.match(str(e.get("pin"))): lock["tenants"][e["tenant"]]["pin"] = e["pin"]
+    return lock
 
 
 def kernel_hash(root=ROOT, ref="HEAD"):
