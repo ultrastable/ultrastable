@@ -1,112 +1,112 @@
 {
  "a2a-spec": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 1,
   "weight": 1.0
  },
  "aider": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 1,
   "weight": 1.0
  },
  "autogen": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 1,
   "weight": 1.0
  },
  "cff-spec": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 1,
   "weight": 1.0
  },
  "claude-code": {
-  "counted": 7,
-  "quiet": 1,
-  "weight": 1.25
+  "counted": 10,
+  "quiet": 0,
+  "weight": 0.64
  },
  "cline": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 1,
   "weight": 1.0
  },
  "cloudevents-spec": {
   "counted": 0,
-  "quiet": 0,
-  "weight": 1.0
- },
- "cloudflare-agents": {
-  "counted": 1,
   "quiet": 1,
   "weight": 1.0
  },
+ "cloudflare-agents": {
+  "counted": 2,
+  "quiet": 0,
+  "weight": 0.8
+ },
  "cloudflare-blog": {
+  "counted": 0,
+  "quiet": 0,
+  "weight": 0.64
+ },
+ "cloudflare-workers-sdk": {
   "counted": 0,
   "quiet": 3,
   "weight": 0.8
  },
- "cloudflare-workers-sdk": {
-  "counted": 0,
-  "quiet": 2,
-  "weight": 0.8
- },
  "conventional-commits-spec": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 1,
   "weight": 1.0
  },
  "crewai": {
-  "counted": 0,
+  "counted": 1,
   "quiet": 0,
-  "weight": 1.0
+  "weight": 0.8
  },
  "gemini-cli": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 1,
   "weight": 1.0
  },
  "google-adk": {
   "counted": 1,
-  "quiet": 1,
+  "quiet": 2,
   "weight": 0.64
  },
  "langgraph": {
   "counted": 1,
-  "quiet": 1,
+  "quiet": 2,
   "weight": 0.64
  },
  "mcp-spec": {
   "counted": 0,
-  "quiet": 2,
+  "quiet": 3,
   "weight": 0.8
  },
  "openai-codex": {
   "counted": 0,
-  "quiet": 2,
+  "quiet": 3,
   "weight": 0.8
  },
  "openapi-spec": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 1,
   "weight": 1.0
  },
  "openhands": {
   "counted": 0,
-  "quiet": 2,
+  "quiet": 3,
   "weight": 0.8
  },
  "otel-semconv": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 1,
   "weight": 1.0
  },
  "publiccode-spec": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 1,
   "weight": 1.0
  },
  "schemaorg": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 1,
   "weight": 1.0
  }
 }

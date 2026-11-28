@@ -1,0 +1,46 @@
+{
+ "capabilities": {
+  "agents-md": "t-config.yaml .pre-commit-config.yaml .python-version .python-version AGENTS.md AGENTS.md CHANGELOG.md CHANGELOG.md CODE_OF_CONDUCT.md CODE_OF_CONDUC",
+  "autonomous-pr": "}} The-PR-Agent pr-agent Repository navigation Code Issues 16 ( 16 ) Pull requests 36 ( 36 ) Discussions Actions Projects Wiki Security and quality Insi",
+  "cross-model-review": "Navigation Menu Sign in Products Platform GitHub Repository hosting, code review, and collaboration Copilot AI coding agent for tasks, projects, and a",
+  "event-triggered-agents": "asks, projects, and automated work Build &amp; Ship Actions CI/CD and automation Code Quality Quality analysis, fixes, and enforcement Codespaces Clou",
+  "existing-repo-adoption": "r PR-Agent 1. GitHub Action (Recommended) Add automated PR reviews to your repository with a simple workflow file: # .github/workflows/pr-agent.yml name :",
+  "idea-to-deploy": "ed Note Docker Hub namespace migration. Releases 0.34.2 and later are published under pragent/pr-agent . Older releases (up to and including v0.31 )",
+  "other-cloud": "rojects and integrates seamlessly with GitHub, GitLab, Bitbucket, and Azure DevOps for high-quality automated reviews. Sponsors PR-Agent is a com",
+  "permission-guardrails": ": [opened, synchronize] jobs : pr_agent_job : runs-on : ubuntu-latest permissions : contents : read issues : write pull-requests : write steps : - name",
+  "self-hostable": "GitHub - The-PR-Agent/pr-agent: \ud83d\ude80 PR Agent: The Original Open-Source PR Reviewer. This project is not the Qodo free tier. \u00b7 GitHub Skip to"
+ },
+ "errors": {},
+ "id": "pr-agent",
+ "name": "PR-Agent (open source, self-hosted)",
+ "refreshed_at": "2026-11-28T04:19:25Z",
+ "sha": "a1653f568d0f",
+ "sources_read": [
+  "https://github.com/The-PR-Agent/pr-agent"
+ ],
+ "taxonomy": [
+  "a2a-protocol",
+  "agent-evals",
+  "agent-memory",
+  "agent-skills",
+  "agents-md",
+  "autonomous-pr",
+  "chat-entry",
+  "cloud-background-agents",
+  "cross-model-review",
+  "durable-execution",
+  "event-triggered-agents",
+  "existing-repo-adoption",
+  "idea-to-deploy",
+  "incident-investigation",
+  "mcp-server",
+  "multi-agent-roles",
+  "observability",
+  "other-cloud",
+  "permission-guardrails",
+  "sandboxed-execution",
+  "scheduled-agents",
+  "self-hostable",
+  "spend-budgets"
+ ]
+}

@@ -9,3 +9,8 @@
 {"at": "2026-11-17T16:15:27Z", "id": "Q-SCOUT-claude-code-f8d9f498", "outcome": "declined", "reason": "no open gap shares three or more terms with this release note"}
 {"at": "2026-11-17T16:15:27Z", "id": "Q-SCOUT-langgraph-fdca3915", "outcome": "declined", "reason": "no open gap shares three or more terms with this release note"}
 {"at": "2026-11-17T16:15:27Z", "id": "Q-SCOUT-nofeed-sources", "outcome": "declined", "reason": "no open gap shares three or more terms with this release note"}
+{"at": "2026-11-28T04:19:25Z", "id": "Q-SCOUT-claude-code-17cd029e", "outcome": "declined", "reason": "no open gap shares three or more terms with this release note"}
+{"at": "2026-11-28T04:19:25Z", "id": "Q-SCOUT-claude-code-2bd94fb7", "outcome": "declined", "reason": "no open gap shares three or more terms with this release note"}
+{"at": "2026-11-28T04:19:25Z", "id": "Q-SCOUT-claude-code-3684bd2b", "outcome": "declined", "reason": "no open gap shares three or more terms with this release note"}
+{"at": "2026-11-28T04:19:25Z", "id": "Q-SCOUT-cloudflare-agents-c494c488", "outcome": "declined", "reason": "no open gap shares three or more terms with this release note"}
+{"at": "2026-11-28T04:19:25Z", "id": "Q-SCOUT-crewai-b3cef031", "outcome": "declined", "reason": "no open gap shares three or more terms with this release note"}
