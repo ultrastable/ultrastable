@@ -8,8 +8,12 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-27
+Last updated: 2026-11-28
 
+- 2026-11-28: chore(tenants): remove the six conformance-pending exceptions; the fleet reads 12 of 12 conforming (REPO-CONFORM-2) (#2848)
+- 2026-11-28: scout: weekly scout and rnd pass, findings filed, profiles refreshed, sources re-weighted (part 3/3) [skip ci]
+- 2026-11-28: scout: weekly scout and rnd pass, findings filed, profiles refreshed, sources re-weighted (part 2/3) [skip ci]
+- 2026-11-28: scout: weekly scout and rnd pass, findings filed, profiles refreshed, sources re-weighted (part 1/3) [skip ci]
 - 2026-11-27: docs(handoff): what the resumed specification run shipped, and what it did not (SHIP-PLAN-1) (#2844)
 - 2026-11-27: feat(foundation): hits window, owner-action wording and spec tests (#2843)
 - 2026-11-27: feat(core): ladder, kernel, predict, trust and the other modules cite their requirements (#2839)

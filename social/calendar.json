@@ -647,6 +647,27 @@
    "arm": "shipped",
    "kind": "event",
    "tag": "EVENT"
+  },
+  {
+   "id": "paper:knowledge-graph-2026:1of1:2026-11-28",
+   "date": "2026-11-28",
+   "text": "Common belief: A graph only helps when someone queries it.\nOur records: 1 of 1 tests met.\nUltrastable runs on Ultrastable and writes these papers itself. https://ultrastable.io/research/knowledge-graph-2026",
+   "texts": {
+    "bluesky": "Common belief: A graph only helps when someone queries it.\nOur records: 1 of 1 tests met.\nUltrastable runs on Ultrastable and writes these papers itself. https://ultrastable.io/research/knowledge-graph-2026",
+    "mastodon": "Common belief: A knowledge graph is a search index: it only pays off when a person asks it something.\n\nWhat this system's own records show: 1 of 1 tests met; every miss is an open work item. Measured: share of systems in doctrine/knowledge-graph.json whose knowledge graph…\n\nUltrastable runs on Ultrastable: it writes, measures and republishes these papers from its own records. Practical Solutions is one system it runs. https://ultrastable.org\n\nhttps://ultrastable.io/research/knowledge-graph-2026",
+    "linkedin": "A graph that grows itself: what a knowledge graph is worth when nobody is there to query it\n\nA common belief: A knowledge graph is a search index: it only pays off when a person asks it something.\n\nA graph that is rebuilt from every record and mined for missing links produces its own work, and whether that work was worth doing can be counted.\n\nWhat the system's own records show (window of 6.96 days, 378 merged changes):\n• Share of systems in doctrine/knowledge-graph.json whose knowledge graph is built, not pending: 1.0 (n = 5) against a target of >= 1 (met).\n\n1 of 1 tests met; every miss is an open work item. The paper regenerates itself from the records after every change, limits included.\n\nWhy this is on my feed: Ultrastable runs on Ultrastable. Its fixes, deploys and these white papers are produced and checked by the system itself, from its own records. Practical Solutions is one example of a system it runs: a free, evidence-based catalogue of fixes for global problems that keeps its own evidence current. The subject is the example; the point is what a self-running system can do for your own work. https://ultrastable.org\n\nFull paper, method and limits: https://ultrastable.io/research/knowledge-graph-2026"
+   },
+   "channels": [
+    "bluesky",
+    "mastodon",
+    "linkedin"
+   ],
+   "kind": "paper",
+   "arm": "paper",
+   "paper": "knowledge-graph-2026",
+   "state": "1of1",
+   "source": "site/research-data.js",
+   "url": "https://ultrastable.io/research/knowledge-graph-2026"
   }
  ]
 }
