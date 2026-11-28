@@ -789,3 +789,4 @@
 {"at": "2026-11-28T14:45:15Z", "clocks": 49, "kind": "beat", "seq": 787, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 0}
 {"at": "2026-11-28T14:55:30Z", "clocks": 49, "kind": "beat", "seq": 788, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 0}
 {"at": "2026-11-28T15:07:13Z", "clocks": 49, "kind": "beat", "seq": 789, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 0}
+{"at": "2026-11-28T15:15:17Z", "clocks": 49, "kind": "beat", "seq": 790, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 34}
