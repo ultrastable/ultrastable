@@ -4,10 +4,10 @@
   "kind": "lesson",
   "date": "2026-11-28",
   "title": "A retry that repeats its input never converges, and a test CI never runs never fails",
-  "body": "Base Rates queue issues 3-27 stayed open for days because its loop re-fetched the same six Crossref hits and asked a temperature-0 model on every retry, so a topic that failed once failed identically forever; and github/verify.test.mjs was outside package.json test, so CI never exercised the loop. Rules: (1) a retry must change something it reads (window, phrasing, source, route) or it is a repeat, not a retry. (2) every *.test.mjs / *.test.js in a Node tenant is run by package.json test (TEST-COVERAGE-1, foundation/tenantstd.py uncovered_tests, run by tenantstd --check). Open Questions carried the same loop and the same gap.",
+  "body": "Base Rates queue issues 3-27 stayed open for days because its loop re-fetched the same six Crossref hits and asked a temperature-0 model on every retry, so a topic that failed once failed identically forever; and github/verify.test.mjs was outside package.json test, so CI never exercised the loop. Rules: (1) a retry must change something it reads (window, phrasing, source, route) or it is a repeat, not a retry. (2) every *.test.mjs / *.test.js in a Node tenant is run by package.json test (TEST-COVERAGE-1, foundation/tenantstd.py uncovered_tests, run by tenantstd --check). Open Questions carried the same loop and the same gap. (3) A retry counter must count the attempt already recorded where the failure was first filed: Base Rates kept it in the issue body, comments was 0, and the first retry repeated the first search until the fix was checked against the live loop's next run.",
   "probe": "grep:foundation/tenantstd.py::TEST-COVERAGE-1"
  },
  "kind": "lesson",
  "title": "A retry that repeats its input never converges, and a test CI never runs never fails",
- "session": ""
+ "session": "session_0156nqDutqKF5EzM3sG4WaFY"
 }
