@@ -6,6 +6,31 @@ All notable changes, in the Keep a Changelog 1.1 format; versions follow Semanti
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-28
+
+### Added
+
+- TEST-COVERAGE-1 and the stuck-queue lesson (#2871)
+- TEST-COVERAGE-1, CloudEvents research ledger, and ciwatch covering tenants and idle queues (#2870)
+- hits window, owner-action wording and spec tests (#2843)
+- ladder, kernel, predict, trust and the other modules cite their requirements (#2839)
+- claims, elicit, vault, sla and walkthrough reconciled with their requirements (#2838)
+- console and tick routes, launcher bundle and platform adapters (#2830)
+- text-form vendoring, install, self-start and release verification (#2829)
+
+### Changed
+
+- refuse unfit targets, reject uninstalled imports and invalid JSON (#2869)
+- start on pull_request events so a draft PR is not left to the daily sweep (#2876)
+- remove the six conformance-pending exceptions; the fleet reads 12 of 12 conforming (REPO-CONFORM-2) (#2848)
+- what the resumed specification run shipped, and what it did not (SHIP-PLAN-1) (#2844)
+
+### Fixed
+
+- file an item when the GitHub-only loop watch cannot read or dispatch a loop (#2890)
+- the bot commit that skips CI runs the standards check itself (OPEN-STANDARDS-1) (#2875)
+- measure tenant Workers against their repository and redeploy when behind (#2878)
+
 ## [0.2.0] - 2026-11-27
 
 ### Added
