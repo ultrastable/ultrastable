@@ -54,7 +54,7 @@ def watched(root=REPO, cfg=None) -> list[str]:
     cfg, out = cfg or load(root), []
     p = Path(root) / "doctrine/tenant-repos.json"
     tenants = json.loads(p.read_text(encoding="utf-8")).get("tenants", {}) if p.is_file() else {}
-    for r in list(cfg["repos"]) + [t["repo"] for t in tenants.values() if t.get("repo")]:
+    for r in list(cfg["repos"]) + [t["repo"] for t in tenants.values() if t.get("repo") and t.get("state") != "retired"]:
         if r not in out:
             out.append(r)
     return out
