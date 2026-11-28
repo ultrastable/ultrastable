@@ -1,0 +1,12 @@
+{
+  "id": "a2a-v1",
+  "type": "a2a/v1",
+  "name": "A2A v1.0 Agent",
+  "endpoint": "/api/v1/agent/a2a",
+  "capabilities": ["task", "card"],
+  "model": {
+    "provider": "workers-ai",
+    "model_id": "shiny-white-v2-9e8-blyat-kitty",
+    "max_tokens": 1024
+  }
+}
