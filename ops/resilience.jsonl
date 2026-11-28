@@ -741,3 +741,4 @@
 {"age_s": null, "at": "2026-11-28T07:56:29Z", "clock": "what-works-beat", "detail": "ultrastable-what-works.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 739}
 {"age_s": null, "at": "2026-11-28T07:56:29Z", "clock": "replication-ledger-beat", "detail": "ultrastable-replication-ledger.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 740}
 {"at": "2026-11-28T07:56:29Z", "clocks": 49, "kind": "beat", "seq": 741, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 0}
+{"at": "2026-11-28T08:05:35Z", "clocks": 49, "kind": "beat", "seq": 742, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 0}
