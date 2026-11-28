@@ -737,3 +737,7 @@
 {"age_s": null, "at": "2026-11-28T07:37:26Z", "clock": "base-rates-beat", "detail": "ultrastable-base-rates.ultrastable.workers.dev=404, base-rates.ultrastable.org=200", "kind": "restart", "ok": true, "route": "http", "seq": 735}
 {"at": "2026-11-28T07:37:26Z", "clocks": 49, "kind": "beat", "seq": 736, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 0}
 {"at": "2026-11-28T07:49:15Z", "clocks": 49, "kind": "beat", "seq": 737, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 0}
+{"age_s": null, "at": "2026-11-28T07:56:29Z", "clock": "unlearn-beat", "detail": "ultrastable-unlearn.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 738}
+{"age_s": null, "at": "2026-11-28T07:56:29Z", "clock": "what-works-beat", "detail": "ultrastable-what-works.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 739}
+{"age_s": null, "at": "2026-11-28T07:56:29Z", "clock": "replication-ledger-beat", "detail": "ultrastable-replication-ledger.ultrastable.workers.dev=200", "kind": "restart", "ok": true, "route": "http", "seq": 740}
+{"at": "2026-11-28T07:56:29Z", "clocks": 49, "kind": "beat", "seq": 741, "stalled": 5, "stalled_ids": ["unlearn-beat", "what-works-beat", "replication-ledger-beat", "open-questions-beat", "base-rates-beat"], "unmeasured": 0}
