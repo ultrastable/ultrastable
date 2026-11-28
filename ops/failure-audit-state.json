@@ -44,7 +44,7 @@
  "clock-measured": {
   "status": "fail",
   "signature": "3b0aedd1b0a5",
-  "streak": 2,
+  "streak": 3,
   "since": "2026-11-26T16:03:02Z"
  },
  "code-agent-ladder": {
@@ -61,13 +61,13 @@
  },
  "content-drift": {
   "status": "fail",
-  "signature": "05bdb3470805",
+  "signature": "6d74a9476dee",
   "streak": 1,
   "since": "2026-11-26T16:03:01Z"
  },
  "cost-runaway": {
   "status": "fail",
-  "signature": "a7ffb3af7487",
+  "signature": "2c1872450236",
   "streak": 1,
   "since": "2026-11-26T16:03:00Z"
  },
@@ -79,7 +79,7 @@
  },
  "d1-growth": {
   "status": "fail",
-  "signature": "a7ffb3af7487",
+  "signature": "2c1872450236",
   "streak": 1,
   "since": "2026-11-26T16:03:00Z"
  },
@@ -104,7 +104,7 @@
  "dg-built-live": {
   "status": "fail",
   "signature": "d25f28dd36b5",
-  "streak": 3,
+  "streak": 4,
   "since": "2026-11-25T21:07:45Z"
  },
  "dg-crons": {
@@ -146,7 +146,7 @@
  "discovered-20bcba4f37": {
   "status": "fail",
   "signature": "d04c350b09af",
-  "streak": 1,
+  "streak": 2,
   "since": "2026-11-27T15:54:22Z"
  },
  "durable-facts": {
@@ -156,10 +156,10 @@
   "since": ""
  },
  "fleet-contract": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
+  "status": "fail",
+  "signature": "42fc991040b8",
+  "streak": 1,
+  "since": "2026-11-28T14:51:53Z"
  },
  "foreign-ci-item": {
   "status": "pass",
@@ -170,7 +170,7 @@
  "foundation-tests": {
   "status": "fail",
   "signature": "f77d1bb58da8",
-  "streak": 1,
+  "streak": 2,
   "since": "2026-11-21T13:41:13Z"
  },
  "green-guard": {
@@ -200,7 +200,7 @@
  "live-verify": {
   "status": "fail",
   "signature": "3a77af090a37",
-  "streak": 3,
+  "streak": 4,
   "since": "2026-11-25T21:07:16Z"
  },
  "managers-live": {
@@ -241,7 +241,7 @@
  },
  "pr-age-bound": {
   "status": "fail",
-  "signature": "e96dcc8a42e0",
+  "signature": "2afbbf2644f4",
   "streak": 1,
   "since": "2026-11-27T15:54:05Z"
  },
@@ -265,7 +265,7 @@
  },
  "repo-conform": {
   "status": "fail",
-  "signature": "aaa76b42db59",
+  "signature": "0453042fc9c4",
   "streak": 1,
   "since": "2026-11-27T15:54:21Z"
  },
@@ -295,7 +295,7 @@
  },
  "seed-autonomous": {
   "status": "fail",
-  "signature": "cee2a53570a7",
+  "signature": "09b8b977bbf2",
   "streak": 1,
   "since": "2026-11-24T16:27:15Z"
  },
@@ -337,7 +337,7 @@
  },
  "selftest-workflows": {
   "status": "fail",
-  "signature": "c8313e2a862d",
+  "signature": "a542f05cdf9d",
   "streak": 1,
   "since": "2026-11-25T21:07:12Z"
  },
@@ -361,7 +361,7 @@
  },
  "sla-breach": {
   "status": "fail",
-  "signature": "3e7381712aac",
+  "signature": "01a7149735c2",
   "streak": 1,
   "since": "2026-11-21T18:56:59Z"
  },
@@ -385,15 +385,21 @@
  },
  "temporal-drift": {
   "status": "fail",
-  "signature": "de026b5fd93d",
+  "signature": "94cb07bb7211",
   "streak": 1,
   "since": "2026-11-21T13:41:18Z"
  },
+ "tenant-flow": {
+  "status": "fail",
+  "signature": "b1d97889b40e",
+  "streak": 1,
+  "since": "2026-11-28T14:52:22Z"
+ },
  "tenant-health": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
+  "status": "fail",
+  "signature": "d10b36aa74a5",
+  "streak": 1,
+  "since": "2026-11-28T14:46:32Z"
  },
  "vision": {
   "status": "pass",

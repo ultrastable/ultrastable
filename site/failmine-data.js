@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 export const FAILMINE = {
  "schema": "ultrastable-failmine/1",
- "at": "2026-11-27T15:33:26Z",
- "events": 425,
- "open": 55,
- "signatures": 113,
- "recurrence_rate": 0.734,
- "mttr_hours_mean": 55.0,
- "mttr_hours_median": 6.8,
- "remediated": 370,
+ "at": "2026-11-28T14:30:34Z",
+ "events": 449,
+ "open": 76,
+ "signatures": 129,
+ "recurrence_rate": 0.713,
+ "mttr_hours_mean": 55.3,
+ "mttr_hours_median": 7.3,
+ "remediated": 373,
  "classes": [
   {
    "class": "pr-stuck",
-   "events": 139,
-   "open": 3,
+   "events": 145,
+   "open": 6,
    "signatures": 2,
    "root_cause": "nothing server-side owns the PR after the session that opened it ends",
    "owner": "seed/worker/src/sweeper.js lane",
@@ -22,18 +22,18 @@ export const FAILMINE = {
   },
   {
    "class": "merge-conflict",
-   "events": 123,
-   "open": 1,
-   "signatures": 4,
+   "events": 125,
+   "open": 3,
+   "signatures": 5,
    "root_cause": "two writers change one generated or append-only file and the second PR cannot apply",
    "owner": "scripts/resolve_generated.py, scripts/no_markers.py",
    "failure_mode": "fm-lane-rebase-wedge"
   },
   {
    "class": "ci-red",
-   "events": 72,
-   "open": 16,
-   "signatures": 68,
+   "events": 80,
+   "open": 24,
+   "signatures": 76,
    "root_cause": "a change merged or main moved while a check was red",
    "owner": "foundation/redmain.py",
    "failure_mode": "fm-tests-red"
@@ -49,9 +49,9 @@ export const FAILMINE = {
   },
   {
    "class": "other",
-   "events": 24,
-   "open": 23,
-   "signatures": 13,
+   "events": 28,
+   "open": 27,
+   "signatures": 17,
    "root_cause": "unclassified: register a class in foundation/failmine.py ROOT_CAUSES",
    "owner": "foundation/failmine.py",
    "failure_mode": null
@@ -66,28 +66,28 @@ export const FAILMINE = {
    "failure_mode": "fm-clock-silent"
   },
   {
-   "class": "loop-stalled",
-   "events": 9,
-   "open": 4,
-   "signatures": 8,
-   "root_cause": "a loop has one trigger and that trigger did not fire",
-   "owner": "foundation/resilience.py, seed/worker/src/pulse.js",
-   "failure_mode": "fm-clock-silent"
-  },
-  {
    "class": "credential",
-   "events": 8,
+   "events": 9,
    "open": 2,
-   "signatures": 8,
+   "signatures": 9,
    "root_cause": "a credential lapses with no renewal probe ahead of expiry",
    "owner": "foundation/credwatch.py, seed/worker/src/auth/",
    "failure_mode": null
   },
   {
+   "class": "loop-stalled",
+   "events": 9,
+   "open": 6,
+   "signatures": 7,
+   "root_cause": "a loop has one trigger and that trigger did not fire",
+   "owner": "foundation/resilience.py, seed/worker/src/pulse.js",
+   "failure_mode": "fm-clock-silent"
+  },
+  {
    "class": "quota-governor",
-   "events": 5,
-   "open": 3,
-   "signatures": 5,
+   "events": 8,
+   "open": 5,
+   "signatures": 8,
    "root_cause": "a fixed cap refuses work instead of throttling against measured spend",
    "owner": "seed/worker/src/budget.js soft throttle",
    "failure_mode": null
@@ -107,16 +107,16 @@ export const FAILMINE = {
    "sig": "5f8b2445f4",
    "class": "pr-stuck",
    "signature": "ol-pr land or supersede pull request ci",
-   "count": 128,
-   "open": 3,
-   "last": "2026-11-27T14:36:17Z",
+   "count": 134,
+   "open": 6,
+   "last": "2026-11-28T14:11:36Z",
    "ids": [
-    "OL-PR-2788",
-    "OL-PR-2804",
-    "OL-PR-2816",
-    "OL-PR-2818",
-    "OL-PR-2817",
-    "OL-PR-2822"
+    "OL-PR-2849",
+    "OL-PR-2869",
+    "OL-PR-2871",
+    "OL-PR-2876",
+    "OL-PR-2879",
+    "OL-PR-2895"
    ],
    "disposition": "incident"
   },
@@ -124,16 +124,16 @@ export const FAILMINE = {
    "sig": "0f61587b9e",
    "class": "merge-conflict",
    "signature": "ol-pr land or supersede pull request conflict",
-   "count": 120,
-   "open": 0,
-   "last": "2026-11-27T13:02:33Z",
+   "count": 121,
+   "open": 1,
+   "last": "2026-11-28T06:22:54Z",
    "ids": [
-    "OL-PR-2622",
     "OL-PR-2629",
     "OL-PR-2631",
     "OL-PR-2664",
     "OL-PR-2717",
-    "OL-PR-2801"
+    "OL-PR-2801",
+    "OL-PR-2870"
    ],
    "disposition": "incident"
   },
@@ -241,27 +241,24 @@ export const FAILMINE = {
    "sig": "95160dac44",
    "class": "loop-stalled",
    "signature": "selftest workflows last scheduled runs all failed silent loop stop ultrastable practical solutions github",
-   "count": 2,
-   "open": 2,
-   "last": "2026-11-26T16:01:07Z",
+   "count": 3,
+   "open": 3,
+   "last": "2026-11-27T15:52:22Z",
    "ids": [
     "audit-selftest-workflows-2026-11-25T21:07:12Z",
-    "audit-selftest-workflows-2026-11-26T16:01:07Z"
+    "audit-selftest-workflows-2026-11-26T16:01:07Z",
+    "audit-selftest-workflows-2026-11-27T15:52:22Z"
    ],
-   "disposition": "mutate"
+   "disposition": "incident"
   }
  ],
- "discovered": [
-  "fm-discovered-20bcba4f37"
- ],
+ "discovered": [],
  "escalated": [
   "Q-RECUR-5f8b2445f4",
   "Q-RECUR-0f61587b9e",
   "Q-RECUR-7f3c1db956",
   "Q-RECUR-20bcba4f37",
   "Q-RECUR-39caaf9374",
-  "Q-RECUR-9ead069526",
-  "Q-RECUR-b680afd12d",
   "Q-RECUR-be3e6aaca8",
   "Q-RECUR-95160dac44"
  ]
