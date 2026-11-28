@@ -1,10 +1,6 @@
 {
  "capabilities": {
-  "cloud-background-agents": "te Manager Advanced DDoS Advertising Aegis AEO Africa Afroflare Agent Cloud Agent Development Lifecycle Agent Readiness Agents Agents Week Agents Week",
-  "durable-execution": "oding DoH Domain Rankings Domain Scoped Roles dosd Drupal Due Process Durable Execution Durable Objects Early Hints Earth Day eBPF EC2 eCommerce Edge Edge Co",
-  "event-triggered-agents": "cation Authy Auto Rag Automatic HTTPS Automatic Platform Optimization Automation AutoMinify Awards AWS Baidu Bandwidth Alliance Bandwidth Costs Best P",
   "idea-to-deploy": "Deploy your own AI vibe coding platform \u2014 in one click! | Cloudflare Blog Sk",
-  "incident-investigation": "ition Image Resizing Image Storage Impact Impact Week Incident Report Incident Response India Indicators of Compromise Indonesian Inference Infrastructure In",
   "mcp-server": "t Malware Managed Components Managed Rules March of Cloudflare MASQUE MCP Meerkat MeetUp Meris Message Protocol Mexico Micro-frontends Microsof",
   "observability": "rity Argo Smart Routing ASCII Asia Athenian Project Atlassian Attacks Audit Logs Austin Australia Authentication Authy Auto Rag Automatic HTTPS Automa",
   "other-cloud": "ic HTTPS Automatic Platform Optimization Automation AutoMinify Awards AWS Baidu Bandwidth Alliance Bandwidth Costs Best Practices Beta Better I",
@@ -14,34 +10,6 @@
  "errors": {},
  "id": "cloudflare-vibesdk",
  "name": "Cloudflare VibeSDK",
- "refreshed_at": "2026-11-26T06:46:33Z",
- "sha": "0cd595cea7c5",
- "sources_read": [
-  "https://blog.cloudflare.com/deploy-your-own-ai-vibe-coding-platform/"
- ],
- "taxonomy": [
-  "a2a-protocol",
-  "agent-evals",
-  "agent-memory",
-  "agent-skills",
-  "agents-md",
-  "autonomous-pr",
-  "chat-entry",
-  "cloud-background-agents",
-  "cross-model-review",
-  "durable-execution",
-  "event-triggered-agents",
-  "existing-repo-adoption",
-  "idea-to-deploy",
-  "incident-investigation",
-  "mcp-server",
-  "multi-agent-roles",
-  "observability",
-  "other-cloud",
-  "permission-guardrails",
-  "sandboxed-execution",
-  "scheduled-agents",
-  "self-hostable",
-  "spend-budgets"
- ]
+ "refreshed_at": "2026-11-12T20:05:06Z",
+ "sha": "4d9f61cf660c"
 }

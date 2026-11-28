@@ -1,10 +1,4 @@
 {
- "actions-stuck": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
  "audit-loop": {
   "status": "pass",
   "signature": "",
@@ -17,149 +11,17 @@
   "streak": 0,
   "since": ""
  },
- "boot-accept": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "bootproof": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "canon-late": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "classes-complete": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "clock-measured": {
-  "status": "fail",
-  "signature": "3b0aedd1b0a5",
-  "streak": 3,
-  "since": "2026-11-26T16:03:02Z"
- },
- "code-agent-ladder": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "constitution": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "content-drift": {
-  "status": "fail",
-  "signature": "6d74a9476dee",
-  "streak": 1,
-  "since": "2026-11-26T16:03:01Z"
- },
- "cost-runaway": {
-  "status": "fail",
-  "signature": "2c1872450236",
-  "streak": 1,
-  "since": "2026-11-26T16:03:00Z"
- },
- "credential-expiry": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "d1-growth": {
-  "status": "fail",
-  "signature": "2c1872450236",
-  "streak": 1,
-  "since": "2026-11-26T16:03:00Z"
- },
  "dependency-watch": {
   "status": "pass",
   "signature": "",
   "streak": 0,
   "since": ""
  },
- "dg-accounts": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "dg-baseline-roll": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "dg-built-live": {
-  "status": "fail",
-  "signature": "d25f28dd36b5",
-  "streak": 4,
-  "since": "2026-11-25T21:07:45Z"
- },
- "dg-crons": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "dg-empty-commits": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "dg-handoff-lint": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "dg-lane-closed": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "dg-triggers": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "dg-visibility": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "discovered-20bcba4f37": {
-  "status": "fail",
-  "signature": "d04c350b09af",
-  "streak": 2,
-  "since": "2026-11-27T15:54:22Z"
- },
  "durable-facts": {
   "status": "pass",
   "signature": "",
   "streak": 0,
   "since": ""
- },
- "fleet-contract": {
-  "status": "fail",
-  "signature": "42fc991040b8",
-  "streak": 1,
-  "since": "2026-11-28T14:51:53Z"
  },
  "foreign-ci-item": {
   "status": "pass",
@@ -169,8 +31,8 @@
  },
  "foundation-tests": {
   "status": "fail",
-  "signature": "f77d1bb58da8",
-  "streak": 2,
+  "signature": "93c9aaba2be8",
+  "streak": 1,
   "since": "2026-11-21T13:41:13Z"
  },
  "green-guard": {
@@ -191,37 +53,7 @@
   "streak": 0,
   "since": ""
  },
- "ledger-stale": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "live-verify": {
-  "status": "fail",
-  "signature": "3a77af090a37",
-  "streak": 4,
-  "since": "2026-11-25T21:07:16Z"
- },
- "managers-live": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
  "merge-bypass": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "model-routes": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "module-overlap": {
   "status": "pass",
   "signature": "",
   "streak": 0,
@@ -239,35 +71,11 @@
   "streak": 0,
   "since": ""
  },
- "pr-age-bound": {
-  "status": "fail",
-  "signature": "2afbbf2644f4",
-  "streak": 1,
-  "since": "2026-11-27T15:54:05Z"
- },
- "pr-lost": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
  "regen-push": {
   "status": "pass",
   "signature": "",
   "streak": 0,
   "since": ""
- },
- "replication-ledger-citations": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "repo-conform": {
-  "status": "fail",
-  "signature": "0453042fc9c4",
-  "streak": 1,
-  "since": "2026-11-27T15:54:21Z"
  },
  "retry-spin": {
   "status": "pass",
@@ -295,7 +103,7 @@
  },
  "seed-autonomous": {
   "status": "fail",
-  "signature": "09b8b977bbf2",
+  "signature": "bffae65cc559",
   "streak": 1,
   "since": "2026-11-24T16:27:15Z"
  },
@@ -329,18 +137,6 @@
   "streak": 0,
   "since": ""
  },
- "selftest-data": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "selftest-workflows": {
-  "status": "fail",
-  "signature": "a542f05cdf9d",
-  "streak": 1,
-  "since": "2026-11-25T21:07:12Z"
- },
  "silent-drop": {
   "status": "pass",
   "signature": "",
@@ -361,45 +157,15 @@
  },
  "sla-breach": {
   "status": "fail",
-  "signature": "01a7149735c2",
+  "signature": "05e04c30c8c9",
   "streak": 1,
   "since": "2026-11-21T18:56:59Z"
  },
- "standards-live": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "standards-register": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "static-content": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
  "temporal-drift": {
   "status": "fail",
-  "signature": "94cb07bb7211",
+  "signature": "f5fb09925e0b",
   "streak": 1,
   "since": "2026-11-21T13:41:18Z"
- },
- "tenant-flow": {
-  "status": "fail",
-  "signature": "b1d97889b40e",
-  "streak": 1,
-  "since": "2026-11-28T14:52:22Z"
- },
- "tenant-health": {
-  "status": "fail",
-  "signature": "d10b36aa74a5",
-  "streak": 1,
-  "since": "2026-11-28T14:46:32Z"
  },
  "vision": {
   "status": "pass",
@@ -408,12 +174,6 @@
   "since": ""
  },
  "waiting-on-person": {
-  "status": "pass",
-  "signature": "",
-  "streak": 0,
-  "since": ""
- },
- "worker-bundle": {
   "status": "pass",
   "signature": "",
   "streak": 0,

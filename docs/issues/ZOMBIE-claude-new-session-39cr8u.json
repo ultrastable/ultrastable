@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-new-session-39cr8u",
+  "title": "ZOMBIE-claude-new-session-39cr8u: finish or retire claude/new-session-39cr8u",
+  "body": "**Owner:** operations\n**Trigger:** session idle 3.9 h (ttl 0.1 h)\n**Status:** open\n\nBranch `claude/new-session-39cr8u` at f14f5e5269 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/new-session-39cr8u` is 0 or the work is merged. The reaper parked the branch as parked/claude/new-session-39cr8u; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

@@ -1,10 +1,10 @@
 {
- "at": "2026-11-28T15:35:45Z",
+ "at": "2026-11-25T16:45:09Z",
  "days": 730,
  "drills": {
   "actions-billing": {
    "capacity": 0.5,
-   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 56",
+   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 45",
    "exercised": false,
    "mode": "degrades",
    "recover": true
@@ -41,7 +41,7 @@
   },
   "dependency-break": {
    "capacity": 0.9,
-   "evidence": "every ecosystem is advanced by Dependabot: github-actions 1, npm 5; 4 manifest(s) on the shrink-only baseline doctrine/deprot.json",
+   "evidence": "every ecosystem is advanced by Dependabot: github-actions 1, npm 4",
    "exercised": true,
    "mode": "recovers",
    "recover": true
@@ -71,7 +71,7 @@
   },
   "model-retirement": {
    "capacity": 0.9,
-   "evidence": "8 vendor-wide retirements through agents.complete: 8 still produced a change, 2 on a healed rung; modelwatch.observed turned 1 recorded 410s into catalog retirements; watchdog runs it: True",
+   "evidence": "8 vendor-wide retirements through agents.complete: 8 still produced a change, 1 on a healed rung; modelwatch.observed turned 1 recorded 410s into catalog retirements; watchdog runs it: True",
    "exercised": true,
    "mode": "recovers",
    "recover": true
@@ -79,7 +79,7 @@
   "node-eol": {
    "capacity": 0.95,
    "date": "2028-04-30",
-   "evidence": "pins: 24 x17; earliest end of maintenance 2028-04-30; automatic rewrite to 24 works: True",
+   "evidence": "pins: 24 x13; earliest end of maintenance 2028-04-30; automatic rewrite to 24 works: True",
    "exercised": true,
    "mode": "recovers",
    "recover": true
@@ -112,7 +112,7 @@
    "why": "its recovery is declared but no drill exercises code"
   },
   {
-   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 56",
+   "evidence": "second route present: foundation/checksrun.py, seed/worker/src/sweeper.js, seed/worker/src/handoff.js; checksrun steps: 45",
    "id": "actions-billing",
    "why": "its recovery is declared but no drill exercises code"
   },
@@ -128,9 +128,9 @@
   }
  ],
  "horizon": {
-  "capacity_year_p50": 0.684,
+  "capacity_year_p50": 0.69,
   "killers": {
-   "token-revoked": 13
+   "token-revoked": 15
   },
   "p10": 730,
   "p50": 730,
@@ -145,23 +145,8 @@
  "release_horizon_p10": 730,
  "runs": 200,
  "self_commits": {
-  "all": 18,
+  "all": 16,
   "latest": [
-   {
-    "lines": 0,
-    "sha": "54d6e57e7d0c",
-    "title": "Implement active hard-limit regulation in free-tier meter config to automatically divert spend on br"
-   },
-   {
-    "lines": 42,
-    "sha": "8d56a9a5d45a",
-    "title": "Fix async handler, mount route, test wire, update handoff. (#Q-LITE-webmention-wire) (#2589)"
-   },
-   {
-    "lines": 66,
-    "sha": "8481e6057fe6",
-    "title": "Implement inbound webmention receiver in lite.js to record external referrals as reach (#Q-IMPROVE-w"
-   },
    {
     "lines": 18,
     "sha": "96e38e8c0ab1",
@@ -171,16 +156,31 @@
     "lines": 34,
     "sha": "611a809fdc5a",
     "title": "Raise hard error in GH helper on bad status to prevent silent failures and stuck loops (#Q-RECUR-5f8"
+   },
+   {
+    "lines": 19,
+    "sha": "a085f5107c39",
+    "title": "Modify resolve_generated.py to handle concurrent writes to generated files by using a locking mechan"
+   },
+   {
+    "lines": 97,
+    "sha": "1380548609e6",
+    "title": "Implement mergeaudit probe script to verify PR merging commits pass checks and enforce consistent me"
+   },
+   {
+    "lines": 138,
+    "sha": "490ddca85a1f",
+    "title": "Add functionality to agents/spinoff_sweep.py to detect and delete idle us-idea-* Workers when their "
    }
   ],
-  "substantive": 11,
+  "substantive": 10,
   "window_days": 14
  },
- "self_rate_per_day": 0.786,
- "self_releases_year_p50": 196.2,
+ "self_rate_per_day": 0.714,
+ "self_releases_year_p50": 179.8,
  "sensitivity": {
   "base": {
-   "p10": 698,
+   "p10": 730,
    "survive_year": 1.0
   },
   "ranked": [
@@ -192,31 +192,48 @@
       "survive_year": 1.0
      },
      "2.0": {
-      "d_survive": -0.117,
-      "p10": 341,
-      "survive_year": 0.883
+      "d_survive": -0.05,
+      "p10": 428,
+      "survive_year": 0.95
      }
     },
     "id": "token-revoked",
     "rate": 1,
-    "swing": 0.117
+    "swing": 0.05
    },
    {
     "effect": {
      "0.5": {
-      "d_survive": 0.0,
-      "p10": 720,
-      "survive_year": 1.0
+      "d_survive": -0.017,
+      "p10": 730,
+      "survive_year": 0.983
      },
      "2.0": {
-      "d_survive": -0.033,
-      "p10": 648,
-      "survive_year": 0.967
+      "d_survive": 0.0,
+      "p10": 718,
+      "survive_year": 1.0
      }
     },
-    "id": "github-down",
-    "rate": 3,
-    "swing": 0.033
+    "id": "ai-quota",
+    "rate": 60,
+    "swing": 0.017
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": -0.017,
+      "p10": 730,
+      "survive_year": 0.983
+     },
+     "2.0": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     }
+    },
+    "id": "cloudflare-incident",
+    "rate": 4,
+    "swing": 0.017
    },
    {
     "effect": {
@@ -238,42 +255,59 @@
    {
     "effect": {
      "0.5": {
-      "d_survive": -0.017,
-      "p10": 651,
-      "survive_year": 0.983
-     },
-     "2.0": {
       "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": -0.017,
+      "p10": 730,
+      "survive_year": 0.983
+     }
+    },
+    "id": "github-down",
+    "rate": 3,
+    "swing": 0.017
+   },
+   {
+    "effect": {
+     "0.5": {
+      "d_survive": 0.0,
+      "p10": 730,
+      "survive_year": 1.0
+     },
+     "2.0": {
+      "d_survive": -0.017,
+      "p10": 730,
+      "survive_year": 0.983
      }
     },
     "id": "merge-conflict",
-    "rate": 153.7,
+    "rate": 159.7,
     "swing": 0.017
    },
    {
     "effect": {
      "0.5": {
       "d_survive": -0.017,
-      "p10": 563,
+      "p10": 630,
       "survive_year": 0.983
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 572,
+      "p10": 674,
       "survive_year": 1.0
      }
     },
-    "id": "model-retirement",
-    "rate": 6,
+    "id": "scheduler-silent",
+    "rate": 52,
     "swing": 0.017
    },
    {
     "effect": {
      "0.5": {
       "d_survive": 0.0,
-      "p10": 730,
+      "p10": 720,
       "survive_year": 1.0
      },
      "2.0": {
@@ -290,7 +324,7 @@
     "effect": {
      "0.5": {
       "d_survive": 0.0,
-      "p10": 672,
+      "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
@@ -307,46 +341,12 @@
     "effect": {
      "0.5": {
       "d_survive": 0.0,
-      "p10": 722,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": 0.0,
-      "p10": 730,
-      "survive_year": 1.0
-     }
-    },
-    "id": "ai-quota",
-    "rate": 60,
-    "swing": 0.0
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.0,
       "p10": 730,
       "survive_year": 1.0
      },
      "2.0": {
       "d_survive": 0.0,
       "p10": 730,
-      "survive_year": 1.0
-     }
-    },
-    "id": "cloudflare-incident",
-    "rate": 4,
-    "swing": 0.0
-   },
-   {
-    "effect": {
-     "0.5": {
-      "d_survive": 0.0,
-      "p10": 698,
-      "survive_year": 1.0
-     },
-     "2.0": {
-      "d_survive": 0.0,
-      "p10": 698,
       "survive_year": 1.0
      }
     },
@@ -363,26 +363,26 @@
      },
      "2.0": {
       "d_survive": 0.0,
-      "p10": 655,
+      "p10": 730,
       "survive_year": 1.0
      }
     },
-    "id": "scheduler-silent",
-    "rate": 52,
+    "id": "model-retirement",
+    "rate": 6,
     "swing": 0.0
    }
   ],
   "runs": 60
  },
  "strict": {
-  "capacity_year_p50": 0.598,
+  "capacity_year_p50": 0.728,
   "killers": {
-   "domain-renewal": 82,
-   "token-revoked": 118
+   "domain-renewal": 100,
+   "token-revoked": 100
   },
-  "p10": 35,
-  "p50": 275,
-  "p90": 347,
+  "p10": 42,
+  "p50": 349,
+  "p90": 350,
   "survive_year": 0.0
  },
  "target_days": 365

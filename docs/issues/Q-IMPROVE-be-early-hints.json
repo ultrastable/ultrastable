@@ -1,7 +1,7 @@
 {
   "id": "Q-IMPROVE-be-early-hints",
   "title": "Q-IMPROVE-be-early-hints: Send 103 Early Hints for the main stylesheet and script from the site Worker",
-  "body": "**Owner:** program-manager\n**Trigger:** improve --run\n**Done check:** grep:site/worker.js::Link.*rel=preload\n**Prediction:** external_referrals_7d > 83 within 168 h\n**Status:** closed\n\nKind: backend. Baseline external_referrals_7d = 83. Settled 7 days after it closes: kept if external_referrals_7d moved the right way, else replaced.\n\n**Closing probe:** grep:site/worker.js::Link.*rel=preload\n\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): grep:site/worker.js::Link.*rel=preload\n",
+  "body": "**Owner:** program-manager\n**Trigger:** improve --run\n**Done check:** grep:site/worker.js::Link.*rel=preload\n**Prediction:** external_referrals_7d > 83 within 168 h\n**Status:** open\n\nKind: backend. Baseline external_referrals_7d = 83. Settled 7 days after it closes: kept if external_referrals_7d moved the right way, else replaced.\n\n**Closing probe:** grep:site/worker.js::Link.*rel=preload\n",
   "labels": [
     "p1",
     "agent-ready",

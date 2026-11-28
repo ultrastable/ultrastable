@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-branchsweep-20261125",
+  "title": "ZOMBIE-agent-branchsweep-20261125: finish or retire agent/branchsweep-20261125",
+  "body": "**Owner:** operations\n**Trigger:** session idle 1.5 h (ttl 0.17 h)\n**Status:** open\n\nBranch `agent/branchsweep-20261125` at 8850cf486c has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/branchsweep-20261125` is 0 or the work is merged. The reaper parked the branch as parked/agent/branchsweep-20261125; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

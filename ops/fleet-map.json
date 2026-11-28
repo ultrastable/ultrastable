@@ -1,6 +1,6 @@
 {
  "rule": "FLEET-MAP-1",
- "at": "2026-11-28T06:38:17Z",
+ "at": "2026-11-26T16:51:45Z",
  "repos": {
   "ultrastable/ultrastable": {
    "status": "not-a-copy",
@@ -21,8 +21,8 @@
   "ultrastable/second-tenant": {
    "status": "drifted",
    "how": "github",
-   "differ": 122,
-   "missing": 159,
+   "differ": 80,
+   "missing": 111,
    "extra": 0,
    "notes": [
     "ultrastable.lock.json is missing: the kernel sync treats every changed file as a local edit and updates nothing"
@@ -47,19 +47,17 @@
    "notes": []
   },
   "ultrastable/practical-solutions": {
-   "status": "drifted",
+   "status": "equal",
    "how": "github",
    "differ": 0,
    "missing": 0,
    "extra": 0,
-   "notes": [
-    "the manifest's identity differs from the map's row; run fleetmap --gen --apply"
-   ]
+   "notes": []
   },
   "ultrastable/unlearn": {
    "status": "drifted",
    "how": "github",
-   "differ": 4,
+   "differ": 1,
    "missing": 0,
    "extra": 0,
    "notes": []
@@ -67,7 +65,7 @@
   "ultrastable/what-works": {
    "status": "drifted",
    "how": "github",
-   "differ": 4,
+   "differ": 1,
    "missing": 0,
    "extra": 0,
    "notes": []
@@ -75,7 +73,7 @@
   "ultrastable/replication-ledger": {
    "status": "drifted",
    "how": "github",
-   "differ": 4,
+   "differ": 1,
    "missing": 0,
    "extra": 0,
    "notes": []
@@ -86,9 +84,7 @@
    "differ": 1,
    "missing": 0,
    "extra": 0,
-   "notes": [
-    "the manifest's identity differs from the map's row; run fleetmap --gen --apply"
-   ]
+   "notes": []
   },
   "ultrastable/did-it-work": {
    "status": "drifted",
@@ -96,9 +92,7 @@
    "differ": 1,
    "missing": 0,
    "extra": 0,
-   "notes": [
-    "the manifest's identity differs from the map's row; run fleetmap --gen --apply"
-   ]
+   "notes": []
   },
   "ultrastable/open-questions": {
    "status": "drifted",
@@ -106,9 +100,7 @@
    "differ": 1,
    "missing": 0,
    "extra": 0,
-   "notes": [
-    "the manifest's identity differs from the map's row; run fleetmap --gen --apply"
-   ]
+   "notes": []
   }
  }
 }

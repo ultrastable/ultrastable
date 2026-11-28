@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-data-83b58fc9e1",
+  "title": "ZOMBIE-agent-data-83b58fc9e1: finish or retire agent/data-83b58fc9e1",
+  "body": "**Owner:** operations\n**Trigger:** session idle 6.4 h (ttl 0.1 h)\n**Status:** open\n\nBranch `agent/data-83b58fc9e1` at e8c2b77dd2 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/data-83b58fc9e1` is 0 or the work is merged. The reaper parked the branch as parked/agent/data-83b58fc9e1; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

@@ -1,20 +1,12 @@
 {
  "capabilities": {
-  "agent-skills": "ll Claude Code cloud sessions. The session runs shell commands, uses [skills](https://code.claude.com/docs/en/skills.md), and calls any connectors",
-  "agents-md": "gents and agent teams [Subagents](https://code.claude.com/docs/en/sub-agents.md) work the same way they do locally. Claude can spawn them with the Ag",
   "autonomous-pr": "*GitHub**: run automatically in response to repository events such as pull requests or releases A single scheduled task can combine triggers. For example",
-  "chat-entry": "ners based on the area of code referenced. It then posts a summary to Slack so the team starts the day with a groomed queue. * **Alert triage**:",
-  "cloud-background-agents": "ode on autopilot. Create scheduled tasks, formerly routines, that run in the cloud on a schedule, on API calls, or on GitHub events. > [!NOTE] > > Sched",
   "cross-model-review": "reviews the PR instead of starting from a blank terminal. * **Bespoke code review**: a GitHub trigger runs on `pull_request.opened`. The scheduled task",
-  "event-triggered-agents": "w PR. A scheduled task doesn't need a schedule: * A task with only an API trigger runs when you call its endpoint. * A task with only a GitHub trigger",
   "existing-repo-adoption": "* **Backlog maintenance**: a schedule trigger runs every weeknight in your repository, with your issue tracker added as a connector. The scheduled task rea",
   "idea-to-deploy": "iggers. For example, a PR review task can run nightly, trigger from a deploy script, and also react to every new PR. A scheduled task doesn't need",
-  "incident-investigation": "draft pull request with a proposed fix and a link back to the alert. On-call reviews the PR instead of starting from a blank terminal. * **Bespoke",
   "mcp-server": "positories, and a set of [connectors](https://code.claude.com/docs/en/mcp.md), packaged once and run automatically. Scheduled tasks execute on",
-  "multi-agent-roles": "ith a token count in a session where the variable isn't set. #### Use subagents and agent teams [Subagents](https://code.claude.com/docs/en/sub-agent",
   "observability": "e to investigate the alert in the fire payload, so it pulls the stack trace and correlates it with recent commits in the repository. It then open",
   "permission-guardrails": "les/13930452), you also need a role that includes the scheduled tasks permission. An Owner can add it in a role's **Remote sessions** section at [**Or",
-  "sandboxed-execution": "osted environments, git credentials and signing keys stay outside the sandbox, and a proxy authenticates on the session's behalf with scoped creden",
   "scheduled-agents": "er all available pages before exploring further. # Automate work with scheduled tasks > Put Claude Code on autopilot. Create scheduled tasks, formerl",
   "self-hostable": "on Anthropic-managed cloud infrastructure, or on your organization's [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments",
   "spend-budgets": "urly limits has overage. When a scheduled task hits your subscription usage limit, organizations with usage credits turned on can keep running schedule"
@@ -24,35 +16,6 @@
  },
  "id": "claude-code",
  "name": "Claude Code (routines and releases)",
- "refreshed_at": "2026-11-26T06:46:33Z",
- "sha": "a6e34162b4e3",
- "sources_read": [
-  "https://code.claude.com/docs/en/routines.md",
-  "https://code.claude.com/docs/en/claude-code-on-the-web.md"
- ],
- "taxonomy": [
-  "a2a-protocol",
-  "agent-evals",
-  "agent-memory",
-  "agent-skills",
-  "agents-md",
-  "autonomous-pr",
-  "chat-entry",
-  "cloud-background-agents",
-  "cross-model-review",
-  "durable-execution",
-  "event-triggered-agents",
-  "existing-repo-adoption",
-  "idea-to-deploy",
-  "incident-investigation",
-  "mcp-server",
-  "multi-agent-roles",
-  "observability",
-  "other-cloud",
-  "permission-guardrails",
-  "sandboxed-execution",
-  "scheduled-agents",
-  "self-hostable",
-  "spend-budgets"
- ]
+ "refreshed_at": "2026-11-12T19:57:40Z",
+ "sha": "5fd36755a6d7"
 }

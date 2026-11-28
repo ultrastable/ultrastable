@@ -1,11 +1,11 @@
 {
   "id": "Q-AUDIT-discovered-20bcba4f37",
   "title": "Q-AUDIT-discovered-20bcba4f37: fm-discovered-20bcba4f37 failing (fail): Remove the cause in foundation/failmine.py; seen in Q-AUDIT-2716, Q-AUDIT-2722, Q-AUDIT-2742, Q-AUDIT-2765",
-  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe discovered-20bcba4f37\n**Status:** open\n\nFailure mode `fm-discovered-20bcba4f37` detected by `discovered-20bcba4f37`, failing since 2026-11-27T15:54:22Z.\nEvidence: 20bcba4f37: 12 open, last seen 2026-11-27T12:41:41+00:00 (quiet means 0 open and none in 7 days)\n\nSignature: d04c350b09af (disposition: mutate).\nSuspected root cause: unclassified recurring failure\nRemedy: Remove the cause in foundation/failmine.py; seen in Q-AUDIT-2716, Q-AUDIT-2722, Q-AUDIT-2742, Q-AUDIT-2765\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\nSame signature twice: do not retry the same fix, change the approach (guiding directive section 2).\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe discovered-20bcba4f37\n",
+  "body": "**Owner:** operations\n**Trigger:** the daily failure audit files it; the executor takes it in driver order\n**Done check:** cmd:python3 -m foundation failure_audit --probe discovered-20bcba4f37\n**Status:** open\n\nFailure mode `fm-discovered-20bcba4f37` detected by `discovered-20bcba4f37`, failing since 2026-11-27T15:54:22Z.\nEvidence: 20bcba4f37: 12 open, last seen 2026-11-27T12:41:41+00:00 (quiet means 0 open and none in 7 days)\n\nSignature: d04c350b09af (disposition: fix).\nSuspected root cause: unclassified recurring failure\nRemedy: Remove the cause in foundation/failmine.py; seen in Q-AUDIT-2716, Q-AUDIT-2722, Q-AUDIT-2742, Q-AUDIT-2765\nFix the earliest cause, so the detector passes; do not weaken or remove the detector.\n\n**Closing probe:** cmd:python3 -m foundation failure_audit --probe discovered-20bcba4f37\n",
   "labels": [
     "role:operations",
     "audit",
-    "mutate",
+    "fix",
     "agent-ready",
     "p1"
   ],

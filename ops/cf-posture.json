@@ -1,5 +1,5 @@
 {
- "at": "2026-11-28T15:28:51Z",
+ "at": "2026-11-24T17:40:19Z",
  "account_id": "81e3a4efb4eb66e613529b87682911bb",
  "rules": [
   {
@@ -7,13 +7,12 @@
    "kind": "auto",
    "status": "fail",
    "detail": [
-    "good-news",
     "tenant-ps-edge",
     "tenant-ps-mail",
     "ultrastable-did-it-work",
     "ultrastable-mail-in",
     "ultrastable-mail-relay",
-    "ultrastable-regulate",
+    "ultrastable-spinoffs",
     "ultrastable-uptime"
    ]
   },

@@ -1,57 +1,10 @@
 {
  "capabilities": {
-  "a2a-protocol": "ipt/langchain/mcp\",\"href\":\"/oss/javascript/deepagents/mcp\"},{\"title\":\"A2A server\",\"sidebarTitle\":\"A2A with LangSmith\",\"url\":\"/langsmith/server-",
-  "agent-evals": "-in-the-loop, and persistence. LangSmith is the platform for tracing, evaluation, prompts, and deployment across frameworks. LangSmith Engine detects",
-  "agent-memory": "ores Fault tolerance Streaming Event streaming Interrupts Time travel Memory Subgraphs Patterns Workflows + agents Build with the Graph API Thinki",
-  "agent-skills": "},{\"title\":\"Schedules\",\"href\":\"/langsmith/fleet/schedules\"},{\"title\":\"Skills\",\"href\":\"/langsmith/fleet/skills\"},{\"title\":\"Integrate Slack with an",
-  "autonomous-pr": "s issues in LangGraph agent traces and proposes fixes. You can open a pull request with the proposed fix from the Engine tab. LangSmith Fleet is the no-",
-  "chat-entry": "title\":\"Skills\",\"href\":\"/langsmith/fleet/skills\"},{\"title\":\"Integrate Slack with an agent\",\"sidebarTitle\":\"Slack\",\"href\":\"/langsmith/fleet/slack-",
-  "cloud-background-agents": "smith/manage-agent-server\"}]},{\"group\":\"Reference\",\"pages\":[{\"title\":\"Cloud Agent Server environment variables\",\"sidebarTitle\":\"Environment variables\",",
-  "durable-execution": "on Overview Get started Quickstart Changelog Capabilities Persistence Checkpointers Stores Fault tolerance Streaming Event streaming Interrupts Time trav",
-  "event-triggered-agents": "is the no-code agent builder for templates, integrations, and routine automation. For a comparison of the open source stack, see Frameworks, runtimes,",
-  "idea-to-deploy": "te Control flow Send and Command Configure nodes Visualize your graph Deployment Local server Application structure Test Backward compatibility LangSm",
-  "mcp-server": "angSmith Agent Server) Connect these docs to your agent of choice via MCP for real-time answers. Edit this page on GitHub or file an issue . Wa",
-  "multi-agent-roles": "ain products fit together Deep Agents is an agent harness : planning, subagents, filesystem tools, and context management on top of LangGraph. LangCh",
-  "observability": "ard compatibility LangSmith Studio Agent Chat UI Deployment LangSmith Observability Frontend Overview Graph execution Custom stream channels Advanced Fun",
-  "other-cloud": "ef\":\"/oss/javascript/integrations/chat/google_vertex_ai\"}]},{\"group\":\"AWS\",\"pages\":[{\"title\":\"AWS integrations\",\"sidebarTitle\":\"Overview\",\"href",
-  "permission-guardrails": "e\":\"Backends\",\"href\":\"/oss/javascript/deepagents/backends\"},{\"title\":\"Permissions\",\"href\":\"/oss/javascript/deepagents/permissions\"},{\"title\":\"Multimoda",
-  "sandboxed-execution": "\":\"/langsmith/javascript/managed-deep-agents-memory\"},{\"title\":\"Add a sandbox to Managed Deep Agents\",\"sidebarTitle\":\"Sandboxes\",\"href\":\"/langsmith",
-  "scheduled-agents": "h Fleet is the no-code agent builder for templates, integrations, and routine automation. For a comparison of the open source stack, see Frameworks",
-  "self-hostable": "plates, integrations, and routine automation. For a comparison of the open source stack, see Frameworks, runtimes, and harnesses . Install pip uv pip i"
+  "idea-to-deploy": "li): 0.4.43 ( #9682 ) \n feat(cli): use Agent Server flags with hidden deployment aliases ( #9666 ) \n fix(cli): remove discontinued local debugger imag"
  },
- "errors": {
-  "https://github.com/langchain-ai/langgraph/releases.atom": "HTTPError: HTTP Error 403: Forbidden"
- },
+ "errors": {},
  "id": "langgraph",
  "name": "LangGraph",
- "refreshed_at": "2026-11-26T06:46:33Z",
- "sha": "ce87804627ad",
- "sources_read": [
-  "https://docs.langchain.com/oss/python/langgraph/overview"
- ],
- "taxonomy": [
-  "a2a-protocol",
-  "agent-evals",
-  "agent-memory",
-  "agent-skills",
-  "agents-md",
-  "autonomous-pr",
-  "chat-entry",
-  "cloud-background-agents",
-  "cross-model-review",
-  "durable-execution",
-  "event-triggered-agents",
-  "existing-repo-adoption",
-  "idea-to-deploy",
-  "incident-investigation",
-  "mcp-server",
-  "multi-agent-roles",
-  "observability",
-  "other-cloud",
-  "permission-guardrails",
-  "sandboxed-execution",
-  "scheduled-agents",
-  "self-hostable",
-  "spend-budgets"
- ]
+ "refreshed_at": "2026-11-12T20:05:06Z",
+ "sha": "51e6afd3b696"
 }

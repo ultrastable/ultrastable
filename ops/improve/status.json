@@ -1,100 +1,92 @@
 {
-  "at": "2026-11-26T17:43:08.417992+00:00",
+  "at": "2026-11-25T15:33:34.746296+00:00",
   "signals": [
     {
       "id": "reach",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 83,
-      "age_h": 18.1
+      "age_h": 15.7
     },
     {
       "id": "search",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 38,
-      "age_h": 18.1
+      "age_h": 15.7
     },
     {
       "id": "social",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
       "value": 0,
-      "age_h": 18.1
+      "age_h": 15.7
     },
     {
       "id": "tenant",
       "path": "ops/reach/metrics.jsonl",
       "state": "ok",
-      "value": 164,
-      "age_h": 18.1
+      "value": 150,
+      "age_h": 15.7
     },
     {
       "id": "suggestions",
       "path": "ops/reach/metrics.jsonl",
       "state": "unmeasured",
       "value": null,
-      "age_h": 18.1
+      "age_h": 15.7
     },
     {
       "id": "market",
       "path": "ops/rnd/log.jsonl",
-      "state": "ok",
-      "value": 4,
-      "age_h": 10.9
+      "state": "stale",
+      "value": 3,
+      "age_h": 191.3
     },
     {
       "id": "insight",
       "path": "ops/insight/findings.json",
       "state": "ok",
       "value": 1,
-      "age_h": 0.0
+      "age_h": 1.1
     },
     {
       "id": "uiux",
       "path": "ops/uiux/status.json",
-      "state": "ok",
+      "state": "stale",
       "value": 1,
-      "age_h": 23.8
-    },
-    {
-      "id": "tenant-sync",
-      "path": "ops/tenant-sync/metrics.json",
-      "state": "ok",
-      "value": 1,
-      "age_h": 0.6
+      "age_h": 96.2
     }
   ],
   "tiers": [
     {
       "id": "portfolio",
       "window_days": 14,
-      "merges": 67,
-      "alive": true
+      "merges": 0,
+      "alive": false
     },
     {
       "id": "program",
       "window_days": 7,
-      "merges": 49,
+      "merges": 1,
       "alive": true
     },
     {
       "id": "project",
       "window_days": 3,
-      "merges": 115,
+      "merges": 3,
       "alive": true
     },
     {
       "id": "product",
       "window_days": 7,
-      "merges": 48,
+      "merges": 2,
       "alive": true
     }
   ],
-  "open": 0,
+  "open": 12,
   "filed": [
-    "Q-IMPROVE-fe-font-display",
-    "Q-IMPROVE-webmention"
+    "Q-IMPROVE-SIGNAL-uiux"
   ],
   "settle": []
 }

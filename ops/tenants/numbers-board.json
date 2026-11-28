@@ -1,9 +1,9 @@
 {
- "at": "2026-11-28T15:28:54Z",
+ "at": "2026-11-24T17:40:24Z",
  "claims_drift": null,
  "declared_metric": null,
  "declared_target": null,
  "slug": "numbers-board",
- "spend_vs_budget": 83.32,
- "uptime": 0.0
+ "spend_vs_budget": 0.0,
+ "uptime": 1.0
 }

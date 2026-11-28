@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-project-thread-ujxkaf",
+  "title": "ZOMBIE-claude-project-thread-ujxkaf: finish or retire claude/project-thread-ujxkaf",
+  "body": "**Owner:** operations\n**Trigger:** session idle 1.4 h (ttl 0.17 h)\n**Status:** open\n\nBranch `claude/project-thread-ujxkaf` at f9033253ac has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/project-thread-ujxkaf` is 0 or the work is merged. The reaper parked the branch as parked/claude/project-thread-ujxkaf; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

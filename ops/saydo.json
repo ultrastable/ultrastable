@@ -1,34 +1,9 @@
 {
- "at": "2026-11-28T15:38:07Z",
- "gaps": 6,
+ "at": "2026-11-25T16:46:18Z",
+ "gaps": 5,
  "match_share": 0.989,
  "sources": {
   "changes": [
-   {
-    "did": [
-     "actions-budget.json"
-    ],
-    "id": "54d6e57e7d0c",
-    "ok": true,
-    "said": "Implement active hard-limit regulation in free-tier meter config to automatically divert spend on breach and ensure the "
-   },
-   {
-    "did": [
-     "site/lite.js",
-     "tests/site-lite-webmention.test.js"
-    ],
-    "id": "8d56a9a5d45a",
-    "ok": true,
-    "said": "Fix async handler, mount route, test wire, update handoff. (#Q-LITE-webmention-wire) (#2589)"
-   },
-   {
-    "did": [
-     "site/lite.js"
-    ],
-    "id": "8481e6057fe6",
-    "ok": true,
-    "said": "Implement inbound webmention receiver in lite.js to record external referrals as reach (#Q-IMPROVE-webmention) (#2566)"
-   },
    {
     "did": [
      "foundation/mergeaudit.py",
@@ -164,6 +139,16 @@
     "id": "5e5b31e4740d",
     "ok": true,
     "said": "Add a self-contained Q-TICK doer module that closes Q-TICK items from their own tick records, registered shape for confi"
+   },
+   {
+    "did": [
+     "brand/public-profile/profile/proof.js",
+     "doctrine/decision-ledger.json",
+     "tests/proof.test.js"
+    ],
+    "id": "476b12d061c2",
+    "ok": true,
+    "said": "Update ultrastable.io/proof to serve a product-side feed (#Q-10) (#268)"
    }
   ],
   "claims": [
@@ -171,28 +156,19 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 434
+    "total": 382
    }
   ],
   "loops": [
    {
-    "detail": "1 of 165 second-order steps kept in 14 days",
+    "detail": "0 of 77 second-order steps kept in 14 days",
     "id": "second-loop-kept",
-    "judged": 165,
-    "kept": 1,
-    "ok": true
+    "judged": 77,
+    "kept": 0,
+    "ok": false
    }
   ],
   "rules": [
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "AGENT-ENTRY-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
    {
     "checks": 1,
     "external": [],
@@ -263,15 +239,6 @@
     "external": [],
     "failing": [],
     "id": "DRAIN-ALL-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "PR-NEVER-LOSE-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -540,25 +507,7 @@
     "unmeasured": []
    },
    {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "TENANT-SANDBOX-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "ADMIT-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 2,
+    "checks": 1,
     "external": [],
     "failing": [],
     "id": "FULLSTACK-1",
@@ -588,89 +537,6 @@
     "checks": 1,
     "external": [],
     "failing": [],
-    "id": "REPO-STANDARD-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "MANAGERS-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "FLEET-MAP-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "CLONE-PATH-1",
-    "missing": [
-     "org/owner-status.json"
-    ],
-    "ok": false,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "RULE-REFS-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 2,
-    "external": [],
-    "failing": [],
-    "id": "STANDARDS-FIRST-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "TENANT-STANDARD-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "LIVE-LINKS-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "FLEET-CONTRACT-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
     "id": "DECISIONS-1",
     "missing": [],
     "ok": true,
@@ -688,23 +554,12 @@
    {
     "checks": 0,
     "external": [
-     "tools/connections.mjs"
+     "tools/connect.mjs"
     ],
     "failing": [],
     "id": "CONNECT-1",
     "missing": [],
     "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "DATAGRAPH-1",
-    "missing": [
-     "vendor/ultrastable/datagraph.js"
-    ],
-    "ok": false,
     "unmeasured": []
    },
    {
@@ -746,10 +601,12 @@
    {
     "checks": 3,
     "external": [],
-    "failing": [],
+    "failing": [
+     "python3 -m foundation trajectory --check: site/trajectory-data.js is stale: run trajectory --run --apply"
+    ],
     "id": "YEAR-SIM-1",
     "missing": [],
-    "ok": true,
+    "ok": false,
     "unmeasured": []
    },
    {
@@ -762,172 +619,10 @@
     "unmeasured": []
    },
    {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "DISCOVER-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "LAUNCH-PATH-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "BREADTH-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
     "checks": 1,
     "external": [],
     "failing": [],
     "id": "IMPROVE-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "SYNC-BOTH-WAYS-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "REDTEAM-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "REPO-SHAPE-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "COLLISION-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "BLINDSPOT-RED-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "COLDSTART-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "WORK-NOT-PULSE-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "OPEN-STANDARDS-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "BOOT-ACCEPT-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "SYSTEM-SPEC-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "CLEANROOM-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "ORCHESTRATE-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 0,
-    "external": [],
-    "failing": [],
-    "id": "WORK-RECORD-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "PHASED-WORK-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "ASHBY-KERNEL-1",
     "missing": [],
     "ok": true,
     "unmeasured": []
@@ -948,36 +643,6 @@
     "id": "CLOSED-LOOP-1",
     "missing": [],
     "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "NO-FABRICATION-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 1,
-    "external": [],
-    "failing": [],
-    "id": "SPEC-GATE-1",
-    "missing": [],
-    "ok": true,
-    "unmeasured": []
-   },
-   {
-    "checks": 2,
-    "external": [],
-    "failing": [],
-    "id": "STANDARDS-1",
-    "missing": [
-     "worker/linked.js",
-     "ops/supply-chain.json"
-    ],
-    "ok": false,
     "unmeasured": []
    },
    {
@@ -1118,7 +783,7 @@
     "checks": 1,
     "external": [],
     "failing": [
-     "python3 -m foundation dispose --check: an open item is 187.4 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
+     "python3 -m foundation dispose --check: an open item is 75.2 hours old, past the 6 hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)"
     ],
     "id": "DISPOSE-1",
     "missing": [],
@@ -1178,7 +843,7 @@
     "ok": true
    },
    {
-    "detail": "0.786 substantive server-originated changes a day (target 1)",
+    "detail": "0.714 substantive server-originated changes a day (target 1)",
     "id": "ships-daily",
     "ok": false
    }
@@ -1187,24 +852,24 @@
  "summary": {
   "changes": {
    "gaps": 1,
-   "total": 18
+   "total": 16
   },
   "claims": {
    "gaps": 0,
-   "total": 434
+   "total": 382
   },
   "loops": {
-   "gaps": 0,
+   "gaps": 1,
    "total": 1
   },
   "rules": {
-   "gaps": 4,
-   "total": 107
+   "gaps": 2,
+   "total": 72
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 562
+ "total": 473
 }

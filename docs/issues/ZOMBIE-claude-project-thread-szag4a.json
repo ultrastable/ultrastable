@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-project-thread-szag4a",
+  "title": "ZOMBIE-claude-project-thread-szag4a: finish or retire claude/project-thread-szag4a",
+  "body": "**Owner:** operations\n**Trigger:** session idle 13.2 h (ttl 0.1 h)\n**Status:** open\n\nBranch `claude/project-thread-szag4a` at 4ee83cdfc7 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/project-thread-szag4a` is 0 or the work is merged. The reaper parked the branch as parked/claude/project-thread-szag4a; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

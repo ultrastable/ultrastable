@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-kernel9-ci-wiring",
+  "title": "ZOMBIE-claude-kernel9-ci-wiring: finish or retire claude/kernel9-ci-wiring",
+  "body": "**Owner:** operations\n**Trigger:** session idle 3.0 h (ttl 0.1 h)\n**Status:** open\n\nBranch `claude/kernel9-ci-wiring` at 8cdf743789 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/kernel9-ci-wiring` is 0 or the work is merged. The reaper parked the branch as parked/claude/kernel9-ci-wiring; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

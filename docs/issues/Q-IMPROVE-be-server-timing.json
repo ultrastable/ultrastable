@@ -1,7 +1,7 @@
 {
   "id": "Q-IMPROVE-be-server-timing",
   "title": "Q-IMPROVE-be-server-timing: Send Server-Timing headers from the site Worker so slow back-end steps show up in every audit",
-  "body": "**Owner:** program-manager\n**Trigger:** improve --run\n**Done check:** grep:site/worker.js::Server-Timing\n**Prediction:** uiux:findings_total < 0 within 168 h\n**Status:** closed\n\nKind: backend. Baseline uiux:findings_total = 0. Settled 7 days after it closes: kept if uiux:findings_total moved the right way, else replaced.\n\n**Closing probe:** grep:site/worker.js::Server-Timing\n\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): grep:site/worker.js::Server-Timing\n",
+  "body": "**Owner:** program-manager\n**Trigger:** improve --run\n**Done check:** grep:site/worker.js::Server-Timing\n**Prediction:** uiux:findings_total < 0 within 168 h\n**Status:** open\n\nKind: backend. Baseline uiux:findings_total = 0. Settled 7 days after it closes: kept if uiux:findings_total moved the right way, else replaced.\n\n**Closing probe:** grep:site/worker.js::Server-Timing\n",
   "labels": [
     "p1",
     "agent-ready",

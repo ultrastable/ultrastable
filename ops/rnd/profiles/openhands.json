@@ -1,41 +1,12 @@
 {
  "capabilities": {
-  "event-triggered-agents": "dback button and submission flow by  @DevinVinson  in  #19272  \n feat(automations): add a Git Sync switch to keep activation status local (OHE-3927) by",
-  "multi-agent-roles": "nd PRs beside the chat by  @enyst  in  #19810  \n feat(frontend): nest sub-agent conversations under their parent by  @neubig  in  #20010  \n \n Bug Fix",
+  "sandboxed-execution": "l  in  #18986  \n feat(sidebar): start a new conversation in the row's sandbox (OHE-3689) by  @hieptl  in  #18912  \n \n Bug Fixes \n \n fix: pass sessi",
   "self-hostable": "pichini  in  #19382  \n fix(chat): activate the home model pick when a self-hosted instance turns Agent Profiles off by  @hieptl  in  #19682  \n fix(git)",
-  "spend-budgets": ") by  @hieptl  in  #19893  \n feat(chat): show a readable error when a budget is reached by  @hieptl  in  #19926  \n feat: View and edit an automati"
+  "spend-budgets": "automation help by  @ak684  in  #19453  \n feat: display conversation budgets with semantic meter fills by  @enyst  in  #18533  \n feat: add Paper t"
  },
  "errors": {},
  "id": "openhands",
  "name": "OpenHands",
- "refreshed_at": "2026-11-28T04:19:25Z",
- "sha": "45917bc6696f",
- "sources_read": [
-  "https://github.com/All-Hands-AI/OpenHands/releases.atom"
- ],
- "taxonomy": [
-  "a2a-protocol",
-  "agent-evals",
-  "agent-memory",
-  "agent-skills",
-  "agents-md",
-  "autonomous-pr",
-  "chat-entry",
-  "cloud-background-agents",
-  "cross-model-review",
-  "durable-execution",
-  "event-triggered-agents",
-  "existing-repo-adoption",
-  "idea-to-deploy",
-  "incident-investigation",
-  "mcp-server",
-  "multi-agent-roles",
-  "observability",
-  "other-cloud",
-  "permission-guardrails",
-  "sandboxed-execution",
-  "scheduled-agents",
-  "self-hostable",
-  "spend-budgets"
- ]
+ "refreshed_at": "2026-11-12T20:05:06Z",
+ "sha": "9ef4e0410f4b"
 }

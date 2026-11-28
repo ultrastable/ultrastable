@@ -7,9 +7,7 @@
    "predicted_pct": 15,
    "started": "2026-11-17T16:52:10Z",
    "check_after_days": 7,
-   "verdict": "kept",
-   "moved_pct": 173.9,
-   "reviewed": "2026-11-25T17:21:19Z"
+   "verdict": null
   },
   {
    "item": "Q-GROW-AGENT-DIRECTORIES",
@@ -53,24 +51,6 @@
    "baseline": null,
    "predicted_pct": 15,
    "started": "2026-11-21T15:19:17Z",
-   "check_after_days": 7,
-   "verdict": null
-  },
-  {
-   "item": "Q-GROW-adaptive-follow-ups",
-   "metric": "visitors_7d",
-   "baseline": 3164,
-   "predicted_pct": 15,
-   "started": "2026-11-25T17:21:19Z",
-   "check_after_days": 7,
-   "verdict": null
-  },
-  {
-   "item": "Q-GROW-shorter-pilot-form",
-   "metric": "pilot_page_views_7d",
-   "baseline": 3856,
-   "predicted_pct": 15,
-   "started": "2026-11-25T17:21:19Z",
    "check_after_days": 7,
    "verdict": null
   }

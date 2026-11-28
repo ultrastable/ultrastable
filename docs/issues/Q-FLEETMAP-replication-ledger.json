@@ -1,7 +1,7 @@
 {
   "id": "Q-FLEETMAP-replication-ledger",
-  "title": "Q-FLEETMAP-replication-ledger: ultrastable/replication-ledger is not equal to its source (4 file(s) differ, 0 missing, 0 only in the copy)",
-  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe replication-ledger\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** open\n\nultrastable/replication-ledger is a copy and is not equal to its source (FLEET-MAP-1): 4 file(s) differ, 0 missing, 0 only in the copy.\n\n- differ: lifecycle.json, vendor/ultrastable/tenant-standard.json, vendor/ultrastable/tools/repoconform.py, vendor/ultrastable/tools/tenantstd.py\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe replication-ledger\n",
+  "title": "Q-FLEETMAP-replication-ledger: ultrastable/replication-ledger is not equal to its source (1 file(s) differ, 0 missing, 0 only in the copy)",
+  "body": "**Owner:** operations\n**Trigger:** fleetmap --drift --apply (daily in tenant-sync.yml)\n**Done check:** cmd:python3 -m foundation fleetmap --probe replication-ledger\n**Prediction:** fleet_map_drifted_repos <= 0 within 168 h\n**Status:** open\n\nultrastable/replication-ledger is a copy and is not equal to its source (FLEET-MAP-1): 1 file(s) differ, 0 missing, 0 only in the copy.\n\n- differ: lifecycle.json\n\nFix the sync named in doctrine/fleet-map.json for this repository (never copy by hand), then the same reading closes this item.\n\n**Closing probe:** cmd:python3 -m foundation fleetmap --probe replication-ledger\n",
   "labels": [
     "p1",
     "agent-ready",

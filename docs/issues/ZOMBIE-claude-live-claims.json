@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-live-claims",
+  "title": "ZOMBIE-claude-live-claims: finish or retire claude/live-claims",
+  "body": "**Owner:** operations\n**Trigger:** session idle 4.4 h (ttl 0.17 h)\n**Status:** open\n\nBranch `claude/live-claims` at eee50deac2 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/live-claims` is 0 or the work is merged. The reaper parked the branch as parked/claude/live-claims; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
