@@ -1,0 +1,12 @@
+{
+  "id": "Q-RES-second-loop-2026-S1",
+  "title": "Q-RES-second-loop-2026-S1: A person acting as the slow loop (measured 85, target <= 0)",
+  "body": "**Owner:** product-manager\n**Trigger:** research pass: second-loop-2026 finding S1 is not-met (measured 85)\n**Done check:** cmd:python3 -m foundation research --probe second-loop-2026:S1\n**Prediction:** owner_interventions_7d <= 0 within 72 h\n**Out of scope:** editing the study, its target or the paper to match the code; the measurement is changed only by changing the mechanism\n**Closing probe:** `python3 -m foundation research --probe second-loop-2026:S1`\n**Status:** open\n\nConcern: A person acting as the slow loop. The study: Every owner message that redirects the system is a slow-loop action done by hand. We count distinct owner-driven sessions that changed the repository in a week; the target is none.\n\nMechanisms that should answer it: SECOND-LOOP-2 (foundation/ultrastability.py).\n\nMetric: owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl), target <= 0. Improve the mechanism (or add one) until the probe passes; the white paper at /research updates itself from the same measurement.",
+  "labels": [
+    "role:product-manager",
+    "research",
+    "plus"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

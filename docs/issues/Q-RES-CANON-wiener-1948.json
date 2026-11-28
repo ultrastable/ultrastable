@@ -1,0 +1,11 @@
+{
+  "id": "Q-RES-CANON-wiener-1948",
+  "title": "Q-RES-CANON-wiener-1948: research canon: Cybernetics: Or Control and Communication in the Animal and the Machine (Norbert Wiener, 1948)",
+  "body": "**Owner:** product-manager\n**Trigger:** research canon, next source not yet ingested\n**Done check:** cmd:python3 -m foundation research --probe intake:canon:wiener-1948\n**Prediction:** research_findings_met_share >= 0 within 336 h\n**Out of scope:** paraphrase from secondary sources; numbers not in the original\n**Status:** open\n\nRead Cybernetics: Or Control and Communication in the Animal and the Machine by Norbert Wiener (1948) from the original edition (cite publisher, year and pages). Add research/studies/wiener-1948.json with \"source_id\": \"canon:wiener-1948\", a misperception it answers for AI systems, and findings bound to metrics in foundation/research.py METRICS, each with a mechanism path in this repository. State the ideas in our own words with page or chapter. Then run research --run --apply; the thought loop posts it.",
+  "labels": [
+    "role:product-manager",
+    "research"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

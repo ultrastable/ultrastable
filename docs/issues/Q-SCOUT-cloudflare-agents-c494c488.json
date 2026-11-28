@@ -1,0 +1,12 @@
+{
+  "id": "Q-SCOUT-cloudflare-agents-c494c488",
+  "title": "Q-SCOUT-cloudflare-agents-c494c488: agents@0.34.0 (cloudflare-agents)",
+  "body": "**Owner:** product-manager\n**Trigger:** every scout pass\n**Done check:** cmd:python3 -m foundation scout --decided Q-SCOUT-cloudflare-agents-c494c488\n**Prediction:** scout_undecided <= 0 within 336 h\n**Status:** open\n\nScout finding from cloudflare-agents (agent platform), score 8.5, matched gap:executor-merged-pr, gap:durable-agent-runs, gap:site-agent-protocol-parity, component:agents-roles, component:verification, need:mcp.\nagents@0.34.0\nhttps://github.com/cloudflare/agents/releases/tag/agents%400.34.0\n\n This release adds support for  Pi 1.6 , which lets a Pi tool wait for a person, a deadline or another session without keeping the agent awake, and lets a Pi session start from an existing history. MCP clients now say when a user needs to authorize again, and failed requests no longer send error det\n\nDecide: adopt (ship the change that closes a gap or adds the capability) or decline with a reason, then record `python3 -m foundation scout --adopt Q-SCOUT-cloudflare-agents-c494c488 --outcome adopted|declined --reason ...`. The outcome re-weights this source.\n\n**Out of scope:** work the release note does not name, and a decision recorded without a reason.\n\n**Closing probe:** cmd:python3 -m foundation scout --decided Q-SCOUT-cloudflare-agents-c494c488",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "scout"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

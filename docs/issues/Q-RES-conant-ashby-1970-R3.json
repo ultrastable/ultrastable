@@ -1,0 +1,12 @@
+{
+  "id": "Q-RES-conant-ashby-1970-R3",
+  "title": "Q-RES-conant-ashby-1970-R3: Work items too vague to map to a state (measured 0.273, target >= 0.9)",
+  "body": "**Owner:** product-manager\n**Trigger:** research pass: conant-ashby-1970 finding R3 is not-met (measured 0.273)\n**Done check:** cmd:python3 -m foundation research --probe conant-ashby-1970:R3\n**Prediction:** spec_quality >= 0.9 within 336 h\n**Out of scope:** editing the study, its target or the paper to match the code; the measurement is changed only by changing the mechanism\n**Closing probe:** `python3 -m foundation research --probe conant-ashby-1970:R3`\n**Status:** open\n\nConcern: Work items too vague to map to a state. The study: If the regulator's actions are a mapping of system states, each action has to name the state it changes and how to check it. A work item without a done check and a live probe is an action mapped to nothing.\n\nMechanisms that should answer it: SPEC-GATE-1 (seed/scripts/specgate.py).\n\nMetric: share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py), target >= 0.9. Improve the mechanism (or add one) until the probe passes; the white paper at /research updates itself from the same measurement.",
+  "labels": [
+    "role:product-manager",
+    "research",
+    "plus"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}
