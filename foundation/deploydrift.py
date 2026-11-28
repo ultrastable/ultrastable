@@ -5,7 +5,9 @@
 
 The reading uses only the repository: the last row of ops/deploys.jsonl per Worker (the commit it was verified at) against the commits on main that touched
 that Worker's code since. A Worker with no row is unmeasured and counts as drift, never as clean. A Worker whose source lives in its own repository
-(topology `source`) is reported as external. Ultrastable is the foundation for any autonomous system.
+(topology `source`) is measured against that repository's newest commit on its ref: a commit newer than the Worker's last recorded deploy is drift (a tenant Worker
+bundles its data at deploy, so every entry its loop commits is invisible until it is redeployed). Measured 2026-11-28: ultrastable-base-rates served 3 entries
+while its main held 7, because such Workers were reported "external" and never read. Ultrastable is the foundation for any autonomous system.
 """
 from __future__ import annotations
 import json, os, subprocess, sys
@@ -29,14 +31,50 @@ def last_deploys(path: str = "ops/deploys.jsonl") -> dict:
     return out
 
 
-def read(topo: dict, deploys: dict, behind=None) -> list:
+def last_deploy_times(path: str = "ops/deploys.jsonl") -> dict:
+    out: dict = {}
+    for line in open(os.path.join(ROOT, path), encoding="utf8"):
+        try:
+            d = json.loads(line)
+        except ValueError:
+            continue
+        if d.get("worker") and d.get("at") and d.get("live_matches_commit") is True and d.get("kind") != "seed":
+            out[d["worker"]] = d["at"]
+    return out
+
+
+def head_time(repo: str, ref: str) -> str:
+    """ISO time of the newest commit on repo@ref (a public read; raises if unreadable)."""
+    p = subprocess.run(["gh", "api", f"repos/{repo}/commits/{ref}", "--jq", ".commit.committer.date"], capture_output=True, text=True, timeout=60)
+    if p.returncode or not p.stdout.strip():
+        raise RuntimeError((p.stderr or p.stdout or "no answer").strip()[:80])
+    return p.stdout.strip()
+
+
+def _ts(iso: str) -> float:
+    from datetime import datetime
+    return datetime.strptime(iso[:19], "%Y-%m-%dT%H:%M:%S").timestamp()
+
+
+def read(topo: dict, deploys: dict, behind=None, ext=None, times=None) -> list:
     behind = behind or (lambda sha, paths: int(_git("rev-list", "--count", f"{sha}..HEAD", "--", *paths) or 0))
+    ext = ext or head_time
+    times = times or {}
     rows = []
     for w in topo.get("workers", []):
         if w.get("state") != "live" or w.get("retire_candidate"):
             continue
         if w.get("source"):
-            rows.append({"worker": w["id"], "status": "external", "behind": 0})
+            src = w["source"] if isinstance(w["source"], dict) else {"repo": w["source"]}
+            at = times.get(w["id"])
+            if not at:
+                rows.append({"worker": w["id"], "status": "unmeasured", "behind": None, "why": "no recorded deploy"}); continue
+            try:
+                newest = ext(src["repo"], src.get("ref") or "main")
+                late = _ts(newest) > _ts(at)
+            except Exception as e:  # an unreadable tenant repository is unmeasured, never clean
+                rows.append({"worker": w["id"], "status": "unmeasured", "behind": None, "why": str(e)[:80]}); continue
+            rows.append({"worker": w["id"], "status": "drift" if late else "current", "behind": 1 if late else 0, "deployed_at": at, "source_head_at": newest})
             continue
         main = w.get("main") or ""
         paths = [os.path.dirname(os.path.dirname(main)) or main, "doctrine/topology.json"]
@@ -65,7 +103,7 @@ def redeploy(rows: list, run=subprocess.run) -> int:
 
 def main(argv: list) -> int:
     topo = json.load(open(os.path.join(ROOT, "doctrine/topology.json"), encoding="utf8"))
-    rows = read(topo, last_deploys())
+    rows = read(topo, last_deploys(), times=last_deploy_times())
     if "--redeploy" in argv:
         bad = redeploy(rows)
     if "--json" in argv:
