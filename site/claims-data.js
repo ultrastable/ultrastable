@@ -2048,11 +2048,11 @@ export default {
   },
   {
    "claim": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
-   "detail": "",
+   "detail": "grep:.github/workflows/checks.yml::foundation[ .]openstd\\b failed (.github/workflows/checks.yml)",
    "how": "file:foundation/openstd.py + file:doctrine/open-standards.json + file:doctrine/open-standards-baseline.json + file:tests/foundation/test_openstd.py + grep:.github/workflows/checks.yml::foundation[ .]openstd\\b",
    "id": "cited-897a8cdffd",
    "kind": "claim",
-   "pass": true,
+   "pass": false,
    "surface": "agents/AGENTS.md"
   },
   {
@@ -2939,11 +2939,11 @@ export default {
   },
   {
    "claim": "- **Open standards, never a home-grown format (OPEN-STANDARDS-1, Rowan 2026-11-25).** \"Standards, don't reinvent the wheel. Apply standards",
-   "detail": "",
+   "detail": "grep:.github/workflows/checks.yml::foundation[ .]openstd\\b failed (.github/workflows/checks.yml)",
    "how": "file:foundation/openstd.py + file:doctrine/open-standards.json + file:doctrine/open-standards-baseline.json + file:tests/foundation/test_openstd.py + grep:.github/workflows/checks.yml::foundation[ .]openstd\\b",
    "id": "mirror-79e254f607",
    "kind": "claim",
-   "pass": true,
+   "pass": false,
    "surface": "seed/agents/AGENTS.md"
   },
   {
@@ -3934,8 +3934,8 @@ export default {
   }
  ],
  "summary": {
-  "drift": 0,
-  "pass": 434,
+  "drift": 2,
+  "pass": 432,
   "total": 434
  }
 };
