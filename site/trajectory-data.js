@@ -5,7 +5,7 @@ export default {
   {
    "area": "workers",
    "quiet_days": 0,
-   "recent7": 113522,
+   "recent7": 113520,
    "series": [
     0,
     0,
@@ -36,11 +36,11 @@ export default {
     0,
     0,
     0,
-    113522
+    113520
    ],
    "share_recent": 0.266,
    "share_trend": 0.266,
-   "total": 113522
+   "total": 113520
   },
   {
    "area": "doctrine",
@@ -165,7 +165,7 @@ export default {
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 30500,
+   "recent7": 30452,
    "series": [
     0,
     0,
@@ -196,11 +196,11 @@ export default {
     0,
     0,
     0,
-    30500
+    30452
    ],
    "share_recent": 0.071,
    "share_trend": 0.071,
-   "total": 30500
+   "total": 30452
   },
   {
    "area": "tests/foundation",
@@ -323,7 +323,7 @@ export default {
    "total": 17581
   }
  ],
- "at": "2026-11-28T06:38:22Z",
+ "at": "2026-11-28T06:38:50Z",
  "days": 30,
  "findings": [
   {
