@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-28-a-bot-commit-that-skips-ci-runs-the-standards-check-itself-a",
+  "kind": "lesson",
+  "date": "2026-11-28",
+  "title": "A bot commit that skips CI runs the standards check itself, and a new ledger is born a CloudEvent",
+  "body": "The weekly scout pass appended a plain JSON row to ops/research/outcomes.jsonl and committed it with [skip ci]. Evidence, observed live: on 2026-11-28 python3 -m foundation openstd --check failed on main with 'new bespoke format: ops/research/outcomes.jsonl', and that red reached every open pull request's foundation job, including #2848. The writer in foundation/research.py now emits a CloudEvents 1.0 envelope, readers take the payload from data and still accept an older plain row, and the scout workflow runs openstd --check before it commits. Verified by tests/foundation/test_research.py (a settled outcome is a CloudEvent and old rows still read) and openstd --check ok on this change.",
+  "probe": "grep:.github/workflows/scout.yml::foundation openstd --check",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "lesson",
+ "title": "A bot commit that skips CI runs the standards check itself, and a new ledger is born a CloudEvent",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}
