@@ -287,12 +287,17 @@ class Conformance(unittest.TestCase):
         bad = "\n".join(T.check_tenant(d, self.std, REPO))
         self.assertIn("conform: llms.txt fail: missing", bad)
         self.assertIn("conform: publiccode.yml fail:", bad)
+        # The test states its own dated exception: the registry's real ones end when each tenant's pull request lands (REPO-CONFORM-2),
+        # so a fixture that read one would fail the day the last one is removed.
         held, std = [], json.loads(json.dumps(STD))
-        std["exceptions"][PLANNED]["until"] = "9999-12-31"
+        exc = {"conformance": "pending", "until": "9999-12-31", "item": "Q-CONFORM-did-it-work", "why": "fixture for this test"}
+        std["exceptions"][PLANNED] = exc
         self.assertEqual(T.check_tenant(d, std, REPO, held), [])
         self.assertTrue(any(h.startswith("conform: llms.txt") for h in held), held)
-        self.assertTrue(T.pending(PLANNED, STD, "2026-12-11"))
-        self.assertFalse(T.pending(PLANNED, STD, "2026-12-12"))
+        dated = json.loads(json.dumps(std))
+        dated["exceptions"][PLANNED]["until"] = "2026-12-11"
+        self.assertTrue(T.pending(PLANNED, dated, "2026-12-11"))
+        self.assertFalse(T.pending(PLANNED, dated, "2026-12-12"))
         self.assertEqual(T.render_surfaces(d, STD, REPO), ["publiccode.yml", "llms.txt"])
         self.assertEqual(T.check_tenant(d, self.std, REPO), [])
 
