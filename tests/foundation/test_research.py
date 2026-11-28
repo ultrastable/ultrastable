@@ -86,6 +86,31 @@ class Research(unittest.TestCase):
         r = R.experiments(self.d, pol, keyed, ms, True, now=t0 + timedelta(hours=25))
         self.assertEqual((r["settled"], r["met"], r["opened"]), (1, 1, 1))
 
+    def test_a_settled_outcome_is_written_as_a_cloudevent_and_read_back_so_it_settles_once(self):
+        # The first settled experiment wrote a bare row to ops/research/outcomes.jsonl and `openstd --check` failed on main (the same class as ops/perception-cost.jsonl):
+        # a ledger row is built as a CloudEvents 1.0 envelope and checked before it is written, and read back through unwrap.
+        from foundation import cloudevents, openstd
+        pol = R.load(self.d)
+        ms = R.measures(self.d)
+        keyed = [("s1:F2", STUDY["findings"][1])]
+        t0 = datetime(2026, 11, 21, tzinfo=timezone.utc)
+        R.experiments(self.d, pol, keyed, ms, True, now=t0)
+        R.experiments(self.d, pol, keyed, ms, True, now=t0 + timedelta(hours=25))
+        led = self.d / pol["state_dir"] / "outcomes.jsonl"
+        rows = [json.loads(l) for l in led.read_text().splitlines() if l.strip()]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(cloudevents.conforms(rows[0]), [])
+        self.assertEqual(cloudevents.unwrap(rows[0])["key"], "s1:F2")
+        self.assertTrue(openstd.ledger_ok(self.d, str(led.relative_to(self.d))))
+        again = R.experiments(self.d, pol, keyed, ms, True, now=t0 + timedelta(hours=26))
+        self.assertEqual(again["settled"], 0, "the settled experiment is recognised through the envelope, not settled twice")
+        with self.assertRaises(ValueError):
+            R.outcome_event({"key": "k", "opened_at": "not a time", "settled_at": "not a time"})
+
+    def test_the_repository_outcomes_ledger_conforms(self):
+        from foundation import openstd
+        self.assertTrue(openstd.ledger_ok(R.REPO if hasattr(R, "REPO") else Path(__file__).resolve().parents[2], "ops/research/outcomes.jsonl"))
+
     def test_paper_limits_are_computed(self):
         R.run(self.d, apply=True, with_leads=False)
         md = (self.d / "research/papers/s1.md").read_text()
