@@ -7309,6 +7309,15 @@
    "body": "A draft PR's checks run fails on purpose, and the lane only started on a successful checks run or the daily sweep, so an agent's draft PR waited about 23 h. The lane now also starts on pull_request opened, reopened and ready_for_review.",
    "probe": "grep:.github/workflows/lane.yml::LANE-DRAFT-1",
    "session": "session_0156nqDsuxEgQUK6LWsioTDc"
+  },
+  {
+   "id": "lesson-2026-11-28-stuck-tenant-queues-idle-prs-and-a-stale-deploy-causes-and-t",
+   "kind": "lesson",
+   "date": "2026-11-28",
+   "title": "Stuck tenant queues, idle PRs and a stale deploy: causes and the rules that hold them",
+   "body": "Open Questions and base-rates queue issues idled for days: retries repeated their input, no attempts cap, a 200 non-JSON model reply read as a negative finding, github tests never ran in CI, and no job merged the system's own PRs. The live Worker lagged main because the deploy watcher shipped only state moved while live tenants were marked planned. Held by: TEST-COVERAGE-1 (tenantstd), AUTOMERGE-1 (scaffold workflow), FLOW-AUDIT-1 (tenant-flow detector, fm-stale-flow), own-repo rows with admission rows, watcher shipping own-repo. Entries in doctrine/LESSONS.md dated 2026-11-28.",
+   "probe": "grep:foundation/tenant_flow.py::def findings",
+   "session": "session_0156nqDsJkfAA7ULcYgh9DNh"
   }
  ]
 }
