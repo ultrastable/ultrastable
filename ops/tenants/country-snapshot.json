@@ -1,9 +1,9 @@
 {
- "at": "2026-11-27T16:37:46Z",
+ "at": "2026-11-28T15:28:54Z",
  "claims_drift": null,
  "declared_metric": 0.0,
  "declared_target": 0.15,
  "slug": "country-snapshot",
- "spend_vs_budget": 226.9,
+ "spend_vs_budget": 83.32,
  "uptime": 0.0
 }
