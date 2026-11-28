@@ -81,6 +81,8 @@ Code is the only memory. All project state lives in this repository (docs/PROJEC
 | unlearn | [https://unlearn.ultrastable.org](https://unlearn.ultrastable.org/) | [ultrastable/unlearn](https://github.com/ultrastable/unlearn) |
 | what-works | [https://what-works.ultrastable.org](https://what-works.ultrastable.org/) | [ultrastable/what-works](https://github.com/ultrastable/what-works) |
 | replication-ledger | [https://replication-ledger.ultrastable.org](https://replication-ledger.ultrastable.org/) | [ultrastable/replication-ledger](https://github.com/ultrastable/replication-ledger) |
+| base-rates | [https://base-rates.ultrastable.org](https://base-rates.ultrastable.org/) | [ultrastable/base-rates](https://github.com/ultrastable/base-rates) |
+| open-questions | [https://open-questions.ultrastable.org](https://open-questions.ultrastable.org/) | [ultrastable/open-questions](https://github.com/ultrastable/open-questions) |
 
 The same list, read live: [https://ultrastable.io/directory](https://ultrastable.io/directory). Each system's health is at `/health` and what it states, with the endpoint behind each statement, at `/claims.json`.
 <!-- live:end -->

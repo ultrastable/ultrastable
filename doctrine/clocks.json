@@ -310,6 +310,48 @@
       "workflow": "cleanroom",
       "expected_interval_s": 86400,
       "periodic": true
+    },
+    {
+      "id": "open-questions-beat",
+      "what": "Open Questions tenant beat (cron 9 2 * * 1 on ultrastable-open-questions)",
+      "source": "d1",
+      "d1_id": "7b50f33e-9493-4536-bcc2-c330dbabb6b6",
+      "table": "beats",
+      "column": "started_at",
+      "expected_interval_s": 3600,
+      "periodic": true,
+      "replicas": [
+        {
+          "account_id": "81e3a4efb4eb66e613529b87682911bb",
+          "d1_id": "7b50f33e-9493-4536-bcc2-c330dbabb6b6",
+          "why": "ultrastable account, the only copy"
+        }
+      ],
+      "health_urls": [
+        "https://ultrastable-open-questions.ultrastable.workers.dev/health",
+        "https://open-questions.ultrastable.org/health"
+      ]
+    },
+    {
+      "id": "base-rates-beat",
+      "what": "Base Rates tenant beat (cron 8 * * * * on ultrastable-base-rates)",
+      "source": "d1",
+      "d1_id": "90a747d3-68ab-4930-9dad-cd7af8fe9385",
+      "table": "beats",
+      "column": "started_at",
+      "expected_interval_s": 3600,
+      "periodic": true,
+      "replicas": [
+        {
+          "account_id": "81e3a4efb4eb66e613529b87682911bb",
+          "d1_id": "90a747d3-68ab-4930-9dad-cd7af8fe9385",
+          "why": "ultrastable account, the only copy"
+        }
+      ],
+      "health_urls": [
+        "https://ultrastable-base-rates.ultrastable.workers.dev/health",
+        "https://base-rates.ultrastable.org/health"
+      ]
     }
   ],
   "chain": {

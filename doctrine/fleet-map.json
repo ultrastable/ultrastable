@@ -437,8 +437,8 @@
   "ultrastable/base-rates": {
    "purpose": "Before you decide, see what usually happens: graded base rates for life, work and policy choices, and your own forecasting record.",
    "layer": "tenant",
-   "state": "planned",
-   "live": null,
+   "state": "live",
+   "live": "https://base-rates.ultrastable.org",
    "synced_from": [
     {
      "kind": "manifest",
@@ -505,8 +505,8 @@
   "ultrastable/open-questions": {
    "purpose": "What science honestly does not know yet: the big open questions, where the evidence leans today, and how that lean has moved.",
    "layer": "tenant",
-   "state": "planned",
-   "live": null,
+   "state": "live",
+   "live": "https://open-questions.ultrastable.org",
    "synced_from": [
     {
      "kind": "manifest",
