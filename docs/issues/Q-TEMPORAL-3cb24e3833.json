@@ -1,0 +1,12 @@
+{
+  "id": "Q-TEMPORAL-3cb24e3833",
+  "title": "Q-TEMPORAL-3cb24e3833: hotspot: file:site/balance-data.js",
+  "body": "**Owner:** uiux-manager\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation temporal --settled 3cb24e3833\n**Status:** open\n\nTemporal loop finding (hotspot) in site: site/balance-data.js edited 293 times in 3 days (outside generated and ledger paths). Seen in 3 runs since 2026-11-26T16:51:41Z. Advocate: uiux-manager.\n\nFind why this keeps being edited (a flaky generator, an unstable spec, a loop that rewrites its own output) and fix the cause with a test or guard. Do not slow the work down; stop the churn.\n\nFiles: site/balance-data.js.\n\nPrediction: site/balance-data.js is edited at most 5 times in 3 days within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 3cb24e3833` recomputes it from the repository's own history).\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation temporal --settled 3cb24e3833.",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "temporal"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

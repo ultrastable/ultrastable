@@ -1,0 +1,12 @@
+{
+  "id": "Q-TEMPORAL-bfbb87dc25-r1",
+  "title": "Q-TEMPORAL-bfbb87dc25-r1: stopped loop: ledger:deploys:ultrastable-agents",
+  "body": "**Owner:** infrastructure-manager\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation temporal --settled bfbb87dc25\n**Status:** open\n\nTemporal loop finding (stopped_loop) in workflows: ultrastable-agents: last event 8 h ago, it used to arrive every 1.0 h (8.1 intervals). Seen in 1 runs since 2026-11-28T15:36:50Z. Advocate: infrastructure-manager.\n\nRun the loop by hand, read why it stopped, fix the cause and make it fire again. `python3 -m foundation pathfinder --regress` lists the commits since it last worked.\n\nFiles: deploy/deploy-workers.mjs.\n\nPrediction: ledger:deploys:ultrastable-agents records an event within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled bfbb87dc25` recomputes it from the repository's own history).\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation temporal --settled bfbb87dc25.",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "temporal"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

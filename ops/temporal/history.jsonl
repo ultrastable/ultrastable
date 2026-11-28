@@ -4,3 +4,4 @@
 {"day": "2026-11-24", "open": 20, "settled": 10, "hotspot": 7, "neglect": 3, "stale_entry": 0, "stopped_loop": 8, "repeated_failure": 2}
 {"day": "2026-11-26", "open": 15, "settled": 21, "hotspot": 7, "neglect": 5, "stale_entry": 0, "stopped_loop": 1, "repeated_failure": 2}
 {"day": "2026-11-27", "open": 16, "settled": 23, "hotspot": 9, "neglect": 4, "stale_entry": 0, "stopped_loop": 1, "repeated_failure": 2}
+{"day": "2026-11-28", "open": 21, "settled": 28, "hotspot": 10, "neglect": 1, "stale_entry": 0, "stopped_loop": 8, "repeated_failure": 2}

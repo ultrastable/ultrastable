@@ -1,0 +1,12 @@
+{
+  "id": "Q-TEMPORAL-3230293be3",
+  "title": "Q-TEMPORAL-3230293be3: repeated failure: ledger:deploys:ultrastable-seed-second-tenant",
+  "body": "**Owner:** infrastructure-manager\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation temporal --settled 3230293be3\n**Status:** open\n\nTemporal loop finding (repeated_failure) in workflows: ultrastable-seed-second-tenant: 0 failures in a row, 40 in the last 3 days against 2 in the 14 before. Seen in 3 runs since 2026-11-26T16:51:41Z. Advocate: infrastructure-manager.\n\nFind the root cause of the repeated failure, not the symptom. `python3 -m foundation pathfinder --regress` lists the commits since it last worked; fix, add a regression test, and let the ledger show a pass.\n\nFiles: deploy/deploy-workers.mjs.\n\nPrediction: ledger:deploys:ultrastable-seed-second-tenant has no failure in its next 3 events within 7 days.\n\nThis item closes when the finding no longer holds (`python3 -m foundation temporal --settled 3230293be3` recomputes it from the repository's own history).\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation temporal --settled 3230293be3.",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "temporal"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
