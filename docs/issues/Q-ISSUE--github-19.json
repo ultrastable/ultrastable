@@ -1,0 +1,11 @@
+{
+  "id": "Q-ISSUE--github-19",
+  "title": "Q-ISSUE--github-19: Q-OPENLOOP-ultrastable-.github-17: close the open client loop on #17",
+  "body": "**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** cmd:python3 -m foundation issueloop --closed ultrastable/.github#19\n**Status:** open\n\nISSUE-LOOP-1: ultrastable/.github#19 (Q-OPENLOOP-ultrastable-.github-17: close the open client loop on #17) is unprobed: no probe line in the body. Fix it in code and close it, or add a `Closing probe:` line the loop can run (file, grep, allow-listed cmd, or GET url expect \"text\").\n\nsize: S\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Issues"
+}
