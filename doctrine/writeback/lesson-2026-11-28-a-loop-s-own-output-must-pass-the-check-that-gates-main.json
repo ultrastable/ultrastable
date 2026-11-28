@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-28-a-loop-s-own-output-must-pass-the-check-that-gates-main",
+  "kind": "lesson",
+  "date": "2026-11-28",
+  "title": "A loop's own output must pass the check that gates main",
+  "body": "The research loop appended plain JSON rows to ops/research/outcomes.jsonl; openstd --check reads that as a bespoke format, so main went red after a [skip ci] loop commit and the merge lane, which merges only on green, stalled every PR. The loop now writes CloudEvents 1.0 rows, migrates legacy rows on apply, and a test runs the loop's real output through the standards check.",
+  "probe": "grep:foundation/research.py::_migrate",
+  "session": "session_0156nqDsuxEgQUK6LWsioTDc"
+ },
+ "kind": "lesson",
+ "title": "A loop's own output must pass the check that gates main",
+ "session": "session_0156nqDsuxEgQUK6LWsioTDc"
+}

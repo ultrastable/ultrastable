@@ -22,6 +22,7 @@ pull requests, the regime); the study's figures and ours are never presented as 
 from __future__ import annotations
 import datetime as dt, json, os, re, statistics, subprocess, sys, urllib.request, xml.etree.ElementTree as ET
 from pathlib import Path
+from . import cloudevents
 
 REPO = Path(__file__).resolve().parents[1]
 POLICY = "doctrine/research.json"
@@ -83,10 +84,32 @@ def _jsonl(path: Path) -> list[dict]:
     out = []
     for line in (path.read_text(encoding="utf-8").splitlines() if path.is_file() else []):
         try:
-            out.append(json.loads(line))
+            out.append(cloudevents.unwrap(json.loads(line)))  # rows written before the envelope read as they are
         except ValueError:
             continue
     return out
+
+
+def _ce(kind: str, row: dict) -> dict:
+    """STANDARDS-FIRST-1 / OPEN-STANDARDS-1: the loop's ledger rows are CloudEvents 1.0 envelopes around the row, with a deterministic id."""
+    return cloudevents.event("research", kind, "foundation/research", row, subject=row["key"], id=f"{kind}:{row['key']}:{row['opened_at']}", time=row.get("settled_at") or row["opened_at"])
+
+
+def _migrate(path: Path, kind: str) -> int:
+    """Wrap the rows of a ledger written before the envelope, in place, so the open-standards check finds a conformant first and last row. Idempotent."""
+    if not path.is_file():
+        return 0
+    rows, n = [], 0
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        r = json.loads(line)
+        if not cloudevents.is_event(r):
+            r, n = _ce(kind, r), n + 1
+        rows.append(r)
+    if n:
+        path.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+    return n
 
 
 def _median(xs):
@@ -622,10 +645,11 @@ def experiments(root, pol, keyed, ms, apply, now=None) -> dict:
         new_e.append({"key": key, "opened_at": ISO(now), "metric": mt["metric"], "op": mt["op"], "value": float(mt["value"]), "window_h": int(mt["h"]), "baseline": cur})
     if apply:
         st.mkdir(parents=True, exist_ok=True)
+        _migrate(st / "outcomes.jsonl", "outcome")
         with (st / "outcomes.jsonl").open("a", encoding="utf-8") as fh:
-            fh.writelines(json.dumps(o) + "\n" for o in new_o)
+            fh.writelines(json.dumps(_ce("outcome", o)) + "\n" for o in new_o)
         with (st / "experiments.jsonl").open("a", encoding="utf-8") as fh:
-            fh.writelines(json.dumps(e) + "\n" for e in new_e)
+            fh.writelines(json.dumps(_ce("experiment", e)) + "\n" for e in new_e)
     return {"opened": len(new_e), "settled": len(new_o), "met": sum(1 for o in new_o if o["met"])}
 
 

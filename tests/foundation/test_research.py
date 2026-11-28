@@ -76,6 +76,21 @@ class Research(unittest.TestCase):
         ok, why = R.probe(self.d, "s1:F1")
         self.assertTrue(ok, why)
 
+    def test_ledger_rows_are_cloudevents_and_legacy_rows_migrate(self):
+        # OPEN-STANDARDS-1: openstd --check read plain rows in ops/research/outcomes.jsonl as a bespoke format and turned main red
+        from foundation import cloudevents
+        out = self.d / "ops/research/outcomes.jsonl"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        legacy = {"key": "k", "opened_at": "2026-11-21T09:33:27Z", "settled_at": "2026-11-28T04:19:32Z", "metric": "m", "observed": 1.0, "met": True, "baseline": 1.0}
+        out.write_text(json.dumps(legacy) + "\n")
+        self.assertEqual(R._migrate(out, "outcome"), 1)
+        self.assertEqual(R._migrate(out, "outcome"), 0, "idempotent")
+        rows = [json.loads(l) for l in out.read_text().splitlines()]
+        self.assertEqual(cloudevents.conforms(rows[0]), [])
+        self.assertEqual(R._jsonl(out), [legacy], "readers unwrap the envelope")
+        from foundation import openstd
+        self.assertTrue(openstd.ledger_ok(self.d, "ops/research/outcomes.jsonl"))
+
     def test_experiments_settle_after_window_then_reopen(self):
         pol = R.load(self.d)
         ms = R.measures(self.d)
@@ -85,6 +100,9 @@ class Research(unittest.TestCase):
         self.assertEqual(R.experiments(self.d, pol, keyed, ms, True, now=t0 + timedelta(hours=1))["opened"], 0, "still inside its window")
         r = R.experiments(self.d, pol, keyed, ms, True, now=t0 + timedelta(hours=25))
         self.assertEqual((r["settled"], r["met"], r["opened"]), (1, 1, 1))
+        from foundation import openstd  # root cause of a red main: the loop's own output must pass the check that gates it
+        self.assertTrue(openstd.ledger_ok(self.d, "ops/research/outcomes.jsonl"))
+        self.assertTrue(openstd.ledger_ok(self.d, "ops/research/experiments.jsonl"))
 
     def test_paper_limits_are_computed(self):
         R.run(self.d, apply=True, with_leads=False)
