@@ -66,3 +66,11 @@ test('watchGhOnly dispatches a stale loop and one whose Pages just turned on, an
   assert.ok(!calls.some(c => c.includes('a/busy') && c.startsWith('POST')));
   assert.equal((await watchGhOnly({ token: '' })).status, 'no-token');
 });
+
+test('a GitHub-only loop the tick could not read or dispatch is a failure line, not a pass', async () => {
+  const { ghOnlyFailures } = await import('../src/declared.js');
+  const loops = [{ repo: 'a/x' }, { repo: 'a/y' }];
+  assert.deepEqual(ghOnlyFailures({ status: 'ok', unmeasured: ['a/x: dispatch HTTP 403'] }, loops), ['a/x: dispatch HTTP 403']);
+  assert.deepEqual(ghOnlyFailures({ status: 'no-token', why: 'no token' }, loops), ['a/x: no token', 'a/y: no token']);
+  assert.deepEqual(ghOnlyFailures({ status: 'ok', dispatched: ['a/y: no run for 9.0 h'], unmeasured: [] }, loops), []);
+});

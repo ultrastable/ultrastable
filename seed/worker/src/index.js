@@ -69,7 +69,7 @@ import { createHosts, cloudflareHost, githubActionsHost, gcpHost, reporting, onP
 import { beat, watch, readPulse, failed, HEAVY_CADENCE_MIN } from './pulse.js';
 import { decide, healthView, readState } from './cutover.js';
 import { handleAppHost } from './apprepos.js';
-import { reconcileVisibility, pulseTenants, watchGhOnly } from './declared.js';  // DECLARED-LIVE-1
+import { reconcileVisibility, pulseTenants, watchGhOnly, ghOnlyFailures } from './declared.js';  // DECLARED-LIVE-1
 import { readIgnition } from './ignition.js';
 import { loopHealth } from './critloop.js';
 import { routeEvent, verifySignature, EVENT_TABLE } from './events.js';
@@ -161,7 +161,7 @@ const app = {
       await b('progress', () => progressStep({ db: env.DB, config, token, ensureItem }));  // PROGRESS-1: release cadence monitor; a slow system has its producers dispatched, a stalled one files STALL-<system>
       await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));
       await b('recency', () => probeStamps({ siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // RECENCY-PROBE-1: every live page keeps its stamp  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
-      if (new Date().getUTCMinutes() < 10) await b('gh-only', () => watchGhOnly({ token, loops: config.gh_only || [] }));  // GH-ONLY-WATCH-1: GitHub-only loops get a second clock and go live the hour Pages turns on
+      if (new Date().getUTCMinutes() < 10) await b('gh-only', async () => { const loops = config.gh_only || [], r = await watchGhOnly({ token, loops }); await declaredItems(env.DB, 'GHONLY', ghOnlyFailures(r, loops), loops.map(l => l.repo)); return r; });  // GH-ONLY-WATCH-1: GitHub-only loops get a second clock and go live the hour Pages turns on
       if (new Date().getUTCMinutes() % 30 < 10) await b('tenant-deploy', () => watchTenantDeploys({ token, repo: main }));  // TENANT-DEPLOY-1: a tenant repository's merge ships within the hour (twice an hour, ~4 subrequests)
       if (new Date().getUTCMinutes() < 10) {  // DECLARED-LIVE-1: hourly, from this one cron
         await b('tenant-pulse', async () => { const r = await pulseTenants({ targets: config.tenant_pulse || [] }); await declaredItems(env.DB, 'PULSE', r.failed, (config.tenant_pulse || []).map(x => x.id)); return r; });  // every tenant back end has a second route to run besides its own cron
@@ -422,8 +422,8 @@ async function declaredItems(db, prefix, failing, all) {
   const bad = new Map(failing.map(l => [String(l).split(':')[0], String(l)]));
   for (const id of all) {
     const item = `${prefix}-${String(id).replace(/[^A-Za-z0-9-]+/g, '-')}`;
-    if (bad.has(id)) await ensureItem(db, { id: item, kind: 'fix', owner_role: 'operations', priority: 1, title: `${prefix === 'PULSE' ? 'Tenant back end did not answer its hourly pulse' : 'Repository visibility drifted from its declaration'}: ${bad.get(id)}`.slice(0, 400),
-      done_check: `the next ${prefix === 'PULSE' ? 'tenant-pulse' : 'repo-visibility'} pass reads ${id} in order`, closing_probe: `declared:${prefix}:${id}` }).catch(e => console.error('declared item', e && e.message));
+    if (bad.has(id)) await ensureItem(db, { id: item, kind: 'fix', owner_role: 'operations', priority: 1, title: `${prefix === 'PULSE' ? 'Tenant back end did not answer its hourly pulse' : prefix === 'GHONLY' ? 'GitHub-only loop could not be read or dispatched by the tick' : 'Repository visibility drifted from its declaration'}: ${bad.get(id)}`.slice(0, 400),
+      done_check: `the next ${prefix === 'PULSE' ? 'tenant-pulse' : prefix === 'GHONLY' ? 'gh-only' : 'repo-visibility'} pass reads ${id} in order`, closing_probe: `declared:${prefix}:${id}` }).catch(e => console.error('declared item', e && e.message));
     else await db.prepare(`UPDATE items SET status='done', disposition=?, updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`).bind(`probe green: declared:${prefix}:${id}`, new Date().toISOString(), item).run().catch(() => null);
   }
 }

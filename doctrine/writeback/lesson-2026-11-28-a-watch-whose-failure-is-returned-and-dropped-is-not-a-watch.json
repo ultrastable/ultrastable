@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-28-a-watch-whose-failure-is-returned-and-dropped-is-not-a-watch",
+  "kind": "lesson",
+  "date": "2026-11-28",
+  "title": "A watch whose failure is returned and dropped is not a watch",
+  "body": "The tick's GH-ONLY-WATCH-1 reading returned unmeasured lines for loops it could not read or dispatch, and the tick discarded them, so base-rates and open-questions loops were never dispatched through gaps of 8 to 12 hours (the only dispatches in either repository were by hand) and GitHub's cron ran them about twice a day instead of four times. Rule: every reading's inability to act is filed as an item with a probe (ghOnlyFailures into declaredItems), the same as a failed pulse.",
+  "probe": "grep:seed/worker/src/declared.js::ghOnlyFailures"
+ },
+ "kind": "lesson",
+ "title": "A watch whose failure is returned and dropped is not a watch",
+ "session": "session_0156nqDutqKF5EzM3sG4WaFY"
+}
