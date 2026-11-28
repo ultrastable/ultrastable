@@ -7259,6 +7259,14 @@
    "body": "Ten bounded slices carried round two onto a main that kept moving, each built on the main that had just merged the one before it. Evidence, observed live on GitHub: #2815, #2819, #2825, #2827, #2828, #2829, #2830, #2838, #2839 and #2843 merged in that order and each deployed through the handoff lane. Two reds on main surfaced on the way (the JavaScript substance classifier missing a generated path; an invented-number test whose figure had become a measured value); each was reproduced on a clean main checkout and then fixed at its cause in the slice that met it. A CI step stopped by the actions budget or a GitHub rate limit is not a test failure: it got one re-run after the same suite passed locally, and it cleared. Verified by shipplan --check, which now reads: every entry has landed.",
    "probe": "grep:doctrine/ship-plan.json::workflow-output",
    "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "decision-2026-11-27-repo-conform-2-the-six-tenant-conformance-exceptions-are-rem",
+   "kind": "decision",
+   "date": "2026-11-27",
+   "title": "REPO-CONFORM-2: the six tenant conformance exceptions are removed once the fleet reads 12 of 12",
+   "body": "Every tenant repository's own pull request merged and python3 seed/scripts/repoconform.py --fleet doctrine/fleet-map.json reads 12 of 12 repositories conforming from GitHub. The dated conformance-pending exceptions in doctrine/tenant-standard.json held findings only until those pull requests landed, so they are removed; the Q-CONFORM items close by their own probe on the daily queue pass. Session: session_0156nqDuSa1pdM6rAaTQ1irE",
+   "probe": "grep:doctrine/tenant-standard.json::exceptions"
   }
  ]
 }

@@ -10,8 +10,9 @@ gaps=""
 
 # 1. Pull requests: enable auto-merge on every non-draft PR (merges when required checks pass); flag conflicts and stale drafts.
 for n in $(gh pr list -R "$repo" --state open --json number --jq '.[].number'); do
-  info=$(gh pr view "$n" -R "$repo" --json isDraft,mergeable,labels,updatedAt,title --jq '[.isDraft,.mergeable,([.labels[].name]|join(",")),.updatedAt,.title]|@tsv')
-  IFS=$'\t' read -r draft mergeable labels updated title <<<"$info"
+  info=$(gh pr view "$n" -R "$repo" --json isDraft,mergeable,labels,updatedAt,title --jq '[.isDraft,.mergeable,([.labels[].name]|join(",")),.updatedAt,.title]|join("|")')
+  # A non-whitespace separator: read collapses consecutive tabs, so an empty label list shifted every later field (updated took the title).
+  IFS='|' read -r draft mergeable labels updated title <<<"$info"
   case ",$labels," in *,superseded,*) gh pr close "$n" -R "$repo" -c "Closed by retriage: labelled superseded." >/dev/null && log "#$n closed (superseded)"; continue;; esac
   if [ "$draft" = "true" ]; then
     age=$(( ( $(date +%s) - $(date -d "$updated" +%s) ) / 3600 ))
@@ -26,8 +27,8 @@ done
 
 # 2. Issues: each open issue needs a doer (assignee or agent-ready or owner-card) and a closing probe (the word "probe" or "done check" in body, or a gate/later label).
 for n in $(gh issue list -R "$repo" --state open --limit 300 --json number --jq '.[].number'); do
-  row=$(gh issue view "$n" -R "$repo" --json labels,assignees,body,title --jq '[([.labels[].name]|join(",")),(.assignees|length),((.body // "")|test("probe|done check";"i")),.title]|@tsv')
-  IFS=$'\t' read -r labels nassign hasprobe title <<<"$row"
+  row=$(gh issue view "$n" -R "$repo" --json labels,assignees,body,title --jq '[([.labels[].name]|join(",")),(.assignees|length),((.body // "")|test("probe|done check";"i")),.title]|map(tostring)|join("|")')
+  IFS='|' read -r labels nassign hasprobe title <<<"$row"
   doer=false; case ",$labels," in *,agent-ready,*|*,owner-card,*|*,gate:filed,*|*,m:Later,*) doer=true;; esac
   [ "$nassign" != "0" ] && doer=true
   [ "$doer" = false ] && gaps="$gaps\n- issue #$n has no doer: $title"

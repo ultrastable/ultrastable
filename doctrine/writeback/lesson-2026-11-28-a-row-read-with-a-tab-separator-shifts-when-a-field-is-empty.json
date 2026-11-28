@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-28-a-row-read-with-a-tab-separator-shifts-when-a-field-is-empty",
+  "kind": "lesson",
+  "date": "2026-11-28",
+  "title": "A row read with a tab separator shifts when a field is empty, so retriage failed on every pass",
+  "body": "scripts/retriage.sh read gh output with IFS tab, and bash collapses consecutive tabs, so a pull request with no labels moved the title into the updated field. Evidence, observed live: the fleet pass on 2026-11-28 printed date: invalid date and a syntax error at scripts/retriage.sh line 17. The rows are now joined with a vertical bar, a non-whitespace separator, so an empty field stays in place. Verified by bash -n scripts/retriage.sh and by a read of the same row with an empty label list.",
+  "probe": "grep:scripts/retriage.sh::IFS='|' read -r draft",
+  "session": "session_0156nqDroaiS542i2iu8RdAL"
+ },
+ "kind": "lesson",
+ "title": "A row read with a tab separator shifts when a field is empty, so retriage failed on every pass",
+ "session": "session_0156nqDroaiS542i2iu8RdAL"
+}
