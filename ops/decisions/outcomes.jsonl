@@ -39,3 +39,8 @@
 {"at": "2026-11-28T06:23:21Z", "decided_at": "2026-11-26T19:02:37Z", "hit": true, "id": "d-cf8d9f5c296a", "measured": 1.0, "point": "work-queue-priority", "predicted": 1.0}
 {"at": "2026-11-28T06:23:21Z", "decided_at": "2026-11-26T23:04:05Z", "hit": true, "id": "d-dac14feaff9e", "measured": 1.0, "point": "work-queue-priority", "predicted": 1.0}
 {"at": "2026-11-28T06:23:21Z", "decided_at": "2026-11-27T06:03:13Z", "hit": true, "id": "d-b0c9ac8fe76d", "measured": 1.0, "point": "work-queue-priority", "predicted": 1.0}
+{"at": "2026-11-28T14:51:37Z", "decided_at": "2026-11-21T08:01:13Z", "hit": true, "id": "d-49e0ea6e8491", "measured": 1.0, "point": "self-code-finding", "predicted": 1.0}
+{"at": "2026-11-28T14:51:37Z", "decided_at": "2026-11-27T12:20:38Z", "hit": false, "id": "d-267b5cefc4af", "measured": 0.0, "point": "idea-loop", "predicted": 1.0}
+{"at": "2026-11-28T14:51:37Z", "decided_at": "2026-11-27T12:20:38Z", "hit": false, "id": "d-6c17db5c1bf7", "measured": 0.0, "point": "idea-loop", "predicted": 1.0}
+{"at": "2026-11-28T14:51:37Z", "decided_at": "2026-11-27T12:20:38Z", "hit": false, "id": "d-a09a6f9501c3", "measured": 0.0, "point": "idea-loop", "predicted": 1.0}
+{"at": "2026-11-28T14:51:37Z", "decided_at": "2026-11-27T12:20:38Z", "hit": false, "id": "d-197f18e77b6b", "measured": 0.0, "point": "idea-loop", "predicted": 1.0}

@@ -49,7 +49,7 @@ export default {
      "AI systems leave their loops open. Put in place: an output with no code consumer fails the build. Check it with one number, share of registered loops that declare a closing probe and a server-side owner, and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 19; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 172 (n = 29329; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.737 (n = 19; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 4 of 5 of these checks pass today. Share of declared essential variables that have limits (doctrine/ultrastability.json) reads 1.0 (n = 19; source: doctrine/ultrastability.json). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 172 (n = 29407; source: ops/ultrastability.jsonl). Share of essential variables whose second loop can change a parameter of the first loop reads 0.737 (n = 19; source: doctrine/ultrastability.json). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. Chapters 7 and 8 were not machine-read for this paper: the archive.org text the research loop could reach ends in chapter 2. Ashby's mechanism is stated here in our own words from the book's contents and preface; the only verbatim quotation is from the preface (page v).",
@@ -160,7 +160,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 172,
      "status": "met",
-     "n": 29329,
+     "n": 29407,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -1822,7 +1822,7 @@ export default {
      "The member knowing better than the organization. Put in place: what the owner does not know is computed (known minus told), never asked. Check it with one number, owner-driven thread sessions that changed the repository in the last 7 days (ops/provenance.jsonl), and set a limit for it (<= 0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 2 of 7 of these checks pass today. Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.386 (n = None; source: foundation/specgate.py over docs/issues). Share of essential variables (platform and tenant) whose latest reading in the last 7 days has a value (ops/ultrastability.jsonl) reads 0.723 (n = 47; source: ops/ultrastability.jsonl, latest reading per variable in the last 7 days). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.879 (n = 207; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 2 of 7 of these checks pass today. Share of open work items with a done check, a prediction, an out-of-scope line and a live proof (foundation/specgate.py) reads 0.386 (n = None; source: foundation/specgate.py over docs/issues). Share of essential variables (platform and tenant) whose latest reading in the last 7 days has a value (ops/ultrastability.jsonl) reads 0.723 (n = 47; source: ops/ultrastability.jsonl, latest reading per variable in the last 7 days). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.882 (n = 212; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. The whole working paper was read from the IESE PDF the owner supplied; the passages quoted in the findings are verbatim.",
@@ -1975,9 +1975,9 @@ export default {
      },
      "prediction": "efficiency_verdict_share >= 0.8 within 168 h",
      "metric_label": "share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py)",
-     "measured": 0.879,
+     "measured": 0.882,
      "status": "met",
-     "n": 207,
+     "n": 212,
      "source": "ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl",
      "item": null
     },
@@ -2226,7 +2226,7 @@ export default {
      "A response that is never checked against the world. Put in place: every item names a live closing probe. Check it with one number, share of uploaded deploys proven live against their commit, and set a limit for it (>= 0.95 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 3 of 3 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 120; source: instances/ultrastable/loop-registry.json (declared)). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 172 (n = 29329; source: ops/ultrastability.jsonl). Share of uploaded deploys proven live against their commit reads 0.999 (n = 980; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 3 of 3 of these checks pass today. Share of registered loops that declare a closing probe and a server-side owner reads 1.0 (n = 120; source: instances/ultrastable/loop-registry.json (declared)). Second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl) reads 172 (n = 29407; source: ops/ultrastability.jsonl). Share of uploaded deploys proven live against their commit reads 0.999 (n = 980; source: ops/deploys.jsonl (same window)). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "We state the law in our own words from chapter 11. We do not count disturbance classes directly; we read proxies from the loop registry, the second loop's log and the deploy ledger.",
@@ -2340,7 +2340,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 172,
      "status": "met",
-     "n": 29329,
+     "n": 29407,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
@@ -2468,7 +2468,7 @@ export default {
      "A concept in the register that the code does not carry. Put in place: each concept lists the mechanisms that implement it. Check it with one number, share of concepts in doctrine/ashby-concepts.json whose every named mechanism resolves to a file and marker in this repository, and set a limit for it (>= 1.0 is the limit we use)."
     ],
     "practice_note": [
-     "In our own system, 3 of 7 of these checks pass today. Share of the second loop's parameter steps in the last 7 days that changed a step-function another variable's trial already held (MULTISTABLE-1) reads 0.462 (n = 104; source: ops/ultrastability.jsonl steps against doctrine/ultrastability.json ladders). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.879 (n = 207; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Share of declared step-functions that can still move in a direction their steps declare (ops: doctrine files the ladders name) reads 1.0 (n = 13; source: doctrine/ultrastability.json ladders and the files they name). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
+     "In our own system, 3 of 7 of these checks pass today. Share of the second loop's parameter steps in the last 7 days that changed a step-function another variable's trial already held (MULTISTABLE-1) reads 0.462 (n = 104; source: ops/ultrastability.jsonl steps against doctrine/ultrastability.json ladders). Share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py) reads 0.882 (n = 212; source: ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl). Share of declared step-functions that can still move in a direction their steps declare (ops: doctrine files the ladders name) reads 1.0 (n = 13; source: doctrine/ultrastability.json ladders and the files they name). Where a check fails, a work item carries the fix, and it closes only when the same check passes."
     ],
     "tradeoffs": [
      "Reading. The register is built from the archive's index pages, not from the handwritten page images; each principle cites the pages its index entries name. The journal's wording is not copied: principles are stated in our own words.",
@@ -2572,9 +2572,9 @@ export default {
      },
      "prediction": "efficiency_verdict_share >= 0.8 within 168 h",
      "metric_label": "share of settled actions (decisions, growth experiments, second-loop steps) that carry an efficiency verdict as well as an effectiveness verdict (foundation/freeadapt.py)",
-     "measured": 0.879,
+     "measured": 0.882,
      "status": "met",
-     "n": 207,
+     "n": 212,
      "source": "ops/decisions/outcomes.jsonl, ops/growth/experiments.json and ops/ultrastability.jsonl",
      "item": null
     },
