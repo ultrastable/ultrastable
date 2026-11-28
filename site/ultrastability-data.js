@@ -4,77 +4,77 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": false,
    "value": 0.955
   },
   "happy_paths": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": false,
    "value": 88
   },
   "research_in_code": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": false,
    "value": 0.6
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": false,
    "value": 0.033
   },
   "self_shipping": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": false,
    "value": 0.786
   },
   "spec_quality": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": false,
    "value": 0.397
   },
   "spend": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": false,
    "value": 11.345
   },
   "stalled_clocks": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": false,
    "value": 5
   },
   "survival_levels": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": true,
    "value": 3
   },
   "ui_findings": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-28T07:16:38Z",
+   "at": "2026-11-28T07:29:59Z",
    "ok": true,
    "value": 20.714
   }
