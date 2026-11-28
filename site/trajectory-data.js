@@ -45,7 +45,7 @@ export default {
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 46911,
+   "recent7": 46946,
    "series": [
     0,
     0,
@@ -76,11 +76,11 @@ export default {
     0,
     0,
     0,
-    46911
+    46946
    ],
    "share_recent": 0.11,
    "share_trend": 0.11,
-   "total": 46911
+   "total": 46946
   },
   {
    "area": "foundation",
@@ -165,7 +165,7 @@ export default {
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 31056,
+   "recent7": 30500,
    "series": [
     0,
     0,
@@ -196,11 +196,11 @@ export default {
     0,
     0,
     0,
-    31056
+    30500
    ],
-   "share_recent": 0.073,
-   "share_trend": 0.073,
-   "total": 31056
+   "share_recent": 0.071,
+   "share_trend": 0.071,
+   "total": 30500
   },
   {
    "area": "tests/foundation",
@@ -323,7 +323,7 @@ export default {
    "total": 17581
   }
  ],
- "at": "2026-11-28T06:35:57Z",
+ "at": "2026-11-28T06:38:22Z",
  "days": 30,
  "findings": [
   {
@@ -363,10 +363,10 @@ export default {
    "why": "the told ledger had 6 rows, then none for 8 days: the loop that writes it has gone quiet"
   },
   {
-   "evidence": "opened 1516, closed 1430",
+   "evidence": "opened 1517, closed 1430",
    "id": "issues",
    "kind": "drift",
-   "why": "issues are opening faster than they close: backlog grew by 86 over 30 days"
+   "why": "issues are opening faster than they close: backlog grew by 87 over 30 days"
   }
  ],
  "history_days": 1,
@@ -401,10 +401,10 @@ export default {
    0,
    0,
    0,
-   86
+   87
   ],
   "closed": 1430,
-  "opened": 1516
+  "opened": 1517
  },
  "loops": [
   {
@@ -558,7 +558,7 @@ export default {
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 776,
+   "rows": 777,
    "series": [
     0,
     0,
@@ -589,7 +589,7 @@ export default {
     88,
     189,
     206,
-    41
+    42
    ]
   },
   {

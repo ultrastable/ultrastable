@@ -44,7 +44,7 @@
   {
    "area": "doctrine",
    "quiet_days": 0,
-   "recent7": 46911,
+   "recent7": 46946,
    "series": [
     0,
     0,
@@ -75,12 +75,12 @@
     0,
     0,
     0,
-    46911
+    46946
    ],
    "share_recent": 0.11,
    "share_trend": 0.11,
-   "slope": 302.6516,
-   "total": 46911
+   "slope": 302.8774,
+   "total": 46946
   },
   {
    "area": "foundation",
@@ -167,7 +167,7 @@
   {
    "area": "site",
    "quiet_days": 0,
-   "recent7": 31056,
+   "recent7": 30500,
    "series": [
     0,
     0,
@@ -198,12 +198,12 @@
     0,
     0,
     0,
-    31056
+    30500
    ],
-   "share_recent": 0.073,
-   "share_trend": 0.073,
-   "slope": 200.3613,
-   "total": 31056
+   "share_recent": 0.071,
+   "share_trend": 0.071,
+   "slope": 196.7742,
+   "total": 30500
   },
   {
    "area": "tests/foundation",
@@ -782,7 +782,7 @@
   {
    "area": "research",
    "quiet_days": 0,
-   "recent7": 2662,
+   "recent7": 2652,
    "series": [
     0,
     0,
@@ -813,12 +813,12 @@
     0,
     0,
     0,
-    2662
+    2652
    ],
    "share_recent": 0.006,
    "share_trend": 0.006,
-   "slope": 17.1742,
-   "total": 2662
+   "slope": 17.1097,
+   "total": 2652
   },
   {
    "area": "seed/tests",
@@ -1026,7 +1026,7 @@
    "total": 1772
   }
  ],
- "at": "2026-11-28T06:35:57Z",
+ "at": "2026-11-28T06:38:22Z",
  "days": 30,
  "files": [],
  "findings": [
@@ -1067,10 +1067,10 @@
    "why": "the told ledger had 6 rows, then none for 8 days: the loop that writes it has gone quiet"
   },
   {
-   "evidence": "opened 1516, closed 1430",
+   "evidence": "opened 1517, closed 1430",
    "id": "issues",
    "kind": "drift",
-   "why": "issues are opening faster than they close: backlog grew by 86 over 30 days"
+   "why": "issues are opening faster than they close: backlog grew by 87 over 30 days"
   }
  ],
  "history_days": 1,
@@ -1105,10 +1105,10 @@
    0,
    0,
    0,
-   86
+   87
   ],
   "closed": 1430,
-  "opened": 1516
+  "opened": 1517
  },
  "loops": [
   {
@@ -1874,7 +1874,7 @@
   {
    "loop": "trajectory",
    "quiet_days": 0,
-   "rows": 776,
+   "rows": 777,
    "series": [
     0,
     0,
@@ -1905,9 +1905,9 @@
     88,
     189,
     206,
-    41
+    42
    ],
-   "slope": 4.0387
+   "slope": 4.0452
   },
   {
    "loop": "ultrastability",
