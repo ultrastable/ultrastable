@@ -1,8 +1,10 @@
 """DRAIN-FLEET-1 and CHECKS-SESSION-1: fleet counts are exact and unreadable repos are never 0; the session checks route reads every step."""
-import sys, unittest
+import json, sys, unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import _repo  # noqa: E402
 from foundation import drainwatch as D, checksrun as C  # noqa: E402
 
 
@@ -13,6 +15,13 @@ class Drain(unittest.TestCase):
         self.assertEqual(s["unmeasured"], ["o/b"])
         self.assertFalse(s["drained"])
         self.assertTrue(D.summarize({"o/a": {"issues": [], "pulls": []}})["drained"])
+
+    def test_a_registered_tenant_is_measured_and_a_retired_one_is_not(self):
+        """The Base Rates miss: a tenant in doctrine/tenant-repos.json but not in org-settings sat outside the fleet count."""
+        d = Path(_repo.scratch()); (d / "github").mkdir(); (d / "doctrine").mkdir()
+        (d / "github/org-settings.json").write_text(json.dumps({"repos": {"o/core": {}}}))
+        (d / "doctrine/tenant-repos.json").write_text(json.dumps({"tenants": {"a": {"repo": "o/a", "state": "planned"}, "b": {"repo": "o/b", "state": "retired"}}}))
+        self.assertEqual(D.repos(d), ["o/a", "o/core"])
 
     def test_fleet_is_every_declared_repo(self):
         self.assertIn("ultrastable/ultrastable", D.repos())

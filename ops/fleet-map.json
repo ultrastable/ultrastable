@@ -1,6 +1,6 @@
 {
  "rule": "FLEET-MAP-1",
- "at": "2026-11-27T15:51:00Z",
+ "at": "2026-11-28T06:38:17Z",
  "repos": {
   "ultrastable/ultrastable": {
    "status": "not-a-copy",
@@ -21,8 +21,8 @@
   "ultrastable/second-tenant": {
    "status": "drifted",
    "how": "github",
-   "differ": 117,
-   "missing": 169,
+   "differ": 122,
+   "missing": 159,
    "extra": 0,
    "notes": [
     "ultrastable.lock.json is missing: the kernel sync treats every changed file as a local edit and updates nothing"
@@ -47,42 +47,38 @@
    "notes": []
   },
   "ultrastable/practical-solutions": {
-   "status": "equal",
+   "status": "drifted",
    "how": "github",
    "differ": 0,
    "missing": 0,
    "extra": 0,
-   "notes": []
+   "notes": [
+    "the manifest's identity differs from the map's row; run fleetmap --gen --apply"
+   ]
   },
   "ultrastable/unlearn": {
    "status": "drifted",
    "how": "github",
-   "differ": 1,
+   "differ": 4,
    "missing": 0,
    "extra": 0,
-   "notes": [
-    "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
-   ]
+   "notes": []
   },
   "ultrastable/what-works": {
    "status": "drifted",
    "how": "github",
-   "differ": 1,
+   "differ": 4,
    "missing": 0,
    "extra": 0,
-   "notes": [
-    "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
-   ]
+   "notes": []
   },
   "ultrastable/replication-ledger": {
    "status": "drifted",
    "how": "github",
-   "differ": 1,
+   "differ": 4,
    "missing": 0,
    "extra": 0,
-   "notes": [
-    "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
-   ]
+   "notes": []
   },
   "ultrastable/base-rates": {
    "status": "drifted",
@@ -91,8 +87,7 @@
    "missing": 0,
    "extra": 0,
    "notes": [
-    "the manifest's identity differs from the map's row; run fleetmap --gen --apply",
-    "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
+    "the manifest's identity differs from the map's row; run fleetmap --gen --apply"
    ]
   },
   "ultrastable/did-it-work": {
@@ -102,8 +97,7 @@
    "missing": 0,
    "extra": 0,
    "notes": [
-    "the manifest's identity differs from the map's row; run fleetmap --gen --apply",
-    "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
+    "the manifest's identity differs from the map's row; run fleetmap --gen --apply"
    ]
   },
   "ultrastable/open-questions": {
@@ -113,8 +107,7 @@
    "missing": 0,
    "extra": 0,
    "notes": [
-    "the manifest's identity differs from the map's row; run fleetmap --gen --apply",
-    "ultrastable.json is in the older tenant-standard shape (runs_as as one object, no visibility); the schema is seed/standards/system.schema.json"
+    "the manifest's identity differs from the map's row; run fleetmap --gen --apply"
    ]
   }
  }

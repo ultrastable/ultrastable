@@ -7267,6 +7267,48 @@
    "title": "REPO-CONFORM-2: the six tenant conformance exceptions are removed once the fleet reads 12 of 12",
    "body": "Every tenant repository's own pull request merged and python3 seed/scripts/repoconform.py --fleet doctrine/fleet-map.json reads 12 of 12 repositories conforming from GitHub. The dated conformance-pending exceptions in doctrine/tenant-standard.json held findings only until those pull requests landed, so they are removed; the Q-CONFORM items close by their own probe on the daily queue pass. Session: session_0156nqDuSa1pdM6rAaTQ1irE",
    "probe": "grep:doctrine/tenant-standard.json::exceptions"
+  },
+  {
+   "id": "lesson-2026-11-28-a-drift-check-that-skips-a-class-of-workers-measures-nothing",
+   "kind": "lesson",
+   "date": "2026-11-28",
+   "title": "A drift check that skips a class of workers measures nothing for them",
+   "body": "deploydrift reported every Worker whose source lives in a tenant repository as external and never read it, so ultrastable-base-rates served 3 entries while its main held 7 (its /api/beats showed the same stub note for a day). A Worker bundles its data at deploy, so every commit its loop makes is stale until redeployed. Rule: every live Worker gets a reading, an exemption class reads unmeasured at worst, never clean or skipped; deploydrift now compares a tenant Worker's last recorded deploy with the newest commit on its source ref and the watchdog redeploys it.",
+   "probe": "grep:foundation/deploydrift.py::source_head_at"
+  },
+  {
+   "id": "lesson-2026-11-28-a-bot-commit-that-skips-ci-runs-the-standards-check-itself-a",
+   "kind": "lesson",
+   "date": "2026-11-28",
+   "title": "A bot commit that skips CI runs the standards check itself, and a new ledger is born a CloudEvent",
+   "body": "The weekly scout pass appended a plain JSON row to ops/research/outcomes.jsonl and committed it with [skip ci]. Evidence, observed live: on 2026-11-28 python3 -m foundation openstd --check failed on main with 'new bespoke format: ops/research/outcomes.jsonl', and that red reached every open pull request's foundation job, including #2848. The writer in foundation/research.py now emits a CloudEvents 1.0 envelope, readers take the payload from data and still accept an older plain row, and the scout workflow runs openstd --check before it commits. Verified by tests/foundation/test_research.py (a settled outcome is a CloudEvent and old rows still read) and openstd --check ok on this change.",
+   "probe": "grep:.github/workflows/scout.yml::foundation openstd --check",
+   "session": "session_0156nqDroaiS542i2iu8RdAL"
+  },
+  {
+   "id": "lesson-2026-11-28-a-retry-that-repeats-its-input-never-converges",
+   "kind": "lesson",
+   "date": "2026-11-28",
+   "title": "A retry that repeats its input never converges, and a test CI never runs never fails",
+   "body": "Base Rates queue issues 3-27 stayed open for days because its loop re-fetched the same six Crossref hits and asked a temperature-0 model on every retry, so a topic that failed once failed identically forever; and github/verify.test.mjs was outside package.json test, so CI never exercised the loop. Rules: (1) a retry must change something it reads (window, phrasing, source, route) or it is a repeat, not a retry. (2) every *.test.mjs / *.test.js in a Node tenant is run by package.json test (TEST-COVERAGE-1, foundation/tenantstd.py uncovered_tests, run by tenantstd --check). Open Questions carried the same loop and the same gap. (3) A retry counter must count the attempt already recorded where the failure was first filed: Base Rates kept it in the issue body, comments was 0, and the first retry repeated the first search until the fix was checked against the live loop's next run. (4) A fleet-wide measure must read the registry of what exists, not a second hand-kept list: drainwatch read github/org-settings.json and ciwatch a typed list, both missing base-rates, open-questions and did-it-work, so DRAIN-ALL-1 read as met while 14 issues idled (drainwatch.repos and ciwatch.watched now read doctrine/tenant-repos.json).",
+   "probe": "grep:foundation/tenantstd.py::TEST-COVERAGE-1"
+  },
+  {
+   "id": "lesson-2026-11-28-code-agents-cap-retries-refuse-unfit-targets-validate-patche",
+   "kind": "lesson",
+   "date": "2026-11-28",
+   "title": "Code agents: cap retries, refuse unfit targets, validate patches before tests",
+   "body": "a downstream code agent left 10 issues open: whole-file rewrites cut off at the output budget, invented npm imports and files, unlimited retries. Runner now refuses targets longer than the doer output budget and rejects patches that import uninstalled packages or are invalid JSON; retry caps already existed (max_doer_retries, max_rework).",
+   "probe": "grep:workers/core/runner/index.js::checkPatchFile"
+  },
+  {
+   "id": "lesson-2026-11-28-draft-prs-deadlocked-the-merge-lane-until-the-daily-sweep",
+   "kind": "lesson",
+   "date": "2026-11-28",
+   "title": "Draft PRs deadlocked the merge lane until the daily sweep",
+   "body": "A draft PR's checks run fails on purpose, and the lane only started on a successful checks run or the daily sweep, so an agent's draft PR waited about 23 h. The lane now also starts on pull_request opened, reopened and ready_for_review.",
+   "probe": "grep:.github/workflows/lane.yml::LANE-DRAFT-1",
+   "session": "session_0156nqDsuxEgQUK6LWsioTDc"
   }
  ]
 }

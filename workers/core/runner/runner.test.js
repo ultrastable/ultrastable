@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 import * as claims from '../claims/index.js';
 import { createRouter } from '../router/router.js';
 import { runTick } from '../src/tick.js';
-import { parseDoerOutput, normalizePath, isProtected, DEFAULT_PROTECTED, runnerExtraSteps } from './index.js';
+import { checkPatchFile, parseDoerOutput, normalizePath, isProtected, DEFAULT_PROTECTED, runnerExtraSteps } from './index.js';
 import { setup, until, runs, states, goodPatch, approve, reject } from './testkit.js';
 
 const row = (db, sql, ...a) => db.raw.prepare(sql).get(...a);
@@ -302,4 +302,17 @@ test('only a keyless small model configured: the item becomes a decision card, n
   assert.match(card.what, /stronger model is needed for code changes/);
   assert.equal(db.raw.prepare(`SELECT status FROM items WHERE id = 'US-SPEC-11-1'`).get().status, 'blocked');
   assert.equal(vcs.prs.length, 0); assert.equal(runs(db).length, 0);
+});
+
+test('a patch with an uninstalled import or unparsable JSON is invalid output, and a target too big to rewrite is refused before any model call', async () => {
+  assert.match(checkPatchFile({ path: 'a.js', content: "import f from 'node-fetch';" }), /node-fetch.*not installed/);
+  assert.equal(checkPatchFile({ path: 'a.js', content: "import f from 'node-fetch';" }, ['node-fetch']), null);
+  assert.equal(checkPatchFile({ path: 'a.js', content: "import x from './x.js'; import fs from 'node:fs';" }), null);
+  assert.match(checkPatchFile({ path: 'a.json', content: '{broken' }), /not valid JSON/);
+  const inv = setup({ script: { doer: [goodPatch('core/example/widget.js', "import f from 'node-fetch';\n")] }, config: { max_doer_retries: 1 } });
+  await until(inv.runner, inv.db, () => done(inv.db));
+  assert.equal(runs(inv.db)[0].reason, 'invalid_output'); assert.equal(inv.vcs.commits.length, 0);
+  const big = setup({ files: { 'core/example/widget.js': 'x'.repeat(20000) }, config: { doer: { max_tokens: 1000 } }, script: { doer: [goodPatch()], reviewer: [approve] } });
+  await until(big.runner, big.db, () => done(big.db));
+  assert.equal(runs(big.db)[0].reason, 'target_too_large'); assert.equal(big.vcs.commits.length, 0);
 });

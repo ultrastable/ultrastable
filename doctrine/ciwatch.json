@@ -1,8 +1,10 @@
 {
-  "_doc": "CIWATCH-1: the repositories whose default-branch Actions runs the system watches for red X's, and the rules it remediates by. Read by foundation/ciwatch.py, run by .github/workflows/ciwatch.yml. Add a repository (an ultrastable org repo, or a QNFO repo still in use) by adding it here.",
+  "_doc": "CIWATCH-1: the repositories whose default-branch Actions runs the system watches for red X's, and the rules it remediates by. Read by foundation/ciwatch.py, run by .github/workflows/ciwatch.yml. Every tenant in doctrine/tenant-repos.json is watched too (ciwatch.watched), so a new tenant needs no entry here. `queue_label` issues open more than `max_open_days` are filed as Q-AGED items (a queue that idles open is a failure no red run shows).",
   "repos": ["ultrastable/ultrastable", "ultrastable/workers", "ultrastable/spec", "ultrastable/practical-solutions", "ultrastable/ops", "ultrastable/.github"],
   "failing": ["failure", "timed_out", "startup_failure"],
   "transient": ["HTTP 5\\d\\d", "ECONNRESET", "ETIMEDOUT", "rate limit", "Could not resolve host", "Connection reset", "TLS handshake", "runner.*lost", "502 Bad Gateway", "503 Service"],
   "max_reruns_per_run": 1,
-  "max_items_per_run": 6
+  "max_items_per_run": 6,
+ "queue_label": "queue",
+ "max_open_days": 3
 }

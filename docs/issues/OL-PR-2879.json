@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-2879",
+  "title": "OL-PR-2879: land or supersede pull request #2879 (ci-failed)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #2879 is ci-failed\n**Done check:** cmd:python3 -m foundation loopowner --closed 2879\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #2879 (`ccr-87419f50-4p5os9` at 0e99090296, opened by rwnq8): feat(loops): resolve and merge in time, automatically: work records probed and aged, lateness measured, a red open-standards main repaired by code. The session that opened it is not its closer and is never asked to act. A check failed on the head commit. Read the failing run, then land the same change so that every check passes: push a fix to the branch, or open a new pull request from main that carries the change and close this one as superseded. Failed checks: checks. Files (16): .github/workflows/checks.yml, docs/issues/Q-WORK-RESUME-1.json, doctrine/claims.json, doctrine/detectors.json, doctrine/redmain.json, doctrine/registers.json, doctrine/writeback/decision-2026-11-28-redmain-1-has-a-second-gate-openstd.json, doctrine/writeback/decision-2026-11-28-timely-1-lateness-is-a-measured-failure-mode-not-a-hope.json, doctrine/writeback/lesson-2026-11-28-a-label-that-exempts-an-issue-from-the-probe-loop-and-the-sl.json, foundation/drainwatch.py, foundation/issueloop.py, scripts/openstd_gate.sh, scripts/sla.sh, site/claims-data.js, tests/foundation/test_drainwatch.py, tests/foundation/test_issueloop.py.\n\n**Prediction:** open_prs <= 0 within 24 h\n**Out of scope:** changing what pull request #2879 does; land it as written or carry it onto main unchanged.\n\n**Closing probe:** `python3 -m foundation loopowner --closed 2879` exits 0 (pull request #2879 is merged or closed).",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

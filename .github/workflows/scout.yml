@@ -46,4 +46,7 @@ jobs:
           python3 -m foundation balance --gate --apply  # FLOW-BALANCE-1: the one filing gate before any item lands
           if [ -f ops/balance-held.jsonl ]; then git add ops/balance-held.jsonl; fi
           git add doctrine/idea-bank.json site/idea-bank-data.js docs/issues ops/scout ops/rnd ops/research research/papers site/research-data.js
+          # OPEN-STANDARDS-1: a bot commit lands with [skip ci], so the standards check runs here, before the commit; a ledger line that is not a CloudEvent
+          # must not reach main, where it turns every pull request's foundation job red (ops/research/outcomes.jsonl did on 2026-11-28).
+          python3 -m foundation openstd --check
           git diff --cached --quiet || { git commit -m "scout: weekly scout and rnd pass, findings filed, profiles refreshed, sources re-weighted"; python3 tools/push_main.py; }
