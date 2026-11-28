@@ -1,4 +1,36 @@
 {
+ "base-rates": {
+  "feeds": [
+   "https://base-rates.ultrastable.org/feed.json"
+  ],
+  "gaps": [
+   "Open Graph title",
+   "schema.org JSON-LD",
+   "robots.txt names no sitemap",
+   "no sitemap.xml with urls",
+   "no llms.txt"
+  ],
+  "pinged": {
+   "https://base-rates.ultrastable.org/feed.json": 204
+  },
+  "url": "https://base-rates.ultrastable.org/"
+ },
+ "open-questions": {
+  "feeds": [
+   "https://open-questions.ultrastable.org/feed.json"
+  ],
+  "gaps": [
+   "Open Graph title",
+   "schema.org JSON-LD",
+   "robots.txt names no sitemap",
+   "no sitemap.xml with urls",
+   "no llms.txt"
+  ],
+  "pinged": {
+   "https://open-questions.ultrastable.org/feed.json": 204
+  },
+  "url": "https://open-questions.ultrastable.org/"
+ },
  "practical-solutions": {
   "feeds": [
    "https://ultrastable.org/feed.xml"

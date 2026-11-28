@@ -1,0 +1,11 @@
+{
+  "id": "Q-FIND-open-questions",
+  "title": "Q-FIND-open-questions: make https://open-questions.ultrastable.org/ findable (5 gaps)",
+  "body": "**Owner:** executor\n**Trigger:** findable workflow, daily\n**Done check:** cmd:python3 -m foundation findable --probe open-questions\n**Prediction:** findable_gaps <= 0 within 168 h\n**Out of scope:** paid listings, new accounts, and any page that is not this property's own\n**Closing probe:** cmd:python3 -m foundation findable --probe open-questions\n**Status:** open\n\nhttps://open-questions.ultrastable.org/ is missing what search engines and AI agents read: Open Graph title; schema.org JSON-LD; robots.txt names no sitemap; no sitemap.xml with urls; no llms.txt. Fix the property's own pages (shared seed modules first, so every system gets it). Closed by the same daily reading.",
+  "status": "open",
+  "labels": [
+    "role:executor",
+    "growth"
+  ],
+  "milestone": "Now"
+}
