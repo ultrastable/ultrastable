@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-28-timely-1-lateness-is-a-measured-failure-mode-not-a-hope",
+  "kind": "decision",
+  "date": "2026-11-28",
+  "title": "TIMELY-1: lateness is a measured failure mode, not a hope",
+  "body": "Owner directive 2026-11-28: an Ultrastable system shall always resolve its own issues and merge its own pull requests automatically and timely. drainwatch --timely reads every repository's open issues against their priority SLA (p0 4 h, p1 24 h, p2 72 h, otherwise 7 days) and ready pull requests against 24 h, treats hold, later, gate:filed and needs-pat as declared waits, and counts an unreadable repository as unmeasured. Detector timely-resolution files it through the failure-audit as Q-AUDIT-timely-resolution. The rule text itself stays in the existing DRAIN-ALL-1 and FLOW-BALANCE-1 rules because agents/AGENTS.md is at its shrink-only size baseline. Session: session_0156nqDuSa1pdM6rAaTQ1irE",
+  "probe": "grep:foundation/drainwatch.py::def overdue"
+ },
+ "kind": "decision",
+ "title": "TIMELY-1: lateness is a measured failure mode, not a hope",
+ "session": ""
+}

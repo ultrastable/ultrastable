@@ -888,6 +888,18 @@
    "status": "open",
    "cadence_ticks": 144,
    "probe": "grep:foundation/failmine.py::def probe"
+  },
+  {
+   "id": "fm-not-timely",
+   "trigger": "an open issue outlives its priority's SLA, or a ready pull request waits more than a day to merge",
+   "symptom": "work sits for days with its priority unchanged and no loop acting on it: ten work records sat past a 72 h SLA for two days, none probed, aged or worked",
+   "blast_radius": "every repository in github/org-settings.json and every system that inherits the lane and the SLA loops",
+   "detection": "detector timely-resolution: python3 -m foundation drainwatch --timely reads every repository's open issues and pull requests against their limits; an unreadable repository is unmeasured, never on time",
+   "root_cause": "a label (queue, added by worklog reap) exempted an item from the probe loop and the SLA clock because a queue loop owns it, but the queue loop only drives items mirrored from docs/issues, so the item was in no loop; and nothing measured age across the whole fleet",
+   "remediation": "issueloop and scripts/sla.sh treat a work record like any other issue; drainwatch --timely measures lateness as a failure mode the failure-audit files as Q-AUDIT-timely-resolution; the consumer for a resumed record is Q-WORK-RESUME-1",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_drainwatch.py::def test_overdue_is_past_the_sla"
   }
  ],
  "controls": [

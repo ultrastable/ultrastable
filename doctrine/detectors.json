@@ -1164,6 +1164,22 @@
    "root_cause": "unclassified recurring failure",
    "owner": "operations",
    "remedy": "Remove the cause in foundation/failmine.py; seen in Q-AUDIT-2716, Q-AUDIT-2722, Q-AUDIT-2742, Q-AUDIT-2765"
+  },
+  {
+   "id": "timely-resolution",
+   "failure_mode": "fm-not-timely",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "drainwatch",
+    "--timely"
+   ],
+   "timeout": 300,
+   "root_cause": "an open issue is past its priority's SLA (p0 4 h, p1 24 h, p2 72 h, otherwise 7 days), or a ready pull request has waited more than 24 h to merge, in a repository of github/org-settings.json, or the repository cannot be read. A label that records a disposition (hold, later, gate:filed, needs-pat) is a declared wait, not lateness",
+   "owner": "operations",
+   "remedy": "Read python3 -m foundation drainwatch --timely: each line names the repository, the issue or pull request, its age and its limit. A late issue is worked, probed (`python3 -m foundation issueloop`) or given a recorded disposition by its loop; a late pull request is brought to green and merged by the lane (`scripts/lane.sh`), never closed to clear the reading. An item no loop owns is the defect: give it one (Q-WORK-RESUME-1 is one such). Never raise a limit or add a declared-wait label to clear the reading."
   }
  ]
 }
