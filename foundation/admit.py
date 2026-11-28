@@ -157,7 +157,11 @@ def r_showcase(docs, t, fix):
         return None
     if fix and have is None and t["home"]:
         rows.append({"id": t["slug"], "name": t["name"], "tag": "Tenant system, live", "status": "live", "summary": t["description"],
-                     "domain": "org", "home": t["home"] + "/", "homeLabel": f"Open {t['name']}"})
+                     "domain": "org", "home": t["home"] + "/", "homeLabel": f"Open {t['name']}",
+                     # the page renders every one of these; a skeleton row without them crashed /showcase/<id> (found 2026-11-28), so a row is complete and says what is still unwritten
+                     "problem": "Not written yet: the case for this system is still to be written from its IDEA.md.", "loop": "Not written yet: see its repository for the loop it runs.",
+                     "results": [f"Live at {t['home']}; its health report is at {t['home']}/health."], "learned": "Not written yet.",
+                     "links": [{"label": "Operations dashboard", "href": "/ops"}, {"label": "Get in touch", "href": "/contact"}]})
         d.dirty = True
     return "missing" if have is None else "not live, or no home"
 

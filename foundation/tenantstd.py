@@ -313,6 +313,17 @@ def conformance(tenant: Path, std: dict, root: Path | None = None) -> list[str]:
     return [f"conform: {x['path']} {x['state']}: {x['why']} ({x.get('standard')})" for x in rows if not x.get("ok")]
 
 
+def _test_coverage(tenant: Path, pkg: dict) -> list[str]:
+    """TEST-COVERAGE-1 (open-questions, 2026-11-28): github/verify.test.mjs sat in the repository for days and `npm test` never ran it, so CI
+    stayed green on code nothing tested. Every directory holding a *.test.mjs/*.test.js (outside vendor/ and node_modules) must be named
+    by the package.json `test` script."""
+    cmd = str((pkg.get("scripts") or {}).get("test", ""))
+    dirs = {p.parent.relative_to(tenant).as_posix() for ext in ("mjs", "js") for p in tenant.rglob(f"*.test.{ext}")
+            if not ({"node_modules", "vendor", ".git"} & set(p.relative_to(tenant).parts))}
+    return [f"test-coverage: {d}/ holds tests that package.json `test` never runs (TEST-COVERAGE-1)" for d in sorted(dirs) if d != "." and d + "/" not in cmd] + (
+        ["test-coverage: package.json has no `test` script, but the repository holds tests (TEST-COVERAGE-1)"] if dirs and not cmd else [])
+
+
 def check_tenant(tenant: Path, std: dict | None = None, root: Path | None = None, excused: list | None = None) -> list[str]:
     """One repository against the standard. Each line names the part and what is missing; an empty list is a repository that runs itself.
     With the core's root the README's Live URL is also compared with the registries. A finding a dated exception holds goes to `excused`."""
@@ -369,6 +380,7 @@ def check_tenant(tenant: Path, std: dict | None = None, root: Path | None = None
     for k in ("dependencies", "devDependencies"):
         if pkg.get(k):
             bad.append(f"package: package.json has {k} ({std['package']['why']})")
+    bad += _test_coverage(tenant, pkg)
     wf = tenant / ".github/workflows"
     for y in sorted(wf.glob("*.y*ml")) if wf.is_dir() else []:
         bad += [f"workflow {y.name}: {b}" for b in lint_workflow(y.read_text(encoding="utf-8"), std)]
@@ -703,7 +715,7 @@ def table(paths: list[Path], std: dict) -> str:
     rows.append(("README Live block", ["yes" if (c / "README.md").is_file() and BLOCKS["live"].search((c / "README.md").read_text(encoding="utf-8")) else "-" for c in cols]))
     for key, label in (("live", "live block problems"), ("workflow", "workflow lint failures"), ("vendor", "vendor problems"), ("runway", "runway problems"), ("lifecycle", "lifecycle problems"), ("merge", "merge markers")):
         rows.append((label, [str(sum(1 for b in p if b.startswith(key))) for p in probs]))
-    rows.append(("other workflows", [",".join(sorted(y.name for y in (c / ".github/workflows").glob("*.y*ml") if y.name not in ("ci.yml", "vendor-sync.yml", "branch-cleanup.yml"))) or "-" if (c / ".github/workflows").is_dir() else "-" for c in cols]))
+    rows.append(("other workflows", [",".join(sorted(y.name for y in (c / ".github/workflows").glob("*.y*ml") if y.name not in ("ci.yml", "vendor-sync.yml", "branch-cleanup.yml", "automerge.yml"))) or "-" if (c / ".github/workflows").is_dir() else "-" for c in cols]))
     rows.append(("problems in all", [str(len(p)) for p in probs]))
     w = max(len(r[0]) for r in rows)
     return "\n".join(r[0].ljust(w) + " | " + " | ".join(str(x).ljust(18) for x in r[1]) for r in rows)

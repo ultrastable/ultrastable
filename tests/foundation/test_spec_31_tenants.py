@@ -275,7 +275,7 @@ class Admission(unittest.TestCase):
         self.assertFalse(any(e.endswith("rule ADMIT-1 missing") for e in admit.check(self.d)))
 
 
-def planned(slug="base-rates"):
+def planned(slug="did-it-work"):
     """A new tenant's repository as tenant-repos.yml makes it: its manifest folder, then the scaffold."""
     d = scratch()
     for f in (ROOT / "instances" / slug).iterdir():
@@ -353,16 +353,16 @@ class Standard(unittest.TestCase):
 
     def test_US_31_R18_the_scaffold_writes_every_standard_file_once_and_never_overwrites_a_tenants_own_code_or_words(self):
         d = planned()
-        self.assertEqual(T.scaffold(d, "base-rates", ROOT, STD), [], "a second run changes nothing")
+        self.assertEqual(T.scaffold(d, "did-it-work", ROOT, STD), [], "a second run changes nothing")
         ident = json.loads((d / "ultrastable.json").read_text())["identity"]
         self.assertTrue(all(k in ident for k in STD["identity"]["keys"]))
-        self.assertEqual((ident["slug"], ident["public_url"], ident["runs_as"]), ("base-rates", None, []))
+        self.assertEqual((ident["slug"], ident["public_url"], ident["runs_as"]), ("did-it-work", None, []))
         (d / "worker/index.js").write_text("// the tenant's own Worker\n")
         (d / "README.md").write_text((d / "README.md").read_text() + "\nOur own words about the project.\n")
         pkg = json.loads((d / "package.json").read_text())
         pkg["keywords"] = ["mine"]
         (d / "package.json").write_text(json.dumps(pkg))
-        T.scaffold(d, "base-rates", ROOT, STD)
+        T.scaffold(d, "did-it-work", ROOT, STD)
         self.assertEqual((d / "worker/index.js").read_text(), "// the tenant's own Worker\n")
         self.assertIn("Our own words about the project.", (d / "README.md").read_text())
         self.assertEqual(json.loads((d / "package.json").read_text())["keywords"], ["mine"])

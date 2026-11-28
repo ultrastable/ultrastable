@@ -1,0 +1,44 @@
+name: automerge
+# AUTOMERGE-1 (Rowan, 2026-11-28: "An Ultrastable system shall always resolve its own issues and merge its own PRs automatically and timely."):
+# a pull request the system opened (branch ccr-* or claude/*, or by a bot) leaves draft and merges as soon as its checks are green and it has no
+# conflict; a red or conflicted one is left for its author's loop and listed in the run summary, never merged. A pull request still open an hour
+# after its checks went green is a defect this job reports (the step fails). Settings stay the platform's (REPO-STANDARD-1).
+# budget: ~1 min per run, hourly plus each finished ci run (free on a public repository)
+# trigger: hourly; when ci finishes; manual dispatch
+# free-alternative: the platform's fleet manager runs the same merge rule over every repository
+on:
+  schedule:
+    - cron: "41 * * * *"
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+  workflow_dispatch: {}
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: automerge
+  cancel-in-progress: false
+jobs:
+  merge:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Merge the system's own green pull requests
+        run: |
+          stuck=0
+          for n in $(gh pr list --state open --json number,headRefName,author,isCrossRepository \
+              --jq '.[] | select(.isCrossRepository==false and ((.headRefName|test("^(ccr-|claude/)")) or (.author.is_bot==true))) | .number'); do
+            gh pr ready "$n" 2>/dev/null || true
+            s=$(gh pr view "$n" --json mergeStateStatus,mergeable --jq '.mergeStateStatus+" "+.mergeable')
+            case "$s" in
+              "CLEAN MERGEABLE") gh pr merge "$n" --squash --delete-branch && echo "merged #$n" ;;
+              "BEHIND"*|"UNKNOWN"*) gh pr update-branch "$n" || true; echo "#$n $s: updated or waiting"; ;;
+              *) echo "::warning::#$n is $s, left for its author"; stuck=1 ;;
+            esac
+          done
+          exit $stuck

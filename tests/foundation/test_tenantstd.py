@@ -46,6 +46,18 @@ class Core(unittest.TestCase):
     def test_the_registry_and_the_scaffold_meet_the_standard(self):
         self.assertEqual(T.check_core(REPO, STD), [])
 
+    def test_tests_that_npm_test_never_runs_fail(self):
+        d = planned()
+        (d / "github").mkdir(exist_ok=True)
+        (d / "github/x.test.mjs").write_text("")
+        pk = json.loads((d / "package.json").read_text())
+        pk.setdefault("scripts", {})["test"] = "node --test worker/*.test.mjs"
+        (d / "package.json").write_text(json.dumps(pk))
+        self.assertTrue(any("TEST-COVERAGE-1" in b for b in T.check_tenant(d, STD, REPO)))
+        pk["scripts"]["test"] += " github/*.test.mjs"
+        (d / "package.json").write_text(json.dumps(pk))
+        self.assertFalse(any("TEST-COVERAGE-1" in b for b in T.check_tenant(d, STD, REPO)))
+
     def test_an_exception_whose_item_is_not_in_the_queue_fails(self):
         std = json.loads(json.dumps(STD))
         std["exceptions"] = {"_doc": "x", "base-rates": {"conformance": "pending", "until": "9999-12-31", "item": "Q-NOWHERE-base-rates",

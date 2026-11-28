@@ -11,7 +11,7 @@ export async function watchTenantDeploys({ token, repo, workflow = 'deploy-ultra
   try {
     const regFile = await gj(`https://api.github.com/repos/${repo}/contents/${registry}?ref=main`);
     const reg = JSON.parse(atob(String(regFile.content || '').replace(/\s/g, '')));
-    const tenants = Object.entries(reg.tenants || {}).filter(([, t]) => t.state === 'moved' && t.worker && t.repo).map(([slug, t]) => ({ slug, repo: t.repo, worker: t.worker }));
+    const tenants = Object.entries(reg.tenants || {}).filter(([, t]) => (t.state === 'moved' || t.state === 'own-repo') && t.worker && t.repo).map(([slug, t]) => ({ slug, repo: t.repo, worker: t.worker }));
     if (!tenants.length) return { status: 'none' };
     const runs = ((await gj(`https://api.github.com/repos/${repo}/actions/workflows/${workflow}/runs?per_page=20`)).workflow_runs) || [];
     if (runs.some(r => r.status === 'queued' || r.status === 'in_progress')) return { status: 'deploy-running' };

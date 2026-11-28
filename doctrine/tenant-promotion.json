@@ -16,9 +16,30 @@
     }
   },
   "tenants": {
-    "practical-solutions": {"queue": "https://ultrastable.org/social-queue.json", "showcase": "practical-solutions"},
-    "unlearn": {"queue": "https://unlearn.ultrastable.org/social-queue.json", "showcase": "unlearn"},
-    "what-works": {"queue": "https://what-works.ultrastable.org/social-queue.json", "showcase": "what-works"},
-    "replication-ledger": {"queue": "https://replication-ledger.ultrastable.org/social-queue.json", "showcase": "replication-ledger", "worker_dir": "instances/replication-ledger/worker"}
+    "practical-solutions": {
+      "queue": "https://ultrastable.org/social-queue.json",
+      "showcase": "practical-solutions"
+    },
+    "unlearn": {
+      "queue": "https://unlearn.ultrastable.org/social-queue.json",
+      "showcase": "unlearn"
+    },
+    "what-works": {
+      "queue": "https://what-works.ultrastable.org/social-queue.json",
+      "showcase": "what-works"
+    },
+    "replication-ledger": {
+      "queue": "https://replication-ledger.ultrastable.org/social-queue.json",
+      "showcase": "replication-ledger",
+      "worker_dir": "instances/replication-ledger/worker"
+    },
+    "open-questions": {
+      "queue": "https://open-questions.ultrastable.org/social-queue.json",
+      "showcase": "open-questions"
+    },
+    "base-rates": {
+      "queue": "https://base-rates.ultrastable.org/social-queue.json",
+      "showcase": "base-rates"
+    }
   }
 }

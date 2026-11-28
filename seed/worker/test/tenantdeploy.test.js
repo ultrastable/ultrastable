@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { watchTenantDeploys } from '../src/tenantdeploy.js';
 const J = (o, s = 200) => new Response(JSON.stringify(o), { status: s });
 const T = Date.UTC(2026, 10, 25, 16);
-const reg = { tenants: { 'what-works': { repo: 'o/what-works', state: 'moved', worker: 'w-ww' }, old: { repo: 'o/old', state: 'moving', worker: 'w-old' } } };
+const reg = { tenants: { 'what-works': { repo: 'o/what-works', state: 'moved', worker: 'w-ww' }, old: { repo: 'o/old', state: 'moving', worker: 'w-old' }, oq: { repo: 'o/oq', state: 'own-repo', worker: 'w-oq' }, plan: { repo: 'o/plan', state: 'planned', worker: 'w-plan' } } };
 const mk = ({ runs, commitAt }) => { const calls = []; return { calls, f: async (u, i = {}) => { calls.push((i.method || 'GET') + ' ' + u);
   if (u.includes('/contents/')) return J({ content: btoa(JSON.stringify(reg)) });
   if (u.includes('/runs')) return J({ workflow_runs: runs });
@@ -16,9 +16,9 @@ const run = (at, conclusion = 'success', status = 'completed') => ({ created_at:
 test('a tenant merged after the last deploy is dispatched with only its worker', async () => {
   const m = mk({ runs: [run(T - 7200e3)], commitAt: T - 600e3 });
   const r = await watchTenantDeploys({ token: 't', repo: 'o/core', fetchImpl: m.f, now: () => T });
-  assert.equal(r.repair, 'dispatched'); assert.deepEqual(r.behind, ['w-ww']);
+  assert.equal(r.repair, 'dispatched'); assert.deepEqual(r.behind, ['w-ww', 'w-oq']); // an own-repo tenant ships too (Open Questions lagged main by a day as `planned`)
   const post = m.calls.find(c => c.startsWith('POST')); assert.match(post, /deploy-ultrastable\.yml\/dispatches$/);
-  assert.ok(!m.calls.some(c => c.includes('o/old')), 'a tenant still moving is built from the core, not dispatched');
+  assert.ok(!m.calls.some(c => c.includes('o/old') || c.includes('o/plan')), 'a tenant still moving or only planned is not dispatched');
 });
 test('a deployed tenant is current; nothing is dispatched', async () => {
   const m = mk({ runs: [run(T - 600e3)], commitAt: T - 7200e3 });

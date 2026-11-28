@@ -16,7 +16,7 @@
     "dashboard.ultrastable.io": "https://dashboard.ultrastable.io/",
     "what-works.ultrastable.org": "https://what-works.ultrastable.org/health",
     "replication-ledger.ultrastable.org": "https://replication-ledger.ultrastable.org/health",
-    "unlearn.ultrastable.org": "https://unlearn.ultrastable.org/health"
+    "unlearn.ultrastable.org": "https://unlearn.ultrastable.org/health", "open-questions.ultrastable.org": "https://open-questions.ultrastable.org/health", "base-rates.ultrastable.org": "https://base-rates.ultrastable.org/health"
   },
   "closing_probe": "python3 -m foundation liveclaims --check (also run inside claimcode --check)"
 }

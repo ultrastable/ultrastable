@@ -116,6 +116,8 @@ def reading(status: int, body: str) -> tuple[bool, str]:
     if "built" in j or "last" in j:
         nodes = ((j.get("last") or {}).get("nodes")) or 0
         return (status == 200 and bool(j.get("built")) and nodes > 0), f"HTTP {status}, built={j.get('built')}, nodes={nodes}"
+    if isinstance(j.get("nodes"), list):  # a tenant's own /api/graph: {system, built_from, counts, nodes[], edges[]}; it is live when it answers 200 with nodes
+        return (status == 200 and len(j["nodes"]) > 0), f"HTTP {status}, nodes={len(j['nodes'])}"
     nodes = j.get("nodes") or 0
     return (status == 200 and bool(j.get("ok")) and nodes > 0), f"HTTP {status}, ok={j.get('ok')}, nodes={nodes}, last run {j.get('last_run_hours_ago')} h ago"
 

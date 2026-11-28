@@ -46,6 +46,24 @@
       ],
       "idempotent": true
     },
+    "open-questions-beat": {
+      "kind": "http",
+      "why": "POST /pulse/watch runs the Open Questions beat only when the last one is over two intervals (168 h) old; safe to call by anyone; the custom domain and workers.dev are separate routes to the same Worker",
+      "urls": [
+        "https://ultrastable-open-questions.ultrastable.workers.dev/pulse/watch",
+        "https://open-questions.ultrastable.org/pulse/watch"
+      ],
+      "idempotent": true
+    },
+    "base-rates-beat": {
+      "kind": "http",
+      "why": "POST /pulse/watch runs the Base Rates beat only when the last one is over two intervals (1 h) old; safe to call by anyone; the custom domain and workers.dev are separate routes to the same Worker",
+      "urls": [
+        "https://ultrastable-base-rates.ultrastable.workers.dev/pulse/watch",
+        "https://base-rates.ultrastable.org/pulse/watch"
+      ],
+      "idempotent": true
+    },
     "replication-ledger-beat": {
       "kind": "http",
       "why": "POST /pulse/watch runs the Replication Ledger beat only when the last one is over two hours old; safe to call by anyone; a page visit sparks the same beat as a second route",
