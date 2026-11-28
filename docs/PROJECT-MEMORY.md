@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-28
 
+- 2026-11-28: fix(tick): file an item when the GitHub-only loop watch cannot read or dispatch a loop (#2890)
 - 2026-11-28: feat(tenantstd): TEST-COVERAGE-1 and the stuck-queue lesson (#2871)
 - 2026-11-28: runner: refuse unfit targets, reject uninstalled imports and invalid JSON (#2869)
 - 2026-11-28: feat: TEST-COVERAGE-1, CloudEvents research ledger, and ciwatch covering tenants and idle queues (#2870)
