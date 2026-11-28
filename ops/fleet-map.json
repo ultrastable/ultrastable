@@ -1,6 +1,6 @@
 {
  "rule": "FLEET-MAP-1",
- "at": "2026-11-28T06:38:17Z",
+ "at": "2026-11-28T15:43:22Z",
  "repos": {
   "ultrastable/ultrastable": {
    "status": "not-a-copy",
@@ -21,7 +21,7 @@
   "ultrastable/second-tenant": {
    "status": "drifted",
    "how": "github",
-   "differ": 122,
+   "differ": 124,
    "missing": 159,
    "extra": 0,
    "notes": [
@@ -59,7 +59,7 @@
   "ultrastable/unlearn": {
    "status": "drifted",
    "how": "github",
-   "differ": 4,
+   "differ": 1,
    "missing": 0,
    "extra": 0,
    "notes": []
@@ -67,7 +67,7 @@
   "ultrastable/what-works": {
    "status": "drifted",
    "how": "github",
-   "differ": 4,
+   "differ": 1,
    "missing": 0,
    "extra": 0,
    "notes": []
@@ -75,7 +75,7 @@
   "ultrastable/replication-ledger": {
    "status": "drifted",
    "how": "github",
-   "differ": 4,
+   "differ": 1,
    "missing": 0,
    "extra": 0,
    "notes": []
@@ -86,9 +86,7 @@
    "differ": 1,
    "missing": 0,
    "extra": 0,
-   "notes": [
-    "the manifest's identity differs from the map's row; run fleetmap --gen --apply"
-   ]
+   "notes": []
   },
   "ultrastable/did-it-work": {
    "status": "drifted",
@@ -106,9 +104,7 @@
    "differ": 1,
    "missing": 0,
    "extra": 0,
-   "notes": [
-    "the manifest's identity differs from the map's row; run fleetmap --gen --apply"
-   ]
+   "notes": []
   }
  }
 }
