@@ -71,6 +71,16 @@ class Core(unittest.TestCase):
         (d / STD["scaffold"]["dir"] / "worker/index.js.tmpl").unlink()
         self.assertTrue(any("no template" in b for b in T.check_core(d, STD)))
 
+    def test_a_test_file_npm_test_does_not_run_is_a_finding(self):
+        """TEST-COVERAGE-1: Base Rates' github/verify.test.mjs was outside `npm test`, so CI never ran the loop's tests."""
+        d = scratch()
+        (d / "github").mkdir(); (d / "worker").mkdir()
+        (d / "github/a.test.mjs").write_text(""); (d / "worker/b.test.mjs").write_text("")
+        (d / "package.json").write_text(json.dumps({"scripts": {"test": "node --test worker/*.test.mjs"}}))
+        self.assertEqual(T.uncovered_tests(d), ["github/a.test.mjs"])
+        (d / "package.json").write_text(json.dumps({"scripts": {"test": "node --test worker/*.test.mjs github/*.test.mjs"}}))
+        self.assertEqual(T.uncovered_tests(d), [])
+
     def test_every_workflow_template_passes_the_same_lint(self):
         for f in STD["scaffold"]["files"]:
             if f["path"].startswith(".github/workflows/"):
