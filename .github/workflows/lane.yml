@@ -7,6 +7,10 @@ name: lane
 # NEEDS-PAT-1 (server-side only): PRs that change .github/workflows/** are merged here too, on green, when a workflow-capable credential
 # is bound: secret LANE_PAT, or a GitHub App (secrets LANE_APP_ID and LANE_APP_PRIVATE_KEY). With neither, they stay open and labeled needs-pat.
 on:
+  # LANE-DRAFT-1: a draft PR's `checks` run fails on purpose, so the workflow_run trigger below (success only) never fires for it and it waited for the daily sweep (about 23 h).
+  # A PR event starts the pass at once: it marks the draft ready and the lane takes it from there.
+  pull_request:
+    types: [opened, reopened, ready_for_review]
   workflow_run:
     workflows: [checks]
     types: [completed]

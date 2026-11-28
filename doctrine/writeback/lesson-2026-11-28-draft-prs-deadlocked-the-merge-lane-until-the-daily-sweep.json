@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-28-draft-prs-deadlocked-the-merge-lane-until-the-daily-sweep",
+  "kind": "lesson",
+  "date": "2026-11-28",
+  "title": "Draft PRs deadlocked the merge lane until the daily sweep",
+  "body": "A draft PR's checks run fails on purpose, and the lane only started on a successful checks run or the daily sweep, so an agent's draft PR waited about 23 h. The lane now also starts on pull_request opened, reopened and ready_for_review.",
+  "probe": "grep:.github/workflows/lane.yml::LANE-DRAFT-1",
+  "session": "session_0156nqDsuxEgQUK6LWsioTDc"
+ },
+ "kind": "lesson",
+ "title": "Draft PRs deadlocked the merge lane until the daily sweep",
+ "session": "session_0156nqDsuxEgQUK6LWsioTDc"
+}
