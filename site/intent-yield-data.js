@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 export const INTENT_YIELD = {
  "marker": "INTENT-YIELD-1",
- "at": "2026-11-27T17:34:18Z",
+ "at": "2026-11-28T16:18:16Z",
  "settle_days": 30,
  "target_kept_share": 0.8,
  "summary": {
@@ -1428,6 +1428,11 @@ export const INTENT_YIELD = {
   },
   {
    "at": "2026-11-27T17:34:18Z",
+   "holding_share": 0.932,
+   "kept_share": null
+  },
+  {
+   "at": "2026-11-28T16:18:16Z",
    "holding_share": 0.932,
    "kept_share": null
   }
