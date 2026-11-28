@@ -4,79 +4,79 @@ export default {
  "credit": "W. Ross Ashby, Design for a Brain (1952)",
  "now": {
   "claims_drift": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": true,
    "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": false,
-   "value": 0.962
+   "value": 0.965
   },
   "happy_paths": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": true,
    "value": 1.0
   },
   "lessons_enforced": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": false,
    "value": 0.692
   },
   "owner_interventions": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": false,
    "value": 88
   },
   "research_in_code": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": false,
    "value": 0.6
   },
   "second_loop_keep_rate": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": false,
    "value": 0.033
   },
   "self_shipping": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": false,
    "value": 0.786
   },
   "spec_quality": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": false,
    "value": 0.388
   },
   "spend": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": false,
    "value": 11.345
   },
   "stalled_clocks": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": false,
    "value": 5
   },
   "survival_levels": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": true,
    "value": 3
   },
   "ui_findings": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": true,
    "value": 0
   },
   "unattended_horizon": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": true,
    "value": 730
   },
   "value": {
-   "at": "2026-11-28T08:56:02Z",
+   "at": "2026-11-28T09:07:18Z",
    "ok": true,
-   "value": 20.185
+   "value": 19.216
   }
  },
  "readiness": {
